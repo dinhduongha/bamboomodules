@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Extentions\Abp_Extensions_User.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AbpClientCore\AbpClient.Core.csproj" />
+    <ProjectReference Include="..\Bamboo.Document.Shared\Bamboo.Document.Shared.csproj" />
+    <ProjectReference Include="..\Bamboo.POS.Shared\Bamboo.POS.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
