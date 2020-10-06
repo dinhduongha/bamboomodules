@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AbpClientCore\AbpClient.Core.csproj" />
-    <ProjectReference Include="..\Bamboo.Hr.Shared\Bamboo.Hr.Shared.csproj" />
+    <ProjectReference Include="..\..\..\AbpClientCore\AbpClient.Core.csproj" />
+    <ProjectReference Include="..\Bamboo.Fleet.Shared\Bamboo.Fleet.Shared.csproj" />
   </ItemGroup>
 
 </Project>

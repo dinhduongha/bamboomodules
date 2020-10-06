@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bamboo.Common.Shared\Bamboo.Common.Shared.csproj" />
+    <ProjectReference Include="..\..\Bamboo.Common.Shared\Bamboo.Common.Shared.csproj" />
   </ItemGroup>
 
 </Project>

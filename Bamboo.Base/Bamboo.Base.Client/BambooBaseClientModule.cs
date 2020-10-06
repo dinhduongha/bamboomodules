@@ -1,14 +1,14 @@
 ﻿using Abp.Modules;
 using Abp.Reflection.Extensions;
 
-namespace Bamboo.Base
+namespace Bamboo.Base.Client
 {
     [DependsOn(typeof(BambooBaseSharedModule))]
-    public class BambooBaseModule : AbpModule
+    public class BambooBaseClientModule : AbpModule
     {
         public override void Initialize()
         {
-            IocManager.RegisterAssemblyByConvention(typeof(BambooBaseModule).GetAssembly());
+            IocManager.RegisterAssemblyByConvention(typeof(BambooBaseClientModule).GetAssembly());
         }
     }
 }

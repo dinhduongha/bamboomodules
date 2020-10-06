@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AbpClient.Common
+namespace Bamboo.Base.Client
 {
     public class Utils
     {
