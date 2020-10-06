@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 
 using Bamboo.AbpClient;
 using Bamboo.AbpClient.Services;
+using Bamboo.Base.Shared;
 
-namespace Bamboo.Base.Bank
+namespace Bamboo.Base.Client
 {
 	public class BankClientAppService : AbpCoreAppService, IBankAppService
 	{
@@ -15,7 +16,7 @@ namespace Bamboo.Base.Bank
 
 		}
 
-		public async Task<BankDto> Create(CreateBankDto input)
+		public async Task<BankDto> CreateAsync(CreateBankDto input)
 		{
 			await Task.CompletedTask;
 			return null;
