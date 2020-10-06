@@ -8,13 +8,13 @@ using Bamboo.Common;
 
 namespace Bamboo.Base.Shared
 {
-    public class BankExtraData: IExtraData
+    public class BankAccountExtraData: IExtraData
     {
 
     }
 
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class CreateBankDto: EntityDto<Guid>
+    public class CreateBankAccountDto: EntityDto<Guid>
     {
         public string Name { get; set; }
 
@@ -47,13 +47,14 @@ namespace Bamboo.Base.Shared
     }
 
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class UpdateBankDto: CreateBankDto
+    public class UpdateBankAccountDto: CreateBankAccountDto
     { 
     }
 
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class BankDto : CreateBankDto
+    public class BankAccountDto : CreateBankAccountDto
     {
+        public Guid Id { get; set; }
 
         public DateTime CreationTime { get; set; }
 

@@ -7,9 +7,9 @@ using Abp.Application.Services.Dto;
 
 namespace Bamboo.Base.Shared
 {
-    public interface IBankAppService : IApplicationService
+    public interface IPartnerCategoryAppService : IApplicationService
 	{
-		Task<BankDto> CreateAsync(CreateBankDto input);
+		Task<PartnerCategoryDto> Create(CreatePartnerCategoryDto input);
 	}
 
 }

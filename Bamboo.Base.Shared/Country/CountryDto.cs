@@ -1,17 +1,19 @@
 using System;
-
 using Newtonsoft.Json;
+
+using Abp.Domain.Entities;
+using Abp.Application.Services.Dto;
 
 using Bamboo.Common;
 
 namespace Bamboo.Base.Shared
 {
-    public class CurrencyExtraData : IExtraData
+    public class CountryExtraData : IExtraData
     {
 
     }
 
-    public class CreateCurrencyDto
+    public class CreateCountryDto: EntityDto
     {
         public string Name { get; set; }
 
@@ -19,8 +21,7 @@ namespace Bamboo.Base.Shared
     }
 
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class CurrencyDto : CreateCurrencyDto
+    public class CountryDto : CreateCountryDto
     {
-        public int Id { get; set; }
     }
 }

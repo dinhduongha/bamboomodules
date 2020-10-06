@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Bamboo.Base.Extensions
+namespace Bamboo.Common.Extensions
 {
     // https://stackoverflow.com/questions/1689199/c-sharp-code-to-order-by-a-property-using-the-property-name-as-a-string
     public static class IQueryableExtensions

@@ -1,21 +1,22 @@
 using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
-using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 
 using Bamboo.Common;
+using Bamboo.Base.Shared;
 
-namespace Bamboo.Base.Shared
+namespace Bamboo.Base.Core
 {
-    public class BankExtraData: IExtraData
+    public class Bank : FullAuditedEntity<Guid>, IExtraData, IPassivable
     {
+        public override Guid Id { get; set; }
 
-    }
+        [NotMapped]
+        public long Sequence { get; set; }
 
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class CreateBankDto: EntityDto<Guid>
-    {
         public string Name { get; set; }
 
         public string SortName { get; set; }
@@ -44,21 +45,12 @@ namespace Bamboo.Base.Shared
 
         public string Description { get; set; }
 
+#if HAS_DB_POSTGRESQL
+        [Column(TypeName = "jsonb")]
+        public BankExtraData ExtraData { get; set; }
+#else
+        [NotMapped]
+        public BankExtraData ExtraData { get; set; }
+#endif
     }
-
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class UpdateBankDto: CreateBankDto
-    { 
-    }
-
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class BankDto : CreateBankDto
-    {
-
-        public DateTime CreationTime { get; set; }
-
-        public DateTime? LastModificationTime { get; set; }
-
-    }
-
 }

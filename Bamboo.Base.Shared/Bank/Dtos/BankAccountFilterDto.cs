@@ -5,7 +5,7 @@ using Bamboo.Filter;
 
 namespace Bamboo.Base.Shared
 {
-    public class BankFilterDto: FilterBase
+    public class BankAccountFilterDto: FilterBase
     {
     }
 
