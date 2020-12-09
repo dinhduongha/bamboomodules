@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.prod.json",
+  "compilerOptions": {
+    "paths": {
+      "@my-company-name/attendance": [
+        "projects/attendance/src/public-api.ts"
+      ],
+      "@my-company-name/attendance/config": [
+        "projects/attendance/config/src/public-api.ts"
+      ],
+      "@proxy": ["projects/attendance/src/lib/proxy/index.ts"],
+      "@proxy/*": ["projects/attendance/src/lib/proxy/*"]
+    }
+  }
+}

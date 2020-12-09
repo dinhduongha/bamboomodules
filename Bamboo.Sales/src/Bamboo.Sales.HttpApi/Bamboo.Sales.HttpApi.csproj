@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Bamboo.Sales</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="4.0.0" />
+    <ProjectReference Include="..\Bamboo.Sales.Application.Contracts\Bamboo.Sales.Application.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
