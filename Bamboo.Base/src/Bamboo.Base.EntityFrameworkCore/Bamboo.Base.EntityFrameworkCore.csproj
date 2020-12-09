@@ -6,9 +6,12 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Bamboo.Base</RootNamespace>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <DefineConstants>HAS_DB_POSTGRESQL</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="4.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="5.0.0-rc2" />
     <ProjectReference Include="..\Bamboo.Base.Domain\Bamboo.Base.Domain.csproj" />
   </ItemGroup>
 

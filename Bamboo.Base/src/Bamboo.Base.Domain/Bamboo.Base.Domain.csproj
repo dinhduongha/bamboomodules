@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\common.props" />
 
@@ -6,7 +6,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Bamboo.Base</RootNamespace>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <DefineConstants>HAS_DB_POSTGRESQL</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Ddd.Domain" Version="4.0.0" />
     <ProjectReference Include="..\Bamboo.Base.Domain.Shared\Bamboo.Base.Domain.Shared.csproj" />

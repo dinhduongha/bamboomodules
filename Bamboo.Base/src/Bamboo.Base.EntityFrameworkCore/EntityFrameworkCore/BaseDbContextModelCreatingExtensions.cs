@@ -38,6 +38,14 @@ namespace Bamboo.Base.EntityFrameworkCore
                 b.HasIndex(q => q.CreationTime);
             });
             */
+#if HAS_DB_POSTGRESQL
+            builder.UseSerialColumns();
+            builder.StringSize();
+            builder.PostgreSQLDataType();
+            builder.SnakeCase();
+            // Change to lower case:
+            // https://github.com/abpframework/abp/issues/2131
+#endif
         }
     }
 }

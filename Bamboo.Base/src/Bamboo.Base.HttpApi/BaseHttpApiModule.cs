@@ -28,6 +28,14 @@ namespace Bamboo.Base
                     .Get<BaseResource>()
                     .AddBaseTypes(typeof(AbpUiResource));
             });
+
+            // https://docs.abp.io/en/abp/latest/API/Auto-API-Controllers
+            //Configure<AbpAspNetCoreMvcOptions>(options =>
+            //{
+            //    options
+            //        .ConventionalControllers
+            //        .Create(typeof(BaseApplicationModule).Assembly);
+            //});
         }
     }
 }

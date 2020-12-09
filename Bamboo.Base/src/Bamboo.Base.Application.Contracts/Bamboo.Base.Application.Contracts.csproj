@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\common.props" />
 
@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="4.0.0" />
     <PackageReference Include="Volo.Abp.Authorization" Version="4.0.0" />
+    <ProjectReference Include="..\..\..\Bamboo.Common.Shared\Bamboo.Common.Shared.csproj" />
     <ProjectReference Include="..\Bamboo.Base.Domain.Shared\Bamboo.Base.Domain.Shared.csproj" />
   </ItemGroup>
 
