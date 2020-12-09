@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Bamboo.Base</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="4.0.0" />
+    <PackageReference Include="Volo.Abp.Authorization" Version="4.0.0" />
+    <ProjectReference Include="..\Bamboo.Base.Domain.Shared\Bamboo.Base.Domain.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

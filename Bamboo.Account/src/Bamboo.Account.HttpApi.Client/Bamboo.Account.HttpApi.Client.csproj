@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Bamboo.Account</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Http.Client" Version="4.0.0" />
+    <ProjectReference Include="..\Bamboo.Account.Application.Contracts\Bamboo.Account.Application.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
