@@ -4,20 +4,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.Data;
+using Volo.Abp.MultiTenancy;
 
 using Bamboo.Common;
 
 namespace Bamboo.Base.Entities
 {
-    public class Bank : FullAuditedEntity<Guid>, IHasExtraProperties
+    public class Bank : FullAuditedAggregateRoot<Guid>, IMultiTenant, IHasExtraProperties
     {
-        public Bank()
-            : base(CoreUtils.NewGuid()) { }
+        protected Bank() { }
         public Bank(Guid id)
             : base(id) { }
 
+        public Guid? TenantId { get; set; }
+
+#if HAS_DB_POSTGRESQL
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(TypeName = "bigserial")]
+#endif
         public long Sequence { get; set; }
 
         public string Name { get; set; }
@@ -50,6 +54,10 @@ namespace Bamboo.Base.Entities
 
         //[Column(TypeName = "jsonb")]
         //public BankExtraData ExtraData { get; set; }
-        public ExtraPropertyDictionary ExtraProperties { get; }
+
+#if HAS_DB_POSTGRESQL
+        [Column(TypeName = "jsonb")]
+#endif
+        public override ExtraPropertyDictionary ExtraProperties { get; protected set; }
     }
 }

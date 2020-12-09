@@ -2,25 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
-using Bamboo.Common;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
 
+using Bamboo.Common;
+
 namespace Bamboo.Base.Entities
 {
-    /// <summary>
-    /// res_currency_rate
-    /// </summary>
-    public class CurrencyRate : FullAuditedAggregateRoot<Guid>, IMultiTenant
+
+    public class PartnerIndustry : FullAuditedAggregateRoot<long>, IHasExtraProperties
     {
-        public CurrencyRate(){}
-        public CurrencyRate(Guid id)
+        public PartnerIndustry(long id)
             :base(id)
         {
-
         }
-        public Guid? TenantId {get; set;}
+
+        protected PartnerIndustry() 
+        {
+        }
 
 #if HAS_DB_POSTGRESQL
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -30,16 +31,15 @@ namespace Bamboo.Base.Entities
 
         public string Name { get; set; }
 
-        public double Rate { get; set; }
-
-        public long CurrencyId { get; set; }
+        public string FullName { get; set; }
 
         public bool IsActive { get; set; }
 
-        public DateTimeOffset? Date { get; set; }
-
         public string Description { get; set; }
 
+#if HAS_DB_POSTGRESQL
+        [Column(TypeName = "jsonb")]
+#endif
+        public override ExtraPropertyDictionary ExtraProperties { get; protected set; }
     }
-
 }

@@ -9,45 +9,54 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Base.Entities
 {
-    public class Currency : FullAuditedEntity<Guid>, IMultiTenant, IHasExtraProperties
+    /// <summary>
+    /// res_currency
+    /// </summary>
+    public class Currency : FullAuditedAggregateRoot<Guid>, IMultiTenant, IHasExtraProperties
     { 
-        public Currency()
-            :base(CoreUtils.NewGuid())
-        {
-
-        }
+        protected Currency(){}
         public Currency(Guid id)
-            :base(id)
-        {
-
-        }
+            :base(id){}
         public Guid? TenantId { get; set; }
 
+#if HAS_DB_POSTGRESQL
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(TypeName = "bigserial")]
+#endif
         public long Sequence { get; set; }
 
-
         public string Name { get; set; }
+
         public string Symbol { get; set; }
+        
         public double Rate { get; set; }
 
-        [NotMapped]
-        [ForeignKey("CurrencyId")]
-        public ICollection<CurrencyRate> Rates { get; set; }
-
         public double Rounding { get; set; }
+        
         public int DecimalPlaces { get; set; }
+        
         public bool IsActive { get; set; }
-        public string Description { get; set; }
+        
         public string Position { get; set; }
+
+        public string CurrencyUnitLabel { get; set; }
+
+        public string CurrencySubUnitLabel { get; set; }
 
         public DateTimeOffset Date { get; set; }
 
+        public string Description { get; set; }
+
+        //[NotMapped]
+        //[ForeignKey("CurrencyId")]
+        //public ICollection<CurrencyRate> Rates { get; set; }
+
         //[Column(TypeName = "jsonb")]
         //public CurrencyExtraData ExtraData { get; set; }
+#if HAS_DB_POSTGRESQL
         [Column(TypeName = "jsonb")]
-        public ExtraPropertyDictionary ExtraProperties { get; }
+#endif
+        public override ExtraPropertyDictionary ExtraProperties { get; protected set; }
     }
 
 }

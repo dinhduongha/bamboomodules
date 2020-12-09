@@ -10,15 +10,22 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Base.Entities
 {
-    public class CountryState : FullAuditedEntity<Guid>, IMultiTenant, IHasExtraProperties
+    public class CountryState : FullAuditedAggregateRoot<Guid>, IMultiTenant, IHasExtraProperties
     {
+        public CountryState(Guid id): base(id) { }
+        protected CountryState() { }
+
         public Guid? TenantId {get; set;}
         public string Name { get; set; }
         public string Code { get; set; }
         public long CountryId { get; set; }
         public bool IsActive { get; set; }
+        public string Description { get; set; }
+
+#if HAS_DB_POSTGRESQL
         [Column(TypeName = "jsonb")]
-        public ExtraPropertyDictionary ExtraProperties { get; }
+#endif
+        public override ExtraPropertyDictionary ExtraProperties { get; protected set; }
     }
 
 }

@@ -8,13 +8,13 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Base.Entities
 {
-    public class PartnerTitle : FullAuditedAggregateRoot<long>, IHasExtraProperties
+    public class ReportLayout : FullAuditedAggregateRoot<long>, IHasExtraProperties
     { 
-        public PartnerTitle()
+        public ReportLayout()
         {
 
         }
-        public PartnerTitle(long id)
+        public ReportLayout(long id)
             :base(id)
         {
 
@@ -27,10 +27,14 @@ namespace Bamboo.Base.Entities
 #endif
         public long Sequence { get; set; }
 
-        public string Name { get; set; }
+        public string ViewId { get; set; }
 
-        public string Shortcut { get; set; }
+        public string Image { get; set; } // Image Url
+        public string Pdf { get; set; } // Pdf Url
 
+        public string Name { get; set; } // Image Url
+
+        public string Description { get; set; } // Image Url
 
         //[Column(TypeName = "jsonb")]
         //public PartnerTitleExtraData ExtraData { get; set; }

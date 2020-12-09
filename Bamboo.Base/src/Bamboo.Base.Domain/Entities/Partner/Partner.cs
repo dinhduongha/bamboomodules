@@ -8,10 +8,9 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Base.Entities
 {
-    public class Partner : FullAuditedEntity<Guid>, IMultiTenant, IHasExtraProperties
+    public class Partner : FullAuditedAggregateRoot<Guid>, IMultiTenant, IHasExtraProperties
     {
-        public Partner()
-            : base(CoreUtils.NewGuid())
+        protected Partner()
         {
 
         }
@@ -23,26 +22,34 @@ namespace Bamboo.Base.Entities
 
         public Guid? TenantId { get; set; }
 
+#if HAS_DB_POSTGRESQL
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(TypeName = "bigserial")]
+#endif
         public long Sequence { get; set; }
 
         public string Name { get; set; }
-        public string Date { get; set; }
-        public Guid? Parent { get; set; }
+        public string DisplayName { get; set; }
+
+        public DateTimeOffset CreateDate { get; set; }
+
+        public DateTimeOffset Date { get; set; }
+
+        public string Title { get; set; }
+
+        public Guid? ParentId { get; set; }
         public string ParentName { get; set; }
 
         public string Ref { get; set; }
 
         public long LanguageId { get; set; }
+        public string Tz { get; set; }
 
         public int ActiveLangCount { get; set; }
 
-        public string TZ { get; set; }
-
         public string TZOffset { get; set; }
 
-        public long User { get; set; }
+        public Guid? UserId { get; set; }
 
         public string VAT { get; set; }
 
@@ -74,11 +81,11 @@ namespace Bamboo.Base.Entities
 
         public Guid? StateId { get; set; }
 
-        public Guid? CountryId { get; set; }
+        public long? CountryId { get; set; }
 
-        public double Latitude { get; set; }
+        public double PartnerLatitude { get; set; }
 
-        public double Longitude { get; set; }
+        public double PartnerLongitude { get; set; }
 
         public string Email { get; set; }
 
@@ -90,16 +97,16 @@ namespace Bamboo.Base.Entities
 
         public bool IsCompany { get; set; }
 
-        public Guid? Industry { get; set; }
+        public long? Industry { get; set; }
 
         public int CompanyTypeId { get; set; }
 
-        public int CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
 
-        public string Color { get; set; }
+        public long Color { get; set; }
 
         [NotMapped]
-        public ICollection<long> Users { get; set; }
+        public ICollection<Guid> Users { get; set; }
 
         public bool PartnerShare { get; set; }
 
@@ -129,7 +136,9 @@ namespace Bamboo.Base.Entities
         [NotMapped]
         public ICollection<PartnerCategory> Categories { get; set; }
 
+#if HAS_DB_POSTGRESQL
         [Column(TypeName = "jsonb")]
-        public ExtraPropertyDictionary ExtraProperties { get; }
+#endif
+        public override ExtraPropertyDictionary ExtraProperties { get; protected set; }
     }
 }
