@@ -1,0 +1,12 @@
+.divider {
+    height: 1px;
+    width: 152px;
+    background-color: #E9EDF7;
+}
+.divider-text {
+    font-size: 0.75rem;
+    width: 150px;
+    text-align: center;
+    color: #A3AED0;
+    margin: auto 16px !important;
+}

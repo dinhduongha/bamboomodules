@@ -250,7 +250,7 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
-
+appsettings.secrets.json
 # Bamboo
 src/Bamboo.Web/Logs/*
 src/Bamboo.Web.Host/Logs/*

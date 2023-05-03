@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.2.0" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXLiteTheme" Version="2.2.*-*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Autofac.WebAssembly" Version="7.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Identity.Blazor.WebAssembly" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.WebAssembly" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.WebAssembly" Version="7.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\admin\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" />
+    <ProjectReference Include="..\..\shared\common\Bamboo.Shared.Common\Bamboo.Shared.Common.csproj" />
+    <ProjectReference Include="..\core\src\Bamboo.Core.Blazor.WebAssembly\Bamboo.Core.Blazor.WebAssembly.csproj" />
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--<PackageReference Include="FirebaseAdmin" Version="2.3.0" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="6.0.0" />-->
+    <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
+    <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.*" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.*" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.*" /> 
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Sms" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Account.Application" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi" Version="7.2.1" />
+  </ItemGroup>
+</Project>

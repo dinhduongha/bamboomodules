@@ -1,0 +1,111 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "Bamboo.Core.Domain.Shared": {
+      "path": "src/Bamboo.Core.Domain.Shared/Bamboo.Core.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.Domain": {
+      "path": "src/Bamboo.Core.Domain/Bamboo.Core.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.Application.Contracts": {
+      "path": "src/Bamboo.Core.Application.Contracts/Bamboo.Core.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.Application": {
+      "path": "src/Bamboo.Core.Application/Bamboo.Core.Application.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.EntityFrameworkCore": {
+      "path": "src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.MongoDB": {
+      "path": "src/Bamboo.Core.MongoDB/Bamboo.Core.MongoDB.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.HttpApi": {
+      "path": "src/Bamboo.Core.HttpApi/Bamboo.Core.HttpApi.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.HttpApi.Client": {
+      "path": "src/Bamboo.Core.HttpApi.Client/Bamboo.Core.HttpApi.Client.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.TestBase": {
+      "path": "test/Bamboo.Core.TestBase/Bamboo.Core.TestBase.abppkg.json",
+      "folder": "test"
+    },
+    "Bamboo.Core.EntityFrameworkCore.Tests": {
+      "path": "test/Bamboo.Core.EntityFrameworkCore.Tests/Bamboo.Core.EntityFrameworkCore.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "Bamboo.Core.MongoDB.Tests": {
+      "path": "test/Bamboo.Core.MongoDB.Tests/Bamboo.Core.MongoDB.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "Bamboo.Core.Domain.Tests": {
+      "path": "test/Bamboo.Core.Domain.Tests/Bamboo.Core.Domain.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "Bamboo.Core.Application.Tests": {
+      "path": "test/Bamboo.Core.Application.Tests/Bamboo.Core.Application.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "Bamboo.Core.HttpApi.Host": {
+      "path": "host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.abppkg.json",
+      "folder": "host"
+    },
+    "Bamboo.Core.Web": {
+      "path": "src/Bamboo.Core.Web/Bamboo.Core.Web.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Bamboo.Core.HttpApi.Client.ConsoleTestApp/Bamboo.Core.HttpApi.Client.ConsoleTestApp.abppkg.json",
+      "folder": "test"
+    },
+    "Bamboo.Core.Web.Host": {
+      "path": "host/Bamboo.Core.Web.Host/Bamboo.Core.Web.Host.abppkg.json",
+      "folder": "host"
+    },
+    "Bamboo.Core.AuthServer": {
+      "path": "host/Bamboo.Core.AuthServer/Bamboo.Core.AuthServer.abppkg.json",
+      "folder": "host"
+    },
+    "Bamboo.Core.Host.Shared": {
+      "path": "host/Bamboo.Core.Host.Shared/Bamboo.Core.Host.Shared.abppkg.json",
+      "folder": "host"
+    },
+    "Bamboo.Core.Web.Unified": {
+      "path": "host/Bamboo.Core.Web.Unified/Bamboo.Core.Web.Unified.abppkg.json",
+      "folder": "host"
+    },
+    "Bamboo.Core.Blazor": {
+      "path": "src/Bamboo.Core.Blazor/Bamboo.Core.Blazor.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.Blazor.Host": {
+      "path": "host/Bamboo.Core.Blazor.Host/Bamboo.Core.Blazor.Host.abppkg.json",
+      "folder": "host"
+    },
+    "Bamboo.Core.Blazor.Server": {
+      "path": "src/Bamboo.Core.Blazor.Server/Bamboo.Core.Blazor.Server.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.Blazor.WebAssembly": {
+      "path": "src/Bamboo.Core.Blazor.WebAssembly/Bamboo.Core.Blazor.WebAssembly.abppkg.json",
+      "folder": "src"
+    },
+    "Bamboo.Core.Blazor.Server.Host": {
+      "path": "host/Bamboo.Core.Blazor.Server.Host/Bamboo.Core.Blazor.Server.Host.abppkg.json",
+      "folder": "host"
+    }
+  }
+}

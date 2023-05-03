@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "Bamboo.Core": {
+      "path": "Bamboo.Core.abpmdl.json"
+    }
+  }
+}
