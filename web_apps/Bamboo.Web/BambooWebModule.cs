@@ -9,8 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Bamboo.Localization;
-using Bamboo.MultiTenancy;
+using Bamboo.Admin.Localization;
+using Bamboo.Admin.MultiTenancy;
 using Bamboo.Web.Menus;
 using StackExchange.Redis;
 using Microsoft.OpenApi.Models;
@@ -44,12 +44,13 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using Bamboo.Admin;
+using Bamboo.Admin.MultiTenancy;
 
 namespace Bamboo.Web;
 
 [DependsOn(
-    typeof(BambooHttpApiClientModule),
-    typeof(BambooHttpApiModule),
+    typeof(AdminHttpApiClientModule),
     typeof(AbpAspNetCoreAuthenticationOpenIdConnectModule),
     typeof(AbpAspNetCoreMvcClientModule),
     typeof(AbpHttpClientWebModule),
@@ -71,9 +72,9 @@ public class BambooWebModule : AbpModule
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
             options.AddAssemblyResource(
-                typeof(BambooResource),
-                typeof(BambooDomainSharedModule).Assembly,
-                typeof(BambooApplicationContractsModule).Assembly,
+                typeof(AdminResource),
+                typeof(AdminDomainSharedModule).Assembly,
+                typeof(AdminApplicationContractsModule).Assembly,
                 typeof(BambooWebModule).Assembly
             );
         });
@@ -180,8 +181,9 @@ public class BambooWebModule : AbpModule
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.ReplaceEmbeddedByPhysical<BambooDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<BambooApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Application.Contracts"));
+                var str = Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared");
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
                 options.FileSets.ReplaceEmbeddedByPhysical<BambooWebModule>(hostingEnvironment.ContentRootPath);
             });
         }

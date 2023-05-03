@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Bamboo.Localization;
-using Bamboo.MultiTenancy;
+using Bamboo.Admin.Localization;
+using Bamboo.Admin.MultiTenancy;
 using Volo.Abp.Account.Localization;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Identity.Web.Navigation;
@@ -38,7 +38,7 @@ public class BambooMenuContributor : IMenuContributor
     private Task ConfigureMainMenuAsync(MenuConfigurationContext context)
     {
         var administration = context.Menu.GetAdministration();
-        var l = context.GetLocalizer<BambooResource>();
+        var l = context.GetLocalizer<AdminResource>();
 
         context.Menu.Items.Insert(
             0,
@@ -68,7 +68,7 @@ public class BambooMenuContributor : IMenuContributor
 
     private Task ConfigureUserMenuAsync(MenuConfigurationContext context)
     {
-        var l = context.GetLocalizer<BambooResource>();
+        var l = context.GetLocalizer<AdminResource>();
         var accountStringLocalizer = context.GetLocalizer<AccountResource>();
         var authServerUrl = _configuration["AuthServer:Authority"] ?? "";
 

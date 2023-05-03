@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Bamboo.Blazor": {
+    "Bamboo.BlazorServer": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

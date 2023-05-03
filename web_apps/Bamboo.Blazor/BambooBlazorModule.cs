@@ -17,12 +17,13 @@ using Volo.Abp.UI.Navigation;
 using Volo.Abp.Identity.Blazor.WebAssembly;
 using Volo.Abp.SettingManagement.Blazor.WebAssembly;
 using Volo.Abp.TenantManagement.Blazor.WebAssembly;
+using Bamboo.Admin;
 
 namespace Bamboo.Blazor;
 
 [DependsOn(
     typeof(AbpAutofacWebAssemblyModule),
-    typeof(BambooHttpApiClientModule),
+    typeof(AdminHttpApiClientModule),
     typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXLiteThemeModule),
     typeof(AbpIdentityBlazorWebAssemblyModule),
     typeof(AbpTenantManagementBlazorWebAssemblyModule),

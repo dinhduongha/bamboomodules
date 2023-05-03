@@ -14,8 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.OpenApi.Models;
 using Bamboo.Blazor.Menus;
-using Bamboo.Localization;
-using Bamboo.MultiTenancy;
+using Bamboo.Admin.Localization;
+using Bamboo.Admin.MultiTenancy;
 using StackExchange.Redis;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.OpenIdConnect;
@@ -50,11 +50,14 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Bamboo.Admin;
+using Bamboo.Admin.Localization;
+using Bamboo.Admin.MultiTenancy;
 
 namespace Bamboo.Blazor;
 
 [DependsOn(
-    typeof(BambooHttpApiClientModule),
+    typeof(AdminHttpApiClientModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpDistributedLockingModule),
     typeof(AbpAspNetCoreMvcClientModule),
@@ -76,9 +79,9 @@ public class BambooBlazorModule : AbpModule
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
             options.AddAssemblyResource(
-                typeof(BambooResource),
-                typeof(BambooDomainSharedModule).Assembly,
-                typeof(BambooApplicationContractsModule).Assembly,
+                typeof(AdminResource),
+                typeof(AdminDomainSharedModule).Assembly,
+                typeof(AdminApplicationContractsModule).Assembly,
                 typeof(BambooBlazorModule).Assembly
             );
         });
@@ -140,7 +143,7 @@ public class BambooBlazorModule : AbpModule
                 {
                     bundle.AddFiles("/blazor-global-styles.css");
                     //You can remove the following line if you don't use Blazor CSS isolation for components
-                    bundle.AddFiles("/Bamboo.Blazor.styles.css");
+                    //bundle.AddFiles("/Bamboo.Blazor.styles.css");
                 }
             );
         });
@@ -191,8 +194,8 @@ public class BambooBlazorModule : AbpModule
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.ReplaceEmbeddedByPhysical<BambooDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<BambooApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Application.Contracts"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
                 options.FileSets.ReplaceEmbeddedByPhysical<BambooBlazorModule>(hostingEnvironment.ContentRootPath);
             });
         }
