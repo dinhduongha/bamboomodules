@@ -6,6 +6,7 @@ using Volo.Abp;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Distributed;
+using Volo.Abp.EventBus.Local;
 using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.ObjectExtending;
@@ -27,12 +28,14 @@ public class BambooTenantAppService : TenantAppService
         ITenantRepository tenantRepository,
         ITenantManager tenantManager,
         IDataSeeder dataSeeder,
-        IDistributedEventBus distributedEventBus
+        IDistributedEventBus distributedEventBus,
+        ILocalEventBus localEventBus
     ) : base(
         tenantRepository,
         tenantManager,
         dataSeeder,
-        distributedEventBus)
+        distributedEventBus,
+        localEventBus)
     {
         _dataFilter = dataFilter;
     }

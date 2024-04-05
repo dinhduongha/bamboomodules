@@ -7,5 +7,5 @@ public class ClientAppDto : EntityDto
     public string PostLogoutRedirectUris { get; set; }
     public string RedirectUris { get; set; }
     public string Permissions { get; set; }
-    public string Type { get; set; }
+    public string ClientType { get; set; }
 }

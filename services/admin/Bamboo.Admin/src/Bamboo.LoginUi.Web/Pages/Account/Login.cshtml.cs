@@ -6,11 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Account.Web;
 using Volo.Abp.Account.Web.Pages.Account;
+using Volo.Abp.AspNetCore.Mvc.UI.Theming;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Guids;
+using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Volo.Abp.Identity.IdentityPermissions;
+using static Volo.Abp.UI.Navigation.DefaultMenuNames.Application;
 
 //using IdentityModel;
 
@@ -19,7 +24,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Account;
 public class LoginUiLoginModel : LoginModel
 {
     public LoginUiLoginModel(IAuthenticationSchemeProvider schemeProvider, IOptions<AbpAccountOptions> accountOptions,
-        IOptions<IdentityOptions> identityOptions) : base(schemeProvider, accountOptions, identityOptions)
+        IOptions<IdentityOptions> identityOptions, IdentityDynamicClaimsPrincipalContributorCache identityDynamicClaimsPrincipalContributorCache) : base(schemeProvider, accountOptions, identityOptions, identityDynamicClaimsPrincipalContributorCache)
     {
     }
 

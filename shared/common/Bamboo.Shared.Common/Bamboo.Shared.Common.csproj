@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="7.2.1" />
-    <PackageReference Include="Volo.Abp.Guids" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="8.1.0" />
+    <PackageReference Include="Volo.Abp.Guids" Version="8.1.0" />
   </ItemGroup>
 
 </Project>

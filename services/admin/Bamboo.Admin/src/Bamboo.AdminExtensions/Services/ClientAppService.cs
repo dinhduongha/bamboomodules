@@ -30,7 +30,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = x.PostLogoutRedirectUris,
             RedirectUris = x.RedirectUris,
             Permissions = x.Permissions,
-            Type = x.Type
+            ClientType = x.ClientType
         }).ToList();
     }
 
@@ -44,7 +44,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = client.PostLogoutRedirectUris,
             RedirectUris = client.RedirectUris,
             Permissions = client.Permissions,
-            Type = client.Type
+            ClientType = client.ClientType
         };
     }
 
@@ -56,7 +56,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
         client.PostLogoutRedirectUris = input.PostLogoutRedirectUris;
         client.RedirectUris = input.RedirectUris;
         client.Permissions = input.Permissions;
-        client.Type = input.Type;
+        client.ClientType = input.ClientType;
         await _openIddictApplicationRepository.InsertAsync(client);
         return new ClientAppDto
         {
@@ -65,7 +65,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = client.PostLogoutRedirectUris,
             RedirectUris = client.RedirectUris,
             Permissions = client.Permissions,
-            Type = client.Type
+            ClientType = client.ClientType
         };
     }
 
@@ -77,7 +77,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
         client.PostLogoutRedirectUris = input.PostLogoutRedirectUris;
         client.RedirectUris = input.RedirectUris;
         client.Permissions = input.Permissions;
-        client.Type = input.Type;
+        client.ClientType = input.ClientType;
         await _openIddictApplicationRepository.UpdateAsync(client);
         return new ClientAppDto
         {
@@ -86,7 +86,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = client.PostLogoutRedirectUris,
             RedirectUris = client.RedirectUris,
             Permissions = client.Permissions,
-            Type = client.Type
+            ClientType = client.ClientType
         };
     }
 
@@ -104,7 +104,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = client.PostLogoutRedirectUris,
             RedirectUris = client.RedirectUris,
             Permissions = client.Permissions,
-            Type = client.Type
+            ClientType = client.ClientType
         };
     }
 
@@ -122,14 +122,14 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = client.PostLogoutRedirectUris,
             RedirectUris = client.RedirectUris,
             Permissions = client.Permissions,
-            Type = client.Type
+            ClientType = client.ClientType
         };
     }
 
     public async Task<ClientAppDto> UpdateClientTypeAsync(Guid id, string clientType)
     {
         var client = await _openIddictApplicationRepository.GetAsync(id);
-        client.Type = clientType;
+        client.ClientType = clientType;
         await _openIddictApplicationRepository.UpdateAsync(client);
         return new ClientAppDto
         {
@@ -138,7 +138,7 @@ public class ClientAppService : ApplicationService, ITransientDependency
             PostLogoutRedirectUris = client.PostLogoutRedirectUris,
             RedirectUris = client.RedirectUris,
             Permissions = client.Permissions,
-            Type = client.Type
+            ClientType = client.ClientType
         };
     }
 

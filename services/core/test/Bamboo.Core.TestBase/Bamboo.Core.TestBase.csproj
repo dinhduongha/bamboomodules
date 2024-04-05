@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Bamboo.Core</RootNamespace>
   </PropertyGroup>
@@ -19,9 +19,9 @@
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="7.2.1" />
-    <PackageReference Include="Volo.Abp.Authorization" Version="7.2.1" />
-    <PackageReference Include="Volo.Abp.TestBase" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="8.1.0" />
+    <PackageReference Include="Volo.Abp.Authorization" Version="8.1.0" />
+    <PackageReference Include="Volo.Abp.TestBase" Version="8.1.0" />
     <ProjectReference Include="..\..\src\Bamboo.Core.Domain\Bamboo.Core.Domain.csproj" />
   </ItemGroup>
 

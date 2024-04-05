@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Guids;
@@ -22,12 +23,14 @@ public class BambooIdentityUserAppService : IdentityUserAppService
         IdentityUserManager userManager,
         IIdentityUserRepository userRepository,
         IIdentityRoleRepository roleRepository,
-        IOptions<IdentityOptions> identityOptions
+        IOptions<IdentityOptions> identityOptions,
+        IPermissionChecker permissionChecker
     ) : base(
         userManager,
         userRepository,
         roleRepository,
-        identityOptions)
+        identityOptions,
+        permissionChecker)
     {
         _dataFilter = dataFilter;
     }
