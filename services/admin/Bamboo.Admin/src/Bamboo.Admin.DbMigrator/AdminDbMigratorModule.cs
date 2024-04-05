@@ -11,5 +11,4 @@ namespace Bamboo.Admin.DbMigrator;
     )]
 public class AdminDbMigratorModule : AbpModule
 {
-
 }

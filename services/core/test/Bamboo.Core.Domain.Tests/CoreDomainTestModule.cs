@@ -8,8 +8,9 @@ namespace Bamboo.Core;
  * database independent anyway.
  */
 [DependsOn(
-    typeof(CoreEntityFrameworkCoreTestModule)
-    )]
+    typeof(CoreDomainModule),
+    typeof(CoreTestBaseModule)
+)]
 public class CoreDomainTestModule : AbpModule
 {
 

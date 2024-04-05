@@ -49,10 +49,11 @@ public partial class Utils
     {
         var micros = (value.Ticks / 10) - UNIXEPOCHMICROSECONDS;
         var mc = BitConverter.GetBytes(micros / 1000);
-        var mx = new[] { mc[7], mc[6], mc[5], mc[4], mc[3], mc[2], mc[1], mc[0] };
+        //var mx = new[] { mc[7], mc[6], mc[5], mc[4], mc[3], mc[2], mc[1], mc[0] };
         var mb = BitConverter.GetBytes(micros / 1000);
         var mm = BitConverter.GetBytes(micros % 1000);
-        var ret = new[] { mb[5], mb[4], mb[3], mb[2], mb[1], mb[0], mm[1], mm[0] };                                  // Drop byte 6 & 7
+        //var ret = new[] { mb[5], mb[4], mb[3], mb[2], mb[1], mb[0], mm[1], mm[0] };                                  // Drop byte 6 & 7
+        var ret = new[] { mb[5], mb[4], mb[3], mb[2], mb[1], mb[0], (byte)0x00, (byte)0x70 }; // UUIDv7
         return ret;
     }
 

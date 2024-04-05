@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Bamboo.Admin.EntityFrameworkCore;
+using Bamboo.Admin.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Microsoft.OpenApi.Models;
@@ -23,6 +25,7 @@ using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
+using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
@@ -77,6 +80,10 @@ public class AdminHttpApiHostModule : AbpModule
     private void ConfigureAuthentication(ServiceConfigurationContext context)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
+        {
+            options.IsDynamicClaimsEnabled = true;
+        });
     }
 
     private void ConfigureBundles()
@@ -140,7 +147,7 @@ public class AdminHttpApiHostModule : AbpModule
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.AddAbpSwaggerGenWithOAuth(
-            configuration["AuthServer:Authority"],
+            configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
                     {"Admin", "Admin API"}
@@ -203,6 +210,7 @@ public class AdminHttpApiHostModule : AbpModule
         }
 
         app.UseUnitOfWork();
+        app.UseDynamicClaims();
         app.UseAuthorization();
 
         app.UseSwagger();

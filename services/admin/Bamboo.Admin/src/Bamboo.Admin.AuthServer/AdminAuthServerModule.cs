@@ -31,9 +31,12 @@ using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
+using Volo.Abp.OpenIddict;
+using Volo.Abp.Security.Claims;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.Account.Localization;
 
 namespace Bamboo.Admin;
 
@@ -52,6 +55,9 @@ public class AdminAuthServerModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
+        var hostingEnvironment = context.Services.GetHostingEnvironment();
+        var configuration = context.Services.GetConfiguration();
+
         PreConfigure<OpenIddictBuilder>(builder =>
         {
             builder.AddValidation(options =>
@@ -61,6 +67,19 @@ public class AdminAuthServerModule : AbpModule
                 options.UseAspNetCore();
             });
         });
+
+        if (!hostingEnvironment.IsDevelopment())
+        {
+            PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
+            {
+                options.AddDevelopmentEncryptionAndSigningCertificate = false;
+            });
+
+            PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
+            {
+                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "9d763224-f649-47fc-a509-c5ab6aef4008");
+            });
+        }
     }
 
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -73,7 +92,8 @@ public class AdminAuthServerModule : AbpModule
             options.Resources
                 .Get<AdminResource>()
                 .AddBaseTypes(
-                    typeof(AbpUiResource)
+                    typeof(AbpUiResource),
+                    typeof(AccountResource)
                 );
         });
 
@@ -125,14 +145,13 @@ public class AdminAuthServerModule : AbpModule
         var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Admin");
         if (!hostingEnvironment.IsDevelopment())
         {
-            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]);
+            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Admin-Protection-Keys");
         }
 
         context.Services.AddSingleton<IDistributedLockProvider>(sp =>
         {
-            var connection = ConnectionMultiplexer
-                .Connect(configuration["Redis:Configuration"]);
+            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         });
 
@@ -153,6 +172,11 @@ public class AdminAuthServerModule : AbpModule
                     .AllowAnyMethod()
                     .AllowCredentials();
             });
+        });
+
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
+        {
+            options.IsDynamicClaimsEnabled = true;
         });
     }
 
@@ -186,6 +210,7 @@ public class AdminAuthServerModule : AbpModule
         }
 
         app.UseUnitOfWork();
+        app.UseDynamicClaims();
         app.UseAuthorization();
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();

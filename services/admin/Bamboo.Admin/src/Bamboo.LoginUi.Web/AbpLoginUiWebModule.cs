@@ -317,11 +317,11 @@ public class AbpLoginUiWebModule : AbpModule
         var env = context.GetEnvironment();
         GlobalSettingManagementProvider settingManagementProvider = context.ServiceProvider.GetRequiredService<GlobalSettingManagementProvider>();
         SettingDefinitionManager settingDefinitionManager = context.ServiceProvider.GetRequiredService<SettingDefinitionManager>();
-        //await settingManagementProvider.SetAsync(
-        //   settingDefinitionManager.GetAsync(AccountSettingNames.IsSelfRegistrationEnabled),
-        //   true.ToString(),
-        //   GlobalSettingValueProvider.ProviderName
-        //);
+        await settingManagementProvider.SetAsync(
+           await settingDefinitionManager.GetAsync(AccountSettingNames.IsSelfRegistrationEnabled),
+           true.ToString(),
+           GlobalSettingValueProvider.ProviderName
+        );
 
         //settingManagementProvider.SetAsync(
         //    settingDefinitionManager.Get(IdentitySettingNames.Password.RequireNonAlphanumeric),

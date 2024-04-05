@@ -14,8 +14,8 @@ using Volo.Abp.Uow;
 namespace Bamboo.Admin.EntityFrameworkCore;
 
 [DependsOn(
+    typeof(AdminApplicationTestModule),
     typeof(AdminEntityFrameworkCoreModule),
-    typeof(AdminTestBaseModule),
     typeof(AbpEntityFrameworkCoreSqliteModule)
     )]
 public class AdminEntityFrameworkCoreTestModule : AbpModule

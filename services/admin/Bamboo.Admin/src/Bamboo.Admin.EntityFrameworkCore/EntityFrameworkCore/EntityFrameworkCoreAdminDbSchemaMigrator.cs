@@ -20,7 +20,7 @@ public class EntityFrameworkCoreAdminDbSchemaMigrator
 
     public async Task MigrateAsync()
     {
-        /* We intentionally resolving the AdminDbContext
+        /* We intentionally resolve the AdminDbContext
          * from IServiceProvider (instead of directly injecting it)
          * to properly get the connection string of the current tenant in the
          * current scope.

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Shouldly;
 using Volo.Abp.Identity;
+using Volo.Abp.Modularity;
 using Xunit;
 
 namespace Bamboo.Admin.Samples;
@@ -10,12 +11,13 @@ namespace Bamboo.Admin.Samples;
  * (like IdentityUserManager here).
  * Only test your own domain services.
  */
-public class SampleDomainTests : AdminDomainTestBase
+public abstract class SampleDomainTests<TStartupModule> : AdminDomainTestBase<TStartupModule>
+    where TStartupModule : IAbpModule
 {
     private readonly IIdentityUserRepository _identityUserRepository;
     private readonly IdentityUserManager _identityUserManager;
 
-    public SampleDomainTests()
+    protected SampleDomainTests()
     {
         _identityUserRepository = GetRequiredService<IIdentityUserRepository>();
         _identityUserManager = GetRequiredService<IdentityUserManager>();

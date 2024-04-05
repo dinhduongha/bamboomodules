@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.OpenIddict.Applications;
+using Volo.Abp.OpenIddict.Scopes;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.Uow;
 
@@ -22,20 +24,26 @@ namespace Bamboo.Admin.OpenIddict;
 public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDependency
 {
     private readonly IConfiguration _configuration;
+    private readonly IOpenIddictApplicationRepository _openIddictApplicationRepository;
     private readonly IAbpApplicationManager _applicationManager;
+    private readonly IOpenIddictScopeRepository _openIddictScopeRepository;
     private readonly IOpenIddictScopeManager _scopeManager;
     private readonly IPermissionDataSeeder _permissionDataSeeder;
     private readonly IStringLocalizer<OpenIddictResponse> L;
 
     public OpenIddictDataSeedContributor(
         IConfiguration configuration,
+        IOpenIddictApplicationRepository openIddictApplicationRepository,
         IAbpApplicationManager applicationManager,
+        IOpenIddictScopeRepository openIddictScopeRepository,
         IOpenIddictScopeManager scopeManager,
         IPermissionDataSeeder permissionDataSeeder,
         IStringLocalizer<OpenIddictResponse> l)
     {
         _configuration = configuration;
+        _openIddictApplicationRepository = openIddictApplicationRepository;
         _applicationManager = applicationManager;
+        _openIddictScopeRepository = openIddictScopeRepository;
         _scopeManager = scopeManager;
         _permissionDataSeeder = permissionDataSeeder;
         L = l;
@@ -50,7 +58,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
 
     private async Task CreateScopesAsync()
     {
-        if (await _scopeManager.FindByNameAsync("Bamboo") == null)
+        if (await _openIddictScopeRepository.FindByNameAsync("Bamboo") == null)
         {
             await _scopeManager.CreateAsync(new OpenIddictScopeDescriptor
             {
@@ -212,25 +220,19 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         string? postLogoutRedirectUri = null,
         List<string>? permissions = null)
     {
-        if (!string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Public, StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Public,
+                StringComparison.OrdinalIgnoreCase))
         {
             throw new BusinessException(L["NoClientSecretCanBeSetForPublicApplications"]);
         }
 
-        if (string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Confidential, StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Confidential,
+                StringComparison.OrdinalIgnoreCase))
         {
             throw new BusinessException(L["TheClientSecretIsRequiredForConfidentialApplications"]);
         }
 
-        if (!string.IsNullOrEmpty(name) && await _applicationManager.FindByClientIdAsync(name) != null)
-        {
-            return;
-            //throw new BusinessException(L["TheClientIdentifierIsAlreadyTakenByAnotherApplication"]);
-        }
-
-        var client = await _applicationManager.FindByClientIdAsync(name);
-        if (client == null)
-        {
+        var client = await _openIddictApplicationRepository.FindByClientIdAsync(name);
             var application = new AbpApplicationDescriptor
             {
                 ClientId = name,
@@ -398,8 +400,34 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                     null
                 );
             }
-
+        if (client == null)
+        {
             await _applicationManager.CreateAsync(application);
+            return;
         }
+
+        if (!HasSameRedirectUris(client, application))
+        {
+            client.RedirectUris = JsonSerializer.Serialize(application.RedirectUris.Select(q => q.ToString().TrimEnd('/')));
+            client.PostLogoutRedirectUris = JsonSerializer.Serialize(application.PostLogoutRedirectUris.Select(q => q.ToString().TrimEnd('/')));
+
+            await _applicationManager.UpdateAsync(client.ToModel());
+        }
+
+        if (!HasSameScopes(client, application))
+        {
+            client.Permissions = JsonSerializer.Serialize(application.Permissions.Select(q => q.ToString()));
+            await _applicationManager.UpdateAsync(client.ToModel());
+        }
+    }
+
+    private bool HasSameRedirectUris(OpenIddictApplication existingClient, AbpApplicationDescriptor application)
+    {
+        return existingClient.RedirectUris == JsonSerializer.Serialize(application.RedirectUris.Select(q => q.ToString().TrimEnd('/')));
+    }
+
+    private bool HasSameScopes(OpenIddictApplication existingClient, AbpApplicationDescriptor application)
+    {
+        return existingClient.Permissions == JsonSerializer.Serialize(application.Permissions.Select(q => q.ToString().TrimEnd('/')));
     }
 }

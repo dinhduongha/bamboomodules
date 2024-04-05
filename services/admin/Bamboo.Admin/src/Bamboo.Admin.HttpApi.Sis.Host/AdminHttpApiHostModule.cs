@@ -24,8 +24,10 @@ using Volo.Abp.Autofac;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
+using Volo.Abp.Identity;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
+using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.VirtualFileSystem;
 
@@ -102,15 +104,20 @@ public class AdminHttpApiHostModule : AbpModule
             .AddJwtBearer(options =>
             {
                 options.Authority = configuration["AuthServer:Authority"];
-                options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+                options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
                 options.Audience = "Admin";
             });
+
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
+        {
+            options.IsDynamicClaimsEnabled = true;
+        });
     }
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.AddAbpSwaggerGenWithOAuth(
-            configuration["AuthServer:Authority"],
+            configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
                     {"Admin", "Admin API"}
@@ -131,7 +138,7 @@ public class AdminHttpApiHostModule : AbpModule
         var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Admin");
         if (!hostingEnvironment.IsDevelopment())
         {
-            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]);
+            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Admin-Protection-Keys");
         }
     }
@@ -142,8 +149,7 @@ public class AdminHttpApiHostModule : AbpModule
     {
         context.Services.AddSingleton<IDistributedLockProvider>(sp =>
         {
-            var connection = ConnectionMultiplexer
-                .Connect(configuration["Redis:Configuration"]);
+            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         });
     }
@@ -190,6 +196,8 @@ public class AdminHttpApiHostModule : AbpModule
             app.UseMultiTenancy();
         }
 
+        app.UseUnitOfWork();
+        app.UseDynamicClaims();
         app.UseAuthorization();
 
         app.UseSwagger();
@@ -204,7 +212,6 @@ public class AdminHttpApiHostModule : AbpModule
 
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        app.UseUnitOfWork();
         app.UseConfiguredEndpoints();
     }
 }

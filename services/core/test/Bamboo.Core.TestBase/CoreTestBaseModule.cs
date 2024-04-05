@@ -3,6 +3,7 @@ using Volo.Abp;
 using Volo.Abp.Authorization;
 using Volo.Abp.Autofac;
 using Volo.Abp.Data;
+using Volo.Abp.Guids;
 using Volo.Abp.Modularity;
 using Volo.Abp.Threading;
 
@@ -12,8 +13,8 @@ namespace Bamboo.Core;
     typeof(AbpAutofacModule),
     typeof(AbpTestBaseModule),
     typeof(AbpAuthorizationModule),
-    typeof(CoreDomainModule)
-    )]
+    typeof(AbpGuidsModule)
+)]
 public class CoreTestBaseModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

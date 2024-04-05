@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Volo.Abp.Modularity;
 using Xunit;
 
 namespace Bamboo.Core.Samples;
 
-public class SampleManager_Tests : CoreDomainTestBase
+public abstract class SampleManager_Tests<TStartupModule> : CoreDomainTestBase<TStartupModule>
+    where TStartupModule : IAbpModule
 {
     //private readonly SampleManager _sampleManager;
 

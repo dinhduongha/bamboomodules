@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.0" />
     <ProjectReference Include="..\..\src\Bamboo.Core.EntityFrameworkCore\Bamboo.Core.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\Bamboo.Core.TestBase\Bamboo.Core.TestBase.csproj" />
+    <ProjectReference Include="..\Bamboo.Core.Application.Tests\Bamboo.Core.Application.Tests.csproj" />
     <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="8.1.0" />
   </ItemGroup>
 

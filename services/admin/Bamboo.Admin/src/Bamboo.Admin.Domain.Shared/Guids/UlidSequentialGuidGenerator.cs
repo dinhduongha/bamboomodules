@@ -88,7 +88,8 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
 
         // Then get the bytes
         byte[] timestampBytes = BitConverter.GetBytes(timestamp / 1000);
-        byte[] microsecBytes = BitConverter.GetBytes(timestamp % 1000);
+        byte[] microsecBytes = {0x00,0x70}; // UUIDv7
+        //byte[] microsecBytes = BitConverter.GetBytes(timestamp % 1000);
         // Since we're converting from an Int64, we have to reverse on
         // little-endian systems.
         if (BitConverter.IsLittleEndian)
@@ -108,7 +109,7 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
                 // by the random data.
                     
                 Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
-                Buffer.BlockCopy(microsecBytes, 6, guidBytes, 6, 2);
+                Buffer.BlockCopy(microsecBytes, 2, guidBytes, 6, 2);
                 Buffer.BlockCopy(randomBytes, 0, guidBytes, 8, 8);
 
                 // If formatting as a string, we have to compensate for the fact

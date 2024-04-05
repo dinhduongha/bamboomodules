@@ -10,12 +10,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bamboo.Admin.EntityFrameworkCore\Bamboo.Admin.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\Bamboo.Admin.TestBase\Bamboo.Admin.TestBase.csproj" />
+    <ProjectReference Include="..\Bamboo.Admin.Application.Tests\Bamboo.Admin.Application.Tests.csproj" />
     <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="8.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
   </ItemGroup>
 
 </Project>

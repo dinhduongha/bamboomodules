@@ -1,14 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Shouldly;
+using Volo.Abp.Modularity;
 using Xunit;
 
 namespace Bamboo.Core.Samples;
 
-public class SampleAppService_Tests : CoreApplicationTestBase
+public abstract class SampleAppService_Tests<TStartupModule> : CoreApplicationTestBase<TStartupModule>
+    where TStartupModule : IAbpModule
 {
     private readonly ISampleAppService _sampleAppService;
 
-    public SampleAppService_Tests()
+    protected SampleAppService_Tests()
     {
         _sampleAppService = GetRequiredService<ISampleAppService>();
     }
