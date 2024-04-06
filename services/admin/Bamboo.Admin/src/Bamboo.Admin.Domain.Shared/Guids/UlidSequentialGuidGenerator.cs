@@ -109,7 +109,7 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
                 // by the random data.
                     
                 Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
-                Buffer.BlockCopy(microsecBytes, 2, guidBytes, 6, 2);
+                Buffer.BlockCopy(microsecBytes, 0, guidBytes, 6, 2);
                 Buffer.BlockCopy(randomBytes, 0, guidBytes, 8, 8);
 
                 // If formatting as a string, we have to compensate for the fact

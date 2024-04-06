@@ -37,8 +37,8 @@ namespace Bamboo.Admin.Migrations
                     Exceptions = table.Column<string>(type: "text", nullable: true),
                     Comments = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     HttpStatusCode = table.Column<int>(type: "integer", nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,8 +58,8 @@ namespace Bamboo.Admin.Migrations
                     LastTryTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     IsAbandoned = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     Priority = table.Column<byte>(type: "smallint", nullable: false, defaultValue: (byte)15),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,8 +78,8 @@ namespace Bamboo.Admin.Migrations
                     RegexDescription = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     Description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ValueType = table.Column<int>(type: "integer", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,8 +162,8 @@ namespace Bamboo.Admin.Migrations
                     Code = table.Column<string>(type: "character varying(95)", maxLength: 95, nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     EntityVersion = table.Column<int>(type: "integer", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -243,8 +243,8 @@ namespace Bamboo.Admin.Migrations
                     IsStatic = table.Column<bool>(type: "boolean", nullable: false),
                     IsPublic = table.Column<bool>(type: "boolean", nullable: false),
                     EntityVersion = table.Column<int>(type: "integer", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -268,12 +268,32 @@ namespace Bamboo.Admin.Migrations
                     ClientIpAddress = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     BrowserInfo = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpSecurityLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpSettingDefinitions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Description = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    DefaultValue = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    IsVisibleToClients = table.Column<bool>(type: "boolean", nullable: false),
+                    Providers = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    IsInherited = table.Column<bool>(type: "boolean", nullable: false),
+                    IsEncrypted = table.Column<bool>(type: "boolean", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpSettingDefinitions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -297,9 +317,10 @@ namespace Bamboo.Admin.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    NormalizedName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     EntityVersion = table.Column<int>(type: "integer", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -355,8 +376,8 @@ namespace Bamboo.Admin.Migrations
                     ShouldChangePasswordOnNextLogin = table.Column<bool>(type: "boolean", nullable: false),
                     EntityVersion = table.Column<int>(type: "integer", nullable: false),
                     LastPasswordChangeTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -375,21 +396,24 @@ namespace Bamboo.Admin.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ApplicationType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     ClientId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     ClientSecret = table.Column<string>(type: "text", nullable: true),
+                    ClientType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     ConsentType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     DisplayName = table.Column<string>(type: "text", nullable: true),
                     DisplayNames = table.Column<string>(type: "text", nullable: true),
+                    JsonWebKeySet = table.Column<string>(type: "text", nullable: true),
                     Permissions = table.Column<string>(type: "text", nullable: true),
                     PostLogoutRedirectUris = table.Column<string>(type: "text", nullable: true),
                     Properties = table.Column<string>(type: "text", nullable: true),
                     RedirectUris = table.Column<string>(type: "text", nullable: true),
                     Requirements = table.Column<string>(type: "text", nullable: true),
-                    Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Settings = table.Column<string>(type: "text", nullable: true),
                     ClientUri = table.Column<string>(type: "text", nullable: true),
                     LogoUri = table.Column<string>(type: "text", nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -415,8 +439,8 @@ namespace Bamboo.Admin.Migrations
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     Properties = table.Column<string>(type: "text", nullable: true),
                     Resources = table.Column<string>(type: "text", nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -465,7 +489,7 @@ namespace Bamboo.Admin.Migrations
                     ChangeTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ChangeType = table.Column<byte>(type: "smallint", nullable: false),
                     EntityTenantId = table.Column<Guid>(type: "uuid", nullable: true),
-                    EntityId = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    EntityId = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     EntityTypeFullName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     ExtraProperties = table.Column<string>(type: "text", nullable: true)
                 },
@@ -674,8 +698,8 @@ namespace Bamboo.Admin.Migrations
                     Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
                     Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -733,8 +757,8 @@ namespace Bamboo.Admin.Migrations
                     Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
                     Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -896,6 +920,12 @@ namespace Bamboo.Admin.Migrations
                 columns: new[] { "TenantId", "UserId" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AbpSettingDefinitions_Name",
+                table: "AbpSettingDefinitions",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AbpSettings_Name_ProviderName_ProviderKey",
                 table: "AbpSettings",
                 columns: new[] { "Name", "ProviderName", "ProviderKey" },
@@ -905,6 +935,11 @@ namespace Bamboo.Admin.Migrations
                 name: "IX_AbpTenants_Name",
                 table: "AbpTenants",
                 column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbpTenants_NormalizedName",
+                table: "AbpTenants",
+                column: "NormalizedName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AbpUserClaims_UserId",
@@ -1021,6 +1056,9 @@ namespace Bamboo.Admin.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpSecurityLogs");
+
+            migrationBuilder.DropTable(
+                name: "AbpSettingDefinitions");
 
             migrationBuilder.DropTable(
                 name: "AbpSettings");
