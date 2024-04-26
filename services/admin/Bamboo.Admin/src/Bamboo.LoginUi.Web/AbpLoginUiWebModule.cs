@@ -107,6 +107,7 @@ public class AbpLoginUiWebModule : AbpModule
         ConfigureDistributedLock(context, configuration);
         ConfigureDataProtection(context, configuration);
         ConfigureForwardProxy(context, configuration);
+        //services.AddHostedService<TelegramBotHostedService>();
 
     }
 
@@ -142,15 +143,15 @@ public class AbpLoginUiWebModule : AbpModule
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/?view=aspnetcore-6.0&tabs=visual-studio
         context.Services.AddAuthentication()
-            .AddFacebook(options =>
-            {
-                options.AppId = configuration["Authentication:Facebook:AppId"];
-                options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
-                options.Scope.Add("email");
-                options.Scope.Add("public_profile");
-                options.SaveTokens = true;
-                // sigin-facebook
-            })
+            //.AddFacebook(options =>
+            //{
+            //    options.AppId = configuration["Authentication:Facebook:AppId"];
+            //    options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+            //    options.Scope.Add("email");
+            //    options.Scope.Add("public_profile");
+            //    options.SaveTokens = true;
+            //    // sigin-facebook
+            //})
             .AddGoogle(options =>
             {
                 options.ClientId = configuration["Authentication:Google:ClientId"];
@@ -158,11 +159,11 @@ public class AbpLoginUiWebModule : AbpModule
                 //options.Scope.Add("email");
                 //options.Scope.Add("openid");
             })
-            //.AddMicrosoftAccount(options =>
-            //{
-            //    options.ClientId = "8208d98e-400d-4ce9-89ba-d92610c67e13";
-            //    options.ClientSecret = "hsrMP46|_kfkcYCWSW516?%";
-            //})
+            .AddMicrosoftAccount(options =>
+            {
+                options.ClientId = "8208d98e-400d-4ce9-89ba-d92610c67e13";
+                options.ClientSecret = "hsrMP46|_kfkcYCWSW516?%";
+            })
             //.AddDefaultSocial(configuration)
             ;
     }

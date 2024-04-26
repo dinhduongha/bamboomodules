@@ -45,7 +45,7 @@ namespace Bamboo.Admin;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpLoginUiWebModule),    
+    typeof(AbpLoginUiWebModule),
     typeof(AbpSwashbuckleModule)
 )]
 public class AdminHttpApiHostModule : AbpModule

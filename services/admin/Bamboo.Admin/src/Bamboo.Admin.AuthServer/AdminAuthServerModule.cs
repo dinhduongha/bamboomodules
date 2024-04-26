@@ -110,8 +110,8 @@ public class AdminAuthServerModule : AbpModule
 
         Configure<AbpAuditingOptions>(options =>
         {
-                //options.IsEnabledForGetRequests = true;
-                options.ApplicationName = "AuthServer";
+            //options.IsEnabledForGetRequests = true;
+            options.ApplicationName = "AuthServer";
         });
 
         if (hostingEnvironment.IsDevelopment())
@@ -145,13 +145,23 @@ public class AdminAuthServerModule : AbpModule
         var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Admin");
         if (!hostingEnvironment.IsDevelopment())
         {
-            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+            var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+            bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+            redisOptions.User = configuration["Redis:User"];
+            redisOptions.Password = configuration["Redis:Password"];
+            var redis = ConnectionMultiplexer.Connect(redisOptions);
+
             dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Admin-Protection-Keys");
         }
 
         context.Services.AddSingleton<IDistributedLockProvider>(sp =>
         {
-            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+            var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+            bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+            redisOptions.User = configuration["Redis:User"];
+            redisOptions.Password = configuration["Redis:Password"];
+            var connection = ConnectionMultiplexer.Connect(redisOptions);
+            //var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         });
 
