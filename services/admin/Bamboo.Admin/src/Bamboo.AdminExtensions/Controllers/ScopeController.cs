@@ -5,12 +5,14 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.OpenIddict.Scopes;
 
 using Bamboo.AdminExtensions.Dtos;
+using Volo.Abp.TenantManagement;
+using Volo.Abp;
 
 namespace Bamboo.AdminExtensions;
 
 [Route("api/admin/scope-management")]
 [Produces("application/json")]
-[Authorize("Admin")]
+[Authorize(Roles="admin")]
 public class HostScopeController : AbpController
 {
     private readonly IRepository<OpenIddictScope, Guid> _openIddictScopeRepository;
@@ -22,6 +24,10 @@ public class HostScopeController : AbpController
     [HttpGet]
     public async Task<ActionResult<List<ScopeDto>>> GetListAsync()
     {
+        if (CurrentUser.TenantId != null)
+        {
+            throw new UserFriendlyException("Only host users can access features");
+        }
         var scopes = await _openIddictScopeRepository.GetListAsync();
         return Ok(scopes.Select(x => new ScopeDto
         {
@@ -37,6 +43,10 @@ public class HostScopeController : AbpController
     [HttpGet("{id}")]
     public async Task<ActionResult<ScopeDto>> GetAsync(Guid id)
     {
+        if (CurrentUser.TenantId != null)
+        {
+            throw new UserFriendlyException("Only host users can access features");
+        }
         var scope = await _openIddictScopeRepository.GetAsync(id);
         return Ok(new ScopeDto
         {
@@ -50,8 +60,13 @@ public class HostScopeController : AbpController
     }
 
     [HttpPost]
+    [Authorize(TenantManagementPermissions.Tenants.Create)]
     public async Task<ActionResult<ScopeDto>> CreateAsync([FromBody] ScopeDto input)
     {
+        if (CurrentUser.TenantId != null)
+        {
+            throw new UserFriendlyException("Only host users can access features");
+        }
         var scope = new OpenIddictScope(GuidGenerator.Create());
         scope.Name = input.Name;
         scope.DisplayName = input.DisplayName;
@@ -73,6 +88,10 @@ public class HostScopeController : AbpController
     [HttpPut("{clientId}")]
     public async Task<ActionResult<ScopeDto>> UpdateAsync(Guid clientId, [FromBody] ScopeDto input)
     {
+        if (CurrentUser.TenantId != null)
+        {
+            throw new UserFriendlyException("Only host users can access features");
+        }
         var scope = await _openIddictScopeRepository.GetAsync(clientId);
         scope.Name = input.Name;
         scope.DisplayName = input.DisplayName;

@@ -108,6 +108,11 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 scopes: commonScopes,
                 redirectUri: $"{webClientRootUrl}signin-oidc",
                 clientUri: webClientRootUrl,
+                redirectUris: new List<string>
+                {
+                    "https://localhost:9001/signin-oidc",
+                    "https://localhost:9002/signin-oidc",
+                },
                 postLogoutRedirectUri: $"{webClientRootUrl}signout-callback-oidc"
             );
         }
@@ -218,7 +223,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         string? clientUri = null,
         string? redirectUri = null,
         string? postLogoutRedirectUri = null,
-        List<string>? permissions = null)
+        List<string>? permissions = null,
+        List<string>? redirectUris = null)
     {
         if (!string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Public,
                 StringComparison.OrdinalIgnoreCase))
@@ -374,7 +380,24 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                     }
                 }
             }
+            if (redirectUris != null)
+            {
+                foreach (var redirect in redirectUris)
+                {
+                    if (!redirect.IsNullOrEmpty())
+                    {
+                        if (!Uri.TryCreate(redirect, UriKind.Absolute, out var uri) || !uri.IsWellFormedOriginalString())
+                        {
+                            throw new BusinessException(L["InvalidRedirectUri", redirect]);
+                        }
 
+                        if (application.RedirectUris.All(x => x != uri))
+                        {
+                            application.RedirectUris.Add(uri);
+                        }
+                    }
+                }
+            }
             if (postLogoutRedirectUri != null)
             {
                 if (!postLogoutRedirectUri.IsNullOrEmpty())

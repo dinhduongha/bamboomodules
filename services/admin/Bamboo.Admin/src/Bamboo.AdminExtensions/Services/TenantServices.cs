@@ -189,10 +189,10 @@ public class TenantService : ApplicationService
             throw new UserFriendlyException("Name is exist");
         }
         var count = await _tenantRepository.CountAsync(x => x.CreatorId == CurrentUser.Id);
-        var maxTenant = _configuration.GetValue<int>("App:MaxTenantPerAccount", 10);
+        var maxTenant = _configuration.GetValue<int>("App:MaxTenantPerAccount", 2);
         if (count >= maxTenant)
         {
-            throw new UserFriendlyException($"Too many vendors created");
+            throw new UserFriendlyException($"Too many items created");
         }
         try
         {

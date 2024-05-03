@@ -152,11 +152,11 @@ public class AdminHttpApiHostModule : AbpModule
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
-                    {"Admin", "Admin API"}
+                    {"Bamboo", "Bamboo API"}
             },
             options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Admin API", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Bamboo API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
             });
@@ -218,7 +218,7 @@ public class AdminHttpApiHostModule : AbpModule
         app.UseSwagger();
         app.UseAbpSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Admin API");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
 
             var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
             c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);

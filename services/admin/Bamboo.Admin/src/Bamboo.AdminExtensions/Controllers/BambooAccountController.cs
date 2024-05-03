@@ -26,7 +26,7 @@ public class BambooAccountController : AccountController
     {
         // return await AccountAppService.RegisterAsync(input);
         await Task.CompletedTask;
-        throw new UserFriendlyException("New user must login by Google/Facebook to register!");
+        throw new UserFriendlyException("New user must login by Google/Microsoft to register!");
     }
 
     public async override Task SendPasswordResetCodeAsync(SendPasswordResetCodeDto input)

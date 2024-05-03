@@ -22,6 +22,7 @@ using Telegram.Bot.Types;
 namespace Bamboo.AdminExtensions.Controllers;
 
 [Route("api/telegrambot")]
+[AllowAnonymous]
 public class TelegramBotController : AbpControllerBase
 {    
     private readonly IConfiguration _configuration;
