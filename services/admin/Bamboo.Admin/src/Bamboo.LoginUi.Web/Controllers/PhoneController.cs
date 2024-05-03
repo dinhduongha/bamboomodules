@@ -7,7 +7,7 @@ using Volo.Abp.AspNetCore.Mvc;
 
 using Volo.Abp.Account;
 
-namespace Bamboo.LoginUiWeb;
+namespace Bamboo.Abp.LoginUi.Web;
 
 [Route("api/phone/")]
 [Produces("application/json")]

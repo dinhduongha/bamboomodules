@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Bamboo.Admin.EntityFrameworkCore;
-using Bamboo.Admin.MultiTenancy;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Microsoft.OpenApi.Models;
 using OpenIddict.Validation.AspNetCore;
+
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
+
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
@@ -31,6 +31,7 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 
 using Bamboo.Abp.LoginUi.Web;
+using Bamboo.AdminExtensions;
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.MultiTenancy;
 
@@ -45,6 +46,7 @@ namespace Bamboo.Admin;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpAspNetCoreSerilogModule),
+    typeof(AbpAdminExtensionsModule),    
     typeof(AbpLoginUiWebModule),
     typeof(AbpSwashbuckleModule)
 )]

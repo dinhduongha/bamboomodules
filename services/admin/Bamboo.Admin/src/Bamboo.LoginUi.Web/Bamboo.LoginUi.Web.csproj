@@ -45,7 +45,6 @@
     <PackageReference Include="Volo.Abp.Sms" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="8.1.0" />
     <PackageReference Include="Telegram.Bot.Extensions.LoginWidget" Version="1.2.0" />
-    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>
 
   <ItemGroup>

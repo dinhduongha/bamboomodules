@@ -10,11 +10,11 @@ namespace Bamboo.AdminExtensions;
 
 [Route("api/admin/scope-management")]
 [Produces("application/json")]
-[Authorize]
-public class ScopeController : AbpController
+[Authorize("Admin")]
+public class HostScopeController : AbpController
 {
     private readonly IRepository<OpenIddictScope, Guid> _openIddictScopeRepository;
-    public ScopeController(IRepository<OpenIddictScope, Guid> _openIddictScopeRepository)
+    public HostScopeController(IRepository<OpenIddictScope, Guid> _openIddictScopeRepository)
     {
         this._openIddictScopeRepository = _openIddictScopeRepository;
     }

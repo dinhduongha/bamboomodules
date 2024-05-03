@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Security.Principal;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -29,9 +30,8 @@ using Volo.Abp.Account;
 using Volo.Abp.Users;
 
 using Bamboo.Abp.VerificationCode;
-using System.Security.Principal;
 
-namespace Bamboo.LoginUiWeb;
+namespace Bamboo.Abp.LoginUi.Web;
 
 public class PhoneService : ApplicationService
 {

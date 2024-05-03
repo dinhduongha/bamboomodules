@@ -27,14 +27,14 @@ using Volo.Abp.Account.Settings;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.Settings;
 
-namespace Bamboo.Authentication;
+namespace Bamboo.AdminExtensions;
 [DependsOn(
     typeof(AbpAutofacModule),
     typeof(AbpCachingModule),
     typeof(AbpIdentityHttpApiModule),
     typeof(AbpAccountHttpApiModule),
     typeof(AbpSmsModule))]
-public class BambooAuthenticationModule : AbpModule
+public class AbpAdminExtensionsModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

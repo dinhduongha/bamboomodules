@@ -24,7 +24,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Account;
 public class LoginUiLoginModel : LoginModel
 {
     public LoginUiLoginModel(IAuthenticationSchemeProvider schemeProvider, IOptions<AbpAccountOptions> accountOptions,
-        IOptions<IdentityOptions> identityOptions, IdentityDynamicClaimsPrincipalContributorCache identityDynamicClaimsPrincipalContributorCache) : base(schemeProvider, accountOptions, identityOptions, identityDynamicClaimsPrincipalContributorCache)
+        IOptions<IdentityOptions> identityOptions, IdentityDynamicClaimsPrincipalContributorCache cache) : base(schemeProvider, accountOptions, identityOptions, cache)
     {
     }
 

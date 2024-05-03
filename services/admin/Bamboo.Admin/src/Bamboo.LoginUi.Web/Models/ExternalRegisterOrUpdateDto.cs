@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Bamboo.LoginUiWeb;
+namespace Bamboo.Abp.LoginUi.Web;
 
 public class ExternalRegisterOrUpdateDto 
 {

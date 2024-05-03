@@ -8,11 +8,11 @@ namespace Bamboo.AdminExtensions;
 
 [Produces("application/json")]
 [Route("api/admin/client-app")]
-[Authorize]
-public class ClientAppController : AbpController
+[Authorize("Admin")]
+public class HostClientAppController : AbpController
 {
     private readonly ClientAppService _clientAppService;
-    public ClientAppController(ClientAppService clientAppService)
+    public HostClientAppController(ClientAppService clientAppService)
     {
         this._clientAppService = clientAppService;
     }

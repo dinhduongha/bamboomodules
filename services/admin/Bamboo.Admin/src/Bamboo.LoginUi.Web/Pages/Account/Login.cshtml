@@ -1,46 +1,60 @@
 ﻿@page
-@using Bamboo.Abp.LoginUi.Web.Localization
-@using Bamboo.Abp.LoginUi.Web.Pages.Components.ExternalLoginWidget
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.Account.Settings
 @using Volo.Abp.Settings
-@model Bamboo.Abp.LoginUi.Web.Pages.Account.LoginUiLoginModel
+
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Web.Pages.Account;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theming;
+@using Volo.Abp.Identity;
+@using Telegram.Bot.Extensions.LoginWidget
+@using Bamboo.Abp.LoginUi.Web.Localization
+@using Bamboo.Abp.LoginUi.Web.Pages.Components.ExternalLoginWidget
+
 @inject IHtmlLocalizer<AbpLoginUiResource> L
 @inject ISettingProvider SettingProvider
+@inject IThemeManager ThemeManager
+@inject Volo.Abp.Settings.ISettingProvider SettingProvider
+
+@model Bamboo.Abp.LoginUi.Web.Pages.Account.LoginUiLoginModel
+
+@{
+    Layout = ThemeManager.CurrentTheme.GetAccountLayout();
+}
 
 @*<abp-style-bundle>
-    <abp-style src="/Pages/Account/Login.cshtml.css" />
-</abp-style-bundle>*@
+        <abp-style src="/Pages/Account/Login.cshtml.css" />
+    </abp-style-bundle>*@
 
 <div class="card mt-3 shadow-sm rounded">
     <div class="card-body p-5">
         <h4>@L["Login"]</h4>
         @*@if (await SettingProvider.IsTrueAsync(AccountSettingNames.IsSelfRegistrationEnabled))
-        {
-            <strong>
-                @L["AreYouANewUser"]
-                <a href="@Url.Page("./Register", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})" class="text-decoration-none">@L["Register"]</a>
-            </strong>
-        }*@
+            {
+                <strong>
+                    @L["AreYouANewUser"]
+                    <a href="@Url.Page("./Register", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})" class="text-decoration-none">@L["Register"]</a>
+                </strong>
+            }*@
         @if (Model.EnableLocalLogin)
         {
             <form method="post" class="mt-4">
                 <div class="mb-3">
                     <label asp-for="LoginInput.UserNameOrEmailAddress" class="form-label">Phone / Email</label>
-                    <input asp-for="LoginInput.UserNameOrEmailAddress" class="form-control"/>
+                    <input asp-for="LoginInput.UserNameOrEmailAddress" class="form-control" />
                     <span asp-validation-for="LoginInput.UserNameOrEmailAddress" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="LoginInput.Password" class="form-label"></label>
-                    <input asp-for="LoginInput.Password" class="form-control"/>
+                    <input asp-for="LoginInput.Password" class="form-control" />
                     <span asp-validation-for="LoginInput.Password" class="text-danger"></span>
                 </div>
                 <abp-row>
                     <abp-column>
-                        <abp-input asp-for="LoginInput.RememberMe" class="mb-4"/>
+                        <abp-input asp-for="LoginInput.RememberMe" class="mb-4" />
                     </abp-column>
                     <abp-column class="text-end">
-                        <a href="@Url.Page("./ForgotPassword", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})">@L["ForgotPassword"]</a>
+                        <a href="@Url.Page("./ForgotPassword", new { returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash })">@L["ForgotPassword"]</a>
                     </abp-column>
                 </abp-row>
                 <div class="d-grid gap-2">
@@ -64,7 +78,17 @@
                 @await Component.InvokeAsync("ExternalLoginWidget", new ExternalLoginWidgetModel(Model.VisibleExternalProviders, Model.ReturnUrl, Model.ReturnUrlHash))
             </div>
         }
-
+        @{
+            @*
+                https://stackoverflow.com/questions/68157777/implementing-telegram-loginwidget-with-signinmanager
+                string widget = WidgetEmbedCodeGenerator.GenerateRedirectEmbedCode(
+                _config["BOT_NAME"],
+                $"https://{_config["AuthServer:Authority"]}/{Url.Action("tgcallback", "account")}",
+                ButtonStyle.Large,
+                true,
+                true);
+            *@
+        }
         @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
         {
             <div class="alert alert-warning">
@@ -75,3 +99,5 @@
 
     </div>
 </div>
+
+

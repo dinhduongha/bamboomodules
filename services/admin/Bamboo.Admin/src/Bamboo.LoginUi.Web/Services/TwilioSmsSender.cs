@@ -1,34 +1,39 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 
 using Volo.Abp.DependencyInjection;
-using Microsoft.Extensions.Logging;
-//using Telegram.Bot.Exceptions;
-//using Telegram.Bot.Types;
-//using Telegram.Bot.Types.Enums;
-//using Telegram.Bot.Types.InlineQueryResults;
-//using Telegram.Bot.Types.ReplyMarkups;
+using Volo.Abp.Sms;
 
-//namespace Telegram.Bot.Services;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
-namespace Bamboo.LoginUiWeb;
 
-public class UpdateHandlers : ITransientDependency
+namespace Bamboo.Abp.LoginUi.Web;
+
+public class TwilioSmsSender : ISmsSender, ITransientDependency
 {
     IConfiguration _configuration;
-    public UpdateHandlers(IConfiguration configuration)
+    public TwilioSmsSender(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    private readonly ITelegramBotClient _botClient;
-    private readonly ILogger<UpdateHandlers> _logger;
-
-    public UpdateHandlers(ITelegramBotClient botClient, ILogger<UpdateHandlers> logger)
+    public async Task SendAsync(SmsMessage smsMessage)
     {
-        _botClient = botClient;
-        _logger = logger;
+        // Send sms to client
+        var from = _configuration["Twilio:AccountPhone"];
+        var msid = _configuration["Twilio:MessagingServiceSid"];
+        var messageOptions = new CreateMessageOptions(new PhoneNumber(smsMessage.PhoneNumber));
+        messageOptions.MessagingServiceSid = msid;
+        messageOptions.Body = $"{smsMessage.Text}";
+
+        //var message = MessageResource.Create(messageOptions);
+
+        await Task.CompletedTask;
+
     }
 }

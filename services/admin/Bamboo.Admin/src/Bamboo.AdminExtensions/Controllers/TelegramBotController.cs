@@ -1,9 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Threading;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 using Volo.Abp;
 using Volo.Abp.Guids;
@@ -14,20 +18,21 @@ using Volo.Abp.AspNetCore.Mvc;
 using Telegram.Bot.Filters;
 using Telegram.Bot.Services;
 using Telegram.Bot.Types;
-using System.Threading;
 
-namespace Bamboo.LoginUiWeb.Controllers;
+namespace Bamboo.AdminExtensions.Controllers;
 
-[Route("api/twilio")]
+[Route("api/telegrambot")]
 public class TelegramBotController : AbpControllerBase
-{
-    protected IDataSeeder _dataSeeder { get; }
-
+{    
+    private readonly IConfiguration _configuration;
     IHttpClientFactory _httpClientFactory;
+    //private readonly SignInManager<ApplicationUser> _signInManager;
+    //private readonly UserManager<ApplicationUser> _userManager;
 
-    public TelegramBotController(IHttpClientFactory httpFactory)
-    {        
-        _httpClientFactory = httpFactory;        
+    public TelegramBotController(IConfiguration config, IHttpClientFactory httpFactory)
+    {
+        _httpClientFactory = httpFactory;
+        _configuration = config;
     }
 
 
@@ -43,4 +48,5 @@ public class TelegramBotController : AbpControllerBase
         await handleUpdateService.HandleUpdateAsync(update, cancellationToken);
         return Ok();
     }
+
 }

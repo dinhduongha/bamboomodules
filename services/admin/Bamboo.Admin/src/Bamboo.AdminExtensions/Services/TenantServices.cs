@@ -26,6 +26,7 @@ using Volo.Abp.ObjectExtending;
 using Volo.Abp.Identity.EntityFrameworkCore;
 
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
+using Bamboo.AdminExtensions.Dtos;
 
 namespace Bamboo.AdminExtensions;
 
@@ -92,7 +93,8 @@ public class TenantService : ApplicationService
                             AbpUserClaimsPrincipalFactory abpUserClaimsPrincipalFactory,
                             ILookupNormalizer lookupNormalizer,
                             ITenantAppService tenantAppService,
-                            IHttpClientFactory httpClientFactory)
+                            IHttpClientFactory httpClientFactory
+        )
     {
         _configuration = configuration;
         _tenantManager = tenantManager;
