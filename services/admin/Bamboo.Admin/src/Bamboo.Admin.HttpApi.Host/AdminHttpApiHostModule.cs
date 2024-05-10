@@ -67,6 +67,9 @@ public class AdminHttpApiHostModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        var dt = new DateTime(1970,1,1,0,0,0,0);
+        var id = Utils.NewGuid( 1);
+        id = Utils.NewGuid(0x102030405);
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
 

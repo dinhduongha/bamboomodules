@@ -27,6 +27,8 @@ using Volo.Abp.Identity.EntityFrameworkCore;
 
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
 using Bamboo.AdminExtensions.Dtos;
+using Bamboo.Admin;
+using static Volo.Abp.TenantManagement.TenantManagementPermissions;
 
 namespace Bamboo.AdminExtensions;
 
@@ -297,6 +299,47 @@ public class TenantService : ApplicationService
         }
         return ObjectMapper.Map<Tenant, TenantDto>(tenant);
         //return await TenantAppService.CreateAsync(input);
+    }
+
+    public async Task<TenantDto?> MigrateAsync(TenantMigrateDto data)
+    {
+        TenantCreateDto input = new TenantCreateDto()
+        {
+            Name = data.Name,
+            AdminEmailAddress = CurrentUser.Email,
+            AdminPassword = GuidGenerator.Create().ToString(),
+        };
+
+        var id = Utils.NewGuid(data.Id);
+        var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Name == input.Name)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
+        if (tenant != null)
+        {
+            if (tenant.CreatorId == CurrentUser.Id)
+            {
+                return ObjectMapper.Map<Tenant, TenantDto>(tenant);
+            }
+            throw new UserFriendlyException("Name is exist");
+        }
+        try
+        {
+            tenant = await _tenantManager.CreateAsync(input.Name);
+            input.SetProperty("admin", input.AdminEmailAddress);
+            input.MapExtraPropertiesTo(tenant);
+            tenant.CreatorId = CurrentUser.Id;
+            tenant.SetProperty("email", input.AdminEmailAddress);
+            tenant.SetProperty("creator", CurrentUser.Id);
+            tenant = await _tenantRepository.InsertAsync(tenant);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Name == input.Name));
+            //var _ctx = await _dbContextProvider.GetDbContextAsync();
+            //var sql = $"INSERT INTO public.\"AbpUserRoles\"(\n\t\"UserId\", \"RoleId\", \"TenantId\")\n\tVALUES ('{userId}', '{userRole.Id}', '{tenantId}');";
+            //await _ctx.Database.ExecuteSqlRawAsync(sql);
+
+        }
+        catch 
+        {
+        }        
+        return ObjectMapper.Map<Tenant, TenantDto>(tenant);        
     }
 
     public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()

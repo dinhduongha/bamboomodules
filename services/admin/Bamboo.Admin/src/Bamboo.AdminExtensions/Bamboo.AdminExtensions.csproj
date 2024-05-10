@@ -41,4 +41,7 @@
   <ItemGroup>
     <Folder Include="Filters\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+  </ItemGroup>
 </Project>

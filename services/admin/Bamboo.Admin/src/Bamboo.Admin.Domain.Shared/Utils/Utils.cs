@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Volo.Abp.Threading;
 
+namespace Bamboo.Admin;
 public partial class Utils
 {
     private const long UNIXEPOCHMICROSECONDS = 62135596800000000;
@@ -10,6 +11,18 @@ public partial class Utils
     //private static readonly IUlidRng DEFAULTRNG = new CSUlidRng();
     private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
 
+    public static Guid NewGuid(long randPart)
+    {
+        var randomPart = BitConverter.GetBytes(randPart);
+        if (BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(randomPart);
+        }
+        byte[] bytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0,
+                                    randomPart[0], randomPart[1], randomPart[2], randomPart[3],
+                                    randomPart[4], randomPart[5], randomPart[6], randomPart[7]};
+        return new Guid(bytes);
+    }
     public static Guid NewGuid(DateTime timePart, long randPart)
     {
         var d = DateTimeOffsetToByteArray(timePart);
