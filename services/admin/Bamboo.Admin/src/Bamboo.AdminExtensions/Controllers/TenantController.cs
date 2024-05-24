@@ -28,19 +28,22 @@ using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 using Bamboo.AdminExtensions.Dtos;
 using Bamboo.AdminExtensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 //[Area(IntegrateRemoteServiceConsts.ModuleName)]
 //[RemoteService(Name = IntegrateRemoteServiceConsts.RemoteServiceName)]
-[Route("api/admin/tenant-management/")]
+[Route("api/admin/tenants/")]
 [Produces("application/json")]
 //[Authorize]
 //[AllowAnonymous]
 public class TenantExtraController : AbpController
 {
-    private readonly TenantService _tenantService;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IConfiguration _configuration;
+    protected readonly AdminResetPasswordAppService _adminResetPasswordService;
+    protected readonly TenantService _tenantService;
+    protected readonly IHttpClientFactory _httpClientFactory;
+    protected readonly IConfiguration _configuration;
 
     public TenantExtraController(TenantService tenantService,
+                            AdminResetPasswordAppService adminResetPasswordService,
                             IConfiguration configuration,
                             ILookupNormalizer lookupNormalizer,
                             IHttpClientFactory httpClientFactory)
@@ -49,8 +52,10 @@ public class TenantExtraController : AbpController
         _configuration = configuration;
         _httpClientFactory = httpClientFactory;
         _tenantService = tenantService;
+        _adminResetPasswordService = adminResetPasswordService;
 
-    }
+    }    
+
     [HttpGet]
     [Route("{id}")]
     public async Task<TenantDto> GetAsync(Guid id)
@@ -70,6 +75,13 @@ public class TenantExtraController : AbpController
         return await _tenantService.CreateAsync(name);
     }
 
+    [HttpPost]
+    [Route("migrate")]
+    public async Task<TenantDto> CreateWithIdAsync(TenantMigrateDto data)
+    {
+        return await _tenantService.MigrateAsync(data);
+    }
+
     [HttpGet]
     [Route("roles")]
     public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()
@@ -85,17 +97,23 @@ public class TenantExtraController : AbpController
     }
 
     [HttpPost]
-    [Route("roles-add/{tenant}")]
-    public async Task<bool> VendorRoleAddAsync(Guid tenant, TenantRoleCreateDto dto)
+    [Route("user-roles-add/{tenant}")]
+    public async Task<bool> TenantRoleAddAsync(Guid tenant, TenantRoleCreateDto dto)
     {
         return await _tenantService.TenantUserRoleAddAsync(tenant, dto);
     }
 
     [HttpDelete]
-    [Route("roles-remove/{tenant}/{user}")]
-    public async Task<bool> VendorRoleRemoveAsync(Guid tenant, Guid user)
+    [Route("user-roles-remove/{tenant}/{user}")]
+    public async Task<bool> TenantRoleRemoveAsync(Guid tenant, Guid user)
     {
         return await _tenantService.TenantUserRoleRemoveAsync(tenant, user);
     }
 
+    [HttpPost]
+    [Route("users/reset-user-password")]
+    public async Task AdminResetPassword([FromBody] ResetUserPasswordDto input)
+    {
+        await _adminResetPasswordService.AdminResetPasswordAsync(input);
+    }
 }

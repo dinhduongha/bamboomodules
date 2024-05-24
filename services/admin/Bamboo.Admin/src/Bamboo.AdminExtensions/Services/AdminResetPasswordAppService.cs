@@ -19,7 +19,7 @@ namespace Bamboo.AdminExtensions;
 
 public interface IAdminResetPasswordAppService : IApplicationService, IRemoteService
 {
-    Task AdminResetPasswordAsync(AdminResetPasswordDto input);
+    Task AdminResetPasswordAsync(ResetUserPasswordDto input);
 }
 
 public class AdminResetPasswordAppService : ApplicationService, ITransientDependency, IAdminResetPasswordAppService
@@ -35,8 +35,8 @@ public class AdminResetPasswordAppService : ApplicationService, ITransientDepend
         UserManager = userManager;
     }
 
-    [Authorize("Admin,Manager")]
-    public async Task AdminResetPasswordAsync(AdminResetPasswordDto input)
+    [Authorize(Roles="admin,owner")]
+    public async Task AdminResetPasswordAsync(ResetUserPasswordDto input)
     {
         if (CurrentTenant.Id != null)
         {
@@ -46,11 +46,7 @@ public class AdminResetPasswordAppService : ApplicationService, ITransientDepend
         {
             //await IdentityOptions.SetAsync();
 
-            var user = await UserManager.GetByIdAsync(input.Id);
-            if (user == null)
-            {
-                throw new UserFriendlyException("User not found");
-            }
+            var user = await UserManager.GetByIdAsync(input.Id) ?? throw new UserFriendlyException("User not found");
             var resetToken = await UserManager.GeneratePasswordResetTokenAsync(user);
             var result = await UserManager.ResetPasswordAsync(user, resetToken, input.Password);
             if (result.Succeeded == false)

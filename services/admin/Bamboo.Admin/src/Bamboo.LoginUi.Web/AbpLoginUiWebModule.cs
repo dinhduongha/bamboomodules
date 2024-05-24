@@ -176,11 +176,15 @@ public class AbpLoginUiWebModule : AbpModule
             options.TenantKey = configuration["App:TenantKey"] ?? "tenant";
         });
 
-        Configure<AbpTenantResolveOptions>(options =>
+        bool enabledTenantLogin = Convert.ToBoolean(configuration["App:EnableTenantLogin"]);
+        if (!enabledTenantLogin)
         {
-            options.TenantResolvers.Clear();
-            options.TenantResolvers.Add(new CurrentUserTenantResolveContributor());
-        });
+            Configure<AbpTenantResolveOptions>(options =>
+            {
+                options.TenantResolvers.Clear();
+                options.TenantResolvers.Add(new CurrentUserTenantResolveContributor());
+            });
+        }
     }
 
     private void ConfigureCache(ServiceConfigurationContext context, IConfiguration configuration)

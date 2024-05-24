@@ -156,6 +156,103 @@ public class TenantService : ApplicationService
         }
     }
 
+    public async Task<Tenant?> CreateAdminTenantUserAsync(Guid id, String password, Tenant? tenant = null)
+    {
+        if (tenant == null) {
+            tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Id == id));
+        }        
+        var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
+        if (tenant == null) {
+            return tenant;
+        }
+
+        var user = new IdentityLinkUserInfo((Guid)CurrentUser.Id, null);
+        using (CurrentTenant.Change(null))
+        {
+        }
+        var domain = _configuration["App:Domain"]??"bamboo.io";
+        using (CurrentTenant.Change(tenant.Id, tenant.Name))
+        {
+            await _dataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
+                //.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{input.AdminEmailAddress}")
+                //.WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{input.AdminPassword}")
+                .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{tenant.Name}@{domain}")
+                .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{password}")
+                );
+            //"admin" user
+            const string adminUserName = "admin";
+            var adminUser = await _userRepository.FindByNormalizedUserNameAsync(
+                LookupNormalizer.NormalizeName(adminUserName)
+            );
+
+            if (adminUser != null)
+            {
+                (await _userManager.SetUserNameAsync(adminUser, tenant.Name)).CheckErrors();
+                adminUser.Name = tenant.Name;
+                (await _userManager.UpdateAsync(adminUser)).CheckErrors();
+                await CurrentUnitOfWork.SaveChangesAsync();
+
+                // Link current user to admin of new tenant
+                var linkUser = new IdentityLinkUserInfo((Guid)adminUser.Id, tenant.Id);
+                await _linkManager.LinkAsync(user, linkUser);
+            }
+
+            // Create role for new tenant
+            //"admin" role
+            const string adminRoleName = "admin";
+            var adminRole = await _roleRepository.FindByNormalizedNameAsync(LookupNormalizer.NormalizeName(adminRoleName));
+            try
+            {
+                IdentityDbContext _ctx = await _dbContextProvider.GetDbContextAsync();
+                var sql = $"INSERT INTO public.\"AbpUserRoles\"(\n\t\"UserId\", \"RoleId\", \"TenantId\")\n\tVALUES ('{currentUser.Id}', '{adminRole.Id}', '{tenant.Id}');";
+                await _ctx.Database.ExecuteSqlRawAsync(sql);
+                //var newObj = new IdentityUserRoleExtension(currentUser.Id, adminRole.Id, tenant.Id);
+                //var role = newObj as IdentityUserRole;
+                //if (role == null)
+                //{
+                //}
+                //else
+                //{
+                //    await _userRoleRepository.InsertAsync(role);
+                //}
+            }
+            catch (Exception e)
+            {
+                var str = e.ToString();
+                throw;
+            }
+            //await _distributedEventBus.PublishAsync(
+            //    new TenantCreatedEto
+            //    {
+            //        Id = tenant.Id,
+            //        Name = tenant.Name,
+            //        Properties =
+            //        {
+            //                { "AdminEmail", input.AdminEmailAddress },
+            //                { "AdminPassword", input.AdminPassword }
+            //        }
+            //    });
+            //await _distributedEventBus.PublishAsync(
+            //    new EntityCreatedEto<TenantEto>(
+            //       new TenantEto
+            //       {
+            //           Id = tenant.Id,
+            //           Name = tenant.Name,                       
+            //       }
+            //    ));
+            //await _distributedEventBus.PublishAsync(
+            //       new VendorRoleEto
+            //       {
+            //           VendorId = tenant.Id,
+            //           RoleId = adminRole.Id,
+            //           UserId = currentUser.Id,
+            //           RoleName = adminRole.Name,
+            //       }
+            //    );
+        }
+        return tenant;
+    }
+
     public async Task<TenantDto> CreateAsync(string name)
     {
         TenantCreateDto input = new TenantCreateDto()
@@ -206,92 +303,8 @@ public class TenantService : ApplicationService
             tenant.SetProperty("creator", CurrentUser.Id);
             tenant = await _tenantRepository.InsertAsync(tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
-
-            var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
-
-            var user = new IdentityLinkUserInfo((Guid)CurrentUser.Id, null);
-            using (CurrentTenant.Change(null))
-            {
-            }
-            using (CurrentTenant.Change(tenant.Id, tenant.Name))
-            {
-                await _dataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
-                    //.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{input.Name}@{input.Name}.Bamboo.io")
-                    .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{input.AdminEmailAddress}")
-                    .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{input.AdminPassword}")
-                    );
-                //"admin" user
-                const string adminUserName = "admin";
-                var adminUser = await _userRepository.FindByNormalizedUserNameAsync(
-                    LookupNormalizer.NormalizeName(adminUserName)
-                );
-
-                if (adminUser != null)
-                {
-                    (await _userManager.SetUserNameAsync(adminUser, input.Name)).CheckErrors();
-                    adminUser.Name = input.Name;
-                    (await _userManager.UpdateAsync(adminUser)).CheckErrors();
-                    await CurrentUnitOfWork.SaveChangesAsync();
-
-                    // Link current user to admin of new tenant
-                    var linkUser = new IdentityLinkUserInfo((Guid)adminUser.Id, tenant.Id);
-                    await _linkManager.LinkAsync(user, linkUser);
-
-                }
-
-                // Create role for new vendor
-                //"admin" role
-                const string adminRoleName = "admin";
-                var adminRole = await _roleRepository.FindByNormalizedNameAsync(LookupNormalizer.NormalizeName(adminRoleName));
-                try
-                {
-                    IdentityDbContext _ctx = await _dbContextProvider.GetDbContextAsync();
-                    var sql = $"INSERT INTO public.\"AbpUserRoles\"(\n\t\"UserId\", \"RoleId\", \"TenantId\")\n\tVALUES ('{currentUser.Id}', '{adminRole.Id}', '{tenant.Id}');";
-                    await _ctx.Database.ExecuteSqlRawAsync( sql);
-                    //var newObj = new IdentityUserRoleExtension(currentUser.Id, adminRole.Id, tenant.Id);
-                    //var role = newObj as IdentityUserRole;
-                    //if (role == null)
-                    //{
-                    //}
-                    //else
-                    //{
-                    //    await _userRoleRepository.InsertAsync(role);
-                    //}
-                }
-                catch (Exception e)
-                {
-                    var str = e.ToString();
-                    throw;
-                }
-                await _distributedEventBus.PublishAsync(
-                    new TenantCreatedEto
-                    {
-                        Id = tenant.Id,
-                        Name = tenant.Name,
-                        Properties =
-                        {
-                                { "AdminEmail", input.AdminEmailAddress },
-                                { "AdminPassword", input.AdminPassword }
-                        }
-                    });
-                await _distributedEventBus.PublishAsync(
-                    new EntityCreatedEto<TenantEto>(
-                       new TenantEto
-                       {
-                           Id = tenant.Id,
-                           Name = tenant.Name,                       
-                       }
-                    ));
-                //await _distributedEventBus.PublishAsync(
-                //       new VendorRoleEto
-                //       {
-                //           VendorId = tenant.Id,
-                //           RoleId = adminRole.Id,
-                //           UserId = currentUser.Id,
-                //           RoleName = adminRole.Name,
-                //       }
-                //    );
-            }
+            tenant = await CreateAdminTenantUserAsync(tenant.Id, input.AdminPassword, tenant);
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
         catch (Exception e)
         {
@@ -301,8 +314,13 @@ public class TenantService : ApplicationService
         //return await TenantAppService.CreateAsync(input);
     }
 
-    public async Task<TenantDto?> MigrateAsync(TenantMigrateDto data)
+    public async Task<TenantDto> MigrateAsync(TenantMigrateDto data)
     {
+        if (CurrentUser.TenantId != null)
+        {
+            throw new UserFriendlyException("Only host user can migrate tenant");
+        }
+
         TenantCreateDto input = new TenantCreateDto()
         {
             Name = data.Name,
@@ -310,15 +328,15 @@ public class TenantService : ApplicationService
             AdminPassword = GuidGenerator.Create().ToString(),
         };
 
-        var id = Utils.NewGuid(data.Id);
-        var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Name == input.Name)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
+        var newId = Utils.NewGuid(data.Id);
+        var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Name == input.Name) ||(tenant.Id == newId)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
         if (tenant != null)
         {
-            if (tenant.CreatorId == CurrentUser.Id)
+            //if (tenant.CreatorId == CurrentUser.Id)
             {
                 return ObjectMapper.Map<Tenant, TenantDto>(tenant);
             }
-            throw new UserFriendlyException("Name is exist");
+            throw new UserFriendlyException("Tenant is exist");
         }
         try
         {
@@ -330,11 +348,11 @@ public class TenantService : ApplicationService
             tenant.SetProperty("creator", CurrentUser.Id);
             tenant = await _tenantRepository.InsertAsync(tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
-            tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Name == input.Name));
-            //var _ctx = await _dbContextProvider.GetDbContextAsync();
-            //var sql = $"INSERT INTO public.\"AbpUserRoles\"(\n\t\"UserId\", \"RoleId\", \"TenantId\")\n\tVALUES ('{userId}', '{userRole.Id}', '{tenantId}');";
-            //await _ctx.Database.ExecuteSqlRawAsync(sql);
 
+            var _ctx = await _dbContextProvider.GetDbContextAsync();
+            var sql = $"UPDATE public.\"AbpTenants\" SET \"Id\"='{newId}' WHERE \"Id\"='{tenant.Id}';";
+            await _ctx.Database.ExecuteSqlRawAsync(sql);
+            tenant = await CreateAdminTenantUserAsync(newId, data.Password, null);
         }
         catch 
         {
