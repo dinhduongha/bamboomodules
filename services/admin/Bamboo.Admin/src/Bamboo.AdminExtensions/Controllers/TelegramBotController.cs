@@ -26,6 +26,7 @@ namespace Bamboo.AdminExtensions.Controllers;
 public class TelegramBotController : AbpControllerBase
 {    
     private readonly IConfiguration _configuration;
+    protected string? _token;
     IHttpClientFactory _httpClientFactory;
     //private readonly SignInManager<ApplicationUser> _signInManager;
     //private readonly UserManager<ApplicationUser> _userManager;
@@ -34,6 +35,7 @@ public class TelegramBotController : AbpControllerBase
     {
         _httpClientFactory = httpFactory;
         _configuration = config;
+        _token = _configuration["Telegram:Key"];
     }
 
 
@@ -41,11 +43,14 @@ public class TelegramBotController : AbpControllerBase
     [AllowAnonymous]
     [IgnoreAntiforgeryToken]
     [ValidateTelegramBot]
-    public async Task<IActionResult> Post(
+    public async Task<IActionResult> Post( string token,
         [FromBody] Update update,
         [FromServices] UpdateHandlers handleUpdateService,
         CancellationToken cancellationToken)
     {
+        if (_token == null || token != _token) {
+            return Forbid();
+        }
         await handleUpdateService.HandleUpdateAsync(update, cancellationToken);
         return Ok();
     }
