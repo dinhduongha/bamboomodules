@@ -1,7 +1,8 @@
 @page
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.Account.Localization
-@model Volo.Abp.Account.Web.Pages.Account.RegisterModel
+@model Bamboo.Abp.LoginUi.Web.Pages.Account.LoginUiRegisterModel
+
 @inject IHtmlLocalizer<AccountResource> L
 
 <div class="card mt-3 shadow-sm rounded">
@@ -12,15 +13,15 @@
             <a href="@Url.Page("./Login", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})" class="text-decoration-none">@L["Login"]</a>
         </strong>
         <form method="post" class="mt-4">
-            @if (Model.IsExternalLogin && !Model.VisibleExternalProviders.Any())
-            {
+            @if (Model.IsExternalLogin && Model.VisibleExternalProviders.Any())
+            {                 
                 <abp-input asp-for="Input.UserName" auto-focus="true" />
                 <abp-input asp-for="Input.EmailAddress" />
                 <abp-input asp-for="Input.Password" />
                 <div class="d-grid gap-2">
                     <abp-button button-type="Primary" type="submit" class="btn-lg mt-4">@L["Register"]</abp-button>
                 </div>
-            }           
+            }
         </form>
 
         @if (!Model.IsExternalLogin && Model.VisibleExternalProviders.Any())

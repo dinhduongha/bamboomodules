@@ -35,7 +35,7 @@
                     @L["AreYouANewUser"]
                     <a href="@Url.Page("./Register", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})" class="text-decoration-none">@L["Register"]</a>
                 </strong>
-            }*@
+        }*@
         @if (Model.EnableLocalLogin)
         {
             <form method="post" class="mt-4">
@@ -67,28 +67,40 @@
             </form>
         }
 
-        @if (Model.VisibleExternalProviders.Any())
+        @if (Model.VisibleExternalProviders.Any() || Model.EnableTelegram)
         {
             <div class="d-flex block-center mt-4" style="align-items: center;">
                 <div class="divider"></div>
                 <span class="divider-text text-caption mx-4">@L["OrLoginWith"]</span>
                 <div class="divider"></div>
             </div>
-            <div class="mt-3">
-                @await Component.InvokeAsync("ExternalLoginWidget", new ExternalLoginWidgetModel(Model.VisibleExternalProviders, Model.ReturnUrl, Model.ReturnUrlHash))
+            <div class="container">
+                @if (Model.EnableTelegram)
+                {
+                    <div class="mt-3">
+                        @Html.Raw(Model.TelegramWidget)
+                    </div>
+                }
+                @if (Model.VisibleExternalProviders.Any())
+                {
+                    <div class="mt-3">
+                        @await Component.InvokeAsync("ExternalLoginWidget", new ExternalLoginWidgetModel(Model.VisibleExternalProviders, Model.ReturnUrl, Model.ReturnUrlHash))
+                    </div>
+                }
             </div>
         }
         @{
             @*
-                https://stackoverflow.com/questions/68157777/implementing-telegram-loginwidget-with-signinmanager
-                string widget = WidgetEmbedCodeGenerator.GenerateRedirectEmbedCode(
-                _config["BOT_NAME"],
-                $"https://{_config["AuthServer:Authority"]}/{Url.Action("tgcallback", "account")}",
-                ButtonStyle.Large,
-                true,
-                true);
-            *@
+            https://stackoverflow.com/questions/68157777/implementing-telegram-loginwidget-with-signinmanager
+            string widget = WidgetEmbedCodeGenerator.GenerateRedirectEmbedCode(
+            _config["BOT_NAME"],
+            $"https://{_config["AuthServer:Authority"]}/{Url.Action("tgcallback", "account")}",
+            ButtonStyle.Large,
+            true,
+            true);
+            *@            
         }
+
         @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
         {
             <div class="alert alert-warning">

@@ -2,20 +2,29 @@ using System;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Threading;
+using System.Linq;
+using System.Net.Mail;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication;
 
 using Volo.Abp;
 using Volo.Abp.Guids;
 using Volo.Abp.Data;
 using Volo.Abp.Linq;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.Account.Web;
+using Volo.Abp.Identity.AspNetCore;
+using Volo.Abp.Account;
+using Volo.Abp.Identity;
+using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 using Telegram.Bot.Extensions.LoginWidget;
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
 
 namespace Bamboo.LoginUiWeb.Controllers;
 
@@ -28,9 +37,21 @@ public class TelegramLoginController : AbpControllerBase
     //private readonly SignInManager<ApplicationUser> _signInManager;
     //private readonly UserManager<ApplicationUser> _userManager;
 
-    public TelegramLoginController(IConfiguration config)
+    public IAccountAppService AccountAppService { get; set; }
+    public SignInManager<IdentityUser> SignInManager { get; set; }
+    public IdentityUserManager UserManager { get; set; }
+    public IdentitySecurityLogManager IdentitySecurityLogManager { get; set; }
+    public IOptions<IdentityOptions> IdentityOptions { get; set; }
+    public IdentityDynamicClaimsPrincipalContributorCache IdentityDynamicClaimsPrincipalContributorCache { get; set; }
+
+public TelegramLoginController(
+        IConfiguration config,
+        IAuthenticationSchemeProvider schemeProvider,
+        IOptions<AbpAccountOptions> accountOptions,
+        IOptions<IdentityOptions> identityOptions,
+        IdentityDynamicClaimsPrincipalContributorCache cache
+        )
     {
-        //_httpClientFactory = httpFactory;
         configuration = config;
     }
 
@@ -46,8 +67,9 @@ public class TelegramLoginController : AbpControllerBase
         string hash)
     {
         // attempt to authenticate the login
-        var token = configuration["TelegramBot"];
+        var token = configuration["Telegram:BotToken"];
         var loginWidget = new LoginWidget(token);
+        loginWidget.AllowedTimeOffset = 120;
         var auth = loginWidget.CheckAuthorization(new SortedDictionary<string, string>()
         {
             {"id",id},
@@ -62,43 +84,109 @@ public class TelegramLoginController : AbpControllerBase
         // if the authorization was successful, create the user (if not exist) and sign in
         if (auth == Authorization.Valid)
         {
-            //var user = await _userManager.FindByNameAsync($"tg{id}");
-            //if (null == user)
+            var LoginProvider = "Telegram";
+            var ProviderKey = id;
+            var returnUrl = configuration["Telegram:ReturnUrl"];
+            ExternalLoginInfo loginInfo = new ExternalLoginInfo(null, LoginProvider, ProviderKey, username);
+
+            await IdentityOptions.SetAsync();
+
+            var result = await SignInManager.ExternalLoginSignInAsync(
+                LoginProvider,
+                ProviderKey,
+                isPersistent: false,
+                bypassTwoFactor: true
+            );
+            IdentityUser user;
+            if (result.Succeeded)
+            {
+                user = await UserManager.FindByLoginAsync(LoginProvider, ProviderKey);
+                if (user != null)
+                {
+                    // Clear the dynamic claims cache.
+                    await IdentityDynamicClaimsPrincipalContributorCache.ClearAsync(user.Id, user.TenantId);
+                }
+
+                //return await RedirectSafelyAsync(returnUrl, returnUrlHash);
+                return (returnUrl != null)?Redirect(returnUrl): RedirectToPage("/Account/Manage");
+            }
+
+            user = await UserManager.FindByLoginAsync(LoginProvider, ProviderKey);
+            if (user == null)
+            {
+                user = new IdentityUser(GuidGenerator.Create(), username, $"{username}@telegram.org", null);
+                user.SetProperty("id", id);
+                user.SetProperty("first_name", first_name);
+                user.SetProperty("last_name", last_name);
+                user.SetProperty("username", username);
+                user.SetProperty("photo_url", photo_url);
+                user.SetProperty("provider", LoginProvider);
+                user = await RegisterExternalUserAsync(loginInfo, user );
+            }
+            //
+            //if (user == null)
             //{
-            //    user = new ApplicationUser()
+            //    return RedirectToPage("/Account/Register", new
             //    {
-            //        UserName = $"tg{id}",
-
-            //        TelegramNativeId = long.Parse(id),
-            //        TelegramUserName = username,
-            //        FirstName = first_name,
-            //        PhotoUrl = photo_url
-            //    };
-
-            //    var result = await _userManager.CreateAsync(user);
-            //    if (!result.Succeeded)
-            //    {
-            //        ViewBag.ErrorTitle = "Internal error";
-            //        ViewBag.ErrorMessage = $"Failed to create user tg{id}";
-            //        return View("Error");
-            //    }
-
-            //    user = await _userManager.FindByNameAsync($"tg{id}");
-            //    if (null == user)
-            //    {
-            //        ViewBag.ErrorTitle = "Internal error";
-            //        ViewBag.ErrorMessage = $"Failed to create user tg{id}";
-            //        return View("Error");
-            //    }
+            //        IsExternalLogin = true,
+            //        ExternalLoginAuthSchema = LoginProvider,
+            //        ReturnUrl = returnUrl
+            //    });
             //}
 
-            //await _signInManager.SignInAsync(user, true);
-        }
+            if (await UserManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey) == null)
+            {
+                await UserManager.AddLoginAsync(user, loginInfo);
+            }
 
+            await SignInManager.SignInAsync(user, false);
+
+            await IdentitySecurityLogManager.SaveAsync(new IdentitySecurityLogContext()
+            {
+                Identity = IdentitySecurityLogIdentityConsts.IdentityExternal,
+                Action = result.ToIdentitySecurityLogAction(),
+                UserName = user.Name
+            });
+
+            //// Clear the dynamic claims cache.
+            await IdentityDynamicClaimsPrincipalContributorCache.ClearAsync(user.Id, user.TenantId);
+
+            return (returnUrl != null) ? Redirect(returnUrl) : RedirectToPage("/Account/Manage");
+            //return await RedirectSafelyAsync(returnUrl, returnUrlHash);
+        }
         // return him back to home/index where he will be redirected to login,
         // if the login was unsuccessful
         //return RedirectToAction("index", "home");
         await Task.CompletedTask;
-        return Ok();
+        return Forbid();
+    }
+
+    protected async Task<IdentityUser> RegisterExternalUserAsync(ExternalLoginInfo externalLoginInfo, IdentityUser user)
+    {
+        await IdentityOptions.SetAsync();
+
+        
+        (await UserManager.CreateAsync(user)).CheckErrors();
+        (await UserManager.AddDefaultRolesAsync(user)).CheckErrors();
+
+        var userLoginAlreadyExists = user.Logins.Any(x =>
+            x.TenantId == user.TenantId &&
+            x.LoginProvider == externalLoginInfo.LoginProvider &&
+            x.ProviderKey == externalLoginInfo.ProviderKey);
+
+        if (!userLoginAlreadyExists)
+        {
+            (await UserManager.AddLoginAsync(user, new UserLoginInfo(
+                externalLoginInfo.LoginProvider,
+                externalLoginInfo.ProviderKey,
+                externalLoginInfo.ProviderDisplayName
+            ))).CheckErrors();
+        }
+
+        await SignInManager.SignInAsync(user, isPersistent: true, "Telegram");
+
+        // Clear the dynamic claims cache.
+        await IdentityDynamicClaimsPrincipalContributorCache.ClearAsync(user.Id, user.TenantId);
+        return user;
     }
 }

@@ -43,6 +43,7 @@ using Volo.Abp.SettingManagement;
 
 using Bamboo.Abp.LoginUi.Web.Localization;
 using Bamboo.Abp.VerificationCode;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Bamboo.Abp.LoginUi.Web;
 [DependsOn(
@@ -142,30 +143,8 @@ public class AbpLoginUiWebModule : AbpModule
 
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/?view=aspnetcore-6.0&tabs=visual-studio
-        context.Services.AddAuthentication()
-            .AddGoogle(options =>
-            {
-                options.ClientId = configuration["Authentication:Google:ClientId"];
-                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-                //options.Scope.Add("email");
-                //options.Scope.Add("openid");
-            })
-            .AddMicrosoftAccount(options =>
-            {
-                options.ClientId = "8208d98e-400d-4ce9-89ba-d92610c67e13";
-                options.ClientSecret = "hsrMP46|_kfkcYCWSW516?%";
-            })
-            //.AddFacebook(options =>
-            //{
-            //    options.AppId = configuration["Authentication:Facebook:AppId"];
-            //    options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
-            //    options.Scope.Add("email");
-            //    options.Scope.Add("public_profile");
-            //    options.SaveTokens = true;
-            //    // sigin-facebook
-            //})
-            //.AddDefaultSocial(configuration)
-            ;
+        var builder = context.Services.AddAuthentication();        
+        ConfigureDefaultSocialAuthentication(builder, configuration);
     }
 
     // Disable select tenant when login
@@ -257,7 +236,6 @@ public class AbpLoginUiWebModule : AbpModule
             {
                 DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
                 return new FileDistributedSynchronizationProvider(lockFileDirectory);
-
             }
             else
             {
@@ -320,22 +298,22 @@ public class AbpLoginUiWebModule : AbpModule
     {
         var app = context.GetApplicationBuilder();
         var env = context.GetEnvironment();
-        GlobalSettingManagementProvider settingManagementProvider = context.ServiceProvider.GetRequiredService<GlobalSettingManagementProvider>();
-        SettingDefinitionManager settingDefinitionManager = context.ServiceProvider.GetRequiredService<SettingDefinitionManager>();
-        await settingManagementProvider.SetAsync(
-           await settingDefinitionManager.GetAsync(AccountSettingNames.IsSelfRegistrationEnabled),
-           true.ToString(),
-           GlobalSettingValueProvider.ProviderName
-        );
+        //GlobalSettingManagementProvider settingManagementProvider = context.ServiceProvider.GetRequiredService<GlobalSettingManagementProvider>();
+        //SettingDefinitionManager settingDefinitionManager = context.ServiceProvider.GetRequiredService<SettingDefinitionManager>();
+        //await settingManagementProvider.SetAsync(
+        //   await settingDefinitionManager.GetAsync(AccountSettingNames.IsSelfRegistrationEnabled),
+        //   true.ToString(),
+        //   GlobalSettingValueProvider.ProviderName
+        //);
 
-        //settingManagementProvider.SetAsync(
-        //    settingDefinitionManager.Get(IdentitySettingNames.Password.RequireNonAlphanumeric),
+        //await settingManagementProvider.SetAsync(
+        //    await settingDefinitionManager.GetAsync(IdentitySettingNames.Password.RequireNonAlphanumeric),
         //    false.ToString(),
         //    GlobalSettingValueProvider.ProviderName
         //);
 
-        //settingManagementProvider.SetAsync(
-        //    settingDefinitionManager.Get(IdentitySettingNames.Password.RequireUppercase),
+        //await settingManagementProvider.SetAsync(
+        //    await settingDefinitionManager.GetAsync(IdentitySettingNames.Password.RequireUppercase),
         //    false.ToString(),
         //    GlobalSettingValueProvider.ProviderName
         //);
@@ -356,5 +334,107 @@ public class AbpLoginUiWebModule : AbpModule
         });
 
         await base.OnApplicationInitializationAsync(context);
+    }
+
+    private void ConfigureDefaultSocialAuthentication(AuthenticationBuilder builder, IConfiguration configuration)
+    {
+        var section = configuration.GetSection("Authentication:Google");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            var clientId = section["ClientId"];
+            var clientSecret = section["ClientSecret"];
+            builder.AddGoogle(options =>
+            {
+                options.ClientId = clientId;
+                options.ClientSecret = clientSecret;
+            });
+        }
+        section = configuration.GetSection("Authentication:Microsoft");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddMicrosoftAccount(options =>
+            {
+                options.ClientId = section["ClientId"] ?? "8208d98e-400d-4ce9-89ba-d92610c67e13";
+                options.ClientSecret = section["ClientSecret"] ?? "hsrMP46|_kfkcYCWSW516?%";
+            });
+        }
+        section = configuration.GetSection("Authentication:Twitter");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddTwitter(options =>
+            {
+                options.ConsumerKey = section["ClientId"];
+                options.ConsumerSecret = section["ClientSecret"];
+            });
+        }
+        section = configuration.GetSection("Authentication:Apple");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddApple(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
+            });
+        }
+        section = configuration.GetSection("Authentication:Facebook");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddFacebook(options =>
+            {
+                options.AppId = section["AppId"];
+                options.AppSecret = section["AppSecret"];
+                options.Scope.Add("email");
+                options.Scope.Add("public_profile");
+            });
+        }
+        section = configuration.GetSection("Authentication:Instagram");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddInstagram(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
+            });
+        }
+        section = configuration.GetSection("Authentication:Line");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            var str = section["ClientId"];
+            builder.AddLine(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
+            });
+        }
+        section = configuration.GetSection("Authentication:Zalo");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddZalo(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
+            });
+        }
+        section = configuration.GetSection("Authentication:LinkedIn");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddLinkedIn(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
+            });
+        }
+        section = configuration.GetSection("Authentication:Keycloak");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddKeycloak(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
+                options.AuthorizationEndpoint = section["AuthorizationEndpoint"];
+                options.TokenEndpoint = section["TokenEndpoint"];
+                options.UserInformationEndpoint = section["UserInformationEndpoint"];
+            });
+        }
     }
 }
