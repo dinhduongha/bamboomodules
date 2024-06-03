@@ -58,17 +58,28 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
 
     private async Task CreateScopesAsync()
     {
-        if (await _openIddictScopeRepository.FindByNameAsync("Bamboo") == null)
+        var scopeNames = new List<string>()
         {
-            await _scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+            "Bamboo",
+            "Core",
+            "Pos",
+            "Crm",
+            "Push",
+        };
+        foreach (var scope in scopeNames)
+        {
+            if (await _openIddictScopeRepository.FindByNameAsync(scope) == null)
             {
-                Name = "Bamboo",
-                DisplayName = "Bamboo API",
-                Resources =
+                await _scopeManager.CreateAsync(new OpenIddictScopeDescriptor
                 {
-                    "Bamboo"
+                    Name = scope,
+                    DisplayName = $"{scope} API",
+                    Resources =
+                {
+                    scope
                 }
-            });
+                });
+            }
         }
     }
 
@@ -81,7 +92,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
             OpenIddictConstants.Permissions.Scopes.Phone,
             OpenIddictConstants.Permissions.Scopes.Profile,
             OpenIddictConstants.Permissions.Scopes.Roles,
-            "Bamboo"
+            "Bamboo",
         };
 
         var configurationSection = _configuration.GetSection("OpenIddict:Applications");
@@ -99,7 +110,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 type: OpenIddictConstants.ClientTypes.Confidential,
                 consentType: OpenIddictConstants.ConsentTypes.Implicit,
                 displayName: "Web Application",
-                secret: configurationSection["Bamboo_Web:ClientSecret"] ?? "1q2w3e*",
+                secret: configurationSection["Bamboo_Web:ClientSecret"] ?? "1q2w3E*",
                 grantTypes: new List<string> //Hybrid flow
                 {
                     OpenIddictConstants.GrantTypes.AuthorizationCode,
@@ -124,7 +135,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 type: OpenIddictConstants.ClientTypes.Confidential,
                 consentType: OpenIddictConstants.ConsentTypes.Implicit,
                 displayName: "Blazor Server Application",
-                secret: configurationSection["Bamboo_BlazorServerTiered:ClientSecret"] ?? "1q2w3e*",
+                secret: configurationSection["Bamboo_BlazorServerTiered:ClientSecret"] ?? "1q2w3E*",
                 grantTypes: new List<string> //Hybrid flow
                 {
                     OpenIddictConstants.GrantTypes.AuthorizationCode,

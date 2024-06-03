@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Bamboo.Admin.Migrations
 {
     [DbContext(typeof(AdminDbContext))]
-    [Migration("20240405023529_Initial")]
+    [Migration("20240603085057_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -556,6 +556,11 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("ConcurrencyStamp");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
                     b.Property<int>("EntityVersion")
                         .HasColumnType("integer");
 
@@ -595,6 +600,10 @@ namespace Bamboo.Admin.Migrations
                     b.HasIndex("NormalizedName");
 
                     b.ToTable("AbpRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRoleClaim", b =>
@@ -735,6 +744,11 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("DeletionTime");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -865,6 +879,10 @@ namespace Bamboo.Admin.Migrations
                     b.HasIndex("UserName");
 
                     b.ToTable("AbpUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserClaim", b =>
@@ -930,6 +948,11 @@ namespace Bamboo.Admin.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
                     b.Property<string>("ProviderDisplayName")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
@@ -948,6 +971,10 @@ namespace Bamboo.Admin.Migrations
                     b.HasIndex("LoginProvider", "ProviderKey");
 
                     b.ToTable("AbpUserLogins", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserOrganizationUnit", b =>
@@ -1708,6 +1735,11 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("DeletionTime");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
                     b.Property<int>("EntityVersion")
                         .HasColumnType("integer");
 
@@ -1747,6 +1779,10 @@ namespace Bamboo.Admin.Migrations
                     b.HasIndex("NormalizedName");
 
                     b.ToTable("AbpTenants", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Tenant");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Volo.Abp.TenantManagement.TenantConnectionString", b =>
@@ -1766,6 +1802,57 @@ namespace Bamboo.Admin.Migrations
                     b.HasKey("TenantId", "Name");
 
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
+                });
+
+            modelBuilder.Entity("Bamboo.Admin.RolesExtra", b =>
+                {
+                    b.HasBaseType("Volo.Abp.Identity.IdentityRole");
+
+                    b.Property<Guid?>("BrandId")
+                        .HasColumnType("uuid");
+
+                    b.ToTable("AbpRoles");
+
+                    b.HasDiscriminator().HasValue("RolesExtra");
+                });
+
+            modelBuilder.Entity("Bamboo.Admin.UserBrand", b =>
+                {
+                    b.HasBaseType("Volo.Abp.Identity.IdentityUser");
+
+                    b.Property<Guid?>("BrandId")
+                        .HasColumnType("uuid");
+
+                    b.ToTable("AbpUsers");
+
+                    b.HasDiscriminator().HasValue("UserBrand");
+                });
+
+            modelBuilder.Entity("Bamboo.Admin.UserLoginExtra", b =>
+                {
+                    b.HasBaseType("Volo.Abp.Identity.IdentityUserLogin");
+
+                    b.Property<string>("ProviderName")
+                        .HasColumnType("text");
+
+                    b.ToTable("AbpUserLogins");
+
+                    b.HasDiscriminator().HasValue("UserLoginExtra");
+                });
+
+            modelBuilder.Entity("Bamboo.Admin.TenantOwner", b =>
+                {
+                    b.HasBaseType("Volo.Abp.TenantManagement.Tenant");
+
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.ToTable("AbpTenants");
+
+                    b.HasDiscriminator().HasValue("TenantOwner");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>

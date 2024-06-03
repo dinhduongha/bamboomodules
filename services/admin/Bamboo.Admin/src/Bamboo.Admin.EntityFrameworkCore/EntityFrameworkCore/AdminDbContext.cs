@@ -51,6 +51,12 @@ public class AdminDbContext :
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
 
+    public DbSet<TenantOwner> TenantOwners { get; set; }
+    public DbSet<UserBrand> UserBrands { get; set; }
+    public DbSet<RolesExtra> RolesExtras { get; set; }
+    public DbSet<UserLoginExtra> UserLoginExtras { get; set; }
+    //public DbSet<OpenIddictApplicationExtra> OpenIddictApplicationExtras { get; set; }
+
     #endregion
 
     public AdminDbContext(DbContextOptions<AdminDbContext> options)

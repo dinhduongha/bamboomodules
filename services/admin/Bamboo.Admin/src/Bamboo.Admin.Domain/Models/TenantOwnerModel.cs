@@ -7,7 +7,7 @@ using Volo.Abp.TenantManagement;
 namespace Bamboo.Admin;
 
 [Table("AbpTenants")]
-public class TenantOwner: Entity<Guid>
+public class TenantOwner: Tenant
 {
     public Guid? OwnerId { get; set; }
     public Guid? ParentId { get; set; }

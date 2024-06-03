@@ -34,6 +34,7 @@ using Bamboo.Abp.LoginUi.Web;
 using Bamboo.AdminExtensions;
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.MultiTenancy;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Bamboo.Admin;
 
@@ -218,16 +219,18 @@ public class AdminHttpApiHostModule : AbpModule
         app.UseDynamicClaims();
         app.UseAuthorization();
 
-        app.UseSwagger();
-        app.UseAbpSwaggerUI(c =>
+        var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        if (configuration.GetValue<bool>("Swagger:IsEnabled", false))
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
-
-            var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
-            c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-            c.OAuthScopes("Bamboo");
-        });
-
+            app.UseSwagger();
+            app.UseAbpSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
+                c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
+                c.OAuthScopes("Bamboo");
+            });
+        }
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();

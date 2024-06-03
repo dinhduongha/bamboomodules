@@ -6,7 +6,7 @@ using Volo.Abp.Identity;
 namespace Bamboo.Admin;
 
 [Table("AbpUsers")]
-public class UserBrandModel: Entity<Guid>
+public class UserBrand: IdentityUser
 {
     public Guid? BrandId { get; set;}
 }
