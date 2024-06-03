@@ -26,6 +26,12 @@ using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.Settings;
+using Volo.Abp.EventBus.Rebus;
+using Rebus.PostgreSql;
+using Rebus.Config;
+using Rebus.Persistence.FileSystem;
+using Rebus.Transport.InMem;
+using Rebus.Persistence.InMem;
 
 namespace Bamboo.AdminExtensions;
 [DependsOn(
@@ -36,6 +42,10 @@ namespace Bamboo.AdminExtensions;
     typeof(AbpSmsModule))]
 public class AbpAdminExtensionsModule : AbpModule
 {
+    public override void PreConfigureServices(ServiceConfigurationContext context)
+    {
+    }
+
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         
