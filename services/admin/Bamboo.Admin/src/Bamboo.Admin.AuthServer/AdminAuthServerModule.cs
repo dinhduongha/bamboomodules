@@ -7,12 +7,14 @@ using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Bamboo.Admin.EntityFrameworkCore;
-using Bamboo.Admin.Localization;
-using Bamboo.Admin.MultiTenancy;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.Extensions.Configuration;
+
 using StackExchange.Redis;
+
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
@@ -38,6 +40,11 @@ using Volo.Abp.UI;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.Account.Localization;
 
+using Bamboo.Abp.LoginUi.Web;
+using Bamboo.Admin.EntityFrameworkCore;
+using Bamboo.Admin.Localization;
+using Bamboo.Admin.MultiTenancy;
+
 namespace Bamboo.Admin;
 
 [DependsOn(
@@ -49,6 +56,7 @@ namespace Bamboo.Admin;
     typeof(AbpAccountHttpApiModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AdminEntityFrameworkCoreModule),
+    typeof(AbpLoginUiWebModule),
     typeof(AbpAspNetCoreSerilogModule)
     )]
 public class AdminAuthServerModule : AbpModule
@@ -62,7 +70,7 @@ public class AdminAuthServerModule : AbpModule
         {
             builder.AddValidation(options =>
             {
-                options.AddAudiences("Admin");
+                options.AddAudiences("Bamboo");
                 options.UseLocalServer();
                 options.UseAspNetCore();
             });
@@ -142,28 +150,32 @@ public class AdminAuthServerModule : AbpModule
             options.KeyPrefix = "Admin:";
         });
 
-        var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Admin");
-        if (!hostingEnvironment.IsDevelopment())
-        {
-            var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
-            bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
-            redisOptions.User = configuration["Redis:User"];
-            redisOptions.Password = configuration["Redis:Password"];
-            var redis = ConnectionMultiplexer.Connect(redisOptions);
+        ConfigureRedis(context, configuration);
+        ConfigureDataProtection(context, configuration, hostingEnvironment);
+        ConfigureDistributedLocking(context, configuration);
 
-            dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Admin-Protection-Keys");
-        }
+        //var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Admin");
+        //if (!hostingEnvironment.IsDevelopment())
+        //{
+        //    var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+        //    bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+        //    redisOptions.User = configuration["Redis:User"];
+        //    redisOptions.Password = configuration["Redis:Password"];
+        //    var redis = ConnectionMultiplexer.Connect(redisOptions);
 
-        context.Services.AddSingleton<IDistributedLockProvider>(sp =>
-        {
-            var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
-            bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
-            redisOptions.User = configuration["Redis:User"];
-            redisOptions.Password = configuration["Redis:Password"];
-            var connection = ConnectionMultiplexer.Connect(redisOptions);
-            //var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
-            return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
-        });
+        //    dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Admin-Protection-Keys");
+        //}
+
+        //context.Services.AddSingleton<IDistributedLockProvider>(sp =>
+        //{
+        //    var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+        //    bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+        //    redisOptions.User = configuration["Redis:User"];
+        //    redisOptions.Password = configuration["Redis:Password"];
+        //    var connection = ConnectionMultiplexer.Connect(redisOptions);
+        //    //var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+        //    return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
+        //});
 
         context.Services.AddCors(options =>
         {
@@ -189,6 +201,80 @@ public class AdminAuthServerModule : AbpModule
             options.IsDynamicClaimsEnabled = true;
         });
     }
+
+    private void ConfigureRedis(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        //var hostingEnvironment = context.Services.GetHostingEnvironment();
+
+        var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+        bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+
+        if (enabledRedis)
+        {
+            redisOptions.User = configuration["Redis:User"];
+            redisOptions.Password = configuration["Redis:Password"];
+            Configure<RedisCacheOptions>(options =>
+            {
+                //var configurationOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+                //configurationOptions.User = configuration["Redis:User"];
+                //configurationOptions.Password = configuration["Redis:Password"];
+                //options.ConfigurationOptions = configurationOptions;
+                options.Configuration = configuration["Redis:Configuration"];
+                options.ConfigurationOptions = redisOptions;
+            });
+        }
+    }
+
+    private void ConfigureDataProtection(
+        ServiceConfigurationContext context,
+        IConfiguration configuration,
+        IWebHostEnvironment hostingEnvironment)
+    {
+        var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Bamboo");
+        string appName = configuration["App:Name"] ?? "Bamboo";
+        var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+        bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+        if (enabledRedis)
+        {
+            redisOptions.User = configuration["Redis:User"];
+            redisOptions.Password = configuration["Redis:Password"];
+            var redis = ConnectionMultiplexer.Connect(redisOptions);
+            dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, $"{appName}-Protection-Keys");
+            return;
+        }
+        //if (!hostingEnvironment.IsDevelopment())
+        //{
+        //    var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+        //    dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Bamboo-Protection-Keys");
+        //}
+    }
+
+    private void ConfigureDistributedLocking(
+        ServiceConfigurationContext context,
+        IConfiguration configuration)
+    {
+        context.Services.AddSingleton<IDistributedLockProvider>(sp =>
+        {
+            var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+            bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+            if (!enabledRedis)
+            {
+                //DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
+                //return new FileDistributedSynchronizationProvider(lockFileDirectory);
+            }
+            else
+            {
+                redisOptions.User = configuration["Redis:User"];
+                redisOptions.Password = configuration["Redis:Password"];
+                var redis = ConnectionMultiplexer.Connect(redisOptions);
+                return new RedisDistributedSynchronizationProvider(redis.GetDatabase());
+            }
+            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+            return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
+        });
+    }
+
+
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {

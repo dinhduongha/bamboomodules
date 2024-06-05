@@ -37,11 +37,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.Admin.HttpApi.Host",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.Admin.AuthServer", "src\Bamboo.Admin.AuthServer\Bamboo.Admin.AuthServer.csproj", "{E0E23AF1-4F98-4121-B10A-0552F53E8B7C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.Admin.HttpApi.Sis.Host", "src\Bamboo.Admin.HttpApi.Sis.Host\Bamboo.Admin.HttpApi.Sis.Host.csproj", "{49861532-9A50-47AF-8E98-5C8B866015D8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.LoginUi.Web", "src\Bamboo.LoginUi.Web\Bamboo.LoginUi.Web.csproj", "{CAE0185A-CEDC-4584-B98B-866DF78488BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.AdminExtensions", "src\Bamboo.AdminExtensions\Bamboo.AdminExtensions.csproj", "{FD8907C5-8FA3-46A7-899F-EF1893ECEF43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bamboo.Admin.HttpApi.Host.Blazor", "src\Bamboo.Admin.HttpApi.Host.Blazor\Bamboo.Admin.HttpApi.Host.Blazor.csproj", "{6FF60DC1-F0C6-4024-AE71-A741AD75AF6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,10 +109,6 @@ Global
 		{E0E23AF1-4F98-4121-B10A-0552F53E8B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0E23AF1-4F98-4121-B10A-0552F53E8B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0E23AF1-4F98-4121-B10A-0552F53E8B7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49861532-9A50-47AF-8E98-5C8B866015D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49861532-9A50-47AF-8E98-5C8B866015D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49861532-9A50-47AF-8E98-5C8B866015D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49861532-9A50-47AF-8E98-5C8B866015D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CAE0185A-CEDC-4584-B98B-866DF78488BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CAE0185A-CEDC-4584-B98B-866DF78488BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAE0185A-CEDC-4584-B98B-866DF78488BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -121,6 +117,10 @@ Global
 		{FD8907C5-8FA3-46A7-899F-EF1893ECEF43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD8907C5-8FA3-46A7-899F-EF1893ECEF43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD8907C5-8FA3-46A7-899F-EF1893ECEF43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FF60DC1-F0C6-4024-AE71-A741AD75AF6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF60DC1-F0C6-4024-AE71-A741AD75AF6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF60DC1-F0C6-4024-AE71-A741AD75AF6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF60DC1-F0C6-4024-AE71-A741AD75AF6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,9 +141,9 @@ Global
 		{AA94D832-1CCC-4715-95A9-A483F23A1A5D} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{748584B1-BA69-4F6A-81AA-F4BDE6BCE29D} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{E0E23AF1-4F98-4121-B10A-0552F53E8B7C} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
-		{49861532-9A50-47AF-8E98-5C8B866015D8} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{CAE0185A-CEDC-4584-B98B-866DF78488BA} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 		{FD8907C5-8FA3-46A7-899F-EF1893ECEF43} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
+		{6FF60DC1-F0C6-4024-AE71-A741AD75AF6E} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28315BFD-90E7-4E14-A2EA-F3D23AF4126F}

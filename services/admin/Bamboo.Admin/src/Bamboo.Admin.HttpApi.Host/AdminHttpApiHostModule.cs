@@ -2,120 +2,72 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Medallion.Threading;
+using Medallion.Threading.Redis;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Bamboo.Admin.EntityFrameworkCore;
+using Bamboo.Admin.MultiTenancy;
+using StackExchange.Redis;
 using Microsoft.OpenApi.Models;
-using OpenIddict.Validation.AspNetCore;
-
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-
 using Volo.Abp;
-using Volo.Abp.Account;
-using Volo.Abp.Account.Web;
-using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
+using Volo.Abp.Caching;
+using Volo.Abp.Caching.StackExchangeRedis;
+using Volo.Abp.DistributedLocking;
+using Volo.Abp.Identity;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
-using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-
-using Bamboo.Abp.LoginUi.Web;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Bamboo.AdminExtensions;
-using Bamboo.Admin.EntityFrameworkCore;
-using Bamboo.Admin.MultiTenancy;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Bamboo.Admin;
 
 [DependsOn(
     typeof(AdminHttpApiModule),
     typeof(AbpAutofacModule),
-    typeof(AbpAspNetCoreMultiTenancyModule),
+    typeof(AbpCachingStackExchangeRedisModule),
+    typeof(AbpDistributedLockingModule),
+    typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
     typeof(AdminApplicationModule),
     typeof(AdminEntityFrameworkCoreModule),
-    typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
-    typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAdminExtensionsModule),    
-    typeof(AbpLoginUiWebModule),
     typeof(AbpSwashbuckleModule)
 )]
 public class AdminHttpApiHostModule : AbpModule
 {
-    public override void PreConfigureServices(ServiceConfigurationContext context)
-    {
-        PreConfigure<OpenIddictBuilder>(builder =>
-        {
-            builder.AddValidation(options =>
-            {
-                options.AddAudiences("Bamboo");
-                options.UseLocalServer();
-                options.UseAspNetCore();
-            });
-        });
-    }
-
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        var dt = new DateTime(1970,1,1,0,0,0,0);
-        var id = Utils.NewGuid( 1);
-        id = Utils.NewGuid(0x102030405);
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
 
-        ConfigureAuthentication(context);
-        ConfigureBundles();
-        ConfigureUrls(configuration);
         ConfigureConventionalControllers();
+        ConfigureAuthentication(context, configuration);
+        ConfigureRedis(context, configuration);
+        ConfigureCache(configuration);
         ConfigureVirtualFileSystem(context);
+        ConfigureDataProtection(context, configuration, hostingEnvironment);
+        ConfigureDistributedLocking(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
     }
 
-    private void ConfigureAuthentication(ServiceConfigurationContext context)
+    private void ConfigureCache(IConfiguration configuration)
     {
-        context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
-        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
-        {
-            options.IsDynamicClaimsEnabled = true;
-        });
-    }
-
-    private void ConfigureBundles()
-    {
-        Configure<AbpBundlingOptions>(options =>
-        {
-            options.StyleBundles.Configure(
-                LeptonXLiteThemeBundles.Styles.Global,
-                bundle =>
-                {
-                    bundle.AddFiles("/global-styles.css");
-                }
-            );
-        });
-    }
-
-    private void ConfigureUrls(IConfiguration configuration)
-    {
-        Configure<AppUrlOptions>(options =>
-        {
-            options.Applications["MVC"].RootUrl = configuration["App:SelfUrl"];
-            options.RedirectAllowedUrls.AddRange(configuration["App:RedirectAllowedUrls"]?.Split(',') ?? Array.Empty<string>());
-
-            options.Applications["Angular"].RootUrl = configuration["App:ClientUrl"];
-            options.Applications["Angular"].Urls[AccountUrlNames.PasswordReset] = "account/reset-password";
-        });
+        Configure<AbpDistributedCacheOptions>(options => { options.KeyPrefix = "Bamboo:"; });
     }
 
     private void ConfigureVirtualFileSystem(ServiceConfigurationContext context)
@@ -150,6 +102,22 @@ public class AdminHttpApiHostModule : AbpModule
         });
     }
 
+    private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = configuration["AuthServer:Authority"];
+                options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
+                options.Audience = "Bamboo";
+            });
+
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
+        {
+            options.IsDynamicClaimsEnabled = true;
+        });
+    }
+
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.AddAbpSwaggerGenWithOAuth(
@@ -164,6 +132,78 @@ public class AdminHttpApiHostModule : AbpModule
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
             });
+    }
+
+    private void ConfigureRedis(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        //var hostingEnvironment = context.Services.GetHostingEnvironment();
+
+        var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+        bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+
+        if (enabledRedis)
+        {
+            redisOptions.User = configuration["Redis:User"];
+            redisOptions.Password = configuration["Redis:Password"];
+            Configure<RedisCacheOptions>(options =>
+            {
+                //var configurationOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+                //configurationOptions.User = configuration["Redis:User"];
+                //configurationOptions.Password = configuration["Redis:Password"];
+                //options.ConfigurationOptions = configurationOptions;
+                options.Configuration = configuration["Redis:Configuration"];
+                options.ConfigurationOptions = redisOptions;
+            });
+        }
+    }
+
+    private void ConfigureDataProtection(
+        ServiceConfigurationContext context,
+        IConfiguration configuration,
+        IWebHostEnvironment hostingEnvironment)
+    {
+        var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Bamboo");
+        string appName = configuration["App:Name"] ?? "Bamboo";
+        var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+        bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+        if (enabledRedis)
+        {
+            redisOptions.User = configuration["Redis:User"];
+            redisOptions.Password = configuration["Redis:Password"];
+            var redis = ConnectionMultiplexer.Connect(redisOptions);
+            dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, $"{appName}-Protection-Keys");
+            return;
+        }
+        //if (!hostingEnvironment.IsDevelopment())
+        //{
+        //    var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+        //    dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Bamboo-Protection-Keys");
+        //}
+    }
+
+    private void ConfigureDistributedLocking(
+        ServiceConfigurationContext context,
+        IConfiguration configuration)
+    {
+        context.Services.AddSingleton<IDistributedLockProvider>(sp =>
+        {
+            var redisOptions = ConfigurationOptions.Parse(configuration["Redis:Configuration"]);
+            bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
+            if (!enabledRedis)
+            {
+                //DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
+                //return new FileDistributedSynchronizationProvider(lockFileDirectory);
+            }
+            else
+            {
+                redisOptions.User = configuration["Redis:User"];
+                redisOptions.Password = configuration["Redis:Password"];
+                var redis = ConnectionMultiplexer.Connect(redisOptions);
+                return new RedisDistributedSynchronizationProvider(redis.GetDatabase());
+            }
+            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+            return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
+        });
     }
 
     private void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration)
@@ -197,18 +237,11 @@ public class AdminHttpApiHostModule : AbpModule
         }
 
         app.UseAbpRequestLocalization();
-
-        if (!env.IsDevelopment())
-        {
-            app.UseErrorPage();
-        }
-
         app.UseCorrelationId();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors();
         app.UseAuthentication();
-        app.UseAbpOpenIddictValidation();
 
         if (MultiTenancyConsts.IsEnabled)
         {
@@ -219,18 +252,16 @@ public class AdminHttpApiHostModule : AbpModule
         app.UseDynamicClaims();
         app.UseAuthorization();
 
-        var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
-
-        if (configuration.GetValue<bool>("Swagger:IsEnabled", false))
+        app.UseSwagger();
+        app.UseAbpSwaggerUI(options =>
         {
-            app.UseSwagger();
-            app.UseAbpSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
-                c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-                c.OAuthScopes("Bamboo");
-            });
-        }
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
+
+            var configuration = context.GetConfiguration();
+            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
+            options.OAuthScopes("Bamboo");
+        });
+
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
