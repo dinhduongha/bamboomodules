@@ -147,7 +147,7 @@ public class AdminAuthServerModule : AbpModule
 
         Configure<AbpDistributedCacheOptions>(options =>
         {
-            options.KeyPrefix = "Admin:";
+            options.KeyPrefix = "Bamboo:";
         });
 
         ConfigureRedis(context, configuration);

@@ -17,13 +17,14 @@
 
   <ItemGroup>
     <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
-    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.*" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="2.2.*-*" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,7 +62,6 @@
     <ProjectReference Include="..\..\shared\admin\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" />
     <ProjectReference Include="..\..\shared\common\Bamboo.Shared.Common\Bamboo.Shared.Common.csproj" />
     <ProjectReference Include="..\core\src\Bamboo.Core.Web\Bamboo.Core.Web.csproj" />
-    <ProjectReference Include="..\..\services\core\src\Bamboo.Core.HttpApi\Bamboo.Core.HttpApi.csproj" />
   </ItemGroup>
 
 </Project>

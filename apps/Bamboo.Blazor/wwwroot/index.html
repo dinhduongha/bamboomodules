@@ -8,11 +8,14 @@
     <base href="/" />
 
     <!--ABP:Styles-->
-    <link href="global.css?_v=638118912300991924" rel="stylesheet"/>
+    <link href="global.css?_v=638504371660734791" rel="stylesheet"/>
     <link href="main.css" rel="stylesheet"/>
     <!--/ABP:Styles-->
     <link href="Bamboo.Blazor.styles.css" rel="stylesheet"/>
     
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
 </head>
 
 <body class="abp-application-layout bg-light">
@@ -24,8 +27,13 @@
     </div>
 
     <!--ABP:Scripts-->
-    <script src="global.js?_v=638118912302043130"></script>
+    <script src="global.js?_v=638504371668601048"></script>
     <!--/ABP:Scripts-->
 
+    <script>
+        if('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
 </body>
 </html>

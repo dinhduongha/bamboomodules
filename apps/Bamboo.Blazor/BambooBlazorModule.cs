@@ -2,10 +2,11 @@
 using System.Net.Http;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Bamboo.Blazor.Menus;
+
 using OpenIddict.Abstractions;
 using Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXLiteTheme;
 using Volo.Abp.AspNetCore.Components.Web.LeptonXLiteTheme.Themes.LeptonXLite;
@@ -15,10 +16,11 @@ using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.Identity.Blazor.WebAssembly;
+using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Blazor.WebAssembly;
 using Volo.Abp.TenantManagement.Blazor.WebAssembly;
 using Bamboo.Admin;
-
+using Bamboo.Blazor.Menus;
 namespace Bamboo.Blazor;
 
 [DependsOn(
@@ -55,10 +57,11 @@ public class BambooBlazorModule : AbpModule
 
     private void ConfigureMenu(ServiceConfigurationContext context)
     {
-        Configure<AbpNavigationOptions>(options =>
-        {
-            options.MenuContributors.Add(new BambooMenuContributor(context.Services.GetConfiguration()));
-        });
+        // TODO: Check here
+        //Configure<AbpNavigationOptions>(options =>
+        //{
+        //    options.MenuContributors.Add(new BambooMenuContributor(context.Services.GetConfiguration()));
+        //});
     }
 
     private void ConfigureBlazorise(ServiceConfigurationContext context)
@@ -86,7 +89,7 @@ public class BambooBlazorModule : AbpModule
     private static void ConfigureUI(WebAssemblyHostBuilder builder)
     {
         builder.RootComponents.Add<App>("#ApplicationContainer");
-
+        builder.RootComponents.Add<HeadOutlet>("head::after");
     }
 
     private static void ConfigureHttpClient(ServiceConfigurationContext context, IWebAssemblyHostEnvironment environment)
