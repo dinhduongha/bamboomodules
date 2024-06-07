@@ -6,7 +6,7 @@
 @inject IHtmlLocalizer<AbpLoginUiResource> L
 
 <form asp-page="./Login" asp-page-handler="ExternalLogin" asp-route-returnUrl="@Model!.ReturnUrl" asp-route-returnUrlHash="@Model!.ReturnUrlHash" method="post">
-    <div style="text-align: center">
+    <div style="text-align: left">
         @foreach (var provider in Model!.VisibleExternalProviders)
         {
             var buttonClasses = LoginProvidersUi.GetButtonClasses(provider.AuthenticationScheme);

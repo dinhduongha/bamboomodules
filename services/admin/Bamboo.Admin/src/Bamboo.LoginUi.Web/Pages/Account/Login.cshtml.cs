@@ -70,11 +70,11 @@ public class LoginUiLoginModel : LoginModel
             EnableTelegram = true;
             var botName = section["BotName"];
             var LoginCallback = section["LoginCallback"];
+            var useLargeButton = section.GetValue<bool>("Large", false);
             TelegramWidget = WidgetEmbedCodeGenerator.GenerateRedirectEmbedCode(
             botName,
-            LoginCallback,
-            //$"{config["AuthServer:Authority"]}/{Url.Action("tgcallback", "account")}",
-            ButtonStyle.Medium,
+            LoginCallback,            
+            useLargeButton?ButtonStyle.Large: ButtonStyle.Medium,
             true,
             true);
         }        

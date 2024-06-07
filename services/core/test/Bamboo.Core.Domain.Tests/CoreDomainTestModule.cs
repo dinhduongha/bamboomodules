@@ -1,5 +1,4 @@
-﻿using Bamboo.Core.EntityFrameworkCore;
-using Volo.Abp.Modularity;
+﻿using Volo.Abp.Modularity;
 
 namespace Bamboo.Core;
 

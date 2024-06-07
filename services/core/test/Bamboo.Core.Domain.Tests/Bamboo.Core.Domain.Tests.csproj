@@ -9,8 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-    <ProjectReference Include="..\Bamboo.Core.EntityFrameworkCore.Tests\Bamboo.Core.EntityFrameworkCore.Tests.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Bamboo.Core.Domain\Bamboo.Core.Domain.csproj" />
+    <ProjectReference Include="..\Bamboo.Core.TestBase\Bamboo.Core.TestBase.csproj" />
+  </ItemGroup>
 </Project>
