@@ -11,11 +11,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("bus_presence")]
-public partial class BusPresence: Entity<long>, IEntityDto<long>
+public partial class BusPresence : Entity<Guid>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

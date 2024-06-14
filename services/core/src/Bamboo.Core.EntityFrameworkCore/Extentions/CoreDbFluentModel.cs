@@ -7574,7 +7574,9 @@ public static class CoreDbtModelFluentCreatingExtensions
                 .IsUnique()
                 .HasFilter("(user_id IS NOT NULL)");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.GuestId).HasColumnName("guest_id");
             entity.Property(e => e.LastPoll)
                 .HasColumnType("timestamp without time zone")
