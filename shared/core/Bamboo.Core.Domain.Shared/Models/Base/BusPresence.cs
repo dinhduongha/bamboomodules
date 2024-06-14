@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("bus_presence")]
-public partial class BusPresence : Entity<Guid>, IEntityDto<long>
+public partial class BusPresence : Entity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
