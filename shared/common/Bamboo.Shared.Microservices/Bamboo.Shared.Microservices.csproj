@@ -8,11 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
+    <PackageReference Include="DistributedLock.FileSystem" Version="1.0.2" />
     <PackageReference Include="Hangfire.LiteDB" Version="0.4.1" />
     <PackageReference Include="IdentityModel" Version="6.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.*" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Rebus.ServiceProvider" Version="10.1.0" />
+    <PackageReference Include="Rebus.Redis" Version="0.0.1" />
+    <PackageReference Include="Rebus.PostgreSql" Version="9.1.1" />
     <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.1.0" />
@@ -28,6 +32,7 @@
     <PackageReference Include="Volo.Abp.EventBus.Azure" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.EventBus.Kafka" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="8.1.0" />
+    <PackageReference Include="Volo.Abp.EventBus.Rebus" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.Identity.Application" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.Localization" Version="8.1.0" />
     <PackageReference Include="Volo.Abp.MongoDB" Version="8.1.0" />

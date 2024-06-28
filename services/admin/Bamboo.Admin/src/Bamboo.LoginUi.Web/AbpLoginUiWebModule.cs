@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+
 
 using OpenIddict.Validation.AspNetCore;
 
@@ -43,7 +45,7 @@ using Volo.Abp.SettingManagement;
 
 using Bamboo.Abp.LoginUi.Web.Localization;
 using Bamboo.Abp.VerificationCode;
-using Microsoft.AspNetCore.Authentication;
+
 
 namespace Bamboo.Abp.LoginUi.Web;
 [DependsOn(

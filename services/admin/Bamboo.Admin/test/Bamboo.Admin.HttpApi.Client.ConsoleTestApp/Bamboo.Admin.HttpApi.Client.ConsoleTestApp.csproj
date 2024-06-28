@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="8.1.0" />
+    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="8.2.0" />
     <ProjectReference Include="..\..\src\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" />
   </ItemGroup>
 

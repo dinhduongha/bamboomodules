@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
+using Medallion.Threading.FileSystem;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
@@ -21,13 +22,15 @@ using Volo.Abp.BackgroundJobs.RabbitMQ;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
+using Volo.Abp.EventBus.Azure;
+using Volo.Abp.EventBus.Kafka;
 using Volo.Abp.EventBus.RabbitMq;
+using Volo.Abp.EventBus.Rebus;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
-
-//using AbpShared.Hosting.AspNetCore;
+using Volo.Abp.Timing;
 
 [DependsOn(
 	typeof(AbpAutofacModule),
@@ -37,10 +40,12 @@ using Volo.Abp.EntityFrameworkCore.PostgreSql;
     typeof(AbpAspNetCoreMultiTenancyModule),
     typeof(AbpDistributedLockingModule),
     typeof(AbpSwashbuckleModule),
+    //typeof(AbpEventBusAzureModule),
+    //typeof(AbpEventBusKafkaModule),
+    //typeof(AbpEventBusRebusModule),
     //typeof(AbpEventBusRabbitMqModule),
-    //typeof(AbpBackgroundJobsRabbitMqModule),
-    //typeof(AbpSharedHostingAspNetCoreModule),
-	typeof(AbpEntityFrameworkCoreModule),
+    //typeof(AbpBackgroundJobsRabbitMqModule),    
+    typeof(AbpEntityFrameworkCoreModule),
     typeof(AbpEntityFrameworkCorePostgreSqlModule)
 )]
 public class AbpSharedHostingMicroservicesModule : AbpModule
@@ -56,6 +61,10 @@ public class AbpSharedHostingMicroservicesModule : AbpModule
             jsonOptions.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             //jsonOptions.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
+
+        Configure<AbpClockOptions>(options => options.Kind = DateTimeKind.Utc);
+
+
         Configure<AbpDbContextOptions>(options =>
         {
             options.UseNpgsql();
@@ -141,6 +150,10 @@ public class AbpSharedHostingMicroservicesModule : AbpModule
             dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, $"{appName}-Protection-Keys");
             return;
         }
+        else
+        {
+            dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo($".{appName}-bamboo.Protection-Keys"));
+        }
         //if (!hostingEnvironment.IsDevelopment())
         //{
         //    var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
@@ -158,8 +171,8 @@ public class AbpSharedHostingMicroservicesModule : AbpModule
             bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
             if (!enabledRedis)
             {
-                //DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
-                //return new FileDistributedSynchronizationProvider(lockFileDirectory);
+                DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
+                return new FileDistributedSynchronizationProvider(lockFileDirectory);
             }
             else
             {
@@ -191,7 +204,7 @@ public class AbpSharedHostingMicroservicesModule : AbpModule
 
         //     var configuration = context.GetConfiguration();
         //     options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-        //     options.OAuthScopes("Starify");
+        //     options.OAuthScopes("Bamboo");
         // });
     }
 }

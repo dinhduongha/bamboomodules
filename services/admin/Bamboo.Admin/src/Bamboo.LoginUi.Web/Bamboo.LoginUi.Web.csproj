@@ -35,15 +35,15 @@
     <PackageReference Include="AspNet.Security.OAuth.Instagram" Version="8.0.*" />
     <PackageReference Include="AspNet.Security.OAuth.Line" Version="8.0.*" />
     <PackageReference Include="AspNet.Security.OAuth.Zalo" Version="8.0.*" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.Identity.Web" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.Sms" Version="8.1.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="8.1.0" />
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.Web" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Sms" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="8.2.0" />
     <PackageReference Include="Telegram.Bot.Extensions.LoginWidget" Version="1.2.0" />
     <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="8.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.Keycloak" Version="8.0.0" />
