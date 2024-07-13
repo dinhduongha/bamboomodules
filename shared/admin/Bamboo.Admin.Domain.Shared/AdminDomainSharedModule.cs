@@ -1,7 +1,10 @@
 ﻿using Bamboo.Admin.Localization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
+using Volo.Abp.Guids;
 using Volo.Abp.Identity;
 using Volo.Abp.Localization;
 using Volo.Abp.Localization.ExceptionHandling;
@@ -35,6 +38,12 @@ public class AdminDomainSharedModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        Configure<AbpSequentialGuidGeneratorOptions>(options =>
+        {
+            options.DefaultSequentialGuidType = SequentialGuidType.SequentialAsString;
+        });
+        context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, MySequentialGuidGenerator>());
+
         Configure<AbpVirtualFileSystemOptions>(options =>
         {
             options.FileSets.AddEmbedded<AdminDomainSharedModule>();

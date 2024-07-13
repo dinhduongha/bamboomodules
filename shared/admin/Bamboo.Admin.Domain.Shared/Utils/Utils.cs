@@ -10,6 +10,18 @@ public partial class Utils
     //private static readonly IUlidRng DEFAULTRNG = new CSUlidRng();
     private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
 
+    public static Guid NewGuid(long randPart)
+    {
+        var randomPart = BitConverter.GetBytes(randPart);
+        if (BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(randomPart);
+        }
+        byte[] bytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0,
+                                    randomPart[0], randomPart[1], randomPart[2], randomPart[3],
+                                    randomPart[4], randomPart[5], randomPart[6], randomPart[7]};
+        return new Guid(bytes);
+    }
     public static Guid NewGuid(DateTime timePart, long randPart)
     {
         var d = DateTimeOffsetToByteArray(timePart);
@@ -49,10 +61,11 @@ public partial class Utils
     {
         var micros = (value.Ticks / 10) - UNIXEPOCHMICROSECONDS;
         var mc = BitConverter.GetBytes(micros / 1000);
-        var mx = new[] { mc[7], mc[6], mc[5], mc[4], mc[3], mc[2], mc[1], mc[0] };
+        //var mx = new[] { mc[7], mc[6], mc[5], mc[4], mc[3], mc[2], mc[1], mc[0] };
         var mb = BitConverter.GetBytes(micros / 1000);
         var mm = BitConverter.GetBytes(micros % 1000);
-        var ret = new[] { mb[5], mb[4], mb[3], mb[2], mb[1], mb[0], mm[1], mm[0] };                                  // Drop byte 6 & 7
+        //var ret = new[] { mb[5], mb[4], mb[3], mb[2], mb[1], mb[0], mm[1], mm[0] };                                  // Drop byte 6 & 7
+        var ret = new[] { mb[5], mb[4], mb[3], mb[2], mb[1], mb[0], (byte)0x00, (byte)0x70 }; // UUIDv7
         return ret;
     }
 
