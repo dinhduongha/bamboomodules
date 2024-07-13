@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Volo.Abp.Threading;
-
+namespace Bamboo.Admin.Domain.Shared;
 public partial class Utils
 {
     private const long UNIXEPOCHMICROSECONDS = 62135596800000000;

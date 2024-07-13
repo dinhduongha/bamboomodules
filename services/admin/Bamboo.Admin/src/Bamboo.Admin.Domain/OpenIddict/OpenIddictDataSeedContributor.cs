@@ -65,6 +65,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
             "Pos",
             "Crm",
             "Push",
+            "Hrm",
         };
         foreach (var scope in scopeNames)
         {

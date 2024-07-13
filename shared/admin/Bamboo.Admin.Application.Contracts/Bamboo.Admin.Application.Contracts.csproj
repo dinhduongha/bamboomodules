@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Bamboo.Admin</RootNamespace>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
   </ItemGroup>

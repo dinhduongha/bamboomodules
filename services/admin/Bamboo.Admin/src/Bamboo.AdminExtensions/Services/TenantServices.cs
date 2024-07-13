@@ -27,7 +27,7 @@ using Volo.Abp.Identity.EntityFrameworkCore;
 
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
 using Bamboo.AdminExtensions.Dtos;
-using Bamboo.Admin;
+using Bamboo.Admin.Domain.Shared;
 using static Volo.Abp.TenantManagement.TenantManagementPermissions;
 
 namespace Bamboo.AdminExtensions;

@@ -31,10 +31,11 @@
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Autofac" Version="8.2.0" />
-    <ProjectReference Include="..\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
     <ProjectReference Include="..\Bamboo.Admin.EntityFrameworkCore\Bamboo.Admin.EntityFrameworkCore.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\shared\admin\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="Logs\**" />
     <Content Remove="Logs\**" />
