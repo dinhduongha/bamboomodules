@@ -5,20 +5,24 @@ using Blazorise.Icons.FontAwesome;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.OpenApi.Models;
+using Bamboo.Blazor.Components;
 using Bamboo.Blazor.Menus;
 using Bamboo.Admin.Localization;
 using Bamboo.Admin.MultiTenancy;
 using StackExchange.Redis;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.OpenIdConnect;
+using Volo.Abp.AspNetCore.Components.Web;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
@@ -43,6 +47,7 @@ using Volo.Abp.Identity.Blazor.Server;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
+using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Blazor.Server;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Blazor.Server;
@@ -51,8 +56,7 @@ using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 using Bamboo.Admin;
-using Bamboo.Admin.Localization;
-using Bamboo.Admin.MultiTenancy;
+using Bamboo.BlazorServer.Components;
 
 namespace Bamboo.Blazor;
 
@@ -85,12 +89,21 @@ public class BambooBlazorModule : AbpModule
                 typeof(BambooBlazorModule).Assembly
             );
         });
+
+        PreConfigure<AbpAspNetCoreComponentsWebOptions>(options =>
+        {
+            options.IsBlazorWebApp = true;
+        });
     }
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
+
+        // Add services to the container.
+        context.Services.AddRazorComponents()
+            .AddInteractiveServerComponents();
 
         ConfigureUrls(configuration);
         ConfigureCache();
@@ -143,7 +156,7 @@ public class BambooBlazorModule : AbpModule
                 {
                     bundle.AddFiles("/blazor-global-styles.css");
                     //You can remove the following line if you don't use Blazor CSS isolation for components
-                    //bundle.AddFiles("/Bamboo.Blazor.styles.css");
+                    bundle.AddFiles(new BundleFile("/Bamboo.Blazor.styles.css", true));
                 }
             );
         });
@@ -172,7 +185,7 @@ public class BambooBlazorModule : AbpModule
             .AddAbpOpenIdConnect("oidc", options =>
             {
                 options.Authority = configuration["AuthServer:Authority"];
-                options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+                options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
                 options.ResponseType = OpenIdConnectResponseType.CodeIdToken;
 
                 options.ClientId = configuration["AuthServer:ClientId"];
@@ -186,6 +199,54 @@ public class BambooBlazorModule : AbpModule
                 options.Scope.Add("phone");
                 options.Scope.Add("Bamboo");
             });
+            /*
+            * This configuration is used when the AuthServer is running on the internal network such as docker or k8s.
+            * Configuring the redirecting URLs for internal network and the web
+            * The login and the logout URLs are configured to redirect to the AuthServer real DNS for browser.
+            * The token acquired and validated from the the internal network AuthServer URL.
+            */
+            if (configuration.GetValue<bool>("AuthServer:IsContainerized"))
+            {
+                context.Services.Configure<OpenIdConnectOptions>("oidc", options =>
+                {
+                    options.TokenValidationParameters.ValidIssuers = new[]
+                    {
+                        configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/'),
+                        configuration["AuthServer:Authority"]!.EnsureEndsWith('/')
+                    };
+
+                    options.MetadataAddress = configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/') +
+                                            ".well-known/openid-configuration";
+
+                    var previousOnRedirectToIdentityProvider = options.Events.OnRedirectToIdentityProvider;
+                    options.Events.OnRedirectToIdentityProvider = async ctx =>
+                    {
+                        // Intercept the redirection so the browser navigates to the right URL in your host
+                        ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/authorize";
+
+                        if (previousOnRedirectToIdentityProvider != null)
+                        {
+                            await previousOnRedirectToIdentityProvider(ctx);
+                        }
+                    };
+                    var previousOnRedirectToIdentityProviderForSignOut = options.Events.OnRedirectToIdentityProviderForSignOut;
+                    options.Events.OnRedirectToIdentityProviderForSignOut = async ctx =>
+                    {
+                        // Intercept the redirection for signout so the browser navigates to the right URL in your host
+                        ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/logout";
+
+                        if (previousOnRedirectToIdentityProviderForSignOut != null)
+                        {
+                            await previousOnRedirectToIdentityProviderForSignOut(ctx);
+                        }
+                    };
+                });
+            }
+
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
+        {
+            options.IsDynamicClaimsEnabled = true;
+        });
     }
 
     private void ConfigureVirtualFileSystem(IWebHostEnvironment hostingEnvironment)
@@ -194,8 +255,9 @@ public class BambooBlazorModule : AbpModule
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
+                //options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
                 options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
                 options.FileSets.ReplaceEmbeddedByPhysical<BambooBlazorModule>(hostingEnvironment.ContentRootPath);
             });
         }
@@ -257,7 +319,7 @@ public class BambooBlazorModule : AbpModule
         var dataProtectionBuilder = context.Services.AddDataProtection().SetApplicationName("Bamboo");
         if (!hostingEnvironment.IsDevelopment())
         {
-            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]);
+            var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis, "Bamboo-Protection-Keys");
         }
     }
@@ -268,8 +330,7 @@ public class BambooBlazorModule : AbpModule
     {
         context.Services.AddSingleton<IDistributedLockProvider>(sp =>
         {
-            var connection = ConnectionMultiplexer
-                .Connect(configuration["Redis:Configuration"]);
+            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
             return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         });
     }
@@ -300,7 +361,8 @@ public class BambooBlazorModule : AbpModule
         {
             app.UseMultiTenancy();
         }
-
+        app.UseDynamicClaims();
+        app.UseAntiforgery();
         app.UseAuthorization();
         app.UseSwagger();
         app.UseAbpSwaggerUI(options =>
@@ -308,6 +370,11 @@ public class BambooBlazorModule : AbpModule
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
         });
         app.UseAbpSerilogEnrichers();
-        app.UseConfiguredEndpoints();
+        app.UseConfiguredEndpoints(builder =>
+        {
+            builder.MapRazorComponents<App>()
+                .AddInteractiveServerRenderMode()
+                .AddAdditionalAssemblies(builder.ServiceProvider.GetRequiredService<IOptions<AbpRouterOptions>>().Value.AdditionalAssemblies.ToArray());
+        });
     }
 }
