@@ -64,8 +64,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
             "Core",
             "Pos",
             "Crm",
-            "Push",
             "Hrm",
+            "Push",            
         };
         foreach (var scope in scopeNames)
         {
@@ -102,15 +102,16 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         var webClientId = configurationSection["Bamboo_Web:ClientId"];
         if (!webClientId.IsNullOrWhiteSpace())
         {
-            var webClientRootUrl = configurationSection["Bamboo_Web:RootUrl"].EnsureEndsWith('/');            
+            var webClientRootUrl = configurationSection["Bamboo_Web:RootUrl"]!.EnsureEndsWith('/');            
             var redirectUris = configurationSection.GetSection("Bamboo_Web:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configurationSection.GetSection("Bamboo_Web:PostLogoutRedirectUris").Get<List<string>>();
             /* Admin_Web client is only needed if you created a tiered
              * solution. Otherwise, you can delete this client. */
             await CreateApplicationAsync(
                 name: webClientId!,
                 type: OpenIddictConstants.ClientTypes.Confidential,
                 consentType: OpenIddictConstants.ConsentTypes.Implicit,
-                displayName: "Web Application",
+                displayName: "Web MVC Application",
                 secret: configurationSection["Bamboo_Web:ClientSecret"] ?? "1q2w3E*",
                 grantTypes: new List<string> //Hybrid flow
                 {
@@ -121,7 +122,35 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 redirectUri: $"{webClientRootUrl}signin-oidc",
                 clientUri: webClientRootUrl,
                 redirectUris: redirectUris,
-                postLogoutRedirectUri: $"{webClientRootUrl}signout-callback-oidc"
+                postLogoutRedirectUri: $"{webClientRootUrl}signout-callback-oidc",
+                postLogoutRedirectUris: postLogoutRedirectUris
+            );
+        }
+
+        // Blazor WebApp Tiered Client
+        var blazorWebAppTieredClientId = configurationSection["Bamboo_BlazorWebAppTiered:ClientId"];
+        if (!blazorWebAppTieredClientId.IsNullOrWhiteSpace())
+        {
+            var blazorWebAppTieredRootUrl = configurationSection["Bamboo_BlazorWebAppTiered:RootUrl"]!.EnsureEndsWith('/');
+            var redirectUris = configurationSection.GetSection("Bamboo_BlazorWebAppTiered:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configurationSection.GetSection("Bamboo_BlazorWebAppTiered:PostLogoutRedirectUris").Get<List<string>>();
+            await CreateApplicationAsync(
+                name: blazorWebAppTieredClientId!,
+                type: OpenIddictConstants.ClientTypes.Confidential,
+                consentType: OpenIddictConstants.ConsentTypes.Implicit,
+                displayName: "Blazor WebApp Application",
+                secret: configurationSection["Bamboo_BlazorWebAppTiered:ClientSecret"] ?? "1q2w3e*",
+                grantTypes: new List<string> //Hybrid flow
+                {
+                    OpenIddictConstants.GrantTypes.AuthorizationCode,
+                    OpenIddictConstants.GrantTypes.Implicit
+                },
+                scopes: commonScopes, 
+                redirectUri: $"{blazorWebAppTieredRootUrl}signin-oidc",
+                clientUri: blazorWebAppTieredRootUrl,
+                redirectUris: redirectUris,
+                postLogoutRedirectUri: $"{blazorWebAppTieredRootUrl}signout-callback-oidc",
+                postLogoutRedirectUris: postLogoutRedirectUris
             );
         }
 
@@ -129,8 +158,9 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         var blazorServerTieredClientId = configurationSection["Bamboo_BlazorServerTiered:ClientId"];
         if (!blazorServerTieredClientId.IsNullOrWhiteSpace())
         {
-            var blazorServerTieredRootUrl = configurationSection["Bamboo_BlazorServerTiered:RootUrl"].EnsureEndsWith('/');
+            var blazorServerTieredRootUrl = configurationSection["Bamboo_BlazorServerTiered:RootUrl"]!.EnsureEndsWith('/');
             var redirectUris = configurationSection.GetSection("Bamboo_BlazorServerTiered:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configurationSection.GetSection("Bamboo_BlazorServerTiered:PostLogoutRedirectUris").Get<List<string>>();
             await CreateApplicationAsync(
                 name: blazorServerTieredClientId!,
                 type: OpenIddictConstants.ClientTypes.Confidential,
@@ -146,7 +176,33 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 redirectUri: $"{blazorServerTieredRootUrl}signin-oidc",
                 clientUri: blazorServerTieredRootUrl,
                 redirectUris: redirectUris,
-                postLogoutRedirectUri: $"{blazorServerTieredRootUrl}signout-callback-oidc"
+                postLogoutRedirectUri: $"{blazorServerTieredRootUrl}signout-callback-oidc",
+                postLogoutRedirectUris: postLogoutRedirectUris
+            );
+        }
+        // Mobile Client
+        var MobileClientId = configurationSection["Bamboo_Mobile:ClientId"];
+        if (!MobileClientId.IsNullOrWhiteSpace())
+        {
+            var MobileRootUrl = configurationSection["Bamboo_Mobile:RootUrl"]!.EnsureEndsWith('/');
+            var mobileScopes = commonScopes;
+            mobileScopes.AddFirst("offline_access");
+            await CreateApplicationAsync(
+                name: MobileClientId,
+                type: OpenIddictConstants.ClientTypes.Confidential,
+                consentType: OpenIddictConstants.ConsentTypes.Implicit,
+                displayName: "Mobile Application",
+                scopes: mobileScopes,
+                grantTypes: new List<string>
+                {
+                    OpenIddictConstants.GrantTypes.AuthorizationCode,                    
+                    OpenIddictConstants.GrantTypes.Password
+                },
+                secret: configurationSection["Bamboo_Mobile:ClientSecret"] ?? "1q2w3E*",                
+                redirectUri: $"{MobileRootUrl}authenticated",
+                redirectUris: null,
+                postLogoutRedirectUri: $"{MobileRootUrl}signout-callback-oidc"
+                //corsOrigins: new[] { MobileRootUrl.RemovePostFix("/") }
             );
         }
 
@@ -156,11 +212,12 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         {
             var consoleAndAngularClientRootUrl = configurationSection["Bamboo_App:RootUrl"]?.TrimEnd('/');
             var redirectUris = configurationSection.GetSection("Bamboo_App:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configurationSection.GetSection("Bamboo_App:PostLogoutRedirectUris").Get<List<string>>();
             await CreateApplicationAsync(
                 name: consoleAndAngularClientId!,
                 type: OpenIddictConstants.ClientTypes.Public,
                 consentType: OpenIddictConstants.ConsentTypes.Implicit,
-                displayName: "Console Test / Angular Application",
+                displayName: "Console / Angular Application",
                 secret: null,
                 grantTypes: new List<string>
                 {
@@ -173,16 +230,18 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 redirectUri: consoleAndAngularClientRootUrl,
                 clientUri: consoleAndAngularClientRootUrl,
                 redirectUris: redirectUris,
-                postLogoutRedirectUri: consoleAndAngularClientRootUrl
+                postLogoutRedirectUri: consoleAndAngularClientRootUrl,
+                postLogoutRedirectUris: postLogoutRedirectUris
             );
         }
 
-        // Blazor Client
+        // Blazor Wasm Client
         var blazorClientId = configurationSection["Bamboo_Blazor:ClientId"];
         if (!blazorClientId.IsNullOrWhiteSpace())
         {
             var blazorRootUrl = configurationSection["Bamboo_Blazor:RootUrl"]?.TrimEnd('/');
-            var redirectUris = configurationSection.GetSection("Bamboo_App:RedirectUris").Get<List<string>>();
+            var redirectUris = configurationSection.GetSection("Bamboo_Blazor:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configurationSection.GetSection("Bamboo_Blazor:PostLogoutRedirectUris").Get<List<string>>();
             await CreateApplicationAsync(
                 name: blazorClientId!,
                 type: OpenIddictConstants.ClientTypes.Public,
@@ -197,7 +256,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 redirectUri: $"{blazorRootUrl}/authentication/login-callback",
                 clientUri: blazorRootUrl,
                 redirectUris: redirectUris,
-                postLogoutRedirectUri: $"{blazorRootUrl}/authentication/logout-callback"
+                postLogoutRedirectUri: $"{blazorRootUrl}/authentication/logout-callback",
+                postLogoutRedirectUris: postLogoutRedirectUris
             );
         }
 
@@ -238,7 +298,9 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         string? redirectUri = null,
         string? postLogoutRedirectUri = null,
         List<string>? permissions = null,
-        List<string>? redirectUris = null)
+        List<string>? redirectUris = null,
+        List<string>? postLogoutRedirectUris = null
+        )
     {
         if (!string.IsNullOrEmpty(secret) && string.Equals(type, OpenIddictConstants.ClientTypes.Public,
                 StringComparison.OrdinalIgnoreCase))
@@ -428,16 +490,34 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                     }
                 }
             }
-
-            if (permissions != null)
+        if (postLogoutRedirectUris != null)
+        {
+            foreach (var p in postLogoutRedirectUris)
             {
-                await _permissionDataSeeder.SeedAsync(
-                    ClientPermissionValueProvider.ProviderName,
-                    name,
-                    permissions,
-                    null
-                );
+                if (!p.IsNullOrEmpty())
+                {
+                    var redirect = p.TrimEnd('/');
+                    if (!Uri.TryCreate(redirect, UriKind.Absolute, out var uri) || !uri.IsWellFormedOriginalString())
+                    {
+                        throw new BusinessException(L["InvalidRedirectUri", redirect]);
+                    }
+
+                    if (application.PostLogoutRedirectUris.All(x => x != uri))
+                    {
+                        application.PostLogoutRedirectUris.Add(uri);
+                    }
+                }
             }
+        }
+        if (permissions != null)
+        {
+            await _permissionDataSeeder.SeedAsync(
+                ClientPermissionValueProvider.ProviderName,
+                name,
+                permissions,
+                null
+            );
+        }
         if (client == null)
         {
             await _applicationManager.CreateAsync(application);
