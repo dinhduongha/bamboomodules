@@ -36,7 +36,7 @@ public partial class FleetVehicle: Entity<Guid>, IEntityDto<Guid>, IMultiTenant,
     public Guid? ModelId { get; set; }
 
     [Column("brand_id")]
-    public long? BrandId { get; set; }
+    public Guid? BrandId { get; set; }
 
     [Column("state_id")]
     public long? StateId { get; set; }
@@ -54,7 +54,7 @@ public partial class FleetVehicle: Entity<Guid>, IEntityDto<Guid>, IMultiTenant,
     public long? Power { get; set; }
 
     [Column("category_id")]
-    public long? CategoryId { get; set; }
+    public Guid? CategoryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

@@ -39,7 +39,7 @@ public partial class FleetVehicleLogService: Entity<Guid>, IEntityDto<Guid>, IMu
     public Guid? VendorId { get; set; }
 
     [Column("service_type_id")]
-    public long ServiceTypeId { get; set; }
+    public Guid ServiceTypeId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_partner_autocomplete_sync")]
-public partial class ResPartnerAutocompleteSync: Entity<Guid>, IEntityDto<Guid>
+public partial class ResPartnerAutocompleteSync : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -34,6 +37,10 @@ public partial class ResPartnerAutocompleteSync: Entity<Guid>, IEntityDto<Guid>
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("TenantId")]
+    [NotMapped]
+    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ResPartnerAutocompleteSyncCreateUs")]

@@ -13,17 +13,20 @@ namespace Bamboo.Core.Models;
 [Table("res_partner_category")]
 //[Index("ParentId", Name = "res_partner_category_parent_id_index")]
 //[Index("ParentPath", Name = "res_partner_category_parent_path_index")]
-public partial class ResPartnerCategory: Entity<long>, IEntityDto<long>
+public partial class ResPartnerCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
 
     [Column("parent_id")]
-    public long? ParentId { get; set; }
+    public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -45,6 +48,10 @@ public partial class ResPartnerCategory: Entity<long>, IEntityDto<long>
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("TenantId")]
+    [NotMapped]
+    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ResPartnerCategoryCreateUs")]

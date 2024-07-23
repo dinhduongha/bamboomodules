@@ -78,7 +78,7 @@ public partial class IrUiView: Entity<Guid>, IEntityDto<Guid>
     public Guid? WebsiteId { get; set; }
 
     [Column("theme_template_id")]
-    public long? ThemeTemplateId { get; set; }
+    public Guid? ThemeTemplateId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }

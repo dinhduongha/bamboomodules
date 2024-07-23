@@ -75,7 +75,7 @@ public partial class IrActServer: Entity<Guid>, IEntityDto<Guid>
     public Guid? TemplateId { get; set; }
 
     [Column("activity_type_id")]
-    public long? ActivityTypeId { get; set; }
+    public Guid? ActivityTypeId { get; set; }
 
     [Column("activity_date_deadline_range")]
     public long? ActivityDateDeadlineRange { get; set; }

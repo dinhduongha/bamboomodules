@@ -29,7 +29,7 @@ public partial class ProductPricelistItem: Entity<Guid>, IEntityDto<Guid>, IMult
     public long? CurrencyId { get; set; }
 
     [Column("categ_id")]
-    public long? CategId { get; set; }
+    public Guid? CategId { get; set; }
 
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }

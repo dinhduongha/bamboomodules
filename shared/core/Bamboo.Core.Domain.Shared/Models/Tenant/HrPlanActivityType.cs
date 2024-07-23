@@ -21,7 +21,7 @@ public partial class HrPlanActivityType: Entity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("activity_type_id")]
-    public long? ActivityTypeId { get; set; }
+    public Guid? ActivityTypeId { get; set; }
 
     [Column("responsible_id")]
     public Guid? ResponsibleId { get; set; }

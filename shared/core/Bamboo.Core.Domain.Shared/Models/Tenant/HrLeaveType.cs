@@ -33,10 +33,10 @@ public partial class HrLeaveType: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, 
     public Guid? ResponsibleId { get; set; }
 
     [Column("leave_notif_subtype_id")]
-    public long? LeaveNotifSubtypeId { get; set; }
+    public Guid? LeaveNotifSubtypeId { get; set; }
 
     [Column("allocation_notif_subtype_id")]
-    public long? AllocationNotifSubtypeId { get; set; }
+    public Guid? AllocationNotifSubtypeId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

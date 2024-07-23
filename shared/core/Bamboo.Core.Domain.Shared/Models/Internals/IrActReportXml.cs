@@ -48,7 +48,7 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
     public DateTime? LastModificationTime { get; set; }
 
     [Column("paperformat_id")]
-    public long? PaperformatId { get; set; }
+    public Guid? PaperformatId { get; set; }
 
     [Column("model")]
     public string? Model { get; set; }

@@ -23,7 +23,7 @@ public partial class StockPutawayRule: Entity<Guid>, IEntityDto<Guid>, IMultiTen
     public Guid? ProductId { get; set; }
 
     [Column("category_id")]
-    public long? CategoryId { get; set; }
+    public Guid? CategoryId { get; set; }
 
     [Column("location_in_id")]
     public Guid? LocationInId { get; set; }

@@ -27,7 +27,7 @@ public partial class AccountFiscalPosition: Entity<Guid>, IEntityDto<Guid>, IMul
     public long? CountryId { get; set; }
 
     [Column("country_group_id")]
-    public long? CountryGroupId { get; set; }
+    public Guid? CountryGroupId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

@@ -65,7 +65,7 @@ public partial class CrmLead: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMay
     public Guid? PartnerId { get; set; }
 
     [Column("title")]
-    public long? Title { get; set; }
+    public Guid? Title { get; set; }
 
     [Column("lang_id")]
     public long? LangId { get; set; }
@@ -77,7 +77,7 @@ public partial class CrmLead: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMay
     public long? CountryId { get; set; }
 
     [Column("lost_reason_id")]
-    public long? LostReasonId { get; set; }
+    public Guid? LostReasonId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

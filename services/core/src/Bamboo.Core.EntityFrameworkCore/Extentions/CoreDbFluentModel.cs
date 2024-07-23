@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Bamboo.Core.Models;
 
 namespace Bamboo.Core.EntityFrameworkCore;
-public static class CoreDbtModelFluentCreatingExtensions
+public static class CoreDbModelFluentCreatingExtensions
 {
 
     public static void ConfigureCoreFluentExt(this ModelBuilder modelBuilder)
@@ -17,8 +17,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_account_pkey");
 
             entity.ToTable("account_account");
-
-            entity.HasIndex(e => new { e.Code, e.TenantId }, "account_account_code_company_uniq").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_account_company_id_index");
+            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_account_code_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -144,7 +144,13 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_account_tag");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.HasIndex(e => e.TenantId, "account_account_tag_company_id_index");
+
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Applicability).HasColumnName("applicability");
             entity.Property(e => e.Color).HasColumnName("color");
@@ -161,6 +167,11 @@ public static class CoreDbtModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_account_tag_company_id_fkey");
 
             entity.HasOne<ResCountry>().WithMany()
                 .HasForeignKey(d => d.CountryId)
@@ -183,10 +194,12 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_account_template_pkey");
 
             entity.ToTable("account_account_template");
+            entity.HasIndex(e => e.TenantId, "account_account_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountType).HasColumnName("account_type");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
             entity.Property(e => e.Code).HasColumnName("code");
@@ -206,6 +219,11 @@ public static class CoreDbtModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_account_template_company_id_fkey");
 
             entity.HasOne(d => d.ChartTemplate).WithMany(p => p.AccountAccountTemplates)
                 .HasForeignKey(d => d.ChartTemplateId)
@@ -272,8 +290,12 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_account_type_pkey");
 
             entity.ToTable("account_account_type");
+            entity.HasIndex(e => e.TenantId, "account_account_type_company_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -286,6 +308,10 @@ public static class CoreDbtModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_account_type_company_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
@@ -428,14 +454,15 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_analytic_account");
 
+            entity.HasIndex(e => e.TenantId, "account_analytic_account_company_id_index");
             entity.HasIndex(e => e.Code, "account_analytic_account_code_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -493,10 +520,12 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_analytic_applicability_pkey");
 
             entity.ToTable("account_analytic_applicability");
+            entity.HasIndex(e => e.TenantId, "account_account_applicability_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountPrefix).HasColumnName("account_prefix");
             entity.Property(e => e.AnalyticPlanId).HasColumnName("analytic_plan_id");
             entity.Property(e => e.Applicability).HasColumnName("applicability");
@@ -510,6 +539,11 @@ public static class CoreDbtModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_account_applicability_company_id_fkey");
 
             entity.HasOne(d => d.AnalyticPlan).WithMany(p => p.AccountAnalyticApplicabilities)
                 .HasForeignKey(d => d.AnalyticPlanId)
@@ -538,16 +572,17 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_analytic_distribution_model");
 
+            entity.HasIndex(e => e.TenantId, "account_analytic_distribution_model_company_id_index");
             entity.HasIndex(e => e.AnalyticDistribution, "account_analytic_distribution_model_analytic_distribution_gin_i").HasMethod("gin");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountPrefix).HasColumnName("account_prefix");
             entity.Property(e => e.AnalyticDistribution)
                 .HasColumnType("jsonb")
                 .HasColumnName("analytic_distribution");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -954,6 +989,7 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_asset_depreciation_line");
 
+            entity.HasIndex(e => e.TenantId, "account_asset_depreciation_line_company_id_index");
             entity.HasIndex(e => e.DepreciationDate, "account_asset_depreciation_line_depreciation_date_index");
 
             entity.HasIndex(e => e.Name, "account_asset_depreciation_line_name_index");
@@ -961,6 +997,7 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AssetId).HasColumnName("asset_id");
             entity.Property(e => e.CreationTime)
@@ -1244,10 +1281,12 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_bank_statement_import_pkey");
 
             entity.ToTable("account_bank_statement_import");
+            entity.HasIndex(e => e.TenantId, "account_bank_statement_import_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1291,9 +1330,12 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_bank_statement_import_journal_creation");
 
+            entity.HasIndex(e => e.TenantId, "account_bank_statement_import_journal_creation_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1326,6 +1368,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_bank_statement_line");
 
+            entity.HasIndex(e => e.TenantId, "account_bank_statement_line_company_id_index");
+
             entity.HasIndex(e => e.InternalIndex, "account_bank_statement_line_internal_index_index");
 
             entity.HasIndex(e => e.UniqueImportId, "account_bank_statement_line_unique_import_id").IsUnique();
@@ -1333,6 +1377,7 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountNumber).HasColumnName("account_number");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AmountCurrency).HasColumnName("amount_currency");
@@ -1425,9 +1470,12 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_bankbook_report");
 
+            entity.HasIndex(e => e.TenantId, "account_bankbook_report_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1547,9 +1595,12 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_cash_rounding");
 
+            entity.HasIndex(e => e.TenantId, "account_cash_rounding_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1582,9 +1633,12 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_cashbook_report");
 
+            entity.HasIndex(e => e.TenantId, "account_cashbook_report_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1650,6 +1704,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_chart_template_pkey");
 
             entity.ToTable("account_chart_template");
+
+            entity.HasIndex(e => e.TenantId, "account_chart_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2138,6 +2194,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_daybook_report");
 
+            entity.HasIndex(e => e.TenantId, "account_daybook_report_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -2204,7 +2262,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_edi_document");
 
-            entity.HasIndex(e => new { e.EdiFormatId, e.MoveId }, "account_edi_document_unique_edi_document_by_move_by_format").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_edi_document_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.EdiFormatId, e.MoveId }, "account_edi_document_unique_edi_document_by_move_by_format").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2256,9 +2316,14 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_edi_format");
 
+            entity.HasIndex(e => e.TenantId, "account_edi_format_company_id_index");
+
             entity.HasIndex(e => e.Code, "account_edi_format_unique_code").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -2286,6 +2351,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_financial_report_pkey");
 
             entity.ToTable("account_financial_report");
+
+            entity.HasIndex(e => e.TenantId, "account_financial_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2486,7 +2553,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_account");
 
-            entity.HasIndex(e => new { e.PositionId, e.AccountSrcId, e.AccountDestId }, "account_fiscal_position_account_account_src_dest_uniq").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_fiscal_position_account_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.PositionId, e.AccountSrcId, e.AccountDestId }, "account_fiscal_position_account_account_src_dest_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2541,6 +2610,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_account_template");
 
+            entity.HasIndex(e => e.TenantId, "account_fiscal_position_account_template_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -2588,7 +2659,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_tax");
 
-            entity.HasIndex(e => new { e.PositionId, e.TaxSrcId, e.TaxDestId }, "account_fiscal_position_tax_tax_src_dest_uniq").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_fiscal_position_tax_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.PositionId, e.TaxSrcId, e.TaxDestId }, "account_fiscal_position_tax_tax_src_dest_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2643,6 +2716,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_tax_template");
 
+            entity.HasIndex(e => e.TenantId, "account_fiscal_position_tax_template_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -2689,6 +2764,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_fiscal_position_template_pkey");
 
             entity.ToTable("account_fiscal_position_template");
+
+            entity.HasIndex(e => e.TenantId, "account_fiscal_position_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2805,6 +2882,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_full_reconcile");
 
+            entity.HasIndex(e => e.TenantId, "account_full_reconcile_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -2892,6 +2971,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_group_template");
 
+            entity.HasIndex(e => e.TenantId, "account_group_template_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -2938,6 +3019,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_incoterms");
 
+            entity.HasIndex(e => e.TenantId, "account_incoterms_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -2971,6 +3054,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_invoice_send_pkey");
 
             entity.ToTable("account_invoice_send");
+
+            entity.HasIndex(e => e.TenantId, "account_invoice_send_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -3034,9 +3119,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_journal");
 
-            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_journal_code_company_uniq").IsUnique();
-
             entity.HasIndex(e => e.TenantId, "account_journal_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_journal_code_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -3192,6 +3277,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_journal_group");
 
+            entity.HasIndex(e => e.TenantId, "account_journal_group_company_id_index");
+
             entity.HasIndex(e => new { e.TenantId, e.Name }, "account_journal_group_uniq_name").IsUnique();
 
             entity.Property(e => e.Id)
@@ -3270,7 +3357,7 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.PaymentId, "account_move_payment_id_index").HasFilter("(payment_id IS NOT NULL)");
 
-            entity.HasIndex(e => new { e.JournalId, e.State, e.PaymentState, e.MoveType, e.Date }, "account_move_payment_idx");
+            entity.HasIndex(e => new { e.TenantId, e.JournalId, e.State, e.PaymentState, e.MoveType, e.Date }, "account_move_payment_idx");
 
             entity.HasIndex(e => e.PaymentReference, "account_move_payment_reference_index")
                 .HasMethod("gin")
@@ -3278,9 +3365,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ReversedEntryId, "account_move_reversed_entry_id_index").HasFilter("(reversed_entry_id IS NOT NULL)");
 
-            entity.HasIndex(e => new { e.JournalId, e.SequencePrefix, e.SequenceNumber, e.Name }, "account_move_sequence_index").IsDescending(false, true, true, false);
+            entity.HasIndex(e => new { e.TenantId, e.JournalId, e.SequencePrefix, e.SequenceNumber, e.Name }, "account_move_sequence_index").IsDescending(false, false, true, true, false);
 
-            entity.HasIndex(e => new { e.JournalId, e.Id, e.SequencePrefix }, "account_move_sequence_index2").IsDescending(false, true, false);
+            entity.HasIndex(e => new { e.TenantId, e.JournalId, e.Id, e.SequencePrefix }, "account_move_sequence_index2").IsDescending(false, false, true, false);
 
             entity.HasIndex(e => e.StockMoveId, "account_move_stock_move_id_index").HasFilter("(stock_move_id IS NOT NULL)");
 
@@ -3529,7 +3616,7 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.DateMaturity, "account_move_line_date_maturity_index");
 
-            entity.HasIndex(e => new { e.Date, e.MoveName, e.Id }, "account_move_line_date_name_id_idx").IsDescending(true, true, false);
+            entity.HasIndex(e => new { e.TenantId, e.Date, e.MoveName, e.Id }, "account_move_line_date_name_id_idx").IsDescending(false, true, true, false);
 
             entity.HasIndex(e => e.FullReconcileId, "account_move_line_full_reconcile_id_index").HasFilter("(full_reconcile_id IS NOT NULL)");
 
@@ -3541,7 +3628,7 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.MoveName, "account_move_line_move_name_index");
 
-            entity.HasIndex(e => new { e.PartnerId, e.Ref }, "account_move_line_partner_id_ref_idx");
+            entity.HasIndex(e => new { e.TenantId, e.PartnerId, e.Ref }, "account_move_line_partner_id_ref_idx");
 
             entity.HasIndex(e => e.PaymentId, "account_move_line_payment_id_index").HasFilter("(payment_id IS NOT NULL)");
 
@@ -3976,6 +4063,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_payment");
 
+            entity.HasIndex(e => e.TenantId, "account_payment_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -4115,7 +4204,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_payment_method");
 
-            entity.HasIndex(e => new { e.Code, e.PaymentType }, "account_payment_method_name_code_unique").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_payment_method_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Code, e.PaymentType }, "account_payment_method_name_code_unique").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4150,6 +4241,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_payment_method_line_pkey");
 
             entity.ToTable("account_payment_method_line");
+
+            entity.HasIndex(e => e.TenantId, "account_payment_method_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4366,6 +4459,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_payment_term_line");
 
+            entity.HasIndex(e => e.TenantId, "account_payment_term_line_company_id_index");
+
             entity.HasIndex(e => e.PaymentId, "account_payment_term_line_payment_id_index");
 
             entity.Property(e => e.Id)
@@ -4468,7 +4563,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_reconcile_model");
 
-            entity.HasIndex(e => new { e.Name, e.TenantId }, "account_reconcile_model_name_unique").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_reconcile_model_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Name }, "account_reconcile_model_name_unique").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4675,6 +4772,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_reconcile_model_line_template");
 
+            entity.HasIndex(e => e.TenantId, "account_reconcile_model_line_template_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -4741,6 +4840,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_reconcile_model_partner_mapping");
 
+            entity.HasIndex(e => e.TenantId, "account_reconcile_model_partner_mapping_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -4783,6 +4884,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_reconcile_model_template_pkey");
 
             entity.ToTable("account_reconcile_model_template");
+
+            entity.HasIndex(e => e.TenantId, "account_reconcile_model_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4944,6 +5047,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_report");
 
+            entity.HasIndex(e => e.TenantId, "account_report_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -5012,6 +5117,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_report_column");
 
+            entity.HasIndex(e => e.TenantId, "account_report_column_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -5060,6 +5167,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_report_expression_pkey");
 
             entity.ToTable("account_report_expression");
+
+            entity.HasIndex(e => e.TenantId, "account_report_expression_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5272,6 +5381,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_report_line");
 
+            entity.HasIndex(e => e.TenantId, "account_report_line_company_id_index");
+
             entity.HasIndex(e => e.Code, "account_report_line_code_uniq").IsUnique();
 
             entity.Property(e => e.Id)
@@ -5401,6 +5512,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_resequence_wizard");
 
+            entity.HasIndex(e => e.TenantId, "account_resequence_wizard_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -5451,6 +5564,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_setup_bank_manual_config");
 
+            entity.HasIndex(e => e.TenantId, "account_setup_bank_manual_config_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -5488,7 +5603,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_tax");
 
-            entity.HasIndex(e => new { e.Name, e.TenantId, e.TypeTaxUse, e.TaxScope }, "account_tax_name_company_uniq").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_tax_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Name, e.TypeTaxUse, e.TaxScope }, "account_tax_name_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5596,6 +5713,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_tax_group_pkey");
 
             entity.ToTable("account_tax_group");
+
+            entity.HasIndex(e => e.TenantId, "account_tax_group_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5714,6 +5833,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_tax_repartition_line_template_pkey");
 
             entity.ToTable("account_tax_repartition_line_template");
+
+            entity.HasIndex(e => e.TenantId, "account_tax_repartition_line_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5873,7 +5994,9 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_tax_template");
 
-            entity.HasIndex(e => new { e.Name, e.TypeTaxUse, e.TaxScope, e.ChartTemplateId }, "account_tax_template_name_company_uniq").IsUnique();
+            entity.HasIndex(e => e.TenantId, "account_tax_template_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Name, e.TypeTaxUse, e.TaxScope, e.ChartTemplateId }, "account_tax_template_name_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5975,6 +6098,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_tour_upload_bill");
 
+            entity.HasIndex(e => e.TenantId, "account_tour_upload_bill_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -6022,6 +6147,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("account_tour_upload_bill_email_confirm");
 
+            entity.HasIndex(e => e.TenantId, "account_tour_upload_bill_email_confirm_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -6051,6 +6178,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_unreconcile_pkey");
 
             entity.ToTable("account_unreconcile");
+
+            entity.HasIndex(e => e.TenantId, "account_unreconcile_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6268,6 +6397,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("asset_depreciation_confirmation_wizard");
 
+            entity.HasIndex(e => e.TenantId, "asset_depreciation_confirmation_wizard_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -6297,6 +6428,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("asset_modify_pkey");
 
             entity.ToTable("asset_modify");
+
+            entity.HasIndex(e => e.TenantId, "asset_modify_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -7834,7 +7967,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "calendar_event_type_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8440,7 +8576,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "crm_iap_lead_role_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8474,7 +8613,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "crm_iap_lead_seniority_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9091,7 +9233,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("crm_lost_reason");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9303,7 +9448,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "crm_tag_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9811,7 +9959,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("fleet_service_type");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Category).HasColumnName("category");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10294,7 +10445,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_model_brand");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10325,7 +10479,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "fleet_vehicle_model_category_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10429,7 +10586,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "fleet_vehicle_tag_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10497,6 +10657,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("followup_line");
 
+            entity.HasIndex(e => e.TenantId, "followup_line_company_id_index");
+
             entity.HasIndex(e => new { e.FollowupId, e.Delay }, "followup_line_days_uniq").IsUnique();
 
             entity.Property(e => e.Id)
@@ -10555,6 +10717,8 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("followup_print");
 
+            entity.HasIndex(e => e.TenantId, "followup_print_company_id_index");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -10596,6 +10760,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("followup_sending_results_pkey");
 
             entity.ToTable("followup_sending_results");
+
+            entity.HasIndex(e => e.TenantId, "followup_sending_results_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -10832,7 +10998,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "hr_applicant_category_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -11572,7 +11741,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "hr_employee_category_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -12622,7 +12794,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("hr_leave_accrual_level");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.AccrualPlanId).HasColumnName("accrual_plan_id");
             entity.Property(e => e.ActionWithUnusedAccruals).HasColumnName("action_with_unused_accruals");
             entity.Property(e => e.AddedValue).HasColumnName("added_value");
@@ -13450,7 +13625,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("hr_skill_level");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -16516,7 +16694,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.CreatorId, "mail_activity_type_create_uid_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Category).HasColumnName("category");
             entity.Property(e => e.ChainingType).HasColumnName("chaining_type");
@@ -17593,7 +17774,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("mail_message_subtype");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -19840,7 +20024,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("mrp_workcenter_productivity_loss_type");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -19870,7 +20057,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "mrp_workcenter_tag_tag_name_unique").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -20198,6 +20388,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => new { e.OsvMemoryId, e.PartnerId }).HasName("partner_stat_rel_pkey");
 
             entity.ToTable("partner_stat_rel");
+
+            entity.HasIndex(e => e.TenantId, "partner_stat_rel_company_id_index");
 
             entity.HasIndex(e => new { e.PartnerId, e.OsvMemoryId }, "partner_stat_rel_partner_id_osv_memory_id_idx");
 
@@ -20993,7 +21185,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ParentId, "pos_category_parent_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22127,7 +22322,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Sequence, "product_attribute_sequence_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22298,7 +22496,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ParentPath, "product_category_parent_path_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CompleteName).HasColumnName("complete_name");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -22829,7 +23030,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.WebsiteId, "product_public_category_website_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23132,7 +23336,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.WebsiteId, "product_tag_website_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -24032,7 +24239,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "project_tags_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -25538,7 +25748,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "repair_tags_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -25567,7 +25780,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("report_layout");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -25606,7 +25822,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("report_paperformat");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -26606,7 +26825,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("res_country_group");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27218,7 +27440,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ParentPath, "res_partner_category_parent_path_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
@@ -27308,7 +27533,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("res_partner_title");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32753,7 +32981,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("theme_ir_asset");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Bundle).HasColumnName("bundle");
             entity.Property(e => e.CreationTime)
@@ -32790,7 +33021,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("theme_ir_attachment");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32820,7 +33054,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("theme_ir_ui_view");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Arch)
                 .HasColumnType("jsonb")
@@ -32861,7 +33098,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ParentId, "theme_website_menu_parent_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32911,7 +33151,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("theme_website_page");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32951,7 +33194,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.ToTable("uom_category");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33196,7 +33442,10 @@ public static class CoreDbtModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "utm_tag_name_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            //entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -33226,6 +33475,8 @@ public static class CoreDbtModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("validate_account_move_pkey");
 
             entity.ToTable("validate_account_move");
+
+            entity.HasIndex(e => e.TenantId, "validate_account_move_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")

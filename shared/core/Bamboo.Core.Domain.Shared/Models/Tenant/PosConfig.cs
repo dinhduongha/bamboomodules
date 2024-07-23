@@ -27,7 +27,7 @@ public partial class PosConfig: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IM
     public Guid? InvoiceJournalId { get; set; }
 
     [Column("iface_start_categ_id")]
-    public long? IfaceStartCategId { get; set; }
+    public Guid? IfaceStartCategId { get; set; }
 
     [Column("sequence_id")]
     public Guid? SequenceId { get; set; }

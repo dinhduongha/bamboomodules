@@ -47,7 +47,7 @@ public partial class AccountJournal: Entity<Guid>, IEntityDto<Guid>, IMultiTenan
     public Guid? BankAccountId { get; set; }
 
     [Column("sale_activity_type_id")]
-    public long? SaleActivityTypeId { get; set; }
+    public Guid? SaleActivityTypeId { get; set; }
 
     [Column("sale_activity_user_id")]
     public Guid? SaleActivityUserId { get; set; }

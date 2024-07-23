@@ -21,7 +21,7 @@ public partial class AccountAnalyticDistributionModel: Entity<Guid>, IEntityDto<
     public Guid? PartnerId { get; set; }
 
     [Column("partner_category_id")]
-    public long? PartnerCategoryId { get; set; }
+    public Guid? PartnerCategoryId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
@@ -45,7 +45,7 @@ public partial class AccountAnalyticDistributionModel: Entity<Guid>, IEntityDto<
     public Guid? ProductId { get; set; }
 
     [Column("product_categ_id")]
-    public long? ProductCategId { get; set; }
+    public Guid? ProductCategId { get; set; }
 
     [Column("account_prefix")]
     public string? AccountPrefix { get; set; }

@@ -393,7 +393,7 @@ public partial class ResConfigSetting: Entity<Guid>, IEntityDto<Guid>, IMultiTen
     public Guid? PosDefaultFiscalPositionId { get; set; }
 
     [Column("pos_iface_start_categ_id")]
-    public long? PosIfaceStartCategId { get; set; }
+    public Guid? PosIfaceStartCategId { get; set; }
 
     [Column("pos_pricelist_id")]
     public Guid? PosPricelistId { get; set; }

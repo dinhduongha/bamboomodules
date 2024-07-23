@@ -37,7 +37,7 @@ public partial class ResPartner: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public string? Name { get; set; }
 
     [Column("title")]
-    public long? Title { get; set; }
+    public Guid? Title { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

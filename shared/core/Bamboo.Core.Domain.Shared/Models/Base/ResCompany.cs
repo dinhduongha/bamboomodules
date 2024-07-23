@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_company")]
 //[Index("Name", Name = "res_company_name_uniq", IsUnique = true)]
 //[Index("ParentId", Name = "res_company_parent_id_index")]
-public partial class ResCompany: Entity<Guid>, IEntityDto<Guid>
+public partial class ResCompany : Entity<Guid>, IEntityDto<Guid>, IMayHaveCreator, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
@@ -38,7 +38,7 @@ public partial class ResCompany: Entity<Guid>, IEntityDto<Guid>
     public Guid? ParentId { get; set; }
 
     [Column("paperformat_id")]
-    public long? PaperformatId { get; set; }
+    public Guid? PaperformatId { get; set; }
 
     [Column("external_report_layout_id")]
     public Guid? ExternalReportLayoutId { get; set; }

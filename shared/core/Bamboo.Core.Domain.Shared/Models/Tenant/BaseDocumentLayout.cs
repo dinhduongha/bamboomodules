@@ -21,7 +21,7 @@ public partial class BaseDocumentLayout: Entity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("report_layout_id")]
-    public long? ReportLayoutId { get; set; }
+    public Guid? ReportLayoutId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

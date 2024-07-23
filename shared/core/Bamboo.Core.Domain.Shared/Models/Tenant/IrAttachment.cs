@@ -87,7 +87,7 @@ public partial class IrAttachment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant,
     public Guid? WebsiteId { get; set; }
 
     [Column("theme_template_id")]
-    public long? ThemeTemplateId { get; set; }
+    public Guid? ThemeTemplateId { get; set; }
 
     [Column("key")]
     public string? Key { get; set; }

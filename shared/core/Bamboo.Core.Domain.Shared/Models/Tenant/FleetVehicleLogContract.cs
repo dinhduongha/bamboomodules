@@ -25,7 +25,7 @@ public partial class FleetVehicleLogContract: Entity<Guid>, IEntityDto<Guid>, IM
     public Guid? VehicleId { get; set; }
 
     [Column("cost_subtype_id")]
-    public long? CostSubtypeId { get; set; }
+    public Guid? CostSubtypeId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

@@ -13,11 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("res_groups")]
 //[Index("CategoryId", Name = "res_groups_category_id_index")]
 //[Index("CategoryId", "Name", Name = "res_groups_name_uniq", IsUnique = true)]
-public partial class ResGroup: Entity<Guid>, IEntityDto<Guid>
+public partial class ResGroup : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -45,6 +48,10 @@ public partial class ResGroup: Entity<Guid>, IEntityDto<Guid>
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("TenantId")]
+    [NotMapped]
+    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("ResGroups")]

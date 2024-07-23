@@ -30,7 +30,7 @@ public partial class StockWarehouseOrderpoint: Entity<Guid>, IEntityDto<Guid>, I
     public Guid? ProductId { get; set; }
 
     [Column("product_category_id")]
-    public long? ProductCategoryId { get; set; }
+    public Guid? ProductCategoryId { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }

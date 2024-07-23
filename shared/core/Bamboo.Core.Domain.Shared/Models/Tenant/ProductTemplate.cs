@@ -27,7 +27,7 @@ public partial class ProductTemplate: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public long Sequence { get; set; }
 
     [Column("categ_id")]
-    public long? CategId { get; set; }
+    public Guid? CategId { get; set; }
 
     [Column("uom_id")]
     public Guid? UomId { get; set; }
@@ -132,7 +132,7 @@ public partial class ProductTemplate: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public double? SaleDelay { get; set; }
 
     [Column("pos_categ_id")]
-    public long? PosCategId { get; set; }
+    public Guid? PosCategId { get; set; }
 
     [Column("available_in_pos")]
     public bool? AvailableInPos { get; set; }
