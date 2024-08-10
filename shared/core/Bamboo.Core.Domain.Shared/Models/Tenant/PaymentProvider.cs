@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("payment_provider")]
 //[Index("TenantId", Name = "payment_provider_company_id_index")]
-public partial class PaymentProvider: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class PaymentProvider: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -97,7 +97,7 @@ public partial class PaymentProvider: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public bool? FeesActive { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

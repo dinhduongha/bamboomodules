@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 //[Index("PickingTypeId", Name = "mrp_production_picking_type_id_index")]
 //[Index("ReservationState", Name = "mrp_production_reservation_state_index")]
 //[Index("State", Name = "mrp_production_state_index")]
-public partial class MrpProduction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class MrpProduction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -126,7 +126,7 @@ public partial class MrpProduction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant
     public DateTime? DateFinished { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

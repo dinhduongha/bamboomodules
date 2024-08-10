@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_pricelist_item")]
 //[Index("ComputePrice", Name = "product_pricelist_item_compute_price_index")]
 //[Index("PricelistId", Name = "product_pricelist_item_pricelist_id_index")]
-public partial class ProductPricelistItem: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductPricelistItem: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -86,7 +86,7 @@ public partial class ProductPricelistItem: Entity<Guid>, IEntityDto<Guid>, IMult
     public DateTime? DateEnd { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

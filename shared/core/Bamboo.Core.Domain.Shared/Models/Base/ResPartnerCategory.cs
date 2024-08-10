@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_partner_category")]
 //[Index("ParentId", Name = "res_partner_category_parent_id_index")]
 //[Index("ParentPath", Name = "res_partner_category_parent_path_index")]
-public partial class ResPartnerCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResPartnerCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -44,7 +44,7 @@ public partial class ResPartnerCategory : Entity<Guid>, IEntityDto<Guid>, IMulti
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

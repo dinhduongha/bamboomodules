@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_tax")]
 //[Index("Name", "TenantId", "TypeTaxUse", "TaxScope", Name = "account_tax_name_company_uniq", IsUnique = true)]
-public partial class AccountTax: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountTax: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -76,7 +76,7 @@ public partial class AccountTax: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public bool? Analytic { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

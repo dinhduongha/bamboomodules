@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_bank")]
 //[Index("Bic", Name = "res_bank_bic_index")]
-public partial class ResBank : Entity<Guid>, IEntityDto<Guid>, IMayHaveCreator, IModificationAuditedObject
+public partial class ResBank : Entity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -58,7 +58,7 @@ public partial class ResBank : Entity<Guid>, IEntityDto<Guid>, IMayHaveCreator, 
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

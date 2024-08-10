@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("calendar_event")]
 //[Index("AccessToken", Name = "calendar_event_access_token_index")]
 //[Index("OpportunityId", Name = "calendar_event_opportunity_id_index")]
-public partial class CalendarEvent : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class CalendarEvent : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -95,7 +95,7 @@ public partial class CalendarEvent : Entity<Guid>, IEntityDto<Guid>, IMultiTenan
     public DateTime? Stop { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

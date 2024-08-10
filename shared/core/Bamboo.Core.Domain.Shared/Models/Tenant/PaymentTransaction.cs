@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("Operation", Name = "payment_transaction_operation_index")]
 //[Index("Reference", Name = "payment_transaction_reference_uniq", IsUnique = true)]
 //[Index("State", Name = "payment_transaction_state_index")]
-public partial class PaymentTransaction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class PaymentTransaction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -121,7 +121,7 @@ public partial class PaymentTransaction: Entity<Guid>, IEntityDto<Guid>, IMultiT
     public DateTime? LastStateChange { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

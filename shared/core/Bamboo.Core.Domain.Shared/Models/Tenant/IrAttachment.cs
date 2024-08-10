@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("Checksum", Name = "ir_attachment_checksum_index")]
 //[Index("ResModel", "ResId", Name = "ir_attachment_res_idx")]
 //[Index("StoreFname", Name = "ir_attachment_store_fname_index")]
-public partial class IrAttachment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class IrAttachment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -72,7 +72,7 @@ public partial class IrAttachment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant,
     public bool? Public { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

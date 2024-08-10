@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement")]
 //[Index("FirstLineIndex", Name = "account_bank_statement_first_line_index_index")]
-public partial class AccountBankStatement: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountBankStatement: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -55,7 +55,7 @@ public partial class AccountBankStatement: Entity<Guid>, IEntityDto<Guid>, IMult
     public bool? IsComplete { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter_capacity")]
 //[Index("WorkcenterId", "ProductId", Name = "mrp_workcenter_capacity_unique_product", IsUnique = true)]
-public partial class MrpWorkcenterCapacity : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class MrpWorkcenterCapacity : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class MrpWorkcenterCapacity : Entity<Guid>, IEntityDto<Guid>, IMu
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

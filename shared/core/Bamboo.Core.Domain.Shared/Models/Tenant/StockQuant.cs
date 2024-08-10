@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("LotId", Name = "stock_quant_lot_id_index")]
 //[Index("PackageId", Name = "stock_quant_package_id_index")]
 //[Index("ProductId", Name = "stock_quant_product_id_index")]
-public partial class StockQuant: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class StockQuant: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -73,7 +73,7 @@ public partial class StockQuant: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public DateTime? InDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

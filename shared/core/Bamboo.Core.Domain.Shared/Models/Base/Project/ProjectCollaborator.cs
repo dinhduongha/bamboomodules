@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_collaborator")]
 //[Index("ProjectId", "PartnerId", Name = "project_collaborator_unique_collaborator", IsUnique = true)]
-public partial class ProjectCollaborator : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProjectCollaborator : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class ProjectCollaborator : Entity<Guid>, IEntityDto<Guid>, IMult
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

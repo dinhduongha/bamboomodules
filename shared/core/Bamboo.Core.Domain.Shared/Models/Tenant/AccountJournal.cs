@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("account_journal")]
 //[Index("TenantId", "Code", Name = "account_journal_code_company_uniq", IsUnique = true)]
 //[Index("TenantId", Name = "account_journal_company_id_index")]
-public partial class AccountJournal: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountJournal: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -107,7 +107,7 @@ public partial class AccountJournal: Entity<Guid>, IEntityDto<Guid>, IMultiTenan
     public bool? ShowOnDashboard { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

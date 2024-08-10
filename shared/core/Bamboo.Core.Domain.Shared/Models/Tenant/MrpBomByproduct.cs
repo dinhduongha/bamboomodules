@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("mrp_bom_byproduct")]
 //[Index("BomId", Name = "mrp_bom_byproduct_bom_id_index")]
 //[Index("TenantId", Name = "mrp_bom_byproduct_company_id_index")]
-public partial class MrpBomByproduct: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class MrpBomByproduct: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -50,7 +50,7 @@ public partial class MrpBomByproduct: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public decimal? CostShare { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_unbuild")]
 //[Index("TenantId", Name = "mrp_unbuild_company_id_index")]
-public partial class MrpUnbuild: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class MrpUnbuild: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -58,7 +58,7 @@ public partial class MrpUnbuild: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public string? State { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

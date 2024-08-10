@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_warehouse")]
 //[Index("Code", "TenantId", Name = "stock_warehouse_warehouse_code_uniq", IsUnique = true)]
 //[Index("Name", "TenantId", Name = "stock_warehouse_warehouse_name_uniq", IsUnique = true)]
-public partial class StockWarehouse: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class StockWarehouse: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -98,7 +98,7 @@ public partial class StockWarehouse: Entity<Guid>, IEntityDto<Guid>, IMultiTenan
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "ir_default_company_id_index")]
 //[Index("FieldId", Name = "ir_default_field_id_index")]
 //[Index("UserId", Name = "ir_default_user_id_index")]
-public partial class IrDefault: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class IrDefault: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -42,7 +42,7 @@ public partial class IrDefault: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IM
     public string? JsonValue { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

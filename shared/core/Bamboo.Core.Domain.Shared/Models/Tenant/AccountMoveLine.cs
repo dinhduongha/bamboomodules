@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("MoveId", Name = "account_move_line_move_id_index")]
 //[Index("MoveName", Name = "account_move_line_move_name_index")]
 //[Index("PartnerId", "Ref", Name = "account_move_line_partner_id_ref_idx")]
-public partial class AccountMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -176,7 +176,7 @@ public partial class AccountMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public bool? Blocked { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

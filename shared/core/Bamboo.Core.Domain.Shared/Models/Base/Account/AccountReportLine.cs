@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_report_line")]
 //[Index("Code", Name = "account_report_line_code_uniq", IsUnique = true)]
-public partial class AccountReportLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountReportLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -61,7 +61,7 @@ public partial class AccountReportLine : Entity<Guid>, IEntityDto<Guid>, IMultiT
     public bool? HideIfZero { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

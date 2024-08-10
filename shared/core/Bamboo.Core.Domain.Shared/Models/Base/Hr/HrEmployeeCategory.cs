@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_employee_category")]
 //[Index("Name", Name = "hr_employee_category_name_uniq", IsUnique = true)]
-public partial class HrEmployeeCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class HrEmployeeCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class HrEmployeeCategory : Entity<Guid>, IEntityDto<Guid>, IMulti
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

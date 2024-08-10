@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_company")]
 //[Index("Name", Name = "res_company_name_uniq", IsUnique = true)]
 //[Index("ParentId", Name = "res_company_parent_id_index")]
-public partial class ResCompany : Entity<Guid>, IEntityDto<Guid>, IMayHaveCreator, IModificationAuditedObject
+public partial class ResCompany : Entity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -32,7 +32,7 @@ public partial class ResCompany : Entity<Guid>, IEntityDto<Guid>, IMayHaveCreato
     public long? Sequence { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

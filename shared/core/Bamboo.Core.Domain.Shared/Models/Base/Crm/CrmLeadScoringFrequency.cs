@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_lead_scoring_frequency")]
 //[Index("Variable", Name = "crm_lead_scoring_frequency_variable_index")]
-public partial class CrmLeadScoringFrequency : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class CrmLeadScoringFrequency : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -43,7 +43,7 @@ public partial class CrmLeadScoringFrequency : Entity<Guid>, IEntityDto<Guid>, I
     public decimal? LostCount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

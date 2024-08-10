@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("hr_contract")]
 //[Index("DateStart", Name = "hr_contract_date_start_index")]
 //[Index("ResourceCalendarId", Name = "hr_contract_resource_calendar_id_index")]
-public partial class HrContract: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class HrContract: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -80,7 +80,7 @@ public partial class HrContract: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

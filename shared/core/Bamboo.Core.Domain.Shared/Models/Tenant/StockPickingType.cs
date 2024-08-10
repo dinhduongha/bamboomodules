@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("stock_picking_type")]
 //[Index("TenantId", Name = "stock_picking_type_company_id_index")]
-public partial class StockPickingType: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class StockPickingType: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -97,7 +97,7 @@ public partial class StockPickingType: Entity<Guid>, IEntityDto<Guid>, IMultiTen
     public bool? AutoShowReceptionReport { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

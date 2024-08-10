@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("State", Name = "lunch_order_state_index")]
 //[Index("SupplierId", Name = "lunch_order_supplier_id_index")]
 //[Index("UserId", "ProductId", "Date", Name = "lunch_order_user_product_date")]
-public partial class LunchOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class LunchOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -72,7 +72,7 @@ public partial class LunchOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public bool? Notified { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

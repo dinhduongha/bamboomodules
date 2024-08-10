@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("Type", Name = "crm_lead_type_index")]
 //[Index("UserId", Name = "crm_lead_user_id_index")]
 //[Index("UserId", "TeamId", "Type", Name = "crm_lead_user_id_team_id_type_index")]
-public partial class CrmLead: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class CrmLead: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -188,7 +188,7 @@ public partial class CrmLead: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMay
     public DateTime? DateConversion { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

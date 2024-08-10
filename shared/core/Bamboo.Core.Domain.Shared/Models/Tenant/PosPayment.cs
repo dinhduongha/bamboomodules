@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_payment")]
 //[Index("SessionId", Name = "pos_payment_session_id_index")]
-public partial class PosPayment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class PosPayment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -67,7 +67,7 @@ public partial class PosPayment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public DateTime? PaymentDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

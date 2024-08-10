@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_sms")]
 //[Index("MailMessageId", Name = "sms_sms_mail_message_id_index")]
-public partial class SmsSm : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class SmsSm : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -46,7 +46,7 @@ public partial class SmsSm : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayH
     public string? Body { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

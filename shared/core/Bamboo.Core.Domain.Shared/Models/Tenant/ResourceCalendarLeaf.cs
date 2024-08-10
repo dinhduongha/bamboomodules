@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("resource_calendar_leaves")]
 //[Index("CalendarId", Name = "resource_calendar_leaves_calendar_id_index")]
 //[Index("ResourceId", Name = "resource_calendar_leaves_resource_id_index")]
-public partial class ResourceCalendarLeaf: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResourceCalendarLeaf: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -47,7 +47,7 @@ public partial class ResourceCalendarLeaf: Entity<Guid>, IEntityDto<Guid>, IMult
     public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("MoveId", Name = "stock_move_line_move_id_index")]
 //[Index("PickingId", Name = "stock_move_line_picking_id_index")]
 //[Index("ProductId", Name = "stock_move_line_product_id_index")]
-public partial class StockMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class StockMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -91,7 +91,7 @@ public partial class StockMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant
     public DateTime? Date { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

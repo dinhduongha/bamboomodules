@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateLastStageUpdate", Name = "hr_applicant_date_last_stage_update_index")]
 //[Index("JobId", Name = "hr_applicant_job_id_index")]
 //[Index("StageId", Name = "hr_applicant_stage_id_index")]
-public partial class HrApplicant: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class HrApplicant: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -114,7 +114,7 @@ public partial class HrApplicant: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, 
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("date_closed", TypeName = "timestamp without time zone")]
     public DateTime? DateClosed { get; set; }

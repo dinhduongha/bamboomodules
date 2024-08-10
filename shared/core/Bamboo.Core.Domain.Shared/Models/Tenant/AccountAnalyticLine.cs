@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("Date", Name = "account_analytic_line_date_index")]
 //[Index("MoveLineId", Name = "account_analytic_line_move_line_id_index")]
 //[Index("UserId", Name = "account_analytic_line_user_id_index")]
-public partial class AccountAnalyticLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountAnalyticLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -61,7 +61,7 @@ public partial class AccountAnalyticLine: Entity<Guid>, IEntityDto<Guid>, IMulti
     public decimal? Amount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TaskId", "UserId", Name = "project_task_user_rel_project_personal_stage_unique", IsUnique = true)]
 //[Index("TaskId", Name = "project_task_user_rel_task_id_index")]
 //[Index("UserId", Name = "project_task_user_rel_user_id_index")]
-public partial class ProjectTaskUserRel : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProjectTaskUserRel : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -39,7 +39,7 @@ public partial class ProjectTaskUserRel : Entity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

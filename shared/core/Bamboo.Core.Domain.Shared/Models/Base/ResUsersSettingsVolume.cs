@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("GuestId", Name = "res_users_settings_volumes_guest_id_index")]
 //[Index("PartnerId", Name = "res_users_settings_volumes_partner_id_index")]
 //[Index("UserSettingId", Name = "res_users_settings_volumes_user_setting_id_index")]
-public partial class ResUsersSettingsVolume : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResUsersSettingsVolume : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -39,7 +39,7 @@ public partial class ResUsersSettingsVolume : Entity<Guid>, IEntityDto<Guid>, IM
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

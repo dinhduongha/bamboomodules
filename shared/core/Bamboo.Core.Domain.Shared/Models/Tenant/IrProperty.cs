@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("Name", Name = "ir_property_name_index")]
 //[Index("ResId", Name = "ir_property_res_id_index")]
 //[Index("Type", Name = "ir_property_type_index")]
-public partial class IrProperty: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class IrProperty: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -55,7 +55,7 @@ public partial class IrProperty: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public DateTime? ValueDatetime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

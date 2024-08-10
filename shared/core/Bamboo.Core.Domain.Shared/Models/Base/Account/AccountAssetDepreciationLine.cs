@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("account_asset_depreciation_line")]
 //[Index("DepreciationDate", Name = "account_asset_depreciation_line_depreciation_date_index")]
 //[Index("Name", Name = "account_asset_depreciation_line_name_index")]
-public partial class AccountAssetDepreciationLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountAssetDepreciationLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -59,7 +59,7 @@ public partial class AccountAssetDepreciationLine : Entity<Guid>, IEntityDto<Gui
     public bool? MovePostedCheck { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

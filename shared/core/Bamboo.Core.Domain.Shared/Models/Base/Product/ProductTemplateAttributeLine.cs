@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_line")]
 //[Index("AttributeId", Name = "product_template_attribute_line_attribute_id_index")]
 //[Index("ProductTmplId", Name = "product_template_attribute_line_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductTemplateAttributeLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -41,7 +41,7 @@ public partial class ProductTemplateAttributeLine : Entity<Guid>, IEntityDto<Gui
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

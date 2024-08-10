@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_method")]
 //[Index("Code", "PaymentType", Name = "account_payment_method_name_code_unique", IsUnique = true)]
-public partial class AccountPaymentMethod : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountPaymentMethod : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -37,7 +37,7 @@ public partial class AccountPaymentMethod : Entity<Guid>, IEntityDto<Guid>, IMul
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

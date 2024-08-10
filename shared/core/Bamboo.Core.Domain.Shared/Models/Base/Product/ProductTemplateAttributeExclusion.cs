@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_exclusion")]
 //[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion_product_template_attribute")]
 //[Index("ProductTmplId", Name = "product_template_attribute_exclusion_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeExclusion : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductTemplateAttributeExclusion : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -35,7 +35,7 @@ public partial class ProductTemplateAttributeExclusion : Entity<Guid>, IEntityDt
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

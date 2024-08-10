@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "product_template_company_id_index")]
 //[Index("IsPublished", Name = "product_template_is_published_index")]
 //[Index("WebsiteId", Name = "product_template_website_id_index")]
-public partial class ProductTemplate: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductTemplate: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -96,7 +96,7 @@ public partial class ProductTemplate: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public bool? HasConfigurableAttributes { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

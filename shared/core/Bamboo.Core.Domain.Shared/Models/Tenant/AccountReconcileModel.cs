@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_reconcile_model")]
 //[Index("Name", "TenantId", Name = "account_reconcile_model_name_unique", IsUnique = true)]
-public partial class AccountReconcileModel: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountReconcileModel: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -103,7 +103,7 @@ public partial class AccountReconcileModel: Entity<Guid>, IEntityDto<Guid>, IMul
     public bool? MatchPartner { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

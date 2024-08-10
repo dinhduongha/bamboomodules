@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_tag")]
 //[Index("Name", Name = "product_tag_name_uniq", IsUnique = true)]
 //[Index("WebsiteId", Name = "product_tag_website_id_index")]
-public partial class ProductTag : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductTag : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -35,7 +35,7 @@ public partial class ProductTag : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, 
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

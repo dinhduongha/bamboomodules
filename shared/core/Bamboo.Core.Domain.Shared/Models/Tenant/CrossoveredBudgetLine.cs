@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crossovered_budget_lines")]
 //[Index("CrossoveredBudgetId", Name = "crossovered_budget_lines_crossovered_budget_id_index")]
-public partial class CrossoveredBudgetLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class CrossoveredBudgetLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -52,7 +52,7 @@ public partial class CrossoveredBudgetLine: Entity<Guid>, IEntityDto<Guid>, IMul
     public decimal? PlannedAmount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

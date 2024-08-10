@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("AccountMove", Name = "pos_order_account_move_index")]
 //[Index("DateOrder", Name = "pos_order_date_order_index")]
 //[Index("SessionId", Name = "pos_order_session_id_index")]
-public partial class PosOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class PosOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -105,7 +105,7 @@ public partial class PosOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMa
     public DateTime? DateOrder { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

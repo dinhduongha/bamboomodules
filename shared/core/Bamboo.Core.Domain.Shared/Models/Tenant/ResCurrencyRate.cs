@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_currency_rate")]
 //[Index("Name", Name = "res_currency_rate_name_index")]
 //[Index("Name", "CurrencyId", "TenantId", Name = "res_currency_rate_unique_name_per_day", IsUnique = true)]
-public partial class ResCurrencyRate: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResCurrencyRate: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -38,7 +38,7 @@ public partial class ResCurrencyRate: Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public decimal? Rate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

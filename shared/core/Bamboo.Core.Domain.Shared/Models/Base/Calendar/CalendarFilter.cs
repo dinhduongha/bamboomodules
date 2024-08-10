@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("PartnerId", Name = "calendar_filters_partner_id_index")]
 //[Index("UserId", Name = "calendar_filters_user_id_index")]
 //[Index("UserId", "PartnerId", Name = "calendar_filters_user_id_partner_id_unique", IsUnique = true)]
-public partial class CalendarFilter : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class CalendarFilter : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -42,7 +42,7 @@ public partial class CalendarFilter : Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public bool? PartnerChecked { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

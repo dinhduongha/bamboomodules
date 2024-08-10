@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("CombinationIndices", Name = "product_product_combination_indices_index")]
 //[Index("DefaultCode", Name = "product_product_default_code_index")]
 //[Index("ProductTmplId", Name = "product_product_product_tmpl_id_index")]
-public partial class ProductProduct : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductProduct : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -57,7 +57,7 @@ public partial class ProductProduct : Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public bool? CanImageVariant1024BeZoomed { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

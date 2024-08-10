@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_lot")]
 //[Index("TenantId", Name = "stock_lot_company_id_index")]
 //[Index("ProductId", Name = "stock_lot_product_id_index")]
-public partial class StockLot: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class StockLot: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -47,7 +47,7 @@ public partial class StockLot: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMa
     public string? Note { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

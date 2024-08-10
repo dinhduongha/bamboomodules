@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("AttributeId", Name = "product_attribute_value_attribute_id_index")]
 //[Index("Sequence", Name = "product_attribute_value_sequence_index")]
 //[Index("Name", "AttributeId", Name = "product_attribute_value_value_company_uniq", IsUnique = true)]
-public partial class ProductAttributeValue : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductAttributeValue : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -48,7 +48,7 @@ public partial class ProductAttributeValue : Entity<Guid>, IEntityDto<Guid>, IMu
     public bool? IsCustom { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("sale_order_template_line")]
 //[Index("TenantId", Name = "sale_order_template_line_company_id_index")]
 //[Index("SaleOrderTemplateId", Name = "sale_order_template_line_sale_order_template_id_index")]
-public partial class SaleOrderTemplateLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class SaleOrderTemplateLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -50,7 +50,7 @@ public partial class SaleOrderTemplateLine: Entity<Guid>, IEntityDto<Guid>, IMul
     public decimal? ProductUomQty { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

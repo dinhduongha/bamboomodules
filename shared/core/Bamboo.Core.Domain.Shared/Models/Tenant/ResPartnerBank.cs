@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_partner_bank")]
 //[Index("PartnerId", Name = "res_partner_bank_partner_id_index")]
 //[Index("SanitizedAccNumber", "PartnerId", Name = "res_partner_bank_unique_number", IsUnique = true)]
-public partial class ResPartnerBank: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResPartnerBank: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -56,7 +56,7 @@ public partial class ResPartnerBank: Entity<Guid>, IEntityDto<Guid>, IMultiTenan
     public bool? AllowOutPayment { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

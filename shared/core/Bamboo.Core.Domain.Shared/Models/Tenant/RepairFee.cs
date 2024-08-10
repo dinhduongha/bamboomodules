@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "repair_fee_company_id_index")]
 //[Index("Name", Name = "repair_fee_name_index")]
 //[Index("RepairId", Name = "repair_fee_repair_id_index")]
-public partial class RepairFee: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class RepairFee: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -60,7 +60,7 @@ public partial class RepairFee: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IM
     public bool? Invoiced { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

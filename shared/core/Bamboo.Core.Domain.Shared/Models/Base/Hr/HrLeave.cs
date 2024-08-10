@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateTo", "DateFrom", Name = "hr_leave_date_to_date_from_index")]
 //[Index("EmployeeId", Name = "hr_leave_employee_id_index")]
 //[Index("UserId", Name = "hr_leave_user_id_index")]
-public partial class HrLeave : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class HrLeave : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -124,7 +124,7 @@ public partial class HrLeave : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMa
     public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_edi_document")]
 //[Index("EdiFormatId", "MoveId", Name = "account_edi_document_unique_edi_document_by_move_by_format", IsUnique = true)]
-public partial class AccountEdiDocument : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountEdiDocument : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -46,7 +46,7 @@ public partial class AccountEdiDocument : Entity<Guid>, IEntityDto<Guid>, IMulti
     public string? Error { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

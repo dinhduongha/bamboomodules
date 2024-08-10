@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("PickingTypeId", Name = "stock_picking_picking_type_id_index")]
 //[Index("ScheduledDate", Name = "stock_picking_scheduled_date_index")]
 //[Index("State", Name = "stock_picking_state_index")]
-public partial class StockPicking: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class StockPicking: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -101,7 +101,7 @@ public partial class StockPicking: Entity<Guid>, IEntityDto<Guid>, IMultiTenant,
     public DateTime? DateDone { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

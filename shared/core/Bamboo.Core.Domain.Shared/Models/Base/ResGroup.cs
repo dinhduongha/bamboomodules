@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_groups")]
 //[Index("CategoryId", Name = "res_groups_category_id_index")]
 //[Index("CategoryId", "Name", Name = "res_groups_name_uniq", IsUnique = true)]
-public partial class ResGroup : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResGroup : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -44,7 +44,7 @@ public partial class ResGroup : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IM
     public bool? Share { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

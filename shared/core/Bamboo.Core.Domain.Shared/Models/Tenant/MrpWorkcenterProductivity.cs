@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "mrp_workcenter_productivity_company_id_index")]
 //[Index("WorkcenterId", Name = "mrp_workcenter_productivity_workcenter_id_index")]
 //[Index("WorkorderId", Name = "mrp_workcenter_productivity_workorder_id_index")]
-public partial class MrpWorkcenterProductivity: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class MrpWorkcenterProductivity: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -54,7 +54,7 @@ public partial class MrpWorkcenterProductivity: Entity<Guid>, IEntityDto<Guid>, 
     public DateTime? DateEnd { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

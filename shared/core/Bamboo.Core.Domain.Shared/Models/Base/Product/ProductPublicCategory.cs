@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("ParentPath", Name = "product_public_category_parent_path_index")]
 //[Index("Sequence", Name = "product_public_category_sequence_index")]
 //[Index("WebsiteId", Name = "product_public_category_website_id_index")]
-public partial class ProductPublicCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProductPublicCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -64,7 +64,7 @@ public partial class ProductPublicCategory : Entity<Guid>, IEntityDto<Guid>, IMu
     public string? WebsiteDescription { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

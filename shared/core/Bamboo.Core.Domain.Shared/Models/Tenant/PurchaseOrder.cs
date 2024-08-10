@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("Priority", Name = "purchase_order_priority_index")]
 //[Index("State", Name = "purchase_order_state_index")]
 //[Index("UserId", Name = "purchase_order_user_id_index")]
-public partial class PurchaseOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class PurchaseOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -112,7 +112,7 @@ public partial class PurchaseOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant
     public DateTime? DateCalendarStart { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -21,7 +21,7 @@ namespace Bamboo.Core.Models;
 //[Index("Ref", Name = "res_partner_ref_index")]
 //[Index("Vat", Name = "res_partner_vat_index")]
 //[Index("WebsiteId", Name = "res_partner_website_id_index")]
-public partial class ResPartner: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ResPartner: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -31,7 +31,7 @@ public partial class ResPartner: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public Guid? TenantId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }

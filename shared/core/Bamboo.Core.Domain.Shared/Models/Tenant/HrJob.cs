@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("IsPublished", Name = "hr_job_is_published_index")]
 //[Index("Name", "TenantId", "DepartmentId", Name = "hr_job_name_company_uniq", IsUnique = true)]
 //[Index("WebsiteId", Name = "hr_job_website_id_index")]
-public partial class HrJob: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class HrJob: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -66,7 +66,7 @@ public partial class HrJob: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHa
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

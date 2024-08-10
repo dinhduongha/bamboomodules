@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("BomId", Name = "mrp_bom_line_bom_id_index")]
 //[Index("TenantId", Name = "mrp_bom_line_company_id_index")]
 //[Index("ProductTmplId", Name = "mrp_bom_line_product_tmpl_id_index")]
-public partial class MrpBomLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class MrpBomLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -54,7 +54,7 @@ public partial class MrpBomLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, I
     public bool? ManualConsumption { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

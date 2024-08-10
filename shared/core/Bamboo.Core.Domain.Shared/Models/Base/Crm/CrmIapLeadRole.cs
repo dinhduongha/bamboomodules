@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_role")]
 //[Index("Name", Name = "crm_iap_lead_role_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadRole : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class CrmIapLeadRole : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -37,7 +37,7 @@ public partial class CrmIapLeadRole : Entity<Guid>, IEntityDto<Guid>, IMultiTena
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

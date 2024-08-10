@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_term_line")]
 //[Index("PaymentId", Name = "account_payment_term_line_payment_id_index")]
-public partial class AccountPaymentTermLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class AccountPaymentTermLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -52,7 +52,7 @@ public partial class AccountPaymentTermLine : Entity<Guid>, IEntityDto<Guid>, IM
     public bool? EndMonth { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

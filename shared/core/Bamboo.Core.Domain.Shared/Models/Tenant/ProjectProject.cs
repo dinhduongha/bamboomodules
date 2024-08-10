@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("project_project")]
 //[Index("Date", Name = "project_project_date_index")]
 //[Index("StageId", Name = "project_project_stage_id_index")]
-public partial class ProjectProject: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class ProjectProject: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -116,7 +116,7 @@ public partial class ProjectProject: Entity<Guid>, IEntityDto<Guid>, IMultiTenan
     public DateTime? RatingRequestDeadline { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

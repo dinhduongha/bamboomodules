@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "hr_department_company_id_index")]
 //[Index("ParentId", Name = "hr_department_parent_id_index")]
 //[Index("ParentPath", Name = "hr_department_parent_path_index")]
-public partial class HrDepartment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IMayHaveCreator, IModificationAuditedObject
+public partial class HrDepartment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -60,7 +60,7 @@ public partial class HrDepartment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant,
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
