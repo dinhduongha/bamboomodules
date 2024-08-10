@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_expense_refuse_wizard")]
-public partial class HrExpenseRefuseWizard : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

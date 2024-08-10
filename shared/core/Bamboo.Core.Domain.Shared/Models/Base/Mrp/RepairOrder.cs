@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("LocationId", Name = "repair_order_location_id_index")]
 //[Index("Name", Name = "repair_order_name", IsUnique = true)]
 //[Index("PartnerId", Name = "repair_order_partner_id_index")]
-public partial class RepairOrder : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

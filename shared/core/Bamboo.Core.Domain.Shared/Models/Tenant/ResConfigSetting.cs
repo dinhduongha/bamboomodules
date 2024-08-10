@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_config_settings")]
-public partial class ResConfigSetting: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResConfigSetting: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

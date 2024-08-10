@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_consumption_warning")]
-public partial class MrpConsumptionWarning : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpConsumptionWarning : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

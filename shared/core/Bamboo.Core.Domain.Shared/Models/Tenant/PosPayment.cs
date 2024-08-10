@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_payment")]
 //[Index("SessionId", Name = "pos_payment_session_id_index")]
-public partial class PosPayment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

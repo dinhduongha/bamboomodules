@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_team")]
 //[Index("TenantId", Name = "crm_team_company_id_index")]
-public partial class CrmTeam: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

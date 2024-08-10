@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("applicant_get_refuse_reason")]
-public partial class ApplicantGetRefuseReason : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ApplicantGetRefuseReason : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

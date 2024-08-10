@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_immediate_production_line")]
-public partial class MrpImmediateProductionLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpImmediateProductionLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

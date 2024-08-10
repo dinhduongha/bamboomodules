@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_expense")]
 //[Index("State", Name = "hr_expense_state_index")]
-public partial class HrExpense: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

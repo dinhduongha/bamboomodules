@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_session_check_product_wizard")]
-public partial class PosSessionCheckProductWizard : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosSessionCheckProductWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

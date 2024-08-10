@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_rule")]
-public partial class StockRule: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

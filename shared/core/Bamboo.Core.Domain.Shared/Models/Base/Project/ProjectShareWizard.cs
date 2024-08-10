@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_share_wizard")]
-public partial class ProjectShareWizard : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectShareWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

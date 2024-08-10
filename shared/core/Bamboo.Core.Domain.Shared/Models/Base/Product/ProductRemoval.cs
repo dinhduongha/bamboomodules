@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_removal")]
-public partial class ProductRemoval : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

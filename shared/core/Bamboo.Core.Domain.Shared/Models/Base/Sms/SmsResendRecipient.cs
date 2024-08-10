@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sms_resend_recipient")]
-public partial class SmsResendRecipient : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsResendRecipient : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

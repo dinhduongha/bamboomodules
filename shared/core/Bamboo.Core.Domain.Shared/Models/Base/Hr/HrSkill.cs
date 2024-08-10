@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_skill")]
-public partial class HrSkill : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrSkill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

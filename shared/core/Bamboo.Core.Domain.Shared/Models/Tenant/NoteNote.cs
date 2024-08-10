@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("note_note")]
-public partial class NoteNote: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class NoteNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("account_bank_statement_line")]
 //[Index("InternalIndex", Name = "account_bank_statement_line_internal_index_index")]
 //[Index("UniqueImportId", Name = "account_bank_statement_line_unique_import_id", IsUnique = true)]
-public partial class AccountBankStatementLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

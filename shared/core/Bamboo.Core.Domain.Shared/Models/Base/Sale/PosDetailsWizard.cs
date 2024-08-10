@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_details_wizard")]
-public partial class PosDetailsWizard : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosDetailsWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

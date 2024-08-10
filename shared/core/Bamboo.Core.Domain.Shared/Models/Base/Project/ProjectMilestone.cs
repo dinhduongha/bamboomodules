@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_milestone")]
-public partial class ProjectMilestone : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_log_contract")]
 //[Index("UserId", Name = "fleet_vehicle_log_contract_user_id_index")]
-public partial class FleetVehicleLogContract: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_groups")]
 //[Index("CategoryId", Name = "res_groups_category_id_index")]
 //[Index("CategoryId", "Name", Name = "res_groups_name_uniq", IsUnique = true)]
-public partial class ResGroup : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 //[Index("PickingTypeId", Name = "mrp_production_picking_type_id_index")]
 //[Index("ReservationState", Name = "mrp_production_reservation_state_index")]
 //[Index("State", Name = "mrp_production_state_index")]
-public partial class MrpProduction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

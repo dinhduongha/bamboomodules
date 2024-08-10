@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("validate_account_move")]
-public partial class ValidateAccountMove : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

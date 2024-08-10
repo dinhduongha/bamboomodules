@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("maintenance_equipment_category")]
-public partial class MaintenanceEquipmentCategory: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MaintenanceEquipmentCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

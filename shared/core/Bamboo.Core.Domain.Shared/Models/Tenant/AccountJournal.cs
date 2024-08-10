@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("account_journal")]
 //[Index("TenantId", "Code", Name = "account_journal_code_company_uniq", IsUnique = true)]
 //[Index("TenantId", Name = "account_journal_company_id_index")]
-public partial class AccountJournal: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountJournal: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

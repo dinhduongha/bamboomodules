@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_edi_document")]
 //[Index("EdiFormatId", "MoveId", Name = "account_edi_document_unique_edi_document_by_move_by_format", IsUnique = true)]
-public partial class AccountEdiDocument : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountEdiDocument : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

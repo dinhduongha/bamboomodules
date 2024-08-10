@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_helpers")]
-public partial class CrmIapLeadHelper : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmIapLeadHelper : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("CombinationIndices", Name = "product_product_combination_indices_index")]
 //[Index("DefaultCode", Name = "product_product_default_code_index")]
 //[Index("ProductTmplId", Name = "product_product_product_tmpl_id_index")]
-public partial class ProductProduct : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductProduct : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

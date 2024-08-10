@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("confirm_stock_sms")]
-public partial class ConfirmStockSm : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ConfirmStockSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

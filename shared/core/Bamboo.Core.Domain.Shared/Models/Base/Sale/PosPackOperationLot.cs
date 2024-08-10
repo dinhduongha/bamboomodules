@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_pack_operation_lot")]
-public partial class PosPackOperationLot : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosPackOperationLot : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

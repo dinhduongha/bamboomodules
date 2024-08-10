@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("PickingTypeId", Name = "stock_picking_picking_type_id_index")]
 //[Index("ScheduledDate", Name = "stock_picking_scheduled_date_index")]
 //[Index("State", Name = "stock_picking_state_index")]
-public partial class StockPicking: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

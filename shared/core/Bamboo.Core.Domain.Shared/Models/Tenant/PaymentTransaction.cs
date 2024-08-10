@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("Operation", Name = "payment_transaction_operation_index")]
 //[Index("Reference", Name = "payment_transaction_reference_uniq", IsUnique = true)]
 //[Index("State", Name = "payment_transaction_state_index")]
-public partial class PaymentTransaction: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

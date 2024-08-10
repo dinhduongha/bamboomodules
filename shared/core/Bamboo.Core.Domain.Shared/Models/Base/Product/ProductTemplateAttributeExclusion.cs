@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_exclusion")]
 //[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion_product_template_attribute")]
 //[Index("ProductTmplId", Name = "product_template_attribute_exclusion_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeExclusion : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

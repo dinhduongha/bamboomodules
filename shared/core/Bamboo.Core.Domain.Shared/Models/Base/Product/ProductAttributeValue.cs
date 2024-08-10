@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("AttributeId", Name = "product_attribute_value_attribute_id_index")]
 //[Index("Sequence", Name = "product_attribute_value_sequence_index")]
 //[Index("Name", "AttributeId", Name = "product_attribute_value_value_company_uniq", IsUnique = true)]
-public partial class ProductAttributeValue : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

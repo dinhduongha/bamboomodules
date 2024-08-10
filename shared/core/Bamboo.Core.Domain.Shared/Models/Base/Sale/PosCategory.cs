@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_category")]
 //[Index("ParentId", Name = "pos_category_parent_id_index")]
-public partial class PosCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

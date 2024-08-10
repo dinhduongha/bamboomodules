@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_method")]
 //[Index("Code", "PaymentType", Name = "account_payment_method_name_code_unique", IsUnique = true)]
-public partial class AccountPaymentMethod : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPaymentMethod : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

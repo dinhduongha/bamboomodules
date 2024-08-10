@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_partner_category")]
 //[Index("ParentId", Name = "res_partner_category_parent_id_index")]
 //[Index("ParentPath", Name = "res_partner_category_parent_path_index")]
-public partial class ResPartnerCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

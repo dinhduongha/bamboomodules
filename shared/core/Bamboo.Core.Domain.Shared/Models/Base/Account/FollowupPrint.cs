@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("followup_print")]
-public partial class FollowupPrint : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FollowupPrint : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

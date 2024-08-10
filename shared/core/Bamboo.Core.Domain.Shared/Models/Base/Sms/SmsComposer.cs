@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sms_composer")]
-public partial class SmsComposer : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsComposer : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

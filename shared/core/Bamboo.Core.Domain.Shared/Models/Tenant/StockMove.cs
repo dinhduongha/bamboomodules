@@ -21,7 +21,7 @@ namespace Bamboo.Core.Models;
 //[Index("ProductId", Name = "stock_move_product_id_index")]
 //[Index("ProductId", "LocationId", "LocationDestId", "TenantId", "State", Name = "stock_move_product_location_index")]
 //[Index("State", Name = "stock_move_state_index")]
-public partial class StockMove: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("asset_modify")]
-public partial class AssetModify : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AssetModify : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

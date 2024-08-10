@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("ResourceCalendarId", Name = "hr_employee_resource_calendar_id_index")]
 //[Index("ResourceId", Name = "hr_employee_resource_id_index")]
 //[Index("UserId", "TenantId", Name = "hr_employee_user_uniq", IsUnique = true)]
-public partial class HrEmployee: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

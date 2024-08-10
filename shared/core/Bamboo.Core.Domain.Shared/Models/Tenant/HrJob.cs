@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("IsPublished", Name = "hr_job_is_published_index")]
 //[Index("Name", "TenantId", "DepartmentId", Name = "hr_job_name_company_uniq", IsUnique = true)]
 //[Index("WebsiteId", Name = "hr_job_website_id_index")]
-public partial class HrJob: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

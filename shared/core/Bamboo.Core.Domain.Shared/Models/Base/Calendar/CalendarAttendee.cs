@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("calendar_attendee")]
-public partial class CalendarAttendee : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarAttendee : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

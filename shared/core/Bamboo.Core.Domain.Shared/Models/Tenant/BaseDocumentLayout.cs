@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_document_layout")]
-public partial class BaseDocumentLayout: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

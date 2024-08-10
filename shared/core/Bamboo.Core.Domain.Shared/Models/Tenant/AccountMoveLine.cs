@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("MoveId", Name = "account_move_line_move_id_index")]
 //[Index("MoveName", Name = "account_move_line_move_name_index")]
 //[Index("PartnerId", "Ref", Name = "account_move_line_partner_id_ref_idx")]
-public partial class AccountMoveLine: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("project_project")]
 //[Index("Date", Name = "project_project_date_index")]
 //[Index("StageId", Name = "project_project_stage_id_index")]
-public partial class ProjectProject: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

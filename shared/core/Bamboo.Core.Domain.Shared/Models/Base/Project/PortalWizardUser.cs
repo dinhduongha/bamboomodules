@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("portal_wizard_user")]
-public partial class PortalWizardUser : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PortalWizardUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

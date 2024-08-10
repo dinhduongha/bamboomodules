@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_edi_format")]
 //[Index("Code", Name = "account_edi_format_unique_code", IsUnique = true)]
-public partial class AccountEdiFormat : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountEdiFormat : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

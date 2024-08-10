@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateTo", "DateFrom", Name = "hr_leave_date_to_date_from_index")]
 //[Index("EmployeeId", Name = "hr_leave_employee_id_index")]
 //[Index("UserId", Name = "hr_leave_user_id_index")]
-public partial class HrLeave : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

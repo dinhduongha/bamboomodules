@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 // Must-Copy-To-Tenants
 [Table("res_partner_title")]
-public partial class ResPartnerTitle : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerTitle : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

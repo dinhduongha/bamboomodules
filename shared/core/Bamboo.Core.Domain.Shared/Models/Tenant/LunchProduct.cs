@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("lunch_product")]
-public partial class LunchProduct: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LunchProduct: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

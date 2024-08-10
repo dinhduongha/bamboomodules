@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("barcode_rule")]
-public partial class BarcodeRule : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class BarcodeRule : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_attendance_overtime")]
 //[Index("EmployeeId", Name = "hr_attendance_overtime_employee_id_index")]
-public partial class HrAttendanceOvertime : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrAttendanceOvertime : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

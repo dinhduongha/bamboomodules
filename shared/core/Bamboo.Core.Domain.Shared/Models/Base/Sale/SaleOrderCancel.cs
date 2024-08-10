@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sale_order_cancel")]
 //[Index("AuthorId", Name = "sale_order_cancel_author_id_index")]
-public partial class SaleOrderCancel : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderCancel : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

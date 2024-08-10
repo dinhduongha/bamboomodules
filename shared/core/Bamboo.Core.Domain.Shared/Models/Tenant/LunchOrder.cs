@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("State", Name = "lunch_order_state_index")]
 //[Index("SupplierId", Name = "lunch_order_supplier_id_index")]
 //[Index("UserId", "ProductId", "Date", Name = "lunch_order_user_product_date")]
-public partial class LunchOrder: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

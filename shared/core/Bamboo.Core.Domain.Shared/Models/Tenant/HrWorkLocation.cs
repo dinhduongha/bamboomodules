@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_work_location")]
-public partial class HrWorkLocation: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

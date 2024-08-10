@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("portal_share")]
-public partial class PortalShare : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PortalShare : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

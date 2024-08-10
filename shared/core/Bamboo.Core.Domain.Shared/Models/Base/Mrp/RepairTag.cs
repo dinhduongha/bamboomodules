@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("repair_tags")]
 //[Index("Name", Name = "repair_tags_name_uniq", IsUnique = true)]
-public partial class RepairTag : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

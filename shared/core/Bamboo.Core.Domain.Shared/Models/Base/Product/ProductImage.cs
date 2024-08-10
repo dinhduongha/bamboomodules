@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_image")]
 //[Index("ProductTmplId", Name = "product_image_product_tmpl_id_index")]
 //[Index("ProductVariantId", Name = "product_image_product_variant_id_index")]
-public partial class ProductImage : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductImage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

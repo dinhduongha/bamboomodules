@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_routing_workcenter")]
 //[Index("BomId", Name = "mrp_routing_workcenter_bom_id_index")]
-public partial class MrpRoutingWorkcenter : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpRoutingWorkcenter : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

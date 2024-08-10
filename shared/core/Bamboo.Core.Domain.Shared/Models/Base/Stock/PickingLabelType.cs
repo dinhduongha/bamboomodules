@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("picking_label_type")]
-public partial class PickingLabelType : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PickingLabelType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

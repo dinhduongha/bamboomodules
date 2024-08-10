@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("lunch_cashmove")]
-public partial class LunchCashmove : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

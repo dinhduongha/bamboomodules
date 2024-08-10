@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_seniority")]
 //[Index("Name", Name = "crm_iap_lead_seniority_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadSeniority : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmIapLeadSeniority : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

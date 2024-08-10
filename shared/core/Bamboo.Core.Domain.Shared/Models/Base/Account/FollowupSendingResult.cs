@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("followup_sending_results")]
-public partial class FollowupSendingResult : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FollowupSendingResult : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

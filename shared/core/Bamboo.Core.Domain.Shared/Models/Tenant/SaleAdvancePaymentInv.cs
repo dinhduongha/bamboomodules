@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sale_advance_payment_inv")]
-public partial class SaleAdvancePaymentInv: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

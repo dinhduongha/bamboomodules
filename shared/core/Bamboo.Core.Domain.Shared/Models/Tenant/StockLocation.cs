@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("LocationId", Name = "stock_location_location_id_index")]
 //[Index("ParentPath", Name = "stock_location_parent_path_index")]
 //[Index("Usage", Name = "stock_location_usage_index")]
-public partial class StockLocation: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

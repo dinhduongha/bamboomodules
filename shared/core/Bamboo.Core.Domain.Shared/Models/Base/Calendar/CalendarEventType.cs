@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("calendar_event_type")]
 //[Index("Name", Name = "calendar_event_type_name_uniq", IsUnique = true)]
-public partial class CalendarEventType : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarEventType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

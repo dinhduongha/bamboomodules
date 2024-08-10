@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("change_lock_date")]
-public partial class ChangeLockDate: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ChangeLockDate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

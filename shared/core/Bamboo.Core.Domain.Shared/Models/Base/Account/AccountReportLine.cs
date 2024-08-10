@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_report_line")]
 //[Index("Code", Name = "account_report_line_code_uniq", IsUnique = true)]
-public partial class AccountReportLine : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

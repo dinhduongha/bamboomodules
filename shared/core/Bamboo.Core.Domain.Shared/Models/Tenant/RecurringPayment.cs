@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("recurring_payment")]
-public partial class RecurringPayment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RecurringPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

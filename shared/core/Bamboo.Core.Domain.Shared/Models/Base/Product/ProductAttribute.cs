@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("product_attribute")]
 //[Index("Sequence", Name = "product_attribute_sequence_index")]
-public partial class ProductAttribute : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

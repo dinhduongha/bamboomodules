@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("phone_blacklist_remove")]
-public partial class PhoneBlacklistRemove : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PhoneBlacklistRemove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

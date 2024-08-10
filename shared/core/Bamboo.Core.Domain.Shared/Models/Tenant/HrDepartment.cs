@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "hr_department_company_id_index")]
 //[Index("ParentId", Name = "hr_department_parent_id_index")]
 //[Index("ParentPath", Name = "hr_department_parent_path_index")]
-public partial class HrDepartment: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrDepartment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

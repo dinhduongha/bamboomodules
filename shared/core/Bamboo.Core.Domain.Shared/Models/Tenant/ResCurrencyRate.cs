@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_currency_rate")]
 //[Index("Name", Name = "res_currency_rate_name_index")]
 //[Index("Name", "CurrencyId", "TenantId", Name = "res_currency_rate_unique_name_per_day", IsUnique = true)]
-public partial class ResCurrencyRate: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResCurrencyRate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_collaborator")]
 //[Index("ProjectId", "PartnerId", Name = "project_collaborator_unique_collaborator", IsUnique = true)]
-public partial class ProjectCollaborator : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectCollaborator : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

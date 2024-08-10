@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("calendar_event")]
 //[Index("AccessToken", Name = "calendar_event_access_token_index")]
 //[Index("OpportunityId", Name = "calendar_event_opportunity_id_index")]
-public partial class CalendarEvent : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

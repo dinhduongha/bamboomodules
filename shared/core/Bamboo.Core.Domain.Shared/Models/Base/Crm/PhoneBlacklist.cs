@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("phone_blacklist")]
 //[Index("Number", Name = "phone_blacklist_unique_number", IsUnique = true)]
-public partial class PhoneBlacklist : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PhoneBlacklist : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

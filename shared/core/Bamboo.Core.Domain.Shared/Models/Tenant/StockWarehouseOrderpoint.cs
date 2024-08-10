@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "stock_warehouse_orderpoint_company_id_index")]
 //[Index("LocationId", Name = "stock_warehouse_orderpoint_location_id_index")]
 //[Index("ProductId", "LocationId", "TenantId", Name = "stock_warehouse_orderpoint_product_location_check", IsUnique = true)]
-public partial class StockWarehouseOrderpoint: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

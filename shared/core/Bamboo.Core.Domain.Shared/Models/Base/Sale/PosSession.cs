@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("State", Name = "pos_session_state_index")]
 //[Index("Name", Name = "pos_session_uniq_name", IsUnique = true)]
 //[Index("UserId", Name = "pos_session_user_id_index")]
-public partial class PosSession : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

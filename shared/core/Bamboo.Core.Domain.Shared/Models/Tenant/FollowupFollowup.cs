@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("followup_followup")]
 //[Index("TenantId", Name = "followup_followup_company_uniq", IsUnique = true)]
-public partial class FollowupFollowup: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FollowupFollowup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

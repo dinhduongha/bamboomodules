@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "mrp_bom_company_id_index")]
 //[Index("ProductId", Name = "mrp_bom_product_id_index")]
 //[Index("ProductTmplId", Name = "mrp_bom_product_tmpl_id_index")]
-public partial class MrpBom: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

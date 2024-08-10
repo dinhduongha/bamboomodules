@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "repair_fee_company_id_index")]
 //[Index("Name", Name = "repair_fee_name_index")]
 //[Index("RepairId", Name = "repair_fee_repair_id_index")]
-public partial class RepairFee: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairFee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

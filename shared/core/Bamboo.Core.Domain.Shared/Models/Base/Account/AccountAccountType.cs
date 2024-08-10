@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 // Copy-To-Tenants (?)
 [Table("account_account_type")]
-public partial class AccountAccountType : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAccountType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("snailmail_letter")]
-public partial class SnailmailLetter: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SnailmailLetter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

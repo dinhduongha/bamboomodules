@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("Priority", Name = "project_task_priority_index")]
 //[Index("ProjectId", Name = "project_task_project_id_index")]
 //[Index("StageId", Name = "project_task_stage_id_index")]
-public partial class ProjectTask: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

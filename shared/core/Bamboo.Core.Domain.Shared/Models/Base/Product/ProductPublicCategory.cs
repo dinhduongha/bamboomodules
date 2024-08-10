@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("ParentPath", Name = "product_public_category_parent_path_index")]
 //[Index("Sequence", Name = "product_public_category_sequence_index")]
 //[Index("WebsiteId", Name = "product_public_category_website_id_index")]
-public partial class ProductPublicCategory : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

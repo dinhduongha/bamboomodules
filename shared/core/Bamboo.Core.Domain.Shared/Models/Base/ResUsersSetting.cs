@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_users_settings")]
 //[Index("UserId", Name = "res_users_settings_unique_user_id", IsUnique = true)]
-public partial class ResUsersSetting : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersSetting : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("hr_leave_allocation")]
 //[Index("DateFrom", Name = "hr_leave_allocation_date_from_index")]
 //[Index("EmployeeId", Name = "hr_leave_allocation_employee_id_index")]
-public partial class HrLeaveAllocation : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeaveAllocation : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

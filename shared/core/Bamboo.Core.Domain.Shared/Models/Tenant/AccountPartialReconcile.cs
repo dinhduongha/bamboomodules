@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("account_partial_reconcile")]
 //[Index("CreditMoveId", Name = "account_partial_reconcile_credit_move_id_index")]
 //[Index("DebitMoveId", Name = "account_partial_reconcile_debit_move_id_index")]
-public partial class AccountPartialReconcile: Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

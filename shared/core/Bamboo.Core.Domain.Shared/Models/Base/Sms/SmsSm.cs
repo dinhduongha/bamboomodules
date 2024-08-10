@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_sms")]
 //[Index("MailMessageId", Name = "sms_sms_mail_message_id_index")]
-public partial class SmsSm : Entity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
