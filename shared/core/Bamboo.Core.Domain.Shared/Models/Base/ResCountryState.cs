@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_country_state")]
 //[Index("CountryId", "Code", Name = "res_country_state_name_code_uniq", IsUnique = true)]
-public partial class ResCountryState: Entity<long>, IEntityDto<long>
+public partial class ResCountryState: FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class ResCountryState: Entity<long>, IEntityDto<long>
     public string? Code { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

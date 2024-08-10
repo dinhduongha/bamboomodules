@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("maintenance_stage")]
-public partial class MaintenanceStage : Entity<long>, IEntityDto<long>
+public partial class MaintenanceStage : FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -36,7 +36,7 @@ public partial class MaintenanceStage : Entity<long>, IEntityDto<long>
     public bool? Done { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

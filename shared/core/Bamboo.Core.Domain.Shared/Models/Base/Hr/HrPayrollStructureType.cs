@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_payroll_structure_type")]
-public partial class HrPayrollStructureType : Entity<long>, IEntityDto<long>
+public partial class HrPayrollStructureType : FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -33,7 +33,7 @@ public partial class HrPayrollStructureType : Entity<long>, IEntityDto<long>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_currency")]
 //[Index("Name", Name = "res_currency_unique_name", IsUnique = true)]
-public partial class ResCurrency: Entity<long>, IEntityDto<long>
+public partial class ResCurrency: FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -52,7 +52,7 @@ public partial class ResCurrency: Entity<long>, IEntityDto<long>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

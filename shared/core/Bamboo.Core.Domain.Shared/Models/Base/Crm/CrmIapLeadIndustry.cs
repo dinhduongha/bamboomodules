@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_industry")]
 //[Index("Name", Name = "crm_iap_lead_industry_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadIndustry : Entity<long>, IEntityDto<long>
+public partial class CrmIapLeadIndustry : FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -37,7 +37,7 @@ public partial class CrmIapLeadIndustry : Entity<long>, IEntityDto<long>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("decimal_precision")]
 //[Index("Name", Name = "decimal_precision_name_uniq", IsUnique = true)]
-public partial class DecimalPrecision : Entity<long>, IEntityDto<long>
+public partial class DecimalPrecision : FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -31,7 +31,7 @@ public partial class DecimalPrecision : Entity<long>, IEntityDto<long>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_task_type")]
 //[Index("UserId", Name = "project_task_type_user_id_index")]
-public partial class ProjectTaskType : Entity<long>, IEntityDto<long>
+public partial class ProjectTaskType : FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -61,7 +61,7 @@ public partial class ProjectTaskType : Entity<long>, IEntityDto<long>
     public bool? AutoValidationKanbanState { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

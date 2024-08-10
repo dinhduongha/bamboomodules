@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("note_tag")]
 //[Index("Name", Name = "note_tag_name_uniq", IsUnique = true)]
-public partial class NoteTag : Entity<Guid>, IEntityDto<Guid>
+public partial class NoteTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class NoteTag : Entity<Guid>, IEntityDto<Guid>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

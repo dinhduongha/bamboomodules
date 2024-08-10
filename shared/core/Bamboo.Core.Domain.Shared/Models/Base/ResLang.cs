@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("Code", Name = "res_lang_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_lang_name_uniq", IsUnique = true)]
 //[Index("UrlCode", Name = "res_lang_url_code_uniq", IsUnique = true)]
-public partial class ResLang: Entity<long>, IEntityDto<long>
+public partial class ResLang: FullAuditedEntity<long>, IEntityDto<long>
 {
     [Key]
     [Column("id")]
@@ -63,7 +63,7 @@ public partial class ResLang: Entity<long>, IEntityDto<long>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
