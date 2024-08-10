@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_return_picking_line")]
-public partial class StockReturnPickingLine : Entity<Guid>, IEntityDto<Guid>
+public partial class StockReturnPickingLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -39,7 +39,7 @@ public partial class StockReturnPickingLine : Entity<Guid>, IEntityDto<Guid>
     public decimal? Quantity { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_change_product_qty")]
-public partial class StockChangeProductQty : Entity<Guid>, IEntityDto<Guid>
+public partial class StockChangeProductQty : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -36,7 +36,7 @@ public partial class StockChangeProductQty : Entity<Guid>, IEntityDto<Guid>
     public decimal? NewQuantity { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_assign_serial")]
-public partial class StockAssignSerial : Entity<Guid>, IEntityDto<Guid>
+public partial class StockAssignSerial : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -36,7 +36,7 @@ public partial class StockAssignSerial : Entity<Guid>, IEntityDto<Guid>
     public string? NextSerialNumber { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

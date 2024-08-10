@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("StorageCategoryId", Name = "stock_storage_category_capacity_storage_category_id_index")]
 //[Index("PackageTypeId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_package_type", IsUnique = true)]
 //[Index("ProductId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_product", IsUnique = true)]
-public partial class StockStorageCategoryCapacity : Entity<Guid>, IEntityDto<Guid>
+public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -39,7 +39,7 @@ public partial class StockStorageCategoryCapacity : Entity<Guid>, IEntityDto<Gui
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
