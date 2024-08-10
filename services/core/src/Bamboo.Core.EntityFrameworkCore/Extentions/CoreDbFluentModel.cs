@@ -2318,7 +2318,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.TenantId, "account_edi_format_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Cod }, "account_edi_format_unique_code").IsUnique();
+            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_edi_format_unique_code").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -7841,7 +7841,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_event");
 
-            entity.HasIndex(e => e.TenantId, "calendar_attendee_company_id_index");
+            entity.HasIndex(e => e.TenantId, "calendar_event_company_id_index");
 
             entity.HasIndex(e => e.AccessToken, "calendar_event_access_token_index");
 
@@ -8412,7 +8412,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_industry");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
@@ -10539,7 +10539,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_model_category");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_brand_company_id_index");
+            entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_category_company_id_index");
 
             entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_model_category_name_uniq").IsUnique();
 
@@ -10615,9 +10615,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_state");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_state_company_id_index");
-
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
