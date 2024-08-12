@@ -17,6 +17,9 @@ public partial class SpreadsheetDashboardGroup: FullAuditedEntity<long>, IEntity
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 

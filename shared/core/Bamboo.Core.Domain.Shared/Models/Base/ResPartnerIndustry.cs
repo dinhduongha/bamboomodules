@@ -17,6 +17,9 @@ public partial class ResPartnerIndustry: FullAuditedEntity<long>, IEntityDto<lon
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 

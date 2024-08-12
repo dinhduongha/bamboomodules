@@ -36,10 +36,10 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? PartnerId { get; set; }
 
     [Column("stage_id")]
-    public long? StageId { get; set; }
+    public Guid? StageId { get; set; }
 
     [Column("last_stage_id")]
-    public long? LastStageId { get; set; }
+    public Guid? LastStageId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

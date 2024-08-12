@@ -44,7 +44,7 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? UserId { get; set; }
 
     [Column("stage_id")]
-    public long? StageId { get; set; }
+    public Guid? StageId { get; set; }
 
     [Column("last_update_id")]
     public Guid? LastUpdateId { get; set; }

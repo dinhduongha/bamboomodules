@@ -6533,6 +6533,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("barcode_nomenclature");
 
+            entity.HasIndex(e => e.TenantId, "barcode_nomenclature_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8412,7 +8414,9 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_industry");
 
-            entity.HasIndex(e => new { e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
+            entity.HasIndex(e => e.TenantId, "crm_iap_lead_industry_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Color).HasColumnName("color");
@@ -9453,6 +9457,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("crm_stage_pkey");
 
             entity.ToTable("crm_stage");
+
+            entity.HasIndex(e => e.TenantId, "crm_stage_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -10615,7 +10621,9 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_state");
 
-            entity.HasIndex(e => new { e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
+            entity.HasIndex(e => e.TenantId, "fleet_vehicle_state_company_id_index");
+
+            entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -11388,6 +11396,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_contract_type");
 
+            entity.HasIndex(e => e.TenantId, "hr_contract_type_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -11491,6 +11501,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("hr_departure_reason_pkey");
 
             entity.ToTable("hr_departure_reason");
+
+            entity.HasIndex(e => e.TenantId, "hr_departure_reason_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -13271,6 +13283,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_payroll_structure_type");
 
+            entity.HasIndex(e => e.TenantId, "hr_payroll_structure_type_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime)
@@ -13464,6 +13478,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_recruitment_degree");
 
+            entity.HasIndex(e => e.TenantId, "hr_recruitment_degree_company_id_index");
+
             entity.HasIndex(e => e.Name, "hr_recruitment_degree_name_uniq").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
@@ -13553,6 +13569,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("hr_recruitment_stage_pkey");
 
             entity.ToTable("hr_recruitment_stage");
+
+            entity.HasIndex(e => e.TenantId, "hr_recruitment_stage_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -13670,6 +13688,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_resume_line_type");
 
+            entity.HasIndex(e => e.TenantId, "hr_resume_line_type_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -13778,6 +13798,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("hr_skill_type_pkey");
 
             entity.ToTable("hr_skill_type");
+
+            entity.HasIndex(e => e.TenantId, "hr_skill_type_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -18729,6 +18751,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("maintenance_stage");
 
+            entity.HasIndex(e => e.TenantId, "maintenance_stage_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -20469,6 +20493,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("note_stage_pkey");
 
             entity.ToTable("note_stage");
+
+            entity.HasIndex(e => e.TenantId, "note_stage_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -24367,6 +24393,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_project_stage");
 
+            entity.HasIndex(e => e.TenantId, "project_project_stage_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
@@ -27751,6 +27779,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_partner_industry");
 
+            entity.HasIndex(e => e.TenantId, "res_partner_industry_company_id_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
@@ -29863,6 +29893,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("spreadsheet_dashboard_group_pkey");
 
             entity.ToTable("spreadsheet_dashboard_group");
+
+            entity.HasIndex(e => e.TenantId, "spreadsheet_dashboard_group_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)
@@ -33749,6 +33781,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("utm_stage_pkey");
 
             entity.ToTable("utm_stage");
+
+            entity.HasIndex(e => e.TenantId, "utm_stage_company_id_index");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreationTime)

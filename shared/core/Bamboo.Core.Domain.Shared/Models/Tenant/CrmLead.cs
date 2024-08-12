@@ -53,7 +53,7 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("stage_id")]
-    public long? StageId { get; set; }
+    public Guid? StageId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("maintenance_stage")]
-public partial class MaintenanceStage : FullAuditedEntity<long>, IEntityDto<long>
+public partial class MaintenanceStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }

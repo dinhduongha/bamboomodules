@@ -18,6 +18,9 @@ public partial class CrmIapLeadIndustry : FullAuditedEntity<long>, IEntityDto<lo
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("color")]
     public long? Color { get; set; }
 

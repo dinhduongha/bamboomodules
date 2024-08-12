@@ -17,6 +17,9 @@ public partial class HrPayrollStructureType : FullAuditedEntity<long>, IEntityDt
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("default_resource_calendar_id")]
     public Guid? DefaultResourceCalendarId { get; set; }
 

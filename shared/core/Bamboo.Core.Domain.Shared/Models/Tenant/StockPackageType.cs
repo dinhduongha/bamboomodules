@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_package_type")]
 //[Index("Barcode", Name = "stock_package_type_barcode_uniq", IsUnique = true)]
 //[Index("TenantId", Name = "stock_package_type_company_id_index")]
-public partial class StockPackageType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

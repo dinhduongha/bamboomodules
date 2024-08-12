@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("stock_picking_type")]
 //[Index("TenantId", Name = "stock_picking_type_company_id_index")]
-public partial class StockPickingType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
