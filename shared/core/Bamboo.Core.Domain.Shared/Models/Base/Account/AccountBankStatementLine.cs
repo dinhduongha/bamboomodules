@@ -35,10 +35,10 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     public Guid? PartnerId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("foreign_currency_id")]
-    public long? ForeignCurrencyId { get; set; }
+    public Guid? ForeignCurrencyId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

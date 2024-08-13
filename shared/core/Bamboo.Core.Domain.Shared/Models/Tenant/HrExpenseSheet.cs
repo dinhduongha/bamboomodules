@@ -34,7 +34,7 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }

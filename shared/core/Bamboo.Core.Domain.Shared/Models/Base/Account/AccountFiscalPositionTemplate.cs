@@ -27,7 +27,7 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     public Guid? ChartTemplateId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("country_group_id")]
     public Guid? CountryGroupId { get; set; }

@@ -57,7 +57,7 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? PricelistId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

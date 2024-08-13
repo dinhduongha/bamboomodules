@@ -21,7 +21,7 @@ public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

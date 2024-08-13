@@ -27,7 +27,7 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public long? CodeDigits { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("income_currency_exchange_account_id")]
     public Guid? IncomeCurrencyExchangeAccountId { get; set; }
@@ -36,7 +36,7 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? ExpenseCurrencyExchangeAccountId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("account_journal_suspense_account_id")]
     public Guid? AccountJournalSuspenseAccountId { get; set; }

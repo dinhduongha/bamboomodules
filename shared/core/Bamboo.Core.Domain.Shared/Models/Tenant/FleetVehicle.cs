@@ -39,7 +39,7 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? BrandId { get; set; }
 
     [Column("state_id")]
-    public long? StateId { get; set; }
+    public Guid? StateId { get; set; }
 
     [Column("seats")]
     public long? Seats { get; set; }

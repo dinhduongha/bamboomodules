@@ -33,7 +33,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public long Sequence { get; set; }
 
     [Column("stage_id")]
-    public long? StageId { get; set; }
+    public Guid? StageId { get; set; }
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }

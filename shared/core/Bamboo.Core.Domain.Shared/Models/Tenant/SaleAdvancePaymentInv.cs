@@ -21,7 +21,7 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? ProductId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

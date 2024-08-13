@@ -68,13 +68,13 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? Title { get; set; }
 
     [Column("lang_id")]
-    public long? LangId { get; set; }
+    public Guid? LangId { get; set; }
 
     [Column("state_id")]
-    public long? StateId { get; set; }
+    public Guid? StateId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("lost_reason_id")]
     public Guid? LostReasonId { get; set; }

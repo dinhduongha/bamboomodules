@@ -14,11 +14,11 @@ namespace Bamboo.Core.Models;
 //[Index("Code", Name = "res_lang_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_lang_name_uniq", IsUnique = true)]
 //[Index("UrlCode", Name = "res_lang_url_code_uniq", IsUnique = true)]
-public partial class ResLang: FullAuditedEntity<long>, IEntityDto<long>
+public partial class ResLang: AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

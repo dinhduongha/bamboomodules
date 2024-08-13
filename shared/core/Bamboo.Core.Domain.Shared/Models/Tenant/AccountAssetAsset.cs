@@ -21,7 +21,7 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

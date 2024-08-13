@@ -75,7 +75,7 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? FiscalPositionId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("reversed_entry_id")]
     public Guid? ReversedEntryId { get; set; }

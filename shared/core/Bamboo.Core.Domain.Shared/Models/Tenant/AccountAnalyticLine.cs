@@ -37,7 +37,7 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("plan_id")]
     public Guid? PlanId { get; set; }

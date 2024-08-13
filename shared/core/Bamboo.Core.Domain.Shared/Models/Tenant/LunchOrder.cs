@@ -39,7 +39,7 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

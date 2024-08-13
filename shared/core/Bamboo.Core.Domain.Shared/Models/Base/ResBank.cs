@@ -19,10 +19,10 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudit
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("state")]
-    public long? State { get; set; }
+    public Guid? State { get; set; }
 
     [Column("country")]
-    public long? Country { get; set; }
+    public Guid? Country { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

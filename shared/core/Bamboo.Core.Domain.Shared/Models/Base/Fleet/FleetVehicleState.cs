@@ -12,11 +12,11 @@ namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_state")]
 //[Index("Name", Name = "fleet_vehicle_state_fleet_state_name_unique", IsUnique = true)]
-public partial class FleetVehicleState : FullAuditedEntity<long>, IEntityDto<long>
+public partial class FleetVehicleState : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

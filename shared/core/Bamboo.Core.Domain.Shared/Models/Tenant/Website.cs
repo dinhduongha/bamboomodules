@@ -25,7 +25,7 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("default_lang_id")]
-    public long? DefaultLangId { get; set; }
+    public Guid? DefaultLangId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

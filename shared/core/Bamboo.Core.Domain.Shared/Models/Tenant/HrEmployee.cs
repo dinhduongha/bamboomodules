@@ -65,13 +65,13 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? AddressHomeId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("children")]
     public long? Children { get; set; }
 
     [Column("country_of_birth")]
-    public long? CountryOfBirth { get; set; }
+    public Guid? CountryOfBirth { get; set; }
 
     [Column("bank_account_id")]
     public Guid? BankAccountId { get; set; }
@@ -80,7 +80,7 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public long? KmHomeWork { get; set; }
 
     [Column("departure_reason_id")]
-    public long? DepartureReasonId { get; set; }
+    public Guid? DepartureReasonId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

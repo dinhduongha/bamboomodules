@@ -23,7 +23,7 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("structure_type_id")]
-    public long? StructureTypeId { get; set; }
+    public Guid? StructureTypeId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -41,7 +41,7 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("contract_type_id")]
-    public long? ContractTypeId { get; set; }
+    public Guid? ContractTypeId { get; set; }
 
     [Column("hr_responsible_id")]
     public Guid? HrResponsibleId { get; set; }

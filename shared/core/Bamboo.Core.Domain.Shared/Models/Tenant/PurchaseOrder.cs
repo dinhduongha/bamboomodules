@@ -34,7 +34,7 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? DestAddressId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("invoice_count")]
     public long? InvoiceCount { get; set; }

@@ -29,7 +29,7 @@ public partial class MailTrackingValue: Entity<Guid>, IEntityDto<Guid>
     public long? NewValueInteger { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }

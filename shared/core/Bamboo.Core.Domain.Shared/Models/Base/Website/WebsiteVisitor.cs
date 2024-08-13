@@ -25,10 +25,10 @@ public partial class WebsiteVisitor: Entity<Guid>, IEntityDto<Guid>
     public Guid? PartnerId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("lang_id")]
-    public long? LangId { get; set; }
+    public Guid? LangId { get; set; }
 
     [Column("visit_count")]
     public long? VisitCount { get; set; }

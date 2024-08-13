@@ -18,7 +18,7 @@ public partial class BaseImportTestsModelsComplex: Entity<Guid>, IEntityDto<Guid
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

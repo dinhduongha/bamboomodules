@@ -12,11 +12,11 @@ namespace Bamboo.Core.Models;
 
 [Table("res_currency")]
 //[Index("Name", Name = "res_currency_unique_name", IsUnique = true)]
-public partial class ResCurrency: FullAuditedEntity<long>, IEntityDto<long>
+public partial class ResCurrency: AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -25,7 +25,7 @@ public partial class ResCurrency: FullAuditedEntity<long>, IEntityDto<long>
     public string? Symbol { get; set; }
 
     [Column("decimal_places")]
-    public long? DecimalPlaces { get; set; }
+    public Guid? DecimalPlaces { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

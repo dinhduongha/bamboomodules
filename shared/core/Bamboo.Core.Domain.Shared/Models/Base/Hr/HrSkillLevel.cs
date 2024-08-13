@@ -21,7 +21,7 @@ public partial class HrSkillLevel : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("skill_type_id")]
-    public long? SkillTypeId { get; set; }
+    public Guid? SkillTypeId { get; set; }
 
     [Column("level_progress")]
     public long? LevelProgress { get; set; }

@@ -29,7 +29,7 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public long Sequence { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

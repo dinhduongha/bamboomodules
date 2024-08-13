@@ -21,7 +21,7 @@ public partial class HrDepartureWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("departure_reason_id")]
-    public long? DepartureReasonId { get; set; }
+    public Guid? DepartureReasonId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }

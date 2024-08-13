@@ -27,7 +27,7 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? ChartTemplateId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("load_more_limit")]
     public long? LoadMoreLimit { get; set; }

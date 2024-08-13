@@ -45,7 +45,7 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     public Guid? TenantId { get; set; }
 
     [Column("contract_type_id")]
-    public long? ContractTypeId { get; set; }
+    public Guid? ContractTypeId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

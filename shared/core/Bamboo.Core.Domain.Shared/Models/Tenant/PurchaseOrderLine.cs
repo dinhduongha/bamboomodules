@@ -38,7 +38,7 @@ public partial class PurchaseOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? PartnerId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("product_packaging_id")]
     public Guid? ProductPackagingId { get; set; }

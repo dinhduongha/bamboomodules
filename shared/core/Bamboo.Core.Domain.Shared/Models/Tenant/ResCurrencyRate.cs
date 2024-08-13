@@ -20,7 +20,7 @@ public partial class ResCurrencyRate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

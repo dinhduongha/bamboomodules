@@ -31,7 +31,7 @@ public partial class HrApplicantSkill : FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? SkillLevelId { get; set; }
 
     [Column("skill_type_id")]
-    public long? SkillTypeId { get; set; }
+    public Guid? SkillTypeId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

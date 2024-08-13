@@ -33,7 +33,7 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

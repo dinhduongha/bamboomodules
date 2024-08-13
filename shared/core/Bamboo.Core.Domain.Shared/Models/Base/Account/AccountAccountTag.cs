@@ -24,7 +24,7 @@ public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Gui
     public long? Color { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

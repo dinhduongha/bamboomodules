@@ -11,11 +11,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_payroll_structure_type")]
-public partial class HrPayrollStructureType : FullAuditedEntity<long>, IEntityDto<long>
+public partial class HrPayrollStructureType : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
@@ -24,7 +24,7 @@ public partial class HrPayrollStructureType : FullAuditedEntity<long>, IEntityDt
     public Guid? DefaultResourceCalendarId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

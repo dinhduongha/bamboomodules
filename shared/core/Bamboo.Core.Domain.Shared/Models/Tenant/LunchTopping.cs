@@ -24,7 +24,7 @@ public partial class LunchTopping: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? SupplierId { get; set; }
 
     [Column("topping_category")]
-    public long? ToppingCategory { get; set; }
+    public Guid? ToppingCategory { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

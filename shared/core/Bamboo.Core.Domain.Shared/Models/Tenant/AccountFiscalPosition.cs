@@ -24,7 +24,7 @@ public partial class AccountFiscalPosition: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("country_group_id")]
     public Guid? CountryGroupId { get; set; }

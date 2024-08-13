@@ -39,10 +39,10 @@ public partial class SnailmailLetter: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? MessageId { get; set; }
 
     [Column("state_id")]
-    public long? StateId { get; set; }
+    public Guid? StateId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

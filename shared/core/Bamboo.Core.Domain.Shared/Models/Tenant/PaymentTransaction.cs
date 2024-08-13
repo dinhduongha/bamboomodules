@@ -28,7 +28,7 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("token_id")]
     public Guid? TokenId { get; set; }
@@ -46,10 +46,10 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? PartnerId { get; set; }
 
     [Column("partner_state_id")]
-    public long? PartnerStateId { get; set; }
+    public Guid? PartnerStateId { get; set; }
 
     [Column("partner_country_id")]
-    public long? PartnerCountryId { get; set; }
+    public Guid? PartnerCountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

@@ -32,10 +32,10 @@ public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDt
     public Guid? ExchangeMoveId { get; set; }
 
     [Column("debit_currency_id")]
-    public long? DebitCurrencyId { get; set; }
+    public Guid? DebitCurrencyId { get; set; }
 
     [Column("credit_currency_id")]
-    public long? CreditCurrencyId { get; set; }
+    public Guid? CreditCurrencyId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

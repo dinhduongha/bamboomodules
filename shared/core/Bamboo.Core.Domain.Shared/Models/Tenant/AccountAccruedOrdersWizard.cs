@@ -21,7 +21,7 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }

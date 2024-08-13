@@ -33,7 +33,7 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("order_partner_id")]
     public Guid? OrderPartnerId { get; set; }

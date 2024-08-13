@@ -24,7 +24,7 @@ public partial class AccountTaxGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public long Sequence { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

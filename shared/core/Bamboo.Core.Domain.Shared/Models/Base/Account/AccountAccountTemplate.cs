@@ -24,7 +24,7 @@ public partial class AccountAccountTemplate : FullAuditedEntity<Guid>, IEntityDt
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("chart_template_id")]
     public Guid? ChartTemplateId { get; set; }

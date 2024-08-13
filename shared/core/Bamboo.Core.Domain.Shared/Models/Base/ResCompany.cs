@@ -26,7 +26,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public Guid? PartnerId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -191,7 +191,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public Guid? AutomaticEntryDefaultJournalId { get; set; }
 
     [Column("account_fiscal_country_id")]
-    public long? AccountFiscalCountryId { get; set; }
+    public Guid? AccountFiscalCountryId { get; set; }
 
     [Column("tax_cash_basis_journal_id")]
     public Guid? TaxCashBasisJournalId { get; set; }
@@ -326,7 +326,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public bool? VatCheckVies { get; set; }
 
     [Column("nomenclature_id")]
-    public long? NomenclatureId { get; set; }
+    public Guid? NomenclatureId { get; set; }
 
     [Column("internal_transit_location_id")]
     public Guid? InternalTransitLocationId { get; set; }
@@ -392,10 +392,10 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public Guid? CompanyExpenseJournalId { get; set; }
 
     [Column("overtime_company_threshold")]
-    public long? OvertimeCompanyThreshold { get; set; }
+    public Guid? OvertimeCompanyThreshold { get; set; }
 
     [Column("overtime_employee_threshold")]
-    public long? OvertimeEmployeeThreshold { get; set; }
+    public Guid? OvertimeEmployeeThreshold { get; set; }
 
     [Column("attendance_kiosk_delay")]
     public long? AttendanceKioskDelay { get; set; }

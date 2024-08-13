@@ -51,7 +51,7 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? JobId { get; set; }
 
     [Column("type_id")]
-    public long? TypeId { get; set; }
+    public Guid? TypeId { get; set; }
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }

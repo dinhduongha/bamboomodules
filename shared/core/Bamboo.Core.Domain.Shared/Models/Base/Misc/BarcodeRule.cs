@@ -21,7 +21,7 @@ public partial class BarcodeRule : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("barcode_nomenclature_id")]
-    public long? BarcodeNomenclatureId { get; set; }
+    public Guid? BarcodeNomenclatureId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }

@@ -29,7 +29,7 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

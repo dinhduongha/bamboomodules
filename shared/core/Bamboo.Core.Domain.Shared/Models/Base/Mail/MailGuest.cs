@@ -18,7 +18,7 @@ public partial class MailGuest: Entity<Guid>, IEntityDto<Guid>
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

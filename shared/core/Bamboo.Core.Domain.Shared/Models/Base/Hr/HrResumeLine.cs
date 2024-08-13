@@ -24,7 +24,7 @@ public partial class HrResumeLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? EmployeeId { get; set; }
 
     [Column("line_type_id")]
-    public long? LineTypeId { get; set; }
+    public Guid? LineTypeId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

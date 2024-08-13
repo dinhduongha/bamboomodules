@@ -39,7 +39,7 @@ public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? PaymentMethodId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

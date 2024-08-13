@@ -31,7 +31,7 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? CashBasisTransitionAccountId { get; set; }
 
     [Column("country_id")]
-    public long? CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

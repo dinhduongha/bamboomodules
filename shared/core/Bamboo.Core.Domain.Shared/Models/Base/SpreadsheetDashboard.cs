@@ -18,7 +18,7 @@ public partial class SpreadsheetDashboard: Entity<Guid>, IEntityDto<Guid>
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("dashboard_group_id")]
-    public long? DashboardGroupId { get; set; }
+    public Guid? DashboardGroupId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }

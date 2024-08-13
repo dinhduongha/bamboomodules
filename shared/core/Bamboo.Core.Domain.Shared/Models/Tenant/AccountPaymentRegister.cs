@@ -18,7 +18,7 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
@@ -27,7 +27,7 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     public Guid? PartnerBankId { get; set; }
 
     [Column("source_currency_id")]
-    public long? SourceCurrencyId { get; set; }
+    public Guid? SourceCurrencyId { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

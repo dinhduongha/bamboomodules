@@ -12,11 +12,11 @@ namespace Bamboo.Core.Models;
 
 [Table("decimal_precision")]
 //[Index("Name", Name = "decimal_precision_name_uniq", IsUnique = true)]
-public partial class DecimalPrecision : FullAuditedEntity<long>, IEntityDto<long>
+public partial class DecimalPrecision : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("digits")]
     public long? Digits { get; set; }

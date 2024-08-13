@@ -30,7 +30,7 @@ public partial class ProjectTaskUserRel : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? UserId { get; set; }
 
     [Column("stage_id")]
-    public long? StageId { get; set; }
+    public Guid? StageId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

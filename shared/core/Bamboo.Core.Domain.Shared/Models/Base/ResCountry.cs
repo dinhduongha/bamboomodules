@@ -13,17 +13,17 @@ namespace Bamboo.Core.Models;
 [Table("res_country")]
 //[Index("Code", Name = "res_country_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_country_name_uniq", IsUnique = true)]
-public partial class ResCountry: FullAuditedEntity<long>, IEntityDto<long>
+public partial class ResCountry: AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
-    public long Id { get => base.Id; set => base.Id = value; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("address_view_id")]
     public Guid? AddressViewId { get; set; }
 
     [Column("currency_id")]
-    public long? CurrencyId { get; set; }
+    public Guid? CurrencyId { get; set; }
 
     [Column("phone_code")]
     public long? PhoneCode { get; set; }
