@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 // Copy-To-Tenants (?)
 [Table("account_account_tag")]
-public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAccountTag : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -50,9 +50,9 @@ public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CountryId")]
     //[InverseProperty("AccountAccountTags")]

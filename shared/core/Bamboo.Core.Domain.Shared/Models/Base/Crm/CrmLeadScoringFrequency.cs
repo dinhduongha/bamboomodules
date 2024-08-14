@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_lead_scoring_frequency")]
 //[Index("Variable", Name = "crm_lead_scoring_frequency_variable_index")]
-public partial class CrmLeadScoringFrequency : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmLeadScoringFrequency : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("team_id")]
     public Guid? TeamId { get; set; }
@@ -48,9 +48,9 @@ public partial class CrmLeadScoringFrequency : FullAuditedEntity<Guid>, IEntityD
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CrmLeadScoringFrequencyCreateUs")]

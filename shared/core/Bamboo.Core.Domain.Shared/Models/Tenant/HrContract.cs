@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("hr_contract")]
 //[Index("DateStart", Name = "hr_contract_date_start_index")]
 //[Index("ResourceCalendarId", Name = "hr_contract_resource_calendar_id_index")]
-public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrContract: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

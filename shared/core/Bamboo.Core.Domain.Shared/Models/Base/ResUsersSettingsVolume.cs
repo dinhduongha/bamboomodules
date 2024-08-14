@@ -14,14 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("GuestId", Name = "res_users_settings_volumes_guest_id_index")]
 //[Index("PartnerId", Name = "res_users_settings_volumes_partner_id_index")]
 //[Index("UserSettingId", Name = "res_users_settings_volumes_user_setting_id_index")]
-public partial class ResUsersSettingsVolume : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersSettingsVolume : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("user_setting_id")]
     public Guid? UserSettingId { get; set; }
@@ -47,9 +47,9 @@ public partial class ResUsersSettingsVolume : FullAuditedEntity<Guid>, IEntityDt
     [Column("volume")]
     public double? Volume { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ResUsersSettingsVolumeCreateUs")]

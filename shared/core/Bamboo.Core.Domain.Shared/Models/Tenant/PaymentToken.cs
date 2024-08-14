@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("payment_token")]
 //[Index("TenantId", Name = "payment_token_company_id_index")]
-public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PaymentToken: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

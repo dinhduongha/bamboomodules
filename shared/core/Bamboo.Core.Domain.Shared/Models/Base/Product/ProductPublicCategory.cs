@@ -15,14 +15,14 @@ namespace Bamboo.Core.Models;
 //[Index("ParentPath", Name = "product_public_category_parent_path_index")]
 //[Index("Sequence", Name = "product_public_category_sequence_index")]
 //[Index("WebsiteId", Name = "product_public_category_website_id_index")]
-public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductPublicCategory : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -69,9 +69,9 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
 
     [ForeignKey("CreatorId")]

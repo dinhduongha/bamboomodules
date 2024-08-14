@@ -15,8 +15,8 @@ namespace Bamboo.Core.Models;
 //[Index("PartnerId", "OsvMemoryId", Name = "partner_stat_rel_partner_id_osv_memory_id_idx")]
 public partial class PartnerStatRel//: Entity<Guid>, IEntityDto<Guid>
 {
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     //[Key]
     [Column("osv_memory_id")]
@@ -26,9 +26,9 @@ public partial class PartnerStatRel//: Entity<Guid>, IEntityDto<Guid>
     [Column("partner_id")]
     public Guid PartnerId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("OsvMemoryId")]
     //[InverseProperty("PartnerStatRels")]

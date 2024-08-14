@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_template")]
 //[Index("Model", Name = "sms_template_model_index")]
-public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsTemplate : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -54,9 +54,9 @@ public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("SmsTemplateCreateUs")]

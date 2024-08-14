@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("Date", Name = "account_analytic_line_date_index")]
 //[Index("MoveLineId", Name = "account_analytic_line_move_line_id_index")]
 //[Index("UserId", Name = "account_analytic_line_user_id_index")]
-public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticLine: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

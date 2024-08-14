@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("AccountMove", Name = "pos_order_account_move_index")]
 //[Index("DateOrder", Name = "pos_order_date_order_index")]
 //[Index("SessionId", Name = "pos_order_session_id_index")]
-public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosOrder: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

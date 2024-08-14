@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("product_attribute")]
 //[Index("Sequence", Name = "product_attribute_sequence_index")]
-public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttribute : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
@@ -48,9 +48,9 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("visibility")]
     public string? Visibility { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProductAttributeCreateUs")]

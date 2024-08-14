@@ -15,14 +15,14 @@ namespace Bamboo.Core.Models;
 //[Index("DateTo", "DateFrom", Name = "hr_leave_date_to_date_from_index")]
 //[Index("EmployeeId", Name = "hr_leave_employee_id_index")]
 //[Index("UserId", Name = "hr_leave_user_id_index")]
-public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeave : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -135,9 +135,9 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("overtime_id")]
     public Guid? OvertimeId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("HrLeaves")]

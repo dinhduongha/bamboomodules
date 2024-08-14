@@ -144,13 +144,13 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_account_tag");
 
-            entity.HasIndex(e => e.TenantId, "account_account_tag_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_account_tag_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Applicability).HasColumnName("applicability");
             entity.Property(e => e.Color).HasColumnName("color");
@@ -168,10 +168,10 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            entity.HasOne<ResCompany>().WithMany()
-                .HasForeignKey(d => d.TenantId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("account_account_tag_company_id_fkey");
+            //entity.HasOne<ResCompany>().WithMany()
+            //    .HasForeignKey(d => d.TenantId)
+            //    .OnDelete(DeleteBehavior.Restrict)
+            //    .HasConstraintName("account_account_tag_company_id_fkey");
 
             entity.HasOne<ResCountry>().WithMany()
                 .HasForeignKey(d => d.CountryId)
@@ -194,12 +194,13 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_account_template_pkey");
 
             entity.ToTable("account_account_template");
-            entity.HasIndex(e => e.TenantId, "account_account_template_company_id_index");
+            
+            //entity.HasIndex(e => e.TenantId, "account_account_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountType).HasColumnName("account_type");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
             entity.Property(e => e.Code).HasColumnName("code");
@@ -220,10 +221,10 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            entity.HasOne<ResCompany>().WithMany()
-                .HasForeignKey(d => d.TenantId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("account_account_template_company_id_fkey");
+            //entity.HasOne<ResCompany>().WithMany()
+            //    .HasForeignKey(d => d.TenantId)
+            //    .OnDelete(DeleteBehavior.Restrict)
+            //    .HasConstraintName("account_account_template_company_id_fkey");
 
             entity.HasOne(d => d.ChartTemplate).WithMany(p => p.AccountAccountTemplates)
                 .HasForeignKey(d => d.ChartTemplateId)
@@ -290,12 +291,12 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_account_type_pkey");
 
             entity.ToTable("account_account_type");
-            entity.HasIndex(e => e.TenantId, "account_account_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_account_type_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -308,10 +309,10 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
-            entity.HasOne<ResCompany>().WithMany()
-                .HasForeignKey(d => d.TenantId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("account_account_type_company_id_fkey");
+            //entity.HasOne<ResCompany>().WithMany()
+            //    .HasForeignKey(d => d.TenantId)
+            //    .OnDelete(DeleteBehavior.Restrict)
+            //    .HasConstraintName("account_account_type_company_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
@@ -520,12 +521,12 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_analytic_applicability_pkey");
 
             entity.ToTable("account_analytic_applicability");
-            entity.HasIndex(e => e.TenantId, "account_account_applicability_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_account_applicability_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountPrefix).HasColumnName("account_prefix");
             entity.Property(e => e.AnalyticPlanId).HasColumnName("analytic_plan_id");
             entity.Property(e => e.Applicability).HasColumnName("applicability");
@@ -540,10 +541,10 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            entity.HasOne<ResCompany>().WithMany()
-                .HasForeignKey(d => d.TenantId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("account_account_applicability_company_id_fkey");
+            //entity.HasOne<ResCompany>().WithMany()
+            //    .HasForeignKey(d => d.TenantId)
+            //    .OnDelete(DeleteBehavior.Restrict)
+            //    .HasConstraintName("account_account_applicability_company_id_fkey");
 
             entity.HasOne(d => d.AnalyticPlan).WithMany(p => p.AccountAnalyticApplicabilities)
                 .HasForeignKey(d => d.AnalyticPlanId)
@@ -989,7 +990,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_asset_depreciation_line");
 
-            entity.HasIndex(e => e.TenantId, "account_asset_depreciation_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_asset_depreciation_line_company_id_index");
             entity.HasIndex(e => e.DepreciationDate, "account_asset_depreciation_line_depreciation_date_index");
 
             entity.HasIndex(e => e.Name, "account_asset_depreciation_line_name_index");
@@ -997,7 +998,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AssetId).HasColumnName("asset_id");
             entity.Property(e => e.CreationTime)
@@ -1281,12 +1282,12 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_bank_statement_import_pkey");
 
             entity.ToTable("account_bank_statement_import");
-            entity.HasIndex(e => e.TenantId, "account_bank_statement_import_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_bank_statement_import_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1330,12 +1331,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_bank_statement_import_journal_creation");
 
-            entity.HasIndex(e => e.TenantId, "account_bank_statement_import_journal_creation_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_bank_statement_import_journal_creation_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1368,16 +1369,17 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_bank_statement_line");
 
-            entity.HasIndex(e => e.TenantId, "account_bank_statement_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_bank_statement_line_company_id_index");
 
             entity.HasIndex(e => e.InternalIndex, "account_bank_statement_line_internal_index_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.UniqueImportId }, "account_bank_statement_line_unique_import_id").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.UniqueImportId }, "account_bank_statement_line_unique_import_id").IsUnique();
+            entity.HasIndex(e => new { e.UniqueImportId }, "account_bank_statement_line_unique_import_id").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountNumber).HasColumnName("account_number");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AmountCurrency).HasColumnName("amount_currency");
@@ -1470,12 +1472,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_bankbook_report");
 
-            entity.HasIndex(e => e.TenantId, "account_bankbook_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_bankbook_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1595,12 +1597,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_cash_rounding");
 
-            entity.HasIndex(e => e.TenantId, "account_cash_rounding_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_cash_rounding_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1633,12 +1635,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_cashbook_report");
 
-            entity.HasIndex(e => e.TenantId, "account_cashbook_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_cashbook_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1705,7 +1707,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_chart_template");
 
-            entity.HasIndex(e => e.TenantId, "account_chart_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_chart_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2194,7 +2196,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_daybook_report");
 
-            entity.HasIndex(e => e.TenantId, "account_daybook_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_daybook_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2262,9 +2264,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_edi_document");
 
-            entity.HasIndex(e => e.TenantId, "account_edi_document_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_edi_document_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.EdiFormatId, e.MoveId }, "account_edi_document_unique_edi_document_by_move_by_format").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.EdiFormatId, e.MoveId }, "account_edi_document_unique_edi_document_by_move_by_format").IsUnique();
+            entity.HasIndex(e => new { e.EdiFormatId, e.MoveId }, "account_edi_document_unique_edi_document_by_move_by_format").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2316,9 +2319,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_edi_format");
 
-            entity.HasIndex(e => e.TenantId, "account_edi_format_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_edi_format_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_edi_format_unique_code").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Code }, "account_edi_format_unique_code").IsUnique();
+            entity.HasIndex(e => new { e.Code }, "account_edi_format_unique_code").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -2352,7 +2356,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_financial_report");
 
-            entity.HasIndex(e => e.TenantId, "account_financial_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_financial_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2610,7 +2614,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_account_template");
 
-            entity.HasIndex(e => e.TenantId, "account_fiscal_position_account_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_fiscal_position_account_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2716,7 +2720,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_tax_template");
 
-            entity.HasIndex(e => e.TenantId, "account_fiscal_position_tax_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_fiscal_position_tax_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2765,7 +2769,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_fiscal_position_template");
 
-            entity.HasIndex(e => e.TenantId, "account_fiscal_position_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_fiscal_position_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2882,7 +2886,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_full_reconcile");
 
-            entity.HasIndex(e => e.TenantId, "account_full_reconcile_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_full_reconcile_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -2971,7 +2975,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_group_template");
 
-            entity.HasIndex(e => e.TenantId, "account_group_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_group_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -3019,7 +3023,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_incoterms");
 
-            entity.HasIndex(e => e.TenantId, "account_incoterms_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_incoterms_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -3055,7 +3059,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_invoice_send");
 
-            entity.HasIndex(e => e.TenantId, "account_invoice_send_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_invoice_send_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4063,7 +4067,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_payment");
 
-            entity.HasIndex(e => e.TenantId, "account_payment_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_payment_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4204,9 +4208,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_payment_method");
 
-            entity.HasIndex(e => e.TenantId, "account_payment_method_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_payment_method_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Code, e.PaymentType }, "account_payment_method_name_code_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Code, e.PaymentType }, "account_payment_method_name_code_unique").IsUnique();
+            entity.HasIndex(e => new { e.Code, e.PaymentType }, "account_payment_method_name_code_unique").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4242,7 +4247,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_payment_method_line");
 
-            entity.HasIndex(e => e.TenantId, "account_payment_method_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_payment_method_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4459,7 +4464,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_payment_term_line");
 
-            entity.HasIndex(e => e.TenantId, "account_payment_term_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_payment_term_line_company_id_index");
 
             entity.HasIndex(e => e.PaymentId, "account_payment_term_line_payment_id_index");
 
@@ -4772,7 +4777,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_reconcile_model_line_template");
 
-            entity.HasIndex(e => e.TenantId, "account_reconcile_model_line_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_reconcile_model_line_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4840,7 +4845,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_reconcile_model_partner_mapping");
 
-            entity.HasIndex(e => e.TenantId, "account_reconcile_model_partner_mapping_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_reconcile_model_partner_mapping_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4885,7 +4890,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_reconcile_model_template");
 
-            entity.HasIndex(e => e.TenantId, "account_reconcile_model_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_reconcile_model_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5047,7 +5052,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_report");
 
-            entity.HasIndex(e => e.TenantId, "account_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5117,7 +5122,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_report_column");
 
-            entity.HasIndex(e => e.TenantId, "account_report_column_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_report_column_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5168,7 +5173,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_report_expression");
 
-            entity.HasIndex(e => e.TenantId, "account_report_expression_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_report_expression_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5381,9 +5386,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_report_line");
 
-            entity.HasIndex(e => e.TenantId, "account_report_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_report_line_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_report_line_code_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Code }, "account_report_line_code_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Code }, "account_report_line_code_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5512,7 +5518,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_resequence_wizard");
 
-            entity.HasIndex(e => e.TenantId, "account_resequence_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_resequence_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5564,7 +5570,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_setup_bank_manual_config");
 
-            entity.HasIndex(e => e.TenantId, "account_setup_bank_manual_config_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_setup_bank_manual_config_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5714,7 +5720,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_tax_group");
 
-            entity.HasIndex(e => e.TenantId, "account_tax_group_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_tax_group_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5834,7 +5840,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_tax_repartition_line_template");
 
-            entity.HasIndex(e => e.TenantId, "account_tax_repartition_line_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_tax_repartition_line_template_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5994,9 +6000,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_tax_template");
 
-            entity.HasIndex(e => e.TenantId, "account_tax_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_tax_template_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name, e.TypeTaxUse, e.TaxScope, e.ChartTemplateId }, "account_tax_template_name_company_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name, e.TypeTaxUse, e.TaxScope, e.ChartTemplateId }, "account_tax_template_name_company_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name, e.TypeTaxUse, e.TaxScope, e.ChartTemplateId }, "account_tax_template_name_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6098,7 +6105,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_tour_upload_bill");
 
-            entity.HasIndex(e => e.TenantId, "account_tour_upload_bill_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_tour_upload_bill_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6147,7 +6154,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_tour_upload_bill_email_confirm");
 
-            entity.HasIndex(e => e.TenantId, "account_tour_upload_bill_email_confirm_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_tour_upload_bill_email_confirm_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6179,7 +6186,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_unreconcile");
 
-            entity.HasIndex(e => e.TenantId, "account_unreconcile_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "account_unreconcile_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6277,7 +6284,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("applicant_get_refuse_reason");
 
-            entity.HasIndex(e => e.TenantId, "hr_applicant_get_refuse_reason_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_applicant_get_refuse_reason_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6338,7 +6345,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("applicant_send_mail");
 
-            entity.HasIndex(e => e.TenantId, "mail_applicant_send_mail_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mail_applicant_send_mail_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6401,7 +6408,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("asset_depreciation_confirmation_wizard");
 
-            entity.HasIndex(e => e.TenantId, "asset_depreciation_confirmation_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "asset_depreciation_confirmation_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6433,7 +6440,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("asset_modify");
 
-            entity.HasIndex(e => e.TenantId, "asset_modify_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "asset_modify_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -6533,7 +6540,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("barcode_nomenclature");
 
-            entity.HasIndex(e => e.TenantId, "barcode_nomenclature_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "barcode_nomenclature_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -6569,7 +6576,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("barcode_rule");
 
-            entity.HasIndex(e => e.TenantId, "misc_barcode_rule_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "misc_barcode_rule_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -7748,7 +7755,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_alarm");
 
-            entity.HasIndex(e => e.TenantId, "calendar_alarm_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_alarm_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -7799,7 +7806,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_attendee");
 
-            entity.HasIndex(e => e.TenantId, "calendar_attendee_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_attendee_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -7846,7 +7853,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_event");
 
-            entity.HasIndex(e => e.TenantId, "calendar_event_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_event_company_id_index");
 
             entity.HasIndex(e => e.AccessToken, "calendar_event_access_token_index");
 
@@ -7982,9 +7989,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_event_type");
 
-            entity.HasIndex(e => e.TenantId, "calendar_event_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_event_type_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name}, "calendar_event_type_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name}, "calendar_event_type_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "calendar_event_type_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -8018,13 +8026,14 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_filters");
 
-            entity.HasIndex(e => e.TenantId, "calendar_filters_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_filters_company_id_index");
 
             entity.HasIndex(e => e.PartnerId, "calendar_filters_partner_id_index");
 
             entity.HasIndex(e => e.UserId, "calendar_filters_user_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.UserId, e.PartnerId }, "calendar_filters_user_id_partner_id_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.UserId, e.PartnerId }, "calendar_filters_user_id_partner_id_unique").IsUnique();
+            entity.HasIndex(e => new { e.UserId, e.PartnerId }, "calendar_filters_user_id_partner_id_unique").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -8069,7 +8078,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_provider_config");
             
-            entity.HasIndex(e => e.TenantId, "calendar_provider_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_provider_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -8105,7 +8114,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("calendar_recurrence");
 
-            entity.HasIndex(e => e.TenantId, "calendar_recurrence_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "calendar_recurrence_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -8338,7 +8347,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("confirm_stock_sms");
 
-            entity.HasIndex(e => e.TenantId, "stock_confirm_stock_sms_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_confirm_stock_sms_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -8386,7 +8395,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_helpers");
 
-            entity.HasIndex(e => e.TenantId, "crm_iap_lead_helpers_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_iap_lead_helpers_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -8417,9 +8426,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_industry");
 
-            entity.HasIndex(e => e.TenantId, "crm_iap_lead_industry_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_iap_lead_industry_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "crm_iap_lead_industry_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -8459,7 +8469,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_mining_request");
 
-            entity.HasIndex(e => e.TenantId, "crm_iap_lead_mining_request_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_iap_lead_mining_request_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -8610,9 +8620,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_role");
 
-            entity.HasIndex(e => e.TenantId, "crm_iap_lead_role_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_iap_lead_role_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_role_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_role_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "crm_iap_lead_role_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -8649,9 +8660,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_iap_lead_seniority");
 
-            entity.HasIndex(e => e.TenantId, "crm_iap_lead_seniority_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_iap_lead_seniority_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_seniority_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_iap_lead_seniority_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "crm_iap_lead_seniority_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -8932,7 +8944,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lead2opportunity_partner");
 
-            entity.HasIndex(e => e.TenantId, "crm_lead2opportunity_partner_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lead2opportunity_partner_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9007,7 +9019,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lead2opportunity_partner_mass");
 
-            entity.HasIndex(e => e.TenantId, "crm_lead2opportunity_partner_mass_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lead2opportunity_partner_mass_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9118,7 +9130,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lead_lost");
 
-            entity.HasIndex(e => e.TenantId, "crm_lead_lost_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lead_lost_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9156,7 +9168,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lead_pls_update");
 
-            entity.HasIndex(e => e.TenantId, "crm_lead_pls_update_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lead_pls_update_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9205,7 +9217,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lead_scoring_frequency");
 
-            entity.HasIndex(e => e.TenantId, "crm_lead_scoring_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lead_scoring_company_id_index");
 
             entity.HasIndex(e => e.Variable, "crm_lead_scoring_frequency_variable_index");
 
@@ -9248,7 +9260,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lead_scoring_frequency_field");
 
-            entity.HasIndex(e => e.TenantId, "crm_lead_scoring_frequency_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lead_scoring_frequency_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9285,7 +9297,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_lost_reason");
 
-            entity.HasIndex(e => e.TenantId, "crm_lost_reason_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_lost_reason_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -9321,7 +9333,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_merge_opportunity");
 
-            entity.HasIndex(e => e.TenantId, "crm_merge_opportunity_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_merge_opportunity_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9381,7 +9393,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_quotation_partner");
 
-            entity.HasIndex(e => e.TenantId, "crm_quotation_partner_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_quotation_partner_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9425,7 +9437,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_recurring_plan");
 
-            entity.HasIndex(e => e.TenantId, "crm_recurring_plan_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_recurring_plan_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -9464,7 +9476,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_stage");
 
-            entity.HasIndex(e => e.TenantId, "crm_stage_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_stage_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -9511,9 +9523,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_tag");
 
-            entity.HasIndex(e => e.TenantId, "crm_tag_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_tag_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_tag_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "crm_tag_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "crm_tag_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -9638,7 +9651,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("crm_team_member");
 
-            entity.HasIndex(e => e.TenantId, "crm_team_member_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_team_member_company_id_index");
 
             entity.HasIndex(e => e.CrmTeamId, "crm_team_member_crm_team_id_index");
 
@@ -10031,7 +10044,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_service_type");
 
-            entity.HasIndex(e => e.TenantId, "fleet_service_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_service_type_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -10211,7 +10224,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_assignation_log");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_assignation_log_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_assignation_log_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -10447,7 +10460,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_model");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -10523,7 +10536,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_model_brand");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_brand_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_brand_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -10557,9 +10570,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_model_category");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_model_category_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_model_category_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_model_category_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "fleet_vehicle_model_category_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -10593,7 +10607,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_odometer");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_odometer_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_odometer_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -10633,9 +10647,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_state");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_state_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_state_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "fleet_vehicle_state_fleet_state_name_unique").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -10673,9 +10688,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("fleet_vehicle_tag");
 
-            entity.HasIndex(e => e.TenantId, "fleet_vehicle_tag_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "fleet_vehicle_tag_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_tag_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "fleet_vehicle_tag_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "fleet_vehicle_tag_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -10749,9 +10765,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("followup_line");
 
-            entity.HasIndex(e => e.TenantId, "followup_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "followup_line_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.FollowupId, e.Delay }, "followup_line_days_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.FollowupId, e.Delay }, "followup_line_days_uniq").IsUnique();
+            entity.HasIndex(e => new { e.FollowupId, e.Delay }, "followup_line_days_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -10809,7 +10826,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("followup_print");
 
-            entity.HasIndex(e => e.TenantId, "followup_print_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "followup_print_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -10853,7 +10870,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("followup_sending_results");
 
-            entity.HasIndex(e => e.TenantId, "followup_sending_results_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "followup_sending_results_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -11088,9 +11105,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_applicant_category");
 
-            entity.HasIndex(e => e.TenantId, "hr_applicant_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_applicant_category_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "hr_applicant_category_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "hr_applicant_category_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "hr_applicant_category_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -11124,7 +11142,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_applicant_refuse_reason");
 
-            entity.HasIndex(e => e.TenantId, "hr_applicant_refuse_reason_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_applicant_refuse_reason_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -11165,9 +11183,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_applicant_skill");
 
-            entity.HasIndex(e => e.TenantId, "hr_applicant_skill_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_applicant_skill_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.ApplicantId, e.SkillId }, "hr_applicant_skill__unique_skill").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.ApplicantId, e.SkillId }, "hr_applicant_skill__unique_skill").IsUnique();
+            entity.HasIndex(e => new { e.ApplicantId, e.SkillId }, "hr_applicant_skill__unique_skill").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -11222,7 +11241,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_attendance");
 
-            entity.HasIndex(e => e.TenantId, "hr_attendance_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_attendance_company_id_index");
 
             entity.HasIndex(e => e.EmployeeId, "hr_attendance_employee_id_index");
 
@@ -11268,11 +11287,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_attendance_overtime");
 
-            entity.HasIndex(e => e.TenantId, "hr_attendance_overtime_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_attendance_overtime_company_id_index");
 
             entity.HasIndex(e => e.EmployeeId, "hr_attendance_overtime_employee_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.EmployeeId, e.Date }, "hr_attendance_overtime_unique_employee_per_day")
+            //entity.HasIndex(e => new { e.TenantId, e.EmployeeId, e.Date }, "hr_attendance_overtime_unique_employee_per_day")
+            entity.HasIndex(e => new { e.EmployeeId, e.Date }, "hr_attendance_overtime_unique_employee_per_day")
                 .IsUnique()
                 .HasFilter("(adjustment IS FALSE)");
 
@@ -11411,7 +11431,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_contract_type");
 
-            entity.HasIndex(e => e.TenantId, "hr_contract_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_contract_type_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -11520,7 +11540,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_departure_reason");
 
-            entity.HasIndex(e => e.TenantId, "hr_departure_reason_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_departure_reason_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -11558,7 +11578,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_departure_wizard");
 
-            entity.HasIndex(e => e.TenantId, "hr_departure_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_departure_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -11853,9 +11873,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_employee_category");
 
-            entity.HasIndex(e => e.TenantId, "hr_employee_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_employee_category_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "hr_employee_category_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "hr_employee_category_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "hr_employee_category_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -11889,9 +11910,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_employee_skill");
 
-            entity.HasIndex(e => e.TenantId, "hr_employee_skill_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_employee_skill_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.EmployeeId, e.SkillId }, "hr_employee_skill__unique_skill").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.EmployeeId, e.SkillId }, "hr_employee_skill__unique_skill").IsUnique();
+            entity.HasIndex(e => new { e.EmployeeId, e.SkillId }, "hr_employee_skill__unique_skill").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -11946,9 +11968,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_employee_skill_log");
 
-            entity.HasIndex(e => e.TenantId, "hr_employee_skill_log_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_employee_skill_log_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.EmployeeId, e.DepartmentId, e.SkillId, e.Date }, "hr_employee_skill_log__unique_skill_log").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.EmployeeId, e.DepartmentId, e.SkillId, e.Date }, "hr_employee_skill_log__unique_skill_log").IsUnique();
+            entity.HasIndex(e => new { e.EmployeeId, e.DepartmentId, e.SkillId, e.Date }, "hr_employee_skill_log__unique_skill_log").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -12134,7 +12157,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_expense_approve_duplicate");
 
-            entity.HasIndex(e => e.TenantId, "hr_expense_approve_duplicate_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_expense_approve_duplicate_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -12199,7 +12222,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_expense_refuse_wizard");
 
-            entity.HasIndex(e => e.TenantId, "hr_expense_refuse_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_expense_refuse_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -12452,7 +12475,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_expense_split_wizard");
 
-            entity.HasIndex(e => e.TenantId, "hr_expense_split_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_expense_split_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -12489,7 +12512,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_holidays_cancel_leave");
 
-            entity.HasIndex(e => e.TenantId, "hr_holidays_cancel_leave_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_holidays_cancel_leave_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -12527,7 +12550,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_holidays_summary_employee");
 
-            entity.HasIndex(e => e.TenantId, "hr_holidays_summary_employee_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_holidays_summary_employee_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -12758,7 +12781,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_leave");
 
-            entity.HasIndex(e => e.TenantId, "hr_leave_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_leave_company_id_index");
 
             entity.HasIndex(e => e.DateFrom, "hr_leave_date_from_index");
 
@@ -12926,7 +12949,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_leave_accrual_level");
 
-            entity.HasIndex(e => e.TenantId, "hr_leave_accrual_level_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_leave_accrual_level_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -12989,7 +13012,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_leave_accrual_plan");
 
-            entity.HasIndex(e => e.TenantId, "hr_leave_accrual_plan_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_leave_accrual_plan_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -13028,7 +13051,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_leave_allocation");
 
-            entity.HasIndex(e => e.TenantId, "hr_leave_allocation_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_leave_allocation_company_id_index");
 
             entity.HasIndex(e => e.DateFrom, "hr_leave_allocation_date_from_index");
 
@@ -13304,7 +13327,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_payroll_structure_type");
 
-            entity.HasIndex(e => e.TenantId, "hr_payroll_structure_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_payroll_structure_type_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -13448,7 +13471,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_plan_wizard");
 
-            entity.HasIndex(e => e.TenantId, "hr_plan_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_plan_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -13502,7 +13525,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_recruitment_degree");
 
-            entity.HasIndex(e => e.TenantId, "hr_recruitment_degree_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_recruitment_degree_company_id_index");
 
             entity.HasIndex(e => e.Name, "hr_recruitment_degree_name_uniq").IsUnique();
 
@@ -13542,7 +13565,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_recruitment_source");
 
-            entity.HasIndex(e => e.TenantId, "hr_recruitment_source_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_recruitment_source_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -13597,7 +13620,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_recruitment_stage");
 
-            entity.HasIndex(e => e.TenantId, "hr_recruitment_stage_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_recruitment_stage_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -13670,7 +13693,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_resume_line");
 
-            entity.HasIndex(e => e.TenantId, "hr_resume_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_resume_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -13718,7 +13741,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_resume_line_type");
 
-            entity.HasIndex(e => e.TenantId, "hr_resume_line_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_resume_line_type_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -13752,7 +13775,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_skill");
 
-            entity.HasIndex(e => e.TenantId, "hr_skill_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_skill_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -13791,7 +13814,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_skill_level");
 
-            entity.HasIndex(e => e.TenantId, "hr_skill_level_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_skill_level_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -13832,7 +13855,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("hr_skill_type");
 
-            entity.HasIndex(e => e.TenantId, "hr_skill_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_skill_type_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -16214,7 +16237,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("lot_label_layout");
 
-            entity.HasIndex(e => e.TenantId, "lot_label_layout_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "lot_label_layout_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -16264,7 +16287,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("lunch_alert");
 
-            entity.HasIndex(e => e.TenantId, "hr_lunch_alert_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_lunch_alert_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -16338,7 +16361,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("lunch_cashmove");
 
-            entity.HasIndex(e => e.TenantId, "hr_lunch_cashmove_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_lunch_cashmove_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -18787,7 +18810,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("maintenance_stage");
 
-            entity.HasIndex(e => e.TenantId, "maintenance_stage_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "maintenance_stage_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -19146,7 +19169,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_consumption_warning");
 
-            entity.HasIndex(e => e.TenantId, "mrp_consumption_warning_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_consumption_warning_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19194,7 +19217,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_consumption_warning_line");
 
-            entity.HasIndex(e => e.TenantId, "mrp_consumption_warning_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_consumption_warning_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19245,7 +19268,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_document");
 
-            entity.HasIndex(e => e.TenantId, "mrp_document_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_document_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19284,7 +19307,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_immediate_production");
 
-            entity.HasIndex(e => e.TenantId, "mrp_immediate_production_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_immediate_production_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19332,7 +19355,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_immediate_production_line");
 
-            entity.HasIndex(e => e.TenantId, "mrp_immediate_production_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_immediate_production_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19536,7 +19559,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_production_backorder");
 
-            entity.HasIndex(e => e.TenantId, "mrp_production_backorder_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_production_backorder_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19584,7 +19607,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_production_backorder_line");
 
-            entity.HasIndex(e => e.TenantId, "mrp_production_backorder_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_production_backorder_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19628,7 +19651,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_production_split");
 
-            entity.HasIndex(e => e.TenantId, "mrp_production_split_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_production_split_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19672,7 +19695,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_production_split_line");
 
-            entity.HasIndex(e => e.TenantId, "mrp_production_split_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_production_split_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19719,7 +19742,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_production_split_multi");
 
-            entity.HasIndex(e => e.TenantId, "mrp_production_split_multi_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_production_split_multi_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -19750,7 +19773,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_routing_workcenter");
 
-            entity.HasIndex(e => e.TenantId, "mrp_routing_workcenter_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_routing_workcenter_company_id_index");
 
             entity.HasIndex(e => e.BomId, "mrp_routing_workcenter_bom_id_index");
 
@@ -20071,9 +20094,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_workcenter_capacity");
 
-            entity.HasIndex(e => e.TenantId, "mrp_workcenter_capacity_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_workcenter_capacity_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.WorkcenterId, e.ProductId }, "mrp_workcenter_capacity_unique_product").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.WorkcenterId, e.ProductId }, "mrp_workcenter_capacity_unique_product").IsUnique();
+            entity.HasIndex(e => new { e.WorkcenterId, e.ProductId }, "mrp_workcenter_capacity_unique_product").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20194,7 +20218,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_workcenter_productivity_loss");
 
-            entity.HasIndex(e => e.TenantId, "mrp_workcenter_productivity_loss_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_workcenter_productivity_loss_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20237,7 +20261,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_workcenter_productivity_loss_type");
 
-            entity.HasIndex(e => e.TenantId, "mrp_workcenter_productivity_loss_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_workcenter_productivity_loss_type_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -20270,9 +20294,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_workcenter_tag");
 
-            entity.HasIndex(e => e.TenantId, "mrp_workcenter_tag_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_workcenter_tag_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "mrp_workcenter_tag_tag_name_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "mrp_workcenter_tag_tag_name_unique").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "mrp_workcenter_tag_tag_name_unique").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -20306,7 +20331,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mrp_workorder");
 
-            entity.HasIndex(e => e.TenantId, "mrp_workorder_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "mrp_workorder_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20533,7 +20558,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("note_stage");
 
-            entity.HasIndex(e => e.TenantId, "note_stage_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "note_stage_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -20578,9 +20603,9 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("note_tag");
 
-            entity.HasIndex(e => e.TenantId, "note_tag_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "note_tag_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "note_tag_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "note_tag_name_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20615,7 +20640,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("partner_stat_rel");
 
-            entity.HasIndex(e => e.TenantId, "partner_stat_rel_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "partner_stat_rel_company_id_index");
 
             entity.HasIndex(e => new { e.PartnerId, e.OsvMemoryId }, "partner_stat_rel_partner_id_osv_memory_id_idx");
 
@@ -20633,7 +20658,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("payment_icon");
 
-            entity.HasIndex(e => e.TenantId, "payment_icon_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "payment_icon_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20668,7 +20693,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("payment_link_wizard");
 
-            entity.HasIndex(e => e.TenantId, "payment_link_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "payment_link_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20861,7 +20886,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("payment_provider_onboarding_wizard");
 
-            entity.HasIndex(e => e.TenantId, "payment_provider_onboarding_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "payment_provider_onboarding_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -20901,7 +20926,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("payment_refund_wizard");
 
-            entity.HasIndex(e => e.TenantId, "payment_refund_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "payment_refund_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21131,9 +21156,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("phone_blacklist");
 
-            entity.HasIndex(e => e.TenantId, "crm_phone_blacklist_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_phone_blacklist_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Number}, "phone_blacklist_unique_number").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Number}, "phone_blacklist_unique_number").IsUnique();
+            entity.HasIndex(e => new { e.Number }, "phone_blacklist_unique_number").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21172,7 +21198,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("phone_blacklist_remove");
 
-            entity.HasIndex(e => e.TenantId, "crm_phone_blacklist_remove_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "crm_phone_blacklist_remove_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21205,7 +21231,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("picking_label_type");
 
-            entity.HasIndex(e => e.TenantId, "picking_label_type_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "picking_label_type_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21254,7 +21280,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("portal_share");
 
-            entity.HasIndex(e => e.TenantId, "portal_share_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "portal_share_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21305,7 +21331,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("portal_wizard");
 
-            entity.HasIndex(e => e.TenantId, "portal_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "portal_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21354,7 +21380,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("portal_wizard_user");
 
-            entity.HasIndex(e => e.TenantId, "portal_wizard_user_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "portal_wizard_user_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21398,7 +21424,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_bill");
 
-            entity.HasIndex(e => e.TenantId, "pos_bill_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_bill_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21431,7 +21457,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_category");
 
-            entity.HasIndex(e => e.TenantId, "pos_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_category_company_id_index");
 
             entity.HasIndex(e => e.ParentId, "pos_category_parent_id_index");
 
@@ -21475,7 +21501,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_close_session_wizard");
 
-            entity.HasIndex(e => e.TenantId, "pos_close_session_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_close_session_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21792,7 +21818,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_details_wizard");
 
-            entity.HasIndex(e => e.TenantId, "pos_details_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_details_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -21846,7 +21872,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_make_payment");
 
-            entity.HasIndex(e => e.TenantId, "pos_make_payment_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_make_payment_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -22116,7 +22142,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_pack_operation_lot");
 
-            entity.HasIndex(e => e.TenantId, "pos_pack_operation_lot_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_pack_operation_lot_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -22286,7 +22312,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_session");
 
-            entity.HasIndex(e => e.TenantId, "pos_session_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_session_company_id_index");
 
             entity.HasIndex(e => e.ConfigId, "pos_session_config_id_index");
 
@@ -22294,7 +22320,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.State, "pos_session_state_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "pos_session_uniq_name").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "pos_session_uniq_name").IsUnique();
 
             entity.HasIndex(e => e.UserId, "pos_session_user_id_index");
 
@@ -22373,7 +22399,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("pos_session_check_product_wizard");
 
-            entity.HasIndex(e => e.TenantId, "pos_session_check_product_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "pos_session_check_product_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -22533,7 +22559,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("procurement_group");
 
-            entity.HasIndex(e => e.TenantId, "procurement_group_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "procurement_group_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -22584,7 +22610,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_attribute");
 
-            entity.HasIndex(e => e.TenantId, "product_attribute_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_attribute_company_id_index");
 
             entity.HasIndex(e => e.Sequence, "product_attribute_sequence_index");
 
@@ -22644,9 +22670,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_attribute_custom_value");
 
-            entity.HasIndex(e => e.TenantId, "product_attribute_custom_value_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_attribute_custom_value_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.CustomProductTemplateAttributeValueId, e.SaleOrderLineId }, "product_attribute_custom_value_sol_custom_value_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.CustomProductTemplateAttributeValueId, e.SaleOrderLineId }, "product_attribute_custom_value_sol_custom_value_unique").IsUnique();
+            entity.HasIndex(e => new { e.CustomProductTemplateAttributeValueId, e.SaleOrderLineId }, "product_attribute_custom_value_sol_custom_value_unique").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -22690,13 +22717,14 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_attribute_value");
 
-            entity.HasIndex(e => e.TenantId, "product_attribute_value_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_attribute_value_company_id_index");
 
             entity.HasIndex(e => e.AttributeId, "product_attribute_value_attribute_id_index");
 
             entity.HasIndex(e => e.Sequence, "product_attribute_value_sequence_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name, e.AttributeId }, "product_attribute_value_value_company_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name, e.AttributeId }, "product_attribute_value_value_company_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name, e.AttributeId }, "product_attribute_value_value_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -22758,7 +22786,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_category");
 
-            entity.HasIndex(e => e.TenantId, "product_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_category_company_id_index");
 
             entity.HasIndex(e => e.Name, "product_category_name_index")
                 .HasMethod("gin")
@@ -22814,7 +22842,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_image");
 
-            entity.HasIndex(e => e.TenantId, "product_image_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_image_company_id_index");
 
             entity.HasIndex(e => e.ProductTmplId, "product_image_product_tmpl_id_index");
 
@@ -22867,7 +22895,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_label_layout");
 
-            entity.HasIndex(e => e.TenantId, "product_label_layout_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_label_layout_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -23179,13 +23207,14 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_product");
 
-            entity.HasIndex(e => e.TenantId, "product_product_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_product_company_id_index");
 
             entity.HasIndex(e => e.Barcode, "product_product_barcode_index").HasFilter("(barcode IS NOT NULL)");
 
             entity.HasIndex(e => e.CombinationIndices, "product_product_combination_indices_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.ProductTmplId, e.CombinationIndices }, "product_product_combination_unique")
+            //entity.HasIndex(e => new { e.TenantId, e.ProductTmplId, e.CombinationIndices }, "product_product_combination_unique")
+            entity.HasIndex(e => new { e.ProductTmplId, e.CombinationIndices }, "product_product_combination_unique")
                 .IsUnique()
                 .HasFilter("(active IS TRUE)");
 
@@ -23300,7 +23329,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_public_category");
 
-            entity.HasIndex(e => e.TenantId, "product_public_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_public_category_company_id_index");
 
             entity.HasIndex(e => e.ParentId, "product_public_category_parent_id_index");
 
@@ -23392,7 +23421,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_removal");
 
-            entity.HasIndex(e => e.TenantId, "product_removal_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_removal_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -23506,7 +23535,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_ribbon");
 
-            entity.HasIndex(e => e.TenantId, "product_ribbon_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_ribbon_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -23616,9 +23645,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_tag");
 
-            entity.HasIndex(e => e.TenantId, "product_tag_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_tag_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "product_tag_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "product_tag_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "product_tag_name_uniq").IsUnique();
 
             entity.HasIndex(e => e.WebsiteId, "product_tag_website_id_index");
 
@@ -23999,7 +24029,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_template_attribute_exclusion");
 
-            entity.HasIndex(e => e.TenantId, "product_template_attribute_exclusion_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_template_attribute_exclusion_company_id_index");
 
             entity.HasIndex(e => e.ProductTemplateAttributeValueId, "product_template_attribute_exclusion_product_template_attribute");
 
@@ -24063,7 +24093,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_template_attribute_line");
 
-            entity.HasIndex(e => e.TenantId, "product_template_attribute_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_template_attribute_line_company_id_index");
 
             entity.HasIndex(e => e.AttributeId, "product_template_attribute_line_attribute_id_index");
 
@@ -24112,13 +24142,14 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("product_template_attribute_value");
 
-            entity.HasIndex(e => e.TenantId, "product_template_attribute_value_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "product_template_attribute_value_company_id_index");
 
             entity.HasIndex(e => e.AttributeId, "product_template_attribute_value_attribute_id_index");
 
             entity.HasIndex(e => e.AttributeLineId, "product_template_attribute_value_attribute_line_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.AttributeLineId, e.ProductAttributeValueId }, "product_template_attribute_value_attribute_value_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.AttributeLineId, e.ProductAttributeValueId }, "product_template_attribute_value_attribute_value_unique").IsUnique();
+            entity.HasIndex(e => new { e.AttributeLineId, e.ProductAttributeValueId }, "product_template_attribute_value_attribute_value_unique").IsUnique();
 
             entity.HasIndex(e => e.ProductAttributeValueId, "product_template_attribute_value_product_attribute_value_id_ind");
 
@@ -24180,9 +24211,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_collaborator");
 
-            entity.HasIndex(e => e.TenantId, "project_collaborator_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_collaborator_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.ProjectId, e.PartnerId }, "project_collaborator_unique_collaborator").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.ProjectId, e.PartnerId }, "project_collaborator_unique_collaborator").IsUnique();
+            entity.HasIndex(e => new { e.ProjectId, e.PartnerId }, "project_collaborator_unique_collaborator").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -24225,7 +24257,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_milestone");
 
-            entity.HasIndex(e => e.TenantId, "project_milestone_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_milestone_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -24435,7 +24467,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_project_stage");
 
-            entity.HasIndex(e => e.TenantId, "project_project_stage_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_project_stage_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -24487,7 +24519,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_share_wizard");
 
-            entity.HasIndex(e => e.TenantId, "project_share_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_share_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -24540,9 +24572,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_tags");
 
-            entity.HasIndex(e => e.TenantId, "project_tags_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_tags_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "project_tags_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "project_tags_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "project_tags_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -24809,7 +24842,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_task_recurrence");
 
-            entity.HasIndex(e => e.TenantId, "project_task_recurrence_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_task_recurrence_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -24954,7 +24987,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_task_type_delete_wizard");
 
-            entity.HasIndex(e => e.TenantId, "project_task_type_delete_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_task_type_delete_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -25019,9 +25052,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_task_user_rel");
 
-            entity.HasIndex(e => e.TenantId, "project_task_type_user_rel_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_task_type_user_rel_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.TaskId, e.UserId }, "project_task_user_rel_project_personal_stage_unique").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.TaskId, e.UserId }, "project_task_user_rel_project_personal_stage_unique").IsUnique();
+            entity.HasIndex(e => new { e.TaskId, e.UserId }, "project_task_user_rel_project_personal_stage_unique").IsUnique();
 
             entity.HasIndex(e => e.TaskId, "project_task_user_rel_task_id_index");
 
@@ -25074,7 +25108,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("project_update");
 
-            entity.HasIndex(e => e.TenantId, "project_update_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "project_update_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -26032,7 +26066,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("repair_order_make_invoice");
 
-            entity.HasIndex(e => e.TenantId, "repair_order_make_invoice_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "repair_order_make_invoice_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -26064,9 +26098,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("repair_tags");
 
-            entity.HasIndex(e => e.TenantId, "repair_tags_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "repair_tags_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Name }, "repair_tags_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.Name }, "repair_tags_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.Name }, "repair_tags_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -27312,11 +27347,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_groups");
 
-            entity.HasIndex(e => e.TenantId, "res_groups_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_groups_company_id_index");
 
             entity.HasIndex(e => e.CategoryId, "res_groups_category_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.CategoryId, e.Name }, "res_groups_name_uniq").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.CategoryId, e.Name }, "res_groups_name_uniq").IsUnique();
+            entity.HasIndex(e => new { e.CategoryId, e.Name }, "res_groups_name_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -27666,7 +27702,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_partner_autocomplete_sync");
 
-            entity.HasIndex(e => e.TenantId, "res_partner_autocomplete_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_partner_autocomplete_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -27777,7 +27813,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_partner_category");
 
-            entity.HasIndex(e => e.TenantId, "res_partner_category_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_partner_category_company_id_index");
 
             entity.HasIndex(e => e.ParentId, "res_partner_category_parent_id_index");
 
@@ -27842,7 +27878,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_partner_industry");
 
-            entity.HasIndex(e => e.TenantId, "res_partner_industry_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_partner_industry_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -27881,7 +27917,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_partner_title");
 
-            entity.HasIndex(e => e.TenantId, "res_partner_title_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_partner_title_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -27999,7 +28035,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_users_apikeys");
 
-            entity.HasIndex(e => e.TenantId, "res_users_apikeys_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_apikeys_company_id_index");
 
             entity.HasIndex(e => new { e.UserId, e.Index }, "res_users_apikeys_user_id_index_idx");
 
@@ -28027,7 +28063,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_users_apikeys_description");
 
-            entity.HasIndex(e => e.TenantId, "res_users_apikeys_description_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_apikeys_description_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -28059,7 +28095,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_users_deletion");
 
-            entity.HasIndex(e => e.TenantId, "res_users_deletion_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_deletion_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -28098,7 +28134,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_users_identitycheck");
 
-            entity.HasIndex(e => e.TenantId, "res_users_identitycheck_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_identitycheck_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -28131,7 +28167,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_users_log");
 
-            entity.HasIndex(e => e.TenantId, "res_users_log_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_log_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -28163,9 +28199,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.ToTable("res_users_settings");
             
 
-            entity.HasIndex(e => e.TenantId, "res_users_settings_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_settings_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.UserId }, "res_users_settings_unique_user_id").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.UserId }, "res_users_settings_unique_user_id").IsUnique();
+            entity.HasIndex(e => new { e.UserId }, "res_users_settings_unique_user_id").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -28207,17 +28244,19 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("res_users_settings_volumes");
 
-            entity.HasIndex(e => e.TenantId, "res_users_settings_volumes_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "res_users_settings_volumes_company_id_index");
 
             entity.HasIndex(e => e.GuestId, "res_users_settings_volumes_guest_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.UserSettingId, e.GuestId }, "res_users_settings_volumes_guest_unique")
+            //entity.HasIndex(e => new { e.TenantId, e.UserSettingId, e.GuestId }, "res_users_settings_volumes_guest_unique")
+            entity.HasIndex(e => new { e.UserSettingId, e.GuestId }, "res_users_settings_volumes_guest_unique")
                 .IsUnique()
                 .HasFilter("(guest_id IS NOT NULL)");
 
             entity.HasIndex(e => e.PartnerId, "res_users_settings_volumes_partner_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.UserSettingId, e.PartnerId }, "res_users_settings_volumes_partner_unique")
+            //entity.HasIndex(e => new { e.TenantId, e.UserSettingId, e.PartnerId }, "res_users_settings_volumes_partner_unique")
+            entity.HasIndex(e => new { e.UserSettingId, e.PartnerId }, "res_users_settings_volumes_partner_unique")
                 .IsUnique()
                 .HasFilter("(partner_id IS NOT NULL)");
 
@@ -28353,7 +28392,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("resource_calendar_attendance");
 
-            entity.HasIndex(e => e.TenantId, "hr_resource_calendar_attendance_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "hr_resource_calendar_attendance_company_id_index");
 
             entity.HasIndex(e => e.Dayofweek, "resource_calendar_attendance_dayofweek_index");
 
@@ -28848,7 +28887,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sale_order_cancel");
 
-            entity.HasIndex(e => e.TenantId, "sale_order_cancel_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sale_order_cancel_company_id_index");
 
             entity.HasIndex(e => e.AuthorId, "sale_order_cancel_author_id_index");
 
@@ -29086,7 +29125,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sale_order_option");
 
-            entity.HasIndex(e => e.TenantId, "sale_order_option_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sale_order_option_company_id_index");
 
             entity.HasIndex(e => e.OrderId, "sale_order_option_order_id_index");
 
@@ -29325,7 +29364,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sale_payment_provider_onboarding_wizard");
 
-            entity.HasIndex(e => e.TenantId, "sale_payment_provider_onboarding_wizard_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sale_payment_provider_onboarding_wizard_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -29365,7 +29404,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_composer");
 
-            entity.HasIndex(e => e.TenantId, "sms_composer_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_composer_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -29413,7 +29452,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_resend");
 
-            entity.HasIndex(e => e.TenantId, "sms_resend_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_resend_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -29450,7 +29489,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_resend_recipient");
 
-            entity.HasIndex(e => e.TenantId, "sms_resend_recipient_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_resend_recipient_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -29496,7 +29535,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_sms");
 
-            entity.HasIndex(e => e.TenantId, "sms_sms_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_sms_company_id_index");
 
             entity.HasIndex(e => e.MailMessageId, "sms_sms_mail_message_id_index");
 
@@ -29545,7 +29584,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_template");
 
-            entity.HasIndex(e => e.TenantId, "sms_template_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_template_company_id_index");
 
             entity.HasIndex(e => e.Model, "sms_template_model_index");
 
@@ -29599,7 +29638,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_template_preview");
 
-            entity.HasIndex(e => e.TenantId, "sms_template_preview_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_template_preview_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -29638,7 +29677,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("sms_template_reset");
 
-            entity.HasIndex(e => e.TenantId, "sms_template_reset_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "sms_template_reset_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -29960,7 +29999,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("spreadsheet_dashboard_group");
 
-            entity.HasIndex(e => e.TenantId, "spreadsheet_dashboard_group_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "spreadsheet_dashboard_group_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -29996,7 +30035,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_assign_serial");
 
-            entity.HasIndex(e => e.TenantId, "stock_assign_serial_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_assign_serial_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30047,7 +30086,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_backorder_confirmation");
 
-            entity.HasIndex(e => e.TenantId, "stock_backorder_confirmation_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_backorder_confirmation_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30096,7 +30135,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_backorder_confirmation_line");
 
-            entity.HasIndex(e => e.TenantId, "stock_backorder_confirmation_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_backorder_confirmation_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30140,7 +30179,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_change_product_qty");
 
-            entity.HasIndex(e => e.TenantId, "stock_change_product_qty_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_change_product_qty_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30184,7 +30223,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_immediate_transfer");
 
-            entity.HasIndex(e => e.TenantId, "stock_immediate_transfer_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_immediate_transfer_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30233,7 +30272,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_immediate_transfer_line");
 
-            entity.HasIndex(e => e.TenantId, "stock_immediate_transfer_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_immediate_transfer_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30277,7 +30316,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_inventory_adjustment_name");
 
-            entity.HasIndex(e => e.TenantId, "stock_inventory_adjustment_name_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_inventory_adjustment_name_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30327,7 +30366,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_inventory_conflict");
 
-            entity.HasIndex(e => e.TenantId, "stock_inventory_conflict_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_inventory_conflict_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -30394,7 +30433,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_inventory_warning");
 
-            entity.HasIndex(e => e.TenantId, "stock_inventory_warning_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_inventory_warning_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31102,7 +31141,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_orderpoint_snooze");
 
-            entity.HasIndex(e => e.TenantId, "stock_orderpoint_snooze_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_orderpoint_snooze_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31152,7 +31191,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_package_destination");
 
-            entity.HasIndex(e => e.TenantId, "stock_package_destination_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_package_destination_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31793,7 +31832,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_quantity_history");
 
-            entity.HasIndex(e => e.TenantId, "stock_quantity_history_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_quantity_history_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31827,7 +31866,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_replenishment_info");
 
-            entity.HasIndex(e => e.TenantId, "stock_replenishment_info_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_replenishment_info_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31881,7 +31920,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_replenishment_option");
 
-            entity.HasIndex(e => e.TenantId, "stock_replenishment_option_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_replenishment_option_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31930,7 +31969,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_request_count");
 
-            entity.HasIndex(e => e.TenantId, "stock_request_count_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_request_count_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -31987,7 +32026,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_return_picking");
 
-            entity.HasIndex(e => e.TenantId, "stock_return_picking_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_return_picking_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -32319,7 +32358,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_rules_report");
 
-            entity.HasIndex(e => e.TenantId, "stock_rules_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_rules_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -32397,7 +32436,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_scheduler_compute");
 
-            entity.HasIndex(e => e.TenantId, "stock_scheduler_compute_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_scheduler_compute_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -32580,13 +32619,15 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_storage_category_capacity");
 
-            entity.HasIndex(e => e.TenantId, "stock_storage_category_capacity_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_storage_category_capacity_company_id_index");
 
             entity.HasIndex(e => e.StorageCategoryId, "stock_storage_category_capacity_storage_category_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.PackageTypeId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_package_type").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.PackageTypeId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_package_type").IsUnique();
+            entity.HasIndex(e => new { e.PackageTypeId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_package_type").IsUnique();
 
-            entity.HasIndex(e => new { e.TenantId, e.ProductId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_product").IsUnique();
+            //entity.HasIndex(e => new { e.TenantId, e.ProductId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_product").IsUnique();
+            entity.HasIndex(e => new { e.ProductId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_product").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -32636,7 +32677,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_traceability_report");
 
-            entity.HasIndex(e => e.TenantId, "stock_traceability_report_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_traceability_report_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -32667,7 +32708,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_track_confirmation");
 
-            entity.HasIndex(e => e.TenantId, "stock_track_confirmation_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_track_confirmation_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -32732,7 +32773,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_track_line");
 
-            entity.HasIndex(e => e.TenantId, "stock_track_line_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_track_line_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -33272,7 +33313,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_warn_insufficient_qty_repair");
 
-            entity.HasIndex(e => e.TenantId, "stock_warn_insufficient_qty_repair_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_warn_insufficient_qty_repair_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -33323,7 +33364,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_warn_insufficient_qty_scrap");
 
-            entity.HasIndex(e => e.TenantId, "stock_warn_insufficient_qty_scrap_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_warn_insufficient_qty_scrap_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -33374,7 +33415,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("stock_warn_insufficient_qty_unbuild");
 
-            entity.HasIndex(e => e.TenantId, "stock_warn_insufficient_qty_unbuild_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "stock_warn_insufficient_qty_unbuild_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -33851,7 +33892,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("utm_stage");
 
-            entity.HasIndex(e => e.TenantId, "utm_stage_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "utm_stage_company_id_index");
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -33925,7 +33966,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("validate_account_move");
 
-            entity.HasIndex(e => e.TenantId, "validate_account_move_company_id_index");
+            //entity.HasIndex(e => e.TenantId, "validate_account_move_company_id_index");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")

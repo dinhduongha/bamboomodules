@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_consumption_warning_line")]
-public partial class MrpConsumptionWarningLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpConsumptionWarningLine : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("mrp_consumption_warning_id")]
     public Guid? MrpConsumptionWarningId { get; set; }
@@ -47,9 +47,9 @@ public partial class MrpConsumptionWarningLine : FullAuditedEntity<Guid>, IEntit
     [Column("product_expected_qty_uom")]
     public double? ProductExpectedQtyUom { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("MrpConsumptionWarningLineCreateUs")]

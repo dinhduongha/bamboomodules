@@ -21,7 +21,7 @@ namespace Bamboo.Core.Models;
 //[Index("Ref", Name = "res_partner_ref_index")]
 //[Index("Vat", Name = "res_partner_vat_index")]
 //[Index("WebsiteId", Name = "res_partner_website_id_index")]
-public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartner: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

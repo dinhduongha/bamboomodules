@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("Checksum", Name = "ir_attachment_checksum_index")]
 //[Index("ResModel", "ResId", Name = "ir_attachment_res_idx")]
 //[Index("StoreFname", Name = "ir_attachment_store_fname_index")]
-public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrAttachment: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

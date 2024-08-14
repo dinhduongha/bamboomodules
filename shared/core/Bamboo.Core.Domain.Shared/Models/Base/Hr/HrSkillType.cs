@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_skill_type")]
-public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class HrSkillType : AuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

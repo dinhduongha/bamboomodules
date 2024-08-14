@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 //[Index("OrderPartnerId", Name = "sale_order_line_order_partner_id_index")]
 //[Index("ProjectId", Name = "sale_order_line_project_id_index")]
 //[Index("TaskId", Name = "sale_order_line_task_id_index")]
-public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderLine: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

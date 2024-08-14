@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_partner_bank")]
 //[Index("PartnerId", Name = "res_partner_bank_partner_id_index")]
 //[Index("SanitizedAccNumber", "PartnerId", Name = "res_partner_bank_unique_number", IsUnique = true)]
-public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerBank: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

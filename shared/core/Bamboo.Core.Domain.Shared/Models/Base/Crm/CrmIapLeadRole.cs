@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_role")]
 //[Index("Name", Name = "crm_iap_lead_role_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadRole : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmIapLeadRole : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -42,9 +42,9 @@ public partial class CrmIapLeadRole : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CrmIapLeadRoleCreateUs")]

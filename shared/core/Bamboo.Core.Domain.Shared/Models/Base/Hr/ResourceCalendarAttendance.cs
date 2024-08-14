@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("resource_calendar_attendance")]
 //[Index("Dayofweek", Name = "resource_calendar_attendance_dayofweek_index")]
 //[Index("HourFrom", Name = "resource_calendar_attendance_hour_from_index")]
-public partial class ResourceCalendarAttendance : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResourceCalendarAttendance : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("calendar_id")]
     public Guid? CalendarId { get; set; }
@@ -70,9 +70,9 @@ public partial class ResourceCalendarAttendance : FullAuditedEntity<Guid>, IEnti
     [Column("hour_to")]
     public double? HourTo { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CalendarId")]
     //[InverseProperty("ResourceCalendarAttendances")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("website")]
 //[Index("Domain", Name = "website_domain_unique", IsUnique = true)]
-public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class Website: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

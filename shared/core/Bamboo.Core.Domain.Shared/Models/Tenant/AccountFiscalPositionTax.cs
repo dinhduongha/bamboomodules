@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_fiscal_position_tax")]
 //[Index("PositionId", "TaxSrcId", "TaxDestId", Name = "account_fiscal_position_tax_tax_src_dest_uniq", IsUnique = true)]
-public partial class AccountFiscalPositionTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountFiscalPositionTax: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

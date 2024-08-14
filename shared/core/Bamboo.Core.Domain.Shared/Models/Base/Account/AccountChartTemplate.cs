@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_chart_template")]
-public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountChartTemplate : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -137,9 +137,9 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     [Column("spoken_languages")]
     public string? SpokenLanguages { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AccountJournalEarlyPayDiscountGainAccountId")]
     //[InverseProperty("AccountChartTemplateAccountJournalEarlyPayDiscountGainAccounts")]

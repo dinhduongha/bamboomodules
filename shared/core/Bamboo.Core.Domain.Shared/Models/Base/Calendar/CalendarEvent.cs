@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("calendar_event")]
 //[Index("AccessToken", Name = "calendar_event_access_token_index")]
 //[Index("OpportunityId", Name = "calendar_event_opportunity_id_index")]
-public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarEvent : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -109,9 +109,9 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("applicant_id")]
     public Guid? ApplicantId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("ApplicantId")]
     //[InverseProperty("CalendarEvents")]

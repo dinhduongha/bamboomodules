@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateLastStageUpdate", Name = "hr_applicant_date_last_stage_update_index")]
 //[Index("JobId", Name = "hr_applicant_job_id_index")]
 //[Index("StageId", Name = "hr_applicant_stage_id_index")]
-public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrApplicant: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_invoice_send")]
-public partial class AccountInvoiceSend : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountInvoiceSend : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("composer_id")]
     public Guid? ComposerId { get; set; }
@@ -50,9 +50,9 @@ public partial class AccountInvoiceSend : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("snailmail_is_letter")]
     public bool? SnailmailIsLetter { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("ComposerId")]
     //[InverseProperty("AccountInvoiceSends")]

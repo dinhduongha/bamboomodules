@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_exclusion")]
 //[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion_product_template_attribute")]
 //[Index("ProductTmplId", Name = "product_template_attribute_exclusion_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeExclusion : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("product_template_attribute_value_id")]
     public Guid? ProductTemplateAttributeValueId { get; set; }
@@ -40,9 +40,9 @@ public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProductTemplateAttributeExclusionCreateUs")]

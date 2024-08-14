@@ -14,14 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("CombinationIndices", Name = "product_product_combination_indices_index")]
 //[Index("DefaultCode", Name = "product_product_default_code_index")]
 //[Index("ProductTmplId", Name = "product_product_product_tmpl_id_index")]
-public partial class ProductProduct : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductProduct : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -68,9 +68,9 @@ public partial class ProductProduct : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("base_unit_count")]
     public double? BaseUnitCount { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("BaseUnitId")]
     //[InverseProperty("ProductProducts")]

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "product_template_company_id_index")]
 //[Index("IsPublished", Name = "product_template_is_published_index")]
 //[Index("WebsiteId", Name = "product_template_website_id_index")]
-public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplate: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

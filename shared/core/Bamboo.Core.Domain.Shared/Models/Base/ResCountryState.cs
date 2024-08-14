@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_country_state")]
 //[Index("CountryId", "Code", Name = "res_country_state_name_code_uniq", IsUnique = true)]
-public partial class ResCountryState: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ResCountryState: AuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

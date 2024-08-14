@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement")]
 //[Index("FirstLineIndex", Name = "account_bank_statement_first_line_index_index")]
-public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountBankStatement: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

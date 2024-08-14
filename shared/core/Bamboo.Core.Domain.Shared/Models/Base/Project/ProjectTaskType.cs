@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("project_task_type")]
 //[Index("UserId", Name = "project_task_type_user_id_index")]
-public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ProjectTaskType : AuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }

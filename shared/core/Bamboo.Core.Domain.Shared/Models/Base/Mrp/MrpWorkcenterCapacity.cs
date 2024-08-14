@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter_capacity")]
 //[Index("WorkcenterId", "ProductId", Name = "mrp_workcenter_capacity_unique_product", IsUnique = true)]
-public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpWorkcenterCapacity : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -48,9 +48,9 @@ public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto
     [Column("time_stop")]
     public double? TimeStop { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("MrpWorkcenterCapacityCreateUs")]

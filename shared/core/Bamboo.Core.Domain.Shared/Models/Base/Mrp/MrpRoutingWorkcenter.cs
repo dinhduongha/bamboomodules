@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_routing_workcenter")]
 //[Index("BomId", Name = "mrp_routing_workcenter_bom_id_index")]
-public partial class MrpRoutingWorkcenter : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpRoutingWorkcenter : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -71,9 +71,9 @@ public partial class MrpRoutingWorkcenter : FullAuditedEntity<Guid>, IEntityDto<
     [NotMapped]
     public virtual MrpBom? Bom { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("MrpRoutingWorkcenterCreateUs")]

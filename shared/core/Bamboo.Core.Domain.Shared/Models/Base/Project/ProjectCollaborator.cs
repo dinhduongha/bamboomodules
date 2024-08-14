@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("project_collaborator")]
 //[Index("ProjectId", "PartnerId", Name = "project_collaborator_unique_collaborator", IsUnique = true)]
-public partial class ProjectCollaborator : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectCollaborator : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
@@ -39,9 +39,9 @@ public partial class ProjectCollaborator : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProjectCollaboratorCreateUs")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_analytic_account")]
 //[Index("Code", Name = "account_analytic_account_code_index")]
-public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticAccount: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

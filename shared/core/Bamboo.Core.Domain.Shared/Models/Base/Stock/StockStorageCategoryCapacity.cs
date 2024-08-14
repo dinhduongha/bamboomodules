@@ -14,14 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("StorageCategoryId", Name = "stock_storage_category_capacity_storage_category_id_index")]
 //[Index("PackageTypeId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_package_type", IsUnique = true)]
 //[Index("ProductId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_product", IsUnique = true)]
-public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockStorageCategoryCapacity : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("storage_category_id")]
     public Guid? StorageCategoryId { get; set; }
@@ -47,9 +47,9 @@ public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEn
     [Column("quantity")]
     public double? Quantity { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("StockStorageCategoryCapacityCreateUs")]

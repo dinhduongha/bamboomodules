@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_order_line")]
 //[Index("OrderId", Name = "pos_order_line_order_id_index")]
-public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosOrderLine: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
