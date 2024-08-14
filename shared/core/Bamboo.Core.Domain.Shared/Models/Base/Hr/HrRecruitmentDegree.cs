@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_recruitment_degree")]
 //[Index("Name", Name = "hr_recruitment_degree_name_uniq", IsUnique = true)]
-public partial class HrRecruitmentDegree : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class HrRecruitmentDegree : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

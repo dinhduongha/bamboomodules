@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_industry")]
 //[Index("Name", Name = "crm_iap_lead_industry_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadIndustry : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class CrmIapLeadIndustry : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

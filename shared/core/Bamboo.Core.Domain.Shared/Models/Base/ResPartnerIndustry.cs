@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_partner_industry")]
-public partial class ResPartnerIndustry: AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

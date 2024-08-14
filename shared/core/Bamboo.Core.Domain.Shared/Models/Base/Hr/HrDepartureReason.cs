@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_departure_reason")]
-public partial class HrDepartureReason : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class HrDepartureReason : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

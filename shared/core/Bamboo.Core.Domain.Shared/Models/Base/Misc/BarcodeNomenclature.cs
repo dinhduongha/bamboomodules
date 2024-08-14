@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("barcode_nomenclature")]
-public partial class BarcodeNomenclature : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class BarcodeNomenclature : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

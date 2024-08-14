@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("spreadsheet_dashboard_group")]
-public partial class SpreadsheetDashboardGroup: AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

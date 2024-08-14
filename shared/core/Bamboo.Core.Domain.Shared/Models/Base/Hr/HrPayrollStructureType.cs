@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_payroll_structure_type")]
-public partial class HrPayrollStructureType : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class HrPayrollStructureType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

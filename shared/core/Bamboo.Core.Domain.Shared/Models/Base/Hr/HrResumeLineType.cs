@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_resume_line_type")]
-public partial class HrResumeLineType : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
