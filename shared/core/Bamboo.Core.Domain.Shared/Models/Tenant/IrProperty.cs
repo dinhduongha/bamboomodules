@@ -15,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("Name", Name = "ir_property_name_index")]
 //[Index("ResId", Name = "ir_property_res_id_index")]
 //[Index("Type", Name = "ir_property_type_index")]
-public partial class IrProperty: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrProperty: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

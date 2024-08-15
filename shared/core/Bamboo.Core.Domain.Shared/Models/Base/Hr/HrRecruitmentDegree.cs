@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_recruitment_degree")]
 //[Index("Name", Name = "hr_recruitment_degree_name_uniq", IsUnique = true)]
-public partial class HrRecruitmentDegree : FullAuditedEntity<long>, IEntityDto<long>
+public partial class HrRecruitmentDegree : AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }

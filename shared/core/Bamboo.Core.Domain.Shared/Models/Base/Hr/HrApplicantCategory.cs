@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_applicant_category")]
 //[Index("Name", Name = "hr_applicant_category_name_uniq", IsUnique = true)]
-public partial class HrApplicantCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrApplicantCategory : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -39,9 +39,9 @@ public partial class HrApplicantCategory : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("HrApplicantCategoryCreateUs")]

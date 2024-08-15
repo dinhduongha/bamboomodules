@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_model_category")]
 //[Index("Name", Name = "fleet_vehicle_model_category_name_uniq", IsUnique = true)]
-public partial class FleetVehicleModelCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FleetVehicleModelCategory : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -39,9 +39,9 @@ public partial class FleetVehicleModelCategory : FullAuditedEntity<Guid>, IEntit
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("FleetVehicleModelCategoryCreateUs")]

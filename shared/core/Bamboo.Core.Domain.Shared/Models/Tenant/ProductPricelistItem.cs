@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_pricelist_item")]
 //[Index("ComputePrice", Name = "product_pricelist_item_compute_price_index")]
 //[Index("PricelistId", Name = "product_pricelist_item_pricelist_id_index")]
-public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductPricelistItem: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

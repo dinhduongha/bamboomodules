@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_departure_reason")]
-public partial class HrDepartureReason : FullAuditedEntity<long>, IEntityDto<long>
+public partial class HrDepartureReason : AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }

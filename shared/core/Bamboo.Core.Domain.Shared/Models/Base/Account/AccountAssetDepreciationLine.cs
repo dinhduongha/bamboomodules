@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("account_asset_depreciation_line")]
 //[Index("DepreciationDate", Name = "account_asset_depreciation_line_depreciation_date_index")]
 //[Index("Name", Name = "account_asset_depreciation_line_name_index")]
-public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAssetDepreciationLine : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
@@ -64,9 +64,9 @@ public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEn
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AssetId")]
     //[InverseProperty("AccountAssetDepreciationLines")]

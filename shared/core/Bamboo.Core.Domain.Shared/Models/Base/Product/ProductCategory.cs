@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("product_category")]
 //[Index("ParentId", Name = "product_category_parent_id_index")]
 //[Index("ParentPath", Name = "product_category_parent_path_index")]
-public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductCategory : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -52,9 +52,9 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("packaging_reserve_method")]
     public string? PackagingReserveMethod { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProductCategoryCreateUs")]

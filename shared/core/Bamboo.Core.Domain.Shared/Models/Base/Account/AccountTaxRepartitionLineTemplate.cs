@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_tax_repartition_line_template")]
-public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountTaxRepartitionLineTemplate : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -50,9 +50,9 @@ public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>
     [Column("factor_percent")]
     public double? FactorPercent { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AccountId")]
     //[InverseProperty("AccountTaxRepartitionLineTemplates")]

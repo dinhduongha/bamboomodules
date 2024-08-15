@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("Type", Name = "crm_lead_type_index")]
 //[Index("UserId", Name = "crm_lead_user_id_index")]
 //[Index("UserId", "TeamId", "Type", Name = "crm_lead_user_id_team_id_type_index")]
-public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmLead: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

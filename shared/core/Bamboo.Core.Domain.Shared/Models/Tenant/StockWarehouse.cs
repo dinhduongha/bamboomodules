@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_warehouse")]
 //[Index("Code", "TenantId", Name = "stock_warehouse_warehouse_code_uniq", IsUnique = true)]
 //[Index("Name", "TenantId", Name = "stock_warehouse_warehouse_name_uniq", IsUnique = true)]
-public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockWarehouse: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

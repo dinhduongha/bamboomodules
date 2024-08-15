@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("barcode_nomenclature")]
-public partial class BarcodeNomenclature : FullAuditedEntity<long>, IEntityDto<long>
+public partial class BarcodeNomenclature : AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

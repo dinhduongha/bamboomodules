@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_term_line")]
 //[Index("PaymentId", Name = "account_payment_term_line_payment_id_index")]
-public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPaymentTermLine : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("months")]
     public long? Months { get; set; }
@@ -60,9 +60,9 @@ public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDt
     [Column("discount_percentage")]
     public double? DiscountPercentage { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("AccountPaymentTermLineCreateUs")]

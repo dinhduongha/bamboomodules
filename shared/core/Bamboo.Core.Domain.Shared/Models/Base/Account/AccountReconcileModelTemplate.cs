@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_reconcile_model_template")]
-public partial class AccountReconcileModelTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReconcileModelTemplate : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("chart_template_id")]
     public Guid? ChartTemplateId { get; set; }
@@ -110,9 +110,9 @@ public partial class AccountReconcileModelTemplate : FullAuditedEntity<Guid>, IE
     [Column("payment_tolerance_param")]
     public double? PaymentToleranceParam { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("ChartTemplateId")]
     //[InverseProperty("AccountReconcileModelTemplates")]

@@ -16,14 +16,14 @@ namespace Bamboo.Core.Models;
 //[Index("AttributeLineId", "ProductAttributeValueId", Name = "product_template_attribute_value_attribute_value_unique", IsUnique = true)]
 //[Index("ProductAttributeValueId", Name = "product_template_attribute_value_product_attribute_value_id_ind")]
 //[Index("ProductTmplId", Name = "product_template_attribute_value_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeValue : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("product_attribute_value_id")]
     public Guid? ProductAttributeValueId { get; set; }
@@ -68,9 +68,9 @@ public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IE
     [NotMapped]
     public virtual ProductTemplateAttributeLine? AttributeLine { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProductTemplateAttributeValueCreateUs")]

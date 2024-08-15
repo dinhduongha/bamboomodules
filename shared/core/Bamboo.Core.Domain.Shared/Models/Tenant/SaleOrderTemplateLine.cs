@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("sale_order_template_line")]
 //[Index("TenantId", Name = "sale_order_template_line_company_id_index")]
 //[Index("SaleOrderTemplateId", Name = "sale_order_template_line_sale_order_template_id_index")]
-public partial class SaleOrderTemplateLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderTemplateLine: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "stock_quant_package_company_id_index")]
 //[Index("LocationId", Name = "stock_quant_package_location_id_index")]
 //[Index("PackageTypeId", Name = "stock_quant_package_package_type_id_index")]
-public partial class StockQuantPackage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockQuantPackage: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

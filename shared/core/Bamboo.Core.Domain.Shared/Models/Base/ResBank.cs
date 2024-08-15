@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_bank")]
 //[Index("Bic", Name = "res_bank_bic_index")]
-public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResBank : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("spreadsheet_dashboard_group")]
-public partial class SpreadsheetDashboardGroup: FullAuditedEntity<long>, IEntityDto<long>
+public partial class SpreadsheetDashboardGroup: AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }

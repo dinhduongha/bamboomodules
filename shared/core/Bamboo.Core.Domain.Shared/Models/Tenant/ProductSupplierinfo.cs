@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("product_supplierinfo")]
 //[Index("TenantId", Name = "product_supplierinfo_company_id_index")]
 //[Index("ProductTmplId", Name = "product_supplierinfo_product_tmpl_id_index")]
-public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductSupplierinfo: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

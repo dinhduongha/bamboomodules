@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_analytic_applicability")]
-public partial class AccountAnalyticApplicability : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticApplicability : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("analytic_plan_id")]
     public Guid? AnalyticPlanId { get; set; }
@@ -47,9 +47,9 @@ public partial class AccountAnalyticApplicability : FullAuditedEntity<Guid>, IEn
     [Column("account_prefix")]
     public string? AccountPrefix { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AnalyticPlanId")]
     //[InverseProperty("AccountAnalyticApplicabilities")]

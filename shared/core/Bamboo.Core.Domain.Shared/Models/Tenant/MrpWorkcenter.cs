@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("TenantId", Name = "mrp_workcenter_company_id_index")]
 //[Index("ResourceCalendarId", Name = "mrp_workcenter_resource_calendar_id_index")]
 //[Index("ResourceId", Name = "mrp_workcenter_resource_id_index")]
-public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpWorkcenter: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

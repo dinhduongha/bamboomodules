@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("product_tag")]
 //[Index("Name", Name = "product_tag_name_uniq", IsUnique = true)]
 //[Index("WebsiteId", Name = "product_tag_website_id_index")]
-public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTag : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -46,9 +46,9 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("ribbon_id")]
     public Guid? RibbonId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProductTagCreateUs")]

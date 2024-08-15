@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_line")]
 //[Index("AttributeId", Name = "product_template_attribute_line_attribute_id_index")]
 //[Index("ProductTmplId", Name = "product_template_attribute_line_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeLine : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }
@@ -46,9 +46,9 @@ public partial class ProductTemplateAttributeLine : FullAuditedEntity<Guid>, IEn
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AttributeId")]
     //[InverseProperty("ProductTemplateAttributeLines")]

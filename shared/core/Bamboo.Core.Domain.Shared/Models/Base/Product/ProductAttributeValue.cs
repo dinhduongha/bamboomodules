@@ -14,14 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("AttributeId", Name = "product_attribute_value_attribute_id_index")]
 //[Index("Sequence", Name = "product_attribute_value_sequence_index")]
 //[Index("Name", "AttributeId", Name = "product_attribute_value_value_company_uniq", IsUnique = true)]
-public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttributeValue : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -53,9 +53,9 @@ public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AttributeId")]
     //[InverseProperty("ProductAttributeValues")]

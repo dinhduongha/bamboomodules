@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("Priority", Name = "purchase_order_priority_index")]
 //[Index("State", Name = "purchase_order_state_index")]
 //[Index("UserId", Name = "purchase_order_user_id_index")]
-public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PurchaseOrder: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

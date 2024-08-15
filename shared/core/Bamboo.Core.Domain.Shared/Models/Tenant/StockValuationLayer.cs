@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("AccountMoveLineId", Name = "stock_valuation_layer_account_move_line_id_index")]
 //[Index("ProductId", "RemainingQty", "StockMoveId", "TenantId", "CreationTime", Name = "stock_valuation_layer_index")]
 //[Index("StockMoveId", Name = "stock_valuation_layer_stock_move_id_index")]
-public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockValuationLayer: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 //[Index("Code", Name = "res_lang_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_lang_name_uniq", IsUnique = true)]
 //[Index("UrlCode", Name = "res_lang_url_code_uniq", IsUnique = true)]
-public partial class ResLang: FullAuditedEntity<long>, IEntityDto<long>
+public partial class ResLang: AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

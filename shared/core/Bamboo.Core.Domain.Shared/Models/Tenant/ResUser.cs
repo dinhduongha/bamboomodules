@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("res_users")]
 //[Index("Login", "WebsiteId", Name = "res_users_login_key", IsUnique = true)]
 //[Index("PartnerId", Name = "res_users_partner_id_index")]
-public partial class ResUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUser: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

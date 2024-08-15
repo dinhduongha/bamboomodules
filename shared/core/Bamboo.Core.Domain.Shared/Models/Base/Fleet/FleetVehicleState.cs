@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_state")]
 //[Index("Name", Name = "fleet_vehicle_state_fleet_state_name_unique", IsUnique = true)]
-public partial class FleetVehicleState : FullAuditedEntity<long>, IEntityDto<long>
+public partial class FleetVehicleState : AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
     public long Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }

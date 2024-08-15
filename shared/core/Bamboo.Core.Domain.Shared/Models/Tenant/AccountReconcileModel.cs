@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_reconcile_model")]
 //[Index("Name", "TenantId", Name = "account_reconcile_model_name_unique", IsUnique = true)]
-public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReconcileModel: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

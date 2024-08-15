@@ -12,14 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_attendance_overtime")]
 //[Index("EmployeeId", Name = "hr_attendance_overtime_employee_id_index")]
-public partial class HrAttendanceOvertime : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrAttendanceOvertime : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -48,9 +48,9 @@ public partial class HrAttendanceOvertime : FullAuditedEntity<Guid>, IEntityDto<
     [Column("duration_real")]
     public double? DurationReal { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("HrAttendanceOvertimeCreateUs")]

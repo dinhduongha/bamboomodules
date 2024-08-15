@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("account_bank_statement_line")]
 //[Index("InternalIndex", Name = "account_bank_statement_line_internal_index_index")]
 //[Index("UniqueImportId", Name = "account_bank_statement_line_unique_import_id", IsUnique = true)]
-public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountBankStatementLine : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
@@ -85,9 +85,9 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("unique_import_id")]
     public string? UniqueImportId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("AccountBankStatementLineCreateUs")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_unbuild")]
 //[Index("TenantId", Name = "mrp_unbuild_company_id_index")]
-public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpUnbuild: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_currency")]
 //[Index("Name", Name = "res_currency_unique_name", IsUnique = true)]
-public partial class ResCurrency: FullAuditedEntity<long>, IEntityDto<long>
+public partial class ResCurrency: AuditedEntity<long>, IEntityDto<long>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]

@@ -11,14 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_close_session_wizard")]
-public partial class PosCloseSessionWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosCloseSessionWizard : AuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -44,9 +44,9 @@ public partial class PosCloseSessionWizard : FullAuditedEntity<Guid>, IEntityDto
     [Column("amount_to_balance")]
     public double? AmountToBalance { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    //[ForeignKey("TenantId")]
+    //[NotMapped]
+    //public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("AccountId")]
     //[InverseProperty("PosCloseSessionWizards")]

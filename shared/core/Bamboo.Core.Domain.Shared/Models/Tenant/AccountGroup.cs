@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("account_group")]
 //[Index("ParentId", Name = "account_group_parent_id_index")]
 //[Index("ParentPath", Name = "account_group_parent_path_index")]
-public partial class AccountGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountGroup: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

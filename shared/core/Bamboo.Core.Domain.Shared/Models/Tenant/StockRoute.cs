@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("stock_route")]
 //[Index("TenantId", Name = "stock_route_company_id_index")]
-public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockRoute: AuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
