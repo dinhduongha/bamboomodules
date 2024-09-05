@@ -174,9 +174,10 @@ public class TenantService : ApplicationService
         using (CurrentTenant.Change(tenant.Id, tenant.Name))
         {
             await _dataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
-                //.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{input.AdminEmailAddress}")
-                //.WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{input.AdminPassword}")
-                .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{tenant.Name}@{domain}")
+				//.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{input.AdminEmailAddress}")
+				//.WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{input.AdminPassword}")
+				.WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, $"{tenant.Name}")
+				.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{tenant.Name}@{domain}")
                 .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{password}")
                 );
             //"admin" user

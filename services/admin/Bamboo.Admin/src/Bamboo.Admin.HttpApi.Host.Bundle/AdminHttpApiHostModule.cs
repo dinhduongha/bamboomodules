@@ -35,6 +35,7 @@ using Bamboo.AdminExtensions;
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.MultiTenancy;
 using static System.Collections.Specialized.BitVector32;
+using Bamboo.Admin.Domain.Shared;
 
 namespace Bamboo.Admin;
 
