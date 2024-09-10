@@ -41,6 +41,7 @@ namespace Bamboo.Admin;
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpDistributedLockingModule),
     typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
+    //typeof(AbpAspNetCoreAuthenticationJwtBearerModule),
     typeof(AdminApplicationModule),
     typeof(AdminEntityFrameworkCoreModule),
     typeof(AbpAspNetCoreSerilogModule),
@@ -105,7 +106,7 @@ public class AdminHttpApiHostModule : AbpModule
     private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            .AddAbpJwtBearer(options =>
             {
                 options.Authority = configuration["AuthServer:Authority"];
                 options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");

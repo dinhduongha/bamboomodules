@@ -257,7 +257,7 @@ src/Bamboo.Admin.Web/Logs/*
 src/Bamboo.Admin.Web.Host/Logs/*
 src/Bamboo.Admin.AuthServer/Logs/*
 src/Bamboo.Admin.HttpApi.Host/Logs/*
-src/Bamboo.Admin.HttpApi.Host/Logs/*
+src/Bamboo.Admin.HttpApi.HostWithIds/Logs/*
 src/Bamboo.Admin.DbMigrator/Logs/*
 src/Bamboo.Admin.Blazor.Server/Logs/*
 src/Bamboo.Admin.Blazor.Server.Tiered/Logs/*
