@@ -32,6 +32,7 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.VirtualFileSystem;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Bamboo.AdminExtensions;
+using Medallion.Threading.FileSystem;
 
 namespace Bamboo.Admin;
 
@@ -192,8 +193,8 @@ public class AdminHttpApiHostModule : AbpModule
             bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
             if (!enabledRedis)
             {
-                //DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
-                //return new FileDistributedSynchronizationProvider(lockFileDirectory);
+                DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
+                return new FileDistributedSynchronizationProvider(lockFileDirectory);
             }
             else
             {
@@ -202,8 +203,8 @@ public class AdminHttpApiHostModule : AbpModule
                 var redis = ConnectionMultiplexer.Connect(redisOptions);
                 return new RedisDistributedSynchronizationProvider(redis.GetDatabase());
             }
-            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
-            return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
+            //var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+            //return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         });
     }
 

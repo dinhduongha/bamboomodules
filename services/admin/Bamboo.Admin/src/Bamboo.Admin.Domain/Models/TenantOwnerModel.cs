@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.MultiTenancy;
+using Volo.Abp.OpenIddict.Applications;
 using Volo.Abp.TenantManagement;
 
 namespace Bamboo.Admin;
@@ -16,5 +18,3 @@ public class TenantOwner: Tenant
 
     }
 }
-
-

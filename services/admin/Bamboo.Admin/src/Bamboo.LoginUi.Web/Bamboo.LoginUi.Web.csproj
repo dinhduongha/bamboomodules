@@ -21,7 +21,7 @@
     <PackageReference Include="Twilio.AspNet.Core" Version="8.0.0" />
     <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
     <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.*" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />

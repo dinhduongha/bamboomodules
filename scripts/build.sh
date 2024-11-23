@@ -1,12 +1,19 @@
 #!/bin/sh
 name="Bamboo"
-#dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output/$name.Admin services//admin/$name.Admin/src/$name.Admin.HttpApi.Host/$name.Admin.HttpApi.Host.csproj
-#dotnet publish --sc --os linux -o Output/$name.AuthServer services/admin/$name.Admin/src/$name.Admin.AuthServer/$name.Admin.AuthServer.csproj
+#dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output-Single/$name.Admin services/admin/$name.Admin/src/$name.Admin.HttpApi.Host/$name.Admin.HttpApi.Host.csproj
+#dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output-Single/$name.Admin services/admin/$name.Admin/src/$name.Admin.AuthServer/$name.Admin.AuthServer.csproj
+#dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output-Single/$name.Admin services/admin/$name.Admin/src/$name.Admin.HttpApi.Host.Bundle/$name.Admin.HttpApi.Host.Bundle.csproj
+
+# dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output-Single/Bamboo.Admin services/admin/Bamboo.Admin/src/Bamboo.Admin.HttpApi.Host/Bamboo.Admin.HttpApi.Host.csproj
+# dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output-Single/Bamboo.AuthServer services/admin/Bamboo.Admin/src/Bamboo.Admin.AuthServer/Bamboo.Admin.AuthServer.csproj
+# dotnet publish --sc --os linux /p:PublishSingleFile=true -o Output-Single/Bamboo.Admin services/admin/Bamboo.Admin/src/Bamboo.Admin.HttpApi.Host.Bundle/Bamboo.Admin.HttpApi.Host.Bundle.csproj
+
 #rm Output/$name.AuthServer/appsettings.secret*.*
 #dotnet publish --sc --os linux -o Output/$name.Admin services/admin/$name.Admin/src/$name.Admin.HttpApi.Host/$name.Admin.HttpApi.Host.csproj
 #rm Output/$name.Admin/appsettings.secret*.*
 
-dotnet publish --sc --os linux -o Output/$name.Admin services/admin/$name.Admin/$name.Admin.sln
+#Build whole solution
+dotnet publish --sc --os linux -f net8.0 -o Output/$name.Admin services/admin/$name.Admin/$name.Admin.sln
 rm Output/$name.Admin/appsettings.secret*.*
 
 # dotnet publish --sc --os linux -o Output/Bamboo.Admin services/admin/Bamboo.Admin/Bamboo.Admin.sln

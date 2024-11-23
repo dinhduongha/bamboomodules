@@ -16,6 +16,5 @@ public class OpenIddictApplicationExtra : OpenIddictApplication
     : base(id)
     {
     }
-
     public virtual Guid? TenantId { get; set; }
 }

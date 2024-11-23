@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 
 using Bamboo.Core.Models;
+using static IdentityModel.JwtClaimTypes;
 
 
 namespace Bamboo.CodeGenerators;
 /*
 for file in *; do echo "lstTypes.Add(typeof(${file%.*}));"; done 
 */
+
 public class CodeGenerator
 {
     protected List<System.Type> _lstTypes = new List<System.Type>();
@@ -291,32 +293,198 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
             
     }
 
-    protected List<System.Type> GeneratedListType()
+    protected List<System.Type> GeneratedListCore()
+    {
+        var lstTypes = new List<System.Type>();
+        lstTypes.Add(typeof(AuthTotpDevice));
+        lstTypes.Add(typeof(AuthTotpWizard));
+
+        lstTypes.Add(typeof(BaseDocumentLayout));
+        lstTypes.Add(typeof(BaseEnableProfilingWizard));
+        lstTypes.Add(typeof(BaseImportImport));
+        lstTypes.Add(typeof(BaseImportMapping));
+        //lstTypes.Add(typeof(BaseImportModule));
+        lstTypes.Add(typeof(BaseImportTestsModelsChar));
+        lstTypes.Add(typeof(BaseImportTestsModelsCharNoreadonly));
+        lstTypes.Add(typeof(BaseImportTestsModelsCharReadonly));
+        lstTypes.Add(typeof(BaseImportTestsModelsCharRequired));
+        lstTypes.Add(typeof(BaseImportTestsModelsCharState));
+        lstTypes.Add(typeof(BaseImportTestsModelsCharStillreadonly));
+        lstTypes.Add(typeof(BaseImportTestsModelsComplex));
+        lstTypes.Add(typeof(BaseImportTestsModelsFloat));
+        lstTypes.Add(typeof(BaseImportTestsModelsM2o));
+        lstTypes.Add(typeof(BaseImportTestsModelsM2oRelated));
+        lstTypes.Add(typeof(BaseImportTestsModelsM2oRequired));
+        lstTypes.Add(typeof(BaseImportTestsModelsM2oRequiredRelated));
+        lstTypes.Add(typeof(BaseImportTestsModelsO2m));
+        lstTypes.Add(typeof(BaseImportTestsModelsO2mChild));
+        lstTypes.Add(typeof(BaseImportTestsModelsPreview));
+        lstTypes.Add(typeof(BaseLanguageExport));
+        lstTypes.Add(typeof(BaseLanguageImport));
+        lstTypes.Add(typeof(BaseLanguageInstall));
+        lstTypes.Add(typeof(BaseModuleInstallRequest));
+        lstTypes.Add(typeof(BaseModuleInstallReview));
+        lstTypes.Add(typeof(BaseModuleUninstall));
+        lstTypes.Add(typeof(BaseModuleUpdate));
+        lstTypes.Add(typeof(BaseModuleUpgrade));
+        lstTypes.Add(typeof(BasePartnerMergeAutomaticWizard));
+        lstTypes.Add(typeof(BasePartnerMergeLine));
+
+        lstTypes.Add(typeof(BusBu));
+        lstTypes.Add(typeof(BusPresence));
+        lstTypes.Add(typeof(ChangePasswordOwn));
+        lstTypes.Add(typeof(ChangePasswordUser));
+        lstTypes.Add(typeof(ChangePasswordWizard));
+        lstTypes.Add(typeof(DecimalPrecision));
+
+        lstTypes.Add(typeof(IapAccount));
+        lstTypes.Add(typeof(IrActClient));
+        lstTypes.Add(typeof(IrActReportXml));
+        lstTypes.Add(typeof(IrActServer));
+        lstTypes.Add(typeof(IrActUrl));
+        lstTypes.Add(typeof(IrActWindow));
+        lstTypes.Add(typeof(IrActWindowView));
+        lstTypes.Add(typeof(IrAction));
+        lstTypes.Add(typeof(IrActionsTodo));
+        lstTypes.Add(typeof(IrAsset));
+        lstTypes.Add(typeof(IrAttachment));
+        lstTypes.Add(typeof(IrConfigParameter));
+        lstTypes.Add(typeof(IrCron));
+        lstTypes.Add(typeof(IrCronTrigger));
+        lstTypes.Add(typeof(IrDefault));
+        lstTypes.Add(typeof(IrDemo));
+        lstTypes.Add(typeof(IrDemoFailure));
+        lstTypes.Add(typeof(IrDemoFailureWizard));
+        lstTypes.Add(typeof(IrExport));
+        lstTypes.Add(typeof(IrExportsLine));
+        lstTypes.Add(typeof(IrFilter));
+        lstTypes.Add(typeof(IrLogging));
+        lstTypes.Add(typeof(IrMailServer));
+        lstTypes.Add(typeof(IrModel));
+        lstTypes.Add(typeof(IrModelAccess));
+        lstTypes.Add(typeof(IrModelConstraint));
+        lstTypes.Add(typeof(IrModelDatum));
+        lstTypes.Add(typeof(IrModelField));
+        lstTypes.Add(typeof(IrModelFieldsSelection));
+        lstTypes.Add(typeof(IrModelRelation));
+        lstTypes.Add(typeof(IrModuleCategory));
+        lstTypes.Add(typeof(IrModuleModule));
+        lstTypes.Add(typeof(IrModuleModuleDependency));
+        lstTypes.Add(typeof(IrModuleModuleExclusion));
+        lstTypes.Add(typeof(IrProfile));
+        lstTypes.Add(typeof(IrProperty));
+        lstTypes.Add(typeof(IrRule));
+        lstTypes.Add(typeof(IrSequence));
+        lstTypes.Add(typeof(IrSequenceDateRange));
+        lstTypes.Add(typeof(IrServerObjectLine));
+        lstTypes.Add(typeof(IrUiMenu));
+        lstTypes.Add(typeof(IrUiView));
+        lstTypes.Add(typeof(IrUiViewCustom));
+
+        //lstTypes.Add(typeof(ModuleContry));
+
+        lstTypes.Add(typeof(ReportLayout));
+        lstTypes.Add(typeof(ReportPaperformat));
+        lstTypes.Add(typeof(ResBank));
+        lstTypes.Add(typeof(ResCompany));
+        lstTypes.Add(typeof(ResConfig));
+        lstTypes.Add(typeof(ResConfigInstaller));
+        lstTypes.Add(typeof(ResConfigSetting));
+        lstTypes.Add(typeof(ResCountry));
+        lstTypes.Add(typeof(ResCountryGroup));
+        lstTypes.Add(typeof(ResCountryState));
+        lstTypes.Add(typeof(ResCurrency));
+        lstTypes.Add(typeof(ResCurrencyRate));
+        lstTypes.Add(typeof(ResGroup));
+        lstTypes.Add(typeof(ResLang));
+        lstTypes.Add(typeof(ResPartner));
+        lstTypes.Add(typeof(ResPartnerAutocompleteSync));
+        lstTypes.Add(typeof(ResPartnerBank));
+        lstTypes.Add(typeof(ResPartnerCategory));
+        lstTypes.Add(typeof(ResPartnerIndustry));
+        lstTypes.Add(typeof(ResPartnerTitle));
+        lstTypes.Add(typeof(ResUser));
+        lstTypes.Add(typeof(ResUsersApikey));
+        lstTypes.Add(typeof(ResUsersApikeysDescription));
+        lstTypes.Add(typeof(ResUsersDeletion));
+        lstTypes.Add(typeof(ResUsersIdentitycheck));
+        lstTypes.Add(typeof(ResUsersLog));
+        lstTypes.Add(typeof(ResUsersSetting));
+        lstTypes.Add(typeof(ResUsersSettingsVolume));
+
+        lstTypes.Add(typeof(ResetViewArchWizard));
+
+        lstTypes.Add(typeof(WebEditorConverterTest));
+        lstTypes.Add(typeof(WebEditorConverterTestSub));
+        lstTypes.Add(typeof(WebTourTour));
+
+        lstTypes.Add(typeof(WizardIrModelMenuCreate));
+
+        return lstTypes;
+    }
+    protected List<System.Type> GeneratedListSale()
     {
         var lstTypes = new List<System.Type>();
         lstTypes.Add(typeof(AccountAccount));
         lstTypes.Add(typeof(AccountAccountTag));
-        lstTypes.Add(typeof(AccountAccountTemplate));
-        lstTypes.Add(typeof(AccountAccountType));
-        lstTypes.Add(typeof(AccountAccruedOrdersWizard));
-        lstTypes.Add(typeof(AccountAgedTrialBalance));
         lstTypes.Add(typeof(AccountAnalyticAccount));
         lstTypes.Add(typeof(AccountAnalyticApplicability));
         lstTypes.Add(typeof(AccountAnalyticDistributionModel));
         lstTypes.Add(typeof(AccountAnalyticLine));
         lstTypes.Add(typeof(AccountAnalyticPlan));
+        lstTypes.Add(typeof(AccountAutomaticEntryWizard));
+
+        lstTypes.Add(typeof(AccountBankStatement));
+        lstTypes.Add(typeof(AccountBankStatementLine));
+        lstTypes.Add(typeof(AccountCashRounding));
+
+        lstTypes.Add(typeof(AccountFinancialYearOp));
+        lstTypes.Add(typeof(AccountFiscalPosition));
+        lstTypes.Add(typeof(AccountFiscalPositionAccount));
+        lstTypes.Add(typeof(AccountFiscalPositionTax));
+
+        lstTypes.Add(typeof(AccountFullReconcile));
+        lstTypes.Add(typeof(AccountGroup));
+        lstTypes.Add(typeof(AccountIncoterm));
+        lstTypes.Add(typeof(AccountJournal));
+        lstTypes.Add(typeof(AccountJournalGroup));
+
+        lstTypes.Add(typeof(AccountMove));
+        lstTypes.Add(typeof(AccountMoveLine));
+        lstTypes.Add(typeof(AccountMoveReversal));
+
+        lstTypes.Add(typeof(AccountPartialReconcile));
+        lstTypes.Add(typeof(AccountPayment));
+        lstTypes.Add(typeof(AccountPaymentMethod));
+        lstTypes.Add(typeof(AccountPaymentMethodLine));
+        lstTypes.Add(typeof(AccountPaymentRegister));
+        lstTypes.Add(typeof(AccountPaymentTerm));
+        lstTypes.Add(typeof(AccountPaymentTermLine));
+        lstTypes.Add(typeof(AccountReconcileModel));
+        lstTypes.Add(typeof(AccountReconcileModelLine));
+
+        return lstTypes;
+    }
+    protected List<System.Type> GeneratedListType()
+    {
+        var lstTypes = new List<System.Type>();
+        
+        lstTypes.Add(typeof(AccountAccountTemplate));
+        lstTypes.Add(typeof(AccountAccountType));
+        lstTypes.Add(typeof(AccountAccruedOrdersWizard));
+        lstTypes.Add(typeof(AccountAgedTrialBalance));
+        
         lstTypes.Add(typeof(AccountAssetAsset));
         lstTypes.Add(typeof(AccountAssetCategory));
         lstTypes.Add(typeof(AccountAssetDepreciationLine));
-        lstTypes.Add(typeof(AccountAutomaticEntryWizard));
-        lstTypes.Add(typeof(AccountBalanceReport));
-        lstTypes.Add(typeof(AccountBankStatement));
+        
+        lstTypes.Add(typeof(AccountBalanceReport));        
         lstTypes.Add(typeof(AccountBankStatementImport));
         lstTypes.Add(typeof(AccountBankStatementImportJournalCreation));
-        lstTypes.Add(typeof(AccountBankStatementLine));
+        
         lstTypes.Add(typeof(AccountBankbookReport));
         lstTypes.Add(typeof(AccountBudgetPost));
-        lstTypes.Add(typeof(AccountCashRounding));
+        
         lstTypes.Add(typeof(AccountCashbookReport));
         lstTypes.Add(typeof(AccountChartTemplate));
         lstTypes.Add(typeof(AccountCommonAccountReport));
@@ -327,34 +495,20 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(AccountEdiDocument));
         lstTypes.Add(typeof(AccountEdiFormat));
         lstTypes.Add(typeof(AccountFinancialReport));
-        lstTypes.Add(typeof(AccountFinancialYearOp));
-        lstTypes.Add(typeof(AccountFiscalPosition));
-        lstTypes.Add(typeof(AccountFiscalPositionAccount));
+        
         lstTypes.Add(typeof(AccountFiscalPositionAccountTemplate));
-        lstTypes.Add(typeof(AccountFiscalPositionTax));
+        
         lstTypes.Add(typeof(AccountFiscalPositionTaxTemplate));
         lstTypes.Add(typeof(AccountFiscalPositionTemplate));
         lstTypes.Add(typeof(AccountFiscalYear));
-        lstTypes.Add(typeof(AccountFullReconcile));
-        lstTypes.Add(typeof(AccountGroup));
+        
         lstTypes.Add(typeof(AccountGroupTemplate));
-        lstTypes.Add(typeof(AccountIncoterm));
+        
         lstTypes.Add(typeof(AccountInvoiceSend));
-        lstTypes.Add(typeof(AccountJournal));
-        lstTypes.Add(typeof(AccountJournalGroup));
-        lstTypes.Add(typeof(AccountMove));
-        lstTypes.Add(typeof(AccountMoveLine));
-        lstTypes.Add(typeof(AccountMoveReversal));
-        lstTypes.Add(typeof(AccountPartialReconcile));
-        lstTypes.Add(typeof(AccountPayment));
-        lstTypes.Add(typeof(AccountPaymentMethod));
-        lstTypes.Add(typeof(AccountPaymentMethodLine));
-        lstTypes.Add(typeof(AccountPaymentRegister));
-        lstTypes.Add(typeof(AccountPaymentTerm));
-        lstTypes.Add(typeof(AccountPaymentTermLine));
+        
+        
+
         lstTypes.Add(typeof(AccountPrintJournal));
-        lstTypes.Add(typeof(AccountReconcileModel));
-        lstTypes.Add(typeof(AccountReconcileModelLine));
         lstTypes.Add(typeof(AccountReconcileModelLineTemplate));
         lstTypes.Add(typeof(AccountReconcileModelPartnerMapping));
         lstTypes.Add(typeof(AccountReconcileModelTemplate));
@@ -382,41 +536,10 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(ApplicantSendMail));
         lstTypes.Add(typeof(AssetDepreciationConfirmationWizard));
         lstTypes.Add(typeof(AssetModify));
-        lstTypes.Add(typeof(AuthTotpDevice));
-        lstTypes.Add(typeof(AuthTotpWizard));
+        
         lstTypes.Add(typeof(BarcodeNomenclature));
         lstTypes.Add(typeof(BarcodeRule));
-        lstTypes.Add(typeof(BaseDocumentLayout));
-        lstTypes.Add(typeof(BaseEnableProfilingWizard));
-        lstTypes.Add(typeof(BaseImportImport));
-        lstTypes.Add(typeof(BaseImportMapping));
-        lstTypes.Add(typeof(BaseImportTestsModelsChar));
-        lstTypes.Add(typeof(BaseImportTestsModelsCharNoreadonly));
-        lstTypes.Add(typeof(BaseImportTestsModelsCharReadonly));
-        lstTypes.Add(typeof(BaseImportTestsModelsCharRequired));
-        lstTypes.Add(typeof(BaseImportTestsModelsCharState));
-        lstTypes.Add(typeof(BaseImportTestsModelsCharStillreadonly));
-        lstTypes.Add(typeof(BaseImportTestsModelsComplex));
-        lstTypes.Add(typeof(BaseImportTestsModelsFloat));
-        lstTypes.Add(typeof(BaseImportTestsModelsM2o));
-        lstTypes.Add(typeof(BaseImportTestsModelsM2oRelated));
-        lstTypes.Add(typeof(BaseImportTestsModelsM2oRequired));
-        lstTypes.Add(typeof(BaseImportTestsModelsM2oRequiredRelated));
-        lstTypes.Add(typeof(BaseImportTestsModelsO2m));
-        lstTypes.Add(typeof(BaseImportTestsModelsO2mChild));
-        lstTypes.Add(typeof(BaseImportTestsModelsPreview));
-        lstTypes.Add(typeof(BaseLanguageExport));
-        lstTypes.Add(typeof(BaseLanguageImport));
-        lstTypes.Add(typeof(BaseLanguageInstall));
-        lstTypes.Add(typeof(BaseModuleInstallRequest));
-        lstTypes.Add(typeof(BaseModuleInstallReview));
-        lstTypes.Add(typeof(BaseModuleUninstall));
-        lstTypes.Add(typeof(BaseModuleUpdate));
-        lstTypes.Add(typeof(BaseModuleUpgrade));
-        lstTypes.Add(typeof(BasePartnerMergeAutomaticWizard));
-        lstTypes.Add(typeof(BasePartnerMergeLine));
-        lstTypes.Add(typeof(BusBu));
-        lstTypes.Add(typeof(BusPresence));
+        
         lstTypes.Add(typeof(CalendarAlarm));
         lstTypes.Add(typeof(CalendarAttendee));
         lstTypes.Add(typeof(CalendarEvent));
@@ -425,9 +548,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(CalendarProviderConfig));
         lstTypes.Add(typeof(CalendarRecurrence));
         lstTypes.Add(typeof(ChangeLockDate));
-        lstTypes.Add(typeof(ChangePasswordOwn));
-        lstTypes.Add(typeof(ChangePasswordUser));
-        lstTypes.Add(typeof(ChangePasswordWizard));
+        
         lstTypes.Add(typeof(ChangeProductionQty));
         lstTypes.Add(typeof(ConfirmStockSm));
         lstTypes.Add(typeof(CrmIapLeadHelper));
@@ -452,7 +573,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(CrmTeamMember));
         lstTypes.Add(typeof(CrossoveredBudget));
         lstTypes.Add(typeof(CrossoveredBudgetLine));
-        lstTypes.Add(typeof(DecimalPrecision));
+        
         lstTypes.Add(typeof(DigestDigest));
         lstTypes.Add(typeof(DigestTip));
         lstTypes.Add(typeof(FetchmailServer));
@@ -514,49 +635,8 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(HrSkillLevel));
         lstTypes.Add(typeof(HrSkillType));
         lstTypes.Add(typeof(HrWorkLocation));
-        lstTypes.Add(typeof(IapAccount));
-        lstTypes.Add(typeof(IrActClient));
-        lstTypes.Add(typeof(IrActReportXml));
-        lstTypes.Add(typeof(IrActServer));
-        lstTypes.Add(typeof(IrActUrl));
-        lstTypes.Add(typeof(IrActWindow));
-        lstTypes.Add(typeof(IrActWindowView));
-        lstTypes.Add(typeof(IrAction));
-        lstTypes.Add(typeof(IrActionsTodo));
-        lstTypes.Add(typeof(IrAsset));
-        lstTypes.Add(typeof(IrAttachment));
-        lstTypes.Add(typeof(IrConfigParameter));
-        lstTypes.Add(typeof(IrCron));
-        lstTypes.Add(typeof(IrCronTrigger));
-        lstTypes.Add(typeof(IrDefault));
-        lstTypes.Add(typeof(IrDemo));
-        lstTypes.Add(typeof(IrDemoFailure));
-        lstTypes.Add(typeof(IrDemoFailureWizard));
-        lstTypes.Add(typeof(IrExport));
-        lstTypes.Add(typeof(IrExportsLine));
-        lstTypes.Add(typeof(IrFilter));
-        lstTypes.Add(typeof(IrLogging));
-        lstTypes.Add(typeof(IrMailServer));
-        lstTypes.Add(typeof(IrModel));
-        lstTypes.Add(typeof(IrModelAccess));
-        lstTypes.Add(typeof(IrModelConstraint));
-        lstTypes.Add(typeof(IrModelDatum));
-        lstTypes.Add(typeof(IrModelField));
-        lstTypes.Add(typeof(IrModelFieldsSelection));
-        lstTypes.Add(typeof(IrModelRelation));
-        lstTypes.Add(typeof(IrModuleCategory));
-        lstTypes.Add(typeof(IrModuleModule));
-        lstTypes.Add(typeof(IrModuleModuleDependency));
-        lstTypes.Add(typeof(IrModuleModuleExclusion));
-        lstTypes.Add(typeof(IrProfile));
-        lstTypes.Add(typeof(IrProperty));
-        lstTypes.Add(typeof(IrRule));
-        lstTypes.Add(typeof(IrSequence));
-        lstTypes.Add(typeof(IrSequenceDateRange));
-        lstTypes.Add(typeof(IrServerObjectLine));
-        lstTypes.Add(typeof(IrUiMenu));
-        lstTypes.Add(typeof(IrUiView));
-        lstTypes.Add(typeof(IrUiViewCustom));
+
+        
         lstTypes.Add(typeof(LotLabelLayout));
         lstTypes.Add(typeof(LunchAlert));
         lstTypes.Add(typeof(LunchCashmove));
@@ -698,35 +778,10 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(RepairOrder));
         lstTypes.Add(typeof(RepairOrderMakeInvoice));
         lstTypes.Add(typeof(RepairTag));
-        lstTypes.Add(typeof(ReportLayout));
-        lstTypes.Add(typeof(ReportPaperformat));
-        lstTypes.Add(typeof(ResBank));
-        lstTypes.Add(typeof(ResCompany));
-        lstTypes.Add(typeof(ResConfig));
-        lstTypes.Add(typeof(ResConfigInstaller));
-        lstTypes.Add(typeof(ResConfigSetting));
-        lstTypes.Add(typeof(ResCountry));
-        lstTypes.Add(typeof(ResCountryGroup));
-        lstTypes.Add(typeof(ResCountryState));
-        lstTypes.Add(typeof(ResCurrency));
-        lstTypes.Add(typeof(ResCurrencyRate));
-        lstTypes.Add(typeof(ResGroup));
-        lstTypes.Add(typeof(ResLang));
-        lstTypes.Add(typeof(ResPartner));
-        lstTypes.Add(typeof(ResPartnerAutocompleteSync));
-        lstTypes.Add(typeof(ResPartnerBank));
-        lstTypes.Add(typeof(ResPartnerCategory));
-        lstTypes.Add(typeof(ResPartnerIndustry));
-        lstTypes.Add(typeof(ResPartnerTitle));
-        lstTypes.Add(typeof(ResUser));
-        lstTypes.Add(typeof(ResUsersApikey));
-        lstTypes.Add(typeof(ResUsersApikeysDescription));
-        lstTypes.Add(typeof(ResUsersDeletion));
-        lstTypes.Add(typeof(ResUsersIdentitycheck));
-        lstTypes.Add(typeof(ResUsersLog));
-        lstTypes.Add(typeof(ResUsersSetting));
-        lstTypes.Add(typeof(ResUsersSettingsVolume));
-        lstTypes.Add(typeof(ResetViewArchWizard));
+
+        
+
+        
         lstTypes.Add(typeof(ResourceCalendar));
         lstTypes.Add(typeof(ResourceCalendarAttendance));
         lstTypes.Add(typeof(ResourceCalendarLeaf));
@@ -811,9 +866,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(UtmStage));
         lstTypes.Add(typeof(UtmTag));
         lstTypes.Add(typeof(ValidateAccountMove));
-        lstTypes.Add(typeof(WebEditorConverterTest));
-        lstTypes.Add(typeof(WebEditorConverterTestSub));
-        lstTypes.Add(typeof(WebTourTour));
+        
         lstTypes.Add(typeof(Website));
         lstTypes.Add(typeof(WebsiteBaseUnit));
         lstTypes.Add(typeof(WebsiteConfiguratorFeature));
@@ -826,7 +879,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(WebsiteSnippetFilter));
         lstTypes.Add(typeof(WebsiteTrack));
         lstTypes.Add(typeof(WebsiteVisitor));
-        lstTypes.Add(typeof(WizardIrModelMenuCreate));
+        
         return lstTypes;
     }
 }

@@ -44,6 +44,7 @@ using Bamboo.Abp.LoginUi.Web;
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.Localization;
 using Bamboo.Admin.MultiTenancy;
+using Medallion.Threading.FileSystem;
 
 namespace Bamboo.Admin;
 
@@ -85,7 +86,7 @@ public class AdminAuthServerModule : AbpModule
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "9d763224-f649-47fc-a509-c5ab6aef4008");
+                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "58dacf4b-ba19-4d5d-96a3-4caaf26a9ddd");
             });
         }
     }
@@ -259,8 +260,8 @@ public class AdminAuthServerModule : AbpModule
             bool enabledRedis = Convert.ToBoolean(configuration["Redis:IsEnabled"]);
             if (!enabledRedis)
             {
-                //DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
-                //return new FileDistributedSynchronizationProvider(lockFileDirectory);
+                DirectoryInfo lockFileDirectory = new DirectoryInfo($".bamboocache");
+                return new FileDistributedSynchronizationProvider(lockFileDirectory);
             }
             else
             {
@@ -269,8 +270,8 @@ public class AdminAuthServerModule : AbpModule
                 var redis = ConnectionMultiplexer.Connect(redisOptions);
                 return new RedisDistributedSynchronizationProvider(redis.GetDatabase());
             }
-            var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
-            return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
+            //var connection = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]!);
+            //return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         });
     }
 

@@ -258,3 +258,5 @@ src/Bamboo.IdentityServer/Logs/*
 src/Bamboo.HttpApi.Host/Logs/*
 src/Bamboo.HttpApi.HostWithIds/Logs/*
 src/Bamboo.DbMigrator/Logs/*
+**/wwwroot/libs/*
+

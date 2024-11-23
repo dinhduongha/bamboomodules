@@ -7,7 +7,11 @@ using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.Applications;
+using Volo.Abp.OpenIddict.Authorizations;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.Scopes;
+using Volo.Abp.OpenIddict.Tokens;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
@@ -19,7 +23,7 @@ namespace Bamboo.Admin.EntityFrameworkCore;
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
 [ConnectionStringName("Default")]
 public class AdminDbContext :
-    AbpDbContext<AdminDbContext>,
+    AbpDbContext<AdminDbContext>,    
     IIdentityDbContext,
     ITenantManagementDbContext
 {
@@ -51,10 +55,24 @@ public class AdminDbContext :
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
 
-    public DbSet<TenantOwner> TenantOwners { get; set; }
-    public DbSet<UserBrand> UserBrands { get; set; }
+    public DbSet<TenantOwner> TenantOwners { get; set; }    
     public DbSet<RolesExtra> RolesExtras { get; set; }
     public DbSet<UserLoginExtra> UserLoginExtras { get; set; }
+    public DbSet<BranchUser> BranchUsers { get; set; }
+
+    // Branch
+    public DbSet<Branch> Branchs { get; set; }
+    public DbSet<BranchOrganizationUnit> BranchOrganizationUnits { get; set; }
+    public DbSet<BranchOrganizationUnitRole> BranchOrganizationUnitRoles { get; set; }
+    public DbSet<BranchUserOrganizationUnit> BranchUserOrganizationUnits { get; set; }
+    public DbSet<BranchUserClaim> BranchUserClaims { get; set; }
+
+
+    // IOpenIddictDbContext    
+    //public DbSet<OpenIddictApplication> Applications { get; }
+    //public DbSet<OpenIddictAuthorization> Authorizations { get; }
+    //public DbSet<OpenIddictScope> Scopes { get; }
+    //public DbSet<OpenIddictToken> Tokens { get; }
     //public DbSet<OpenIddictApplicationExtra> OpenIddictApplicationExtras { get; set; }
 
     #endregion
@@ -70,6 +88,7 @@ public class AdminDbContext :
         base.OnModelCreating(builder);
 
         /* Include modules to your migration db context */
+        builder.ConfigureBamboo();
 
         builder.ConfigurePermissionManagement();
         builder.ConfigureSettingManagement();

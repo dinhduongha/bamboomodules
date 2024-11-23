@@ -33,16 +33,16 @@ public static class DbContextModelCreatingExtensions
             b.ConfigureByConvention(); //auto configure for the base class props
             //...
         });
-        builder.Entity<UserBrand>(b =>
+        builder.Entity<BranchUser>(b =>
         {
-            b.ToTable("AbpUsers").HasIndex(b=>b.BrandId);
+            b.ToTable("AbpUsers").HasIndex(b=>b.BranchId);
             b.ConfigureByConvention(); //auto configure for the base class props
             //...
         });
 
         builder.Entity<RolesExtra>(b =>
         {
-            b.ToTable("AbpRoles").HasIndex(b => b.BrandId);
+            b.ToTable("AbpRoles").HasIndex(b => b.BranchId);
             b.ConfigureByConvention(); //auto configure for the base class props
             //...
         });
@@ -50,6 +50,41 @@ public static class DbContextModelCreatingExtensions
         builder.Entity<UserLoginExtra>(b =>
         {
             b.ToTable("AbpUserLogins");
+            b.ConfigureByConvention(); //auto configure for the base class props
+            //...
+        });
+
+        builder.Entity<Branch>(b =>
+        {
+            b.ToTable("Branch");
+            b.ConfigureByConvention(); //auto configure for the base class props
+            //...
+        });
+        
+        builder.Entity<BranchOrganizationUnit>(b =>
+        {
+            b.ToTable("AbpOrganizationUnits");
+            b.ConfigureByConvention(); //auto configure for the base class props
+            //...
+        });
+
+        builder.Entity<BranchOrganizationUnitRole>(b =>
+        {
+            b.ToTable("AbpOrganizationUnitRoles");
+            b.ConfigureByConvention(); //auto configure for the base class props
+            //...
+        });
+
+        builder.Entity<BranchUserOrganizationUnit>(b =>
+        {
+            b.ToTable("AbpUserOrganizationUnits");
+            b.ConfigureByConvention(); //auto configure for the base class props
+            //...
+        });
+
+        builder.Entity<BranchUserClaim>(b =>
+        {
+            b.ToTable("AbpUserClaims");
             b.ConfigureByConvention(); //auto configure for the base class props
             //...
         });

@@ -8,7 +8,13 @@ using Volo.Abp.Identity;
 namespace Bamboo.Admin;
 
 [Table("AbpUserLogins")]
-public class UserLoginExtra: IdentityUserLogin
+public class UserLoginExtra: IdentityUserLogin, IHasExtraProperties
 {
-    public virtual string? ProviderName { get; protected set; }    
+    public virtual ExtraPropertyDictionary ExtraProperties { get; set; }
+    public virtual string? ProviderName { get; set; }
+    public UserLoginExtra()
+    {
+        ExtraProperties = new ExtraPropertyDictionary();
+        this.SetDefaultsForExtraProperties();
+    }
 }

@@ -10,5 +10,5 @@ namespace Bamboo.Admin;
 [Table("AbpRoles")]
 public class RolesExtra: IdentityRole
 {
-    public Guid? BrandId { get; set; }
+    public Guid? BranchId { get; set; }
 }
