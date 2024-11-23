@@ -13,7 +13,7 @@
     <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.*" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.*" /> 
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     <PackageReference Include="Rebus.PostgreSql" Version="9.1.1" />
