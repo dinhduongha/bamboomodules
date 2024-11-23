@@ -101,7 +101,7 @@ public class AdminDbMigrationService : ITransientDependency
         Logger.LogInformation($"Executing {(tenant == null ? "host" : tenant.Name + " tenant")} database seed...");
 
         await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
-			.WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, tenant == null? IdentityDataSeedContributor.AdminEmailDefaultValue: tenant.Name)
+			.WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, tenant == null? IdentityDataSeedContributor.AdminUserNameDefaultValue : tenant.Name)
 			.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, IdentityDataSeedContributor.AdminEmailDefaultValue)
             .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, IdentityDataSeedContributor.AdminPasswordDefaultValue)
         );

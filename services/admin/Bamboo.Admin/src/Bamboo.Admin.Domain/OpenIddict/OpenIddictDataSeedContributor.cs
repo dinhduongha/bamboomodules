@@ -198,7 +198,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                     OpenIddictConstants.GrantTypes.AuthorizationCode,                    
                     OpenIddictConstants.GrantTypes.Password
                 },
-                secret: configurationSection["Bamboo_Mobile:ClientSecret"] ?? "1q2w3E*",                
+                secret: configurationSection["Bamboo_Mobile:ClientSecret"] ?? "1q2w3E*",
+                clientUri: MobileRootUrl,
                 redirectUri: $"{MobileRootUrl}authenticated",
                 redirectUris: null,
                 postLogoutRedirectUri: $"{MobileRootUrl}signout-callback-oidc"
