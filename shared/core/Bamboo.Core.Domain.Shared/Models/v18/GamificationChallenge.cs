@@ -47,7 +47,7 @@ public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
-    [Column("write_uid")]DateTime
+    [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
     [Column("state")]
