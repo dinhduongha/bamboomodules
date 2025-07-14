@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("link_tracker_code")]
+//[Index("Code", Name = "link_tracker_code_code", IsUnique = true)]
+public partial class LinkTrackerCode: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("link_id")]
+    public Guid? LinkId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("LinkTrackerCodeCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("LinkId")]
+    //[InverseProperty("LinkTrackerCodes")]
+    [NotMapped]
+    public virtual LinkTracker? Link { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("LinkTrackerCodeWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+}

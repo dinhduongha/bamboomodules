@@ -13,12 +13,15 @@ namespace Bamboo.Core.Models;
 [Table("website_rewrite")]
 //[Index("UrlFrom", Name = "website_rewrite_url_from_index")]
 //[Index("WebsiteId", Name = "website_rewrite_website_id_index")]
-public partial class WebsiteRewrite: Entity<Guid>, IEntityDto<Guid>
+public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 

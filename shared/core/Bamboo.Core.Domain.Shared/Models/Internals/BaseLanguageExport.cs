@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_language_export")]
-public partial class BaseLanguageExport: Entity<Guid>, IEntityDto<Guid>
+public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 

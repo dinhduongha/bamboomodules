@@ -13,12 +13,15 @@ namespace Bamboo.Core.Models;
 // May-Copy-To-Tenants
 [Table("mail_activity_type")]
 //[Index("CreationTime", Name = "mail_activity_type_create_uid_index")]
-public partial class MailActivityType : Entity<Guid>, IEntityDto<Guid>
+public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 

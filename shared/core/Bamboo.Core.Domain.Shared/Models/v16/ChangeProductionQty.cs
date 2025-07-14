@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("change_production_qty")]
-public partial class ChangeProductionQty: Entity<Guid>, IEntityDto<Guid>
+public partial class ChangeProductionQty: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("mo_id")]
     public Guid? MoId { get; set; }
 

@@ -12,12 +12,15 @@ namespace Bamboo.Core.Models;
 
 [Table("website_visitor")]
 //[Index("AccessToken", Name = "website_visitor_access_token_unique", IsUnique = true)]
-public partial class WebsiteVisitor: Entity<Guid>, IEntityDto<Guid>
+public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 

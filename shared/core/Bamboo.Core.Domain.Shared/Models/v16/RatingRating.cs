@@ -18,12 +18,15 @@ namespace Bamboo.Core.Models;
 //[Index("ResId", Name = "rating_rating_res_id_index")]
 //[Index("ResModelId", Name = "rating_rating_res_model_id_index")]
 //[Index("ResModel", Name = "rating_rating_res_model_index")]
-public partial class RatingRating: Entity<Guid>, IEntityDto<Guid>
+public partial class RatingRating: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
 

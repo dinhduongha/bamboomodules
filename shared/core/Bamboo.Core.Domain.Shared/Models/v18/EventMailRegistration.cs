@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("event_mail_registration")]
+public partial class EventMailRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("scheduler_id")]
+    public Guid? SchedulerId { get; set; }
+
+    [Column("registration_id")]
+    public Guid? RegistrationId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("mail_sent")]
+    public bool? MailSent { get; set; }
+
+    [Column("scheduled_date", TypeName = "timestamp without time zone")]
+    public DateTime? ScheduledDate { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("EventMailRegistrationCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("RegistrationId")]
+    //[InverseProperty("EventMailRegistrations")]
+    [NotMapped]
+    public virtual EventRegistration? Registration { get; set; }
+
+    [ForeignKey("SchedulerId")]
+    //[InverseProperty("EventMailRegistrations")]
+    [NotMapped]
+    public virtual EventMail? Scheduler { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("EventMailRegistrationWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+}

@@ -1,0 +1,95 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("payment_method")]
+public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
+    [Column("primary_payment_method_id")]
+    public Guid? PrimaryPaymentMethodId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
+
+    [Column("support_refund")]
+    public string? SupportRefund { get; set; }
+
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("support_tokenization")]
+    public bool? SupportTokenization { get; set; }
+
+    [Column("support_express_checkout")]
+    public bool? SupportExpressCheckout { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("PaymentMethodCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    //[InverseProperty("PrimaryPaymentMethod")]
+    [NotMapped]
+    public virtual ICollection<PaymentMethod> InversePrimaryPaymentMethod { get; set; } = new List<PaymentMethod>();
+
+    //[InverseProperty("PaymentMethod")]
+    [NotMapped]
+    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } = new List<PaymentToken>();
+
+    //[InverseProperty("PaymentMethod")]
+    [NotMapped]
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+
+    [ForeignKey("PrimaryPaymentMethodId")]
+    //[InverseProperty("InversePrimaryPaymentMethod")]
+    [NotMapped]
+    public virtual PaymentMethod? PrimaryPaymentMethod { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("PaymentMethodWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("PaymentMethodId")]
+    //[InverseProperty("PaymentMethods")]
+    [NotMapped]
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
+
+    [ForeignKey("PaymentMethodId")]
+    //[InverseProperty("PaymentMethods")]
+    [NotMapped]
+    public virtual ICollection<ResCountry> ResCountries { get; set; } = new List<ResCountry>();
+
+    [ForeignKey("PaymentMethodId")]
+    //[InverseProperty("PaymentMethods")]
+    [NotMapped]
+    public virtual ICollection<ResCurrency> ResCurrencies { get; set; } = new List<ResCurrency>();
+}

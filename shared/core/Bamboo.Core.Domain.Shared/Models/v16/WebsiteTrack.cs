@@ -14,12 +14,15 @@ namespace Bamboo.Core.Models;
 //[Index("PageId", Name = "website_track_page_id_index")]
 //[Index("Url", Name = "website_track_url_index")]
 //[Index("VisitorId", Name = "website_track_visitor_id_index")]
-public partial class WebsiteTrack: Entity<Guid>, IEntityDto<Guid>
+public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("visitor_id")]
     public Guid? VisitorId { get; set; }
 

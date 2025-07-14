@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_module_update")]
-public partial class BaseModuleUpdate: Entity<Guid>, IEntityDto<Guid>
+public partial class BaseModuleUpdate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("updated")]
     public long? Updated { get; set; }
 

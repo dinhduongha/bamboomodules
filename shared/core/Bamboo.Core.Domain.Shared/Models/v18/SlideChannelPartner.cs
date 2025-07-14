@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("slide_channel_partner")]
+//[Index("ChannelId", Name = "slide_channel_partner__channel_id_index")]
+//[Index("PartnerId", Name = "slide_channel_partner__partner_id_index")]
+//[Index("ChannelId", "PartnerId", Name = "slide_channel_partner_channel_partner_uniq", IsUnique = true)]
+public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("channel_id")]
+    public Guid? ChannelId { get; set; }
+
+    [Column("completion")]
+    public long? Completion { get; set; }
+
+    [Column("completed_slides_count")]
+    public long? CompletedSlidesCount { get; set; }
+
+    [Column("partner_id")]
+    public Guid? PartnerId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("member_status")]
+    public string? MemberStatus { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("last_invitation_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastInvitationDate { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [Column("survey_certification_success")]
+    public bool? SurveyCertificationSuccess { get; set; }
+
+    [ForeignKey("ChannelId")]
+    //[InverseProperty("SlideChannelPartners")]
+    [NotMapped]
+    public virtual SlideChannel? Channel { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("SlideChannelPartnerCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("PartnerId")]
+    //[InverseProperty("SlideChannelPartners")]
+    [NotMapped]
+    public virtual ResPartner? Partner { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("SlideChannelPartnerWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+}

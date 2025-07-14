@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_sale_extra_field")]
-public partial class WebsiteSaleExtraField: Entity<Guid>, IEntityDto<Guid>
+public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 

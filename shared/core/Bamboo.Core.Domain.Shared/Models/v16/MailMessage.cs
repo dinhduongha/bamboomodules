@@ -17,11 +17,14 @@ namespace Bamboo.Core.Models;
 //[Index("Model", "ResId", "Id", Name = "mail_message_model_res_id_id_idx")]
 //[Index("Model", "ResId", Name = "mail_message_model_res_id_idx")]
 //[Index("SubtypeId", Name = "mail_message_subtype_id_index")]
-public partial class MailMessage: Entity<Guid>, IEntityDto<Guid>
+public partial class MailMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

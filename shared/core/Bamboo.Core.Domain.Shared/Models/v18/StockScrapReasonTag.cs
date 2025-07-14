@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("stock_scrap_reason_tag")]
+//[Index("Name", Name = "stock_scrap_reason_tag_name_uniq", IsUnique = true)]
+public partial class StockScrapReasonTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("color")]
+    public string? Color { get; set; }
+
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("StockScrapReasonTagCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("StockScrapReasonTagWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("StockScrapReasonTagId")]
+    //[InverseProperty("StockScrapReasonTags")]
+    [NotMapped]
+    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+}

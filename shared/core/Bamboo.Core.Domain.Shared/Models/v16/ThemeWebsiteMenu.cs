@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("theme_website_menu")]
 //[Index("ParentId", Name = "theme_website_menu_parent_id_index")]
-public partial class ThemeWebsiteMenu : Entity<Guid>, IEntityDto<Guid>
+public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("page_id")]
     public Guid? PageId { get; set; }

@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("auth_totp_wizard")]
-public partial class AuthTotpWizard: Entity<Guid>, IEntityDto<Guid>
+public partial class AuthTotpWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("user_id")]
     public Guid? UserId { get; set; }
 

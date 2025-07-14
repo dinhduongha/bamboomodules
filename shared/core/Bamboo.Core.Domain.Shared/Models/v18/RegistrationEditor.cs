@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("registration_editor")]
+public partial class RegistrationEditor: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("sale_order_id")]
+    public Guid? SaleOrderId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("RegistrationEditorCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    //[InverseProperty("Editor")]
+    [NotMapped]
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } = new List<RegistrationEditorLine>();
+
+    [ForeignKey("SaleOrderId")]
+    //[InverseProperty("RegistrationEditors")]
+    [NotMapped]
+    public virtual SaleOrder? SaleOrder { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("RegistrationEditorWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+}

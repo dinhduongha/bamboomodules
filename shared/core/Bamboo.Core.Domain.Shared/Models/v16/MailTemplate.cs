@@ -12,12 +12,15 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_template")]
 //[Index("Model", Name = "mail_template_model_index")]
-public partial class MailTemplate: Entity<Guid>, IEntityDto<Guid>
+public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 

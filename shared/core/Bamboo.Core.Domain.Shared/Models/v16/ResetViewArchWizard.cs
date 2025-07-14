@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("reset_view_arch_wizard")]
-public partial class ResetViewArchWizard: Entity<Guid>, IEntityDto<Guid>
+public partial class ResetViewArchWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("view_id")]
     public Guid? ViewId { get; set; }
 

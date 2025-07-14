@@ -13,12 +13,15 @@ namespace Bamboo.Core.Models;
 [Table("fetchmail_server")]
 //[Index("ServerType", Name = "fetchmail_server_server_type_index")]
 //[Index("State", Name = "fetchmail_server_state_index")]
-public partial class FetchmailServer: Entity<Guid>, IEntityDto<Guid>
+public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("port")]
     public long? Port { get; set; }
 

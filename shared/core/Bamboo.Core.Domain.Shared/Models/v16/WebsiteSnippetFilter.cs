@@ -13,12 +13,15 @@ namespace Bamboo.Core.Models;
 [Table("website_snippet_filter")]
 //[Index("IsPublished", Name = "website_snippet_filter_is_published_index")]
 //[Index("WebsiteId", Name = "website_snippet_filter_website_id_index")]
-public partial class WebsiteSnippetFilter: Entity<Guid>, IEntityDto<Guid>
+public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 

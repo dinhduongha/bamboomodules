@@ -12,12 +12,15 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_blacklist")]
 //[Index("Email", Name = "mail_blacklist_unique_email", IsUnique = true)]
-public partial class MailBlacklist: Entity<Guid>, IEntityDto<Guid>
+public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 

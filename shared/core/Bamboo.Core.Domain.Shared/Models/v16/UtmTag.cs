@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("utm_tag")]
 //[Index("Name", Name = "utm_tag_name_uniq", IsUnique = true)]
-public partial class UtmTag : Entity<Guid>, IEntityDto<Guid>
+public partial class UtmTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+    
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

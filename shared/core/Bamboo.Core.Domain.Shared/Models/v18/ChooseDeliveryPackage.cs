@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bamboo.Core.Models;
+
+[Table("choose_delivery_package")]
+public partial class ChooseDeliveryPackage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("picking_id")]
+    public Guid? PickingId { get; set; }
+
+    [Column("delivery_package_type_id")]
+    public Guid? DeliveryPackageTypeId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get; set; }
+
+    [Column("write_uid")]
+    public Guid? LastModifierId { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get; set; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastModificationTime { get; set; }
+
+    [Column("shipping_weight")]
+    public double? ShippingWeight { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("ChooseDeliveryPackageCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("DeliveryPackageTypeId")]
+    //[InverseProperty("ChooseDeliveryPackages")]
+    [NotMapped]
+    public virtual StockPackageType? DeliveryPackageType { get; set; }
+
+    [ForeignKey("PickingId")]
+    //[InverseProperty("ChooseDeliveryPackages")]
+    [NotMapped]
+    public virtual StockPicking? Picking { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("ChooseDeliveryPackageWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+}

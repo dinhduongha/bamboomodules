@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("wizard_ir_model_menu_create")]
-public partial class WizardIrModelMenuCreate: Entity<Guid>, IEntityDto<Guid>
+public partial class WizardIrModelMenuCreate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("menu_id")]
     public Guid? MenuId { get; set; }
 

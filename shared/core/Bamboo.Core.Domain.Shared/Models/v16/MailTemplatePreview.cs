@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_template_preview")]
-public partial class MailTemplatePreview: Entity<Guid>, IEntityDto<Guid>
+public partial class MailTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }
 

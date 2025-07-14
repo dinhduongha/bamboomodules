@@ -18,12 +18,15 @@ namespace Bamboo.Core.Models;
 //[Index("NotificationType", Name = "mail_notification_notification_type_index")]
 //[Index("ResPartnerId", Name = "mail_notification_res_partner_id_index")]
 //[Index("ResPartnerId", "IsRead", "NotificationStatus", "MailMessageId", Name = "mail_notification_res_partner_id_is_read_notification_status_ma")]
-public partial class MailNotification: Entity<Guid>, IEntityDto<Guid>
+public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
 

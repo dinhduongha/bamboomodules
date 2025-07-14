@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("web_editor_converter_test")]
-public partial class WebEditorConverterTest: Entity<Guid>, IEntityDto<Guid>
+public partial class WebEditorConverterTest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("integer")]
     public long? Integer { get; set; }
 

@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("snailmail_confirm_invoice")]
-public partial class SnailmailConfirmInvoice: Entity<Guid>, IEntityDto<Guid>
+public partial class SnailmailConfirmInvoice: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("invoice_send_id")]
     public Guid? InvoiceSendId { get; set; }
 

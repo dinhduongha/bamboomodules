@@ -13,12 +13,15 @@ namespace Bamboo.Core.Models;
 [Table("mail_link_preview")]
 //[Index("CreationTime", Name = "mail_link_preview_create_date_index")]
 //[Index("MessageId", Name = "mail_link_preview_message_id_index")]
-public partial class MailLinkPreview: Entity<Guid>, IEntityDto<Guid>
+public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("message_id")]
     public Guid? MessageId { get; set; }
 

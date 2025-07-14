@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("theme_website_page")]
-public partial class ThemeWebsitePage : Entity<Guid>, IEntityDto<Guid>
+public partial class ThemeWebsitePage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("view_id")]
     public Guid? ViewId { get; set; }

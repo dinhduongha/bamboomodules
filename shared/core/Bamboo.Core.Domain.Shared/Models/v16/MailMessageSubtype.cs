@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 // Must-Copy-To-Tenants
 [Table("mail_message_subtype")]
-public partial class MailMessageSubtype : Entity<Guid>, IEntityDto<Guid>
+public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

@@ -13,12 +13,15 @@ namespace Bamboo.Core.Models;
 [Table("mail_channel_rtc_session")]
 //[Index("ChannelMemberId", Name = "mail_channel_rtc_session_channel_member_unique", IsUnique = true)]
 //[Index("LastModificationTime", Name = "mail_channel_rtc_session_write_date_index")]
-public partial class MailChannelRtcSession: Entity<Guid>, IEntityDto<Guid>
+public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("channel_member_id")]
     public Guid? ChannelMemberId { get; set; }
 

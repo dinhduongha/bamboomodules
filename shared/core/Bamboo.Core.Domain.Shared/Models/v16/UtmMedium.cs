@@ -12,12 +12,15 @@ namespace Bamboo.Core.Models;
 
 [Table("utm_medium")]
 //[Index("Name", Name = "utm_medium_unique_name", IsUnique = true)]
-public partial class UtmMedium: Entity<Guid>, IEntityDto<Guid>
+public partial class UtmMedium: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 

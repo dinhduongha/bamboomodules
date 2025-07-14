@@ -11,12 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("theme_ir_ui_view")]
-public partial class ThemeIrUiView : Entity<Guid>, IEntityDto<Guid>
+public partial class ThemeIrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("priority")]
     public long? Priority { get; set; }
 

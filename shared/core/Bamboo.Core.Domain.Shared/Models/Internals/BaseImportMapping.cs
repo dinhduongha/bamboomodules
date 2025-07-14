@@ -12,12 +12,15 @@ namespace Bamboo.Core.Models;
 
 [Table("base_import_mapping")]
 //[Index("ResModel", Name = "base_import_mapping_res_model_index")]
-public partial class BaseImportMapping: Entity<Guid>, IEntityDto<Guid>
+public partial class BaseImportMapping: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
