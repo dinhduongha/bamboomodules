@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -41,13 +46,13 @@ public partial class GamificationGoal: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? State { get; set; }
 
     [Column("start_date")]
-    public DateOnly? StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
     [Column("end_date")]
-    public DateOnly? EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     [Column("last_update")]
-    public DateOnly? LastUpdate { get; set; }
+    public DateTime? LastUpdate { get; set; }
 
     [Column("to_update")]
     public bool? ToUpdate { get; set; }

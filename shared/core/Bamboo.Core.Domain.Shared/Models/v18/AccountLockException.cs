@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -31,10 +36,10 @@ public partial class AccountLockException: FullAuditedEntity<Guid>, IEntityDto<G
     public string? LockDateField { get; set; }
 
     [Column("lock_date")]
-    public DateOnly? LockDate { get; set; }
+    public DateTime? LockDate { get; set; }
 
     [Column("company_lock_date")]
-    public DateOnly? CompanyLockDate { get; set; }
+    public DateTime? CompanyLockDate { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

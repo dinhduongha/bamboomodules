@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -28,10 +33,10 @@ public partial class MrpAccountWipAccounting: FullAuditedEntity<Guid>, IEntityDt
     public string? Reference { get; set; }
 
     [Column("date")]
-    public DateOnly? Date { get; set; }
+    public DateTime? Date { get; set; }
 
     [Column("reversal_date")]
-    public DateOnly? ReversalDate { get; set; }
+    public DateTime? ReversalDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

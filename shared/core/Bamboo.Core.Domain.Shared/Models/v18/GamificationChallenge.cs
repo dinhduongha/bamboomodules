@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -42,7 +47,7 @@ public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
-    [Column("write_uid")]
+    [Column("write_uid")]DateTime
     public Guid? LastModifierId { get; set; }
 
     [Column("state")]
@@ -64,16 +69,16 @@ public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<
     public string? ChallengeCategory { get; set; }
 
     [Column("start_date")]
-    public DateOnly? StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
     [Column("end_date")]
-    public DateOnly? EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     [Column("last_report_date")]
-    public DateOnly? LastReportDate { get; set; }
+    public DateTime? LastReportDate { get; set; }
 
     [Column("next_report_date")]
-    public DateOnly? NextReportDate { get; set; }
+    public DateTime? NextReportDate { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }

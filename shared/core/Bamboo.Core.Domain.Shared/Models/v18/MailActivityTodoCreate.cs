@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -29,7 +34,7 @@ public partial class MailActivityTodoCreate: FullAuditedEntity<Guid>, IEntityDto
     public string? Summary { get; set; }
 
     [Column("date_deadline")]
-    public DateOnly? DateDeadline { get; set; }
+    public DateTime? DateDeadline { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }

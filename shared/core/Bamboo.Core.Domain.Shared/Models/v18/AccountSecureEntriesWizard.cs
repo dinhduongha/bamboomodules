@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -22,7 +27,7 @@ public partial class AccountSecureEntriesWizard: FullAuditedEntity<Guid>, IEntit
     public Guid? LastModifierId { get; set; }
 
     [Column("hash_date")]
-    public DateOnly? HashDate { get; set; }
+    public DateTime? HashDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

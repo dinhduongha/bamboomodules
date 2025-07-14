@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -55,13 +60,13 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? MatrixSubtype { get; set; }
 
     [Column("answer_date")]
-    public DateOnly? AnswerDate { get; set; }
+    public DateTime? AnswerDate { get; set; }
 
     [Column("validation_min_date")]
-    public DateOnly? ValidationMinDate { get; set; }
+    public DateTime? ValidationMinDate { get; set; }
 
     [Column("validation_max_date")]
-    public DateOnly? ValidationMaxDate { get; set; }
+    public DateTime? ValidationMaxDate { get; set; }
 
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }

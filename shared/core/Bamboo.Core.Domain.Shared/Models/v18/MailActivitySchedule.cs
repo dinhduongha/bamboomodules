@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -43,10 +48,10 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
     public string? Summary { get; set; }
 
     [Column("plan_date")]
-    public DateOnly? PlanDate { get; set; }
+    public DateTime? PlanDate { get; set; }
 
     [Column("date_deadline")]
-    public DateOnly? DateDeadline { get; set; }
+    public DateTime? DateDeadline { get; set; }
 
     [Column("res_ids")]
     public string? ResIds { get; set; }

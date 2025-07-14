@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
@@ -37,10 +42,10 @@ public partial class HrLeaveGenerateMultiWizard: FullAuditedEntity<Guid>, IEntit
     public string? AllocationMode { get; set; }
 
     [Column("date_from")]
-    public DateOnly? DateFrom { get; set; }
+    public DateTime? DateFrom { get; set; }
 
     [Column("date_to")]
-    public DateOnly? DateTo { get; set; }
+    public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
