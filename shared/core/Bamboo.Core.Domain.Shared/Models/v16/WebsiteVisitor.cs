@@ -49,7 +49,7 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Timezone { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("last_connection_datetime", TypeName = "timestamp without time zone")]
     public DateTime? LastConnectionDatetime { get; set; }

@@ -23,13 +23,13 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
     public long Sequence { get; set; }
 
     [Column("height")]
-    public long? Height { get; set; }
+    public double? Height { get; set; }
 
     [Column("width")]
-    public long? Width { get; set; }
+    public double? Width { get; set; }
 
     [Column("packaging_length")]
-    public long? PackagingLength { get; set; }
+    public double? PackagingLength { get; set; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }

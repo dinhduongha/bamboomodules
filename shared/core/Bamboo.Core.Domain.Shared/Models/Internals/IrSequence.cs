@@ -17,6 +17,9 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("number_next")]
     public long? NumberNext { get; set; }
 
@@ -25,9 +28,6 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("padding")]
     public long? Padding { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -72,29 +72,34 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrSequenceWriteUs")]
+    //[InverseProperty("Sequence")]
     [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRanges { get; set; } = new List<IrSequenceDateRange>();
 
+    //[InverseProperty("SequenceLine")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> PosConfigSequenceLines { get; set; } = new List<PosConfig>();
+
+    //[InverseProperty("Sequence")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> PosConfigSequences { get; set; } = new List<PosConfig>();
+
+    //[InverseProperty("BatchPaymentSequence")]
+    [NotMapped]
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+
+    // v16-Compat
     //[InverseProperty("SecureSequence")]
     [NotMapped]
     public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
 
-    //[InverseProperty("Sequence")]
-    [NotMapped]
-    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRanges { get; } = new List<IrSequenceDateRange>();
-
-    //[InverseProperty("SequenceLine")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigSequenceLines { get; } = new List<PosConfig>();
-
-    //[InverseProperty("Sequence")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigSequences { get; } = new List<PosConfig>();
 
     //[InverseProperty("SequenceNavigation")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypes { get; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } = new List<StockPickingType>();
 
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrSequenceWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
 }

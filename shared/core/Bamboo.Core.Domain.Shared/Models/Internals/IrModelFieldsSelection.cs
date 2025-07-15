@@ -13,11 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("ir_model_fields_selection")]
 //[Index("FieldId", Name = "ir_model_fields_selection_field_id_index")]
 //[Index("FieldId", "Value", Name = "ir_model_fields_selection_selection_field_uniq", IsUnique = true)]
-public partial class IrModelFieldsSelection: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }
@@ -38,7 +41,7 @@ public partial class IrModelFieldsSelection: Entity<Guid>, IEntityDto<Guid>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -52,6 +55,10 @@ public partial class IrModelFieldsSelection: Entity<Guid>, IEntityDto<Guid>
     //[InverseProperty("IrModelFieldsSelections")]
     [NotMapped]
     public virtual IrModelField? Field { get; set; }
+
+    //[InverseProperty("SelectionValueNavigation")]
+    [NotMapped]
+    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelFieldsSelectionWriteUs")]

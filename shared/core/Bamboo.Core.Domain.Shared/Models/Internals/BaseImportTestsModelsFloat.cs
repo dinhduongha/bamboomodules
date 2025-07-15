@@ -30,7 +30,7 @@ public partial class BaseImportTestsModelsFloat: Entity<Guid>, IEntityDto<Guid>
     public decimal? Value2 { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

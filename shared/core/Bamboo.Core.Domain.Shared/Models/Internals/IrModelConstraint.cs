@@ -16,11 +16,14 @@ namespace Bamboo.Core.Models;
 //[Index("Name", "Module", Name = "ir_model_constraint_module_name_uniq", IsUnique = true)]
 //[Index("Name", Name = "ir_model_constraint_name_index")]
 //[Index("Type", Name = "ir_model_constraint_type_index")]
-public partial class IrModelConstraint: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("model")]
     public Guid? Model { get; set; }
@@ -50,7 +53,7 @@ public partial class IrModelConstraint: Entity<Guid>, IEntityDto<Guid>
     public DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrModelConstraintCreateUs")]

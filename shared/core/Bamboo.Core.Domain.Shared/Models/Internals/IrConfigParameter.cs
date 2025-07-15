@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_config_parameter")]
 //[Index("Key", Name = "ir_config_parameter_key_uniq", IsUnique = true)]
-public partial class IrConfigParameter: Entity<Guid>, IEntityDto<Guid>
+public partial class IrConfigParameter: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -31,7 +34,7 @@ public partial class IrConfigParameter: Entity<Guid>, IEntityDto<Guid>
     public string? Value { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

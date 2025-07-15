@@ -12,19 +12,22 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_module_module")]
 //[Index("CategoryId", Name = "ir_module_module_category_id_index")]
-//[Index("Name", Name = "ir_module_module_name_uniq", IsUnique = true)]
 //[Index("State", Name = "ir_module_module_state_index")]
-public partial class IrModuleModule: Entity<Guid>, IEntityDto<Guid>
+//[Index("Name", Name = "ir_module_module_name_uniq", IsUnique = true)]
+public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -104,6 +107,24 @@ public partial class IrModuleModule: Entity<Guid>, IEntityDto<Guid>
     [Column("views_by_module")]
     public string? ViewsByModule { get; set; }
 
+    [Column("module_type")]
+    public string? ModuleType { get; set; }
+
+    [Column("imported")]
+    public bool? Imported { get; set; }
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequests { get; set; } = new List<BaseModuleInstallRequest>();
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviews { get; set; } = new List<BaseModuleInstallReview>();
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstalls { get; set; } = new List<BaseModuleUninstall>();
+
     [ForeignKey("CategoryId")]
     //[InverseProperty("IrModuleModules")]
     [NotMapped]
@@ -114,57 +135,50 @@ public partial class IrModuleModule: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } = new List<IrDemoFailure>();
+
+    //[InverseProperty("ModuleNavigation")]
+    [NotMapped]
+    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; set; } = new List<IrModelConstraint>();
+
+    //[InverseProperty("ModuleNavigation")]
+    [NotMapped]
+    public virtual ICollection<IrModelRelation> IrModelRelations { get; set; } = new List<IrModelRelation>();
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependencies { get; set; } = new List<IrModuleModuleDependency>();
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusions { get; set; } = new List<IrModuleModuleExclusion>();
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
+
+    //[InverseProperty("Module")]
+    [NotMapped]
+    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; set; } = new List<WebsiteConfiguratorFeature>();
+
+    //[InverseProperty("Theme")]
+    [NotMapped]
+    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModuleModuleWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Module")]
+    [ForeignKey("ModuleId")]
+    //[InverseProperty("Modules")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequests { get; } = new List<BaseModuleInstallRequest>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviews { get; } = new List<BaseModuleInstallReview>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstalls { get; } = new List<BaseModuleUninstall>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; } = new List<IrDemoFailure>();
-
-    //[InverseProperty("ModuleNavigation")]
-    [NotMapped]
-    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; } = new List<IrModelConstraint>();
-
-    //[InverseProperty("ModuleNavigation")]
-    [NotMapped]
-    public virtual ICollection<IrModelRelation> IrModelRelations { get; } = new List<IrModelRelation>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependencies { get; } = new List<IrModuleModuleDependency>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusions { get; } = new List<IrModuleModuleExclusion>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; } = new List<PaymentProvider>();
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; } = new List<WebsiteConfiguratorFeature>();
-
-    //[InverseProperty("Theme")]
-    [NotMapped]
-    public virtual ICollection<Website> Websites { get; } = new List<Website>();
+    public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
 
     [ForeignKey("ModuleId")]
     //[InverseProperty("Modules")]
     [NotMapped]
-    public virtual ICollection<BaseLanguageExport> Wizs { get; } = new List<BaseLanguageExport>();
+    public virtual ICollection<BaseLanguageExport> Wizs { get; set; } = new List<BaseLanguageExport>();
 }

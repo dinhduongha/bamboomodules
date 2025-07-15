@@ -13,11 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("ir_rule")]
 //[Index("ModelId", Name = "ir_rule_model_id_index")]
 //[Index("Name", Name = "ir_rule_name_index")]
-public partial class IrRule: Entity<Guid>, IEntityDto<Guid>
+public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -53,7 +56,7 @@ public partial class IrRule: Entity<Guid>, IEntityDto<Guid>
     public bool? Global { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -76,5 +79,5 @@ public partial class IrRule: Entity<Guid>, IEntityDto<Guid>
     [ForeignKey("RuleGroupId")]
     //[InverseProperty("RuleGroups")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Groups { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Groups { get; set; } = new List<ResGroup>();
 }

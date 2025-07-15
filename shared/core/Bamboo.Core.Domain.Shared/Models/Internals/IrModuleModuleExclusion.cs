@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_module_module_exclusion")]
 //[Index("Name", Name = "ir_module_module_exclusion_name_index")]
-public partial class IrModuleModuleExclusion: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("module_id")]
     public Guid? ModuleId { get; set; }
@@ -31,7 +34,7 @@ public partial class IrModuleModuleExclusion: Entity<Guid>, IEntityDto<Guid>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

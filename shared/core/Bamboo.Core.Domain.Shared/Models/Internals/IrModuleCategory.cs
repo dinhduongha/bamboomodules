@@ -12,17 +12,20 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_module_category")]
 //[Index("ParentId", Name = "ir_module_category_parent_id_index")]
-public partial class IrModuleCategory: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -53,26 +56,25 @@ public partial class IrModuleCategory: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Parent")]
+    [NotMapped]
+    public virtual ICollection<IrModuleCategory> InverseParent { get; set; } = new List<IrModuleCategory>();
+
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<IrModuleModule> IrModuleModules { get; set; } = new List<IrModuleModule>();
+
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
     [NotMapped]
     public virtual IrModuleCategory? Parent { get; set; }
 
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModuleCategoryWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<IrModuleCategory> InverseParent { get; } = new List<IrModuleCategory>();
-
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<IrModuleModule> IrModuleModules { get; } = new List<IrModuleModule>();
-
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; } = new List<ResGroup>();
-
 }

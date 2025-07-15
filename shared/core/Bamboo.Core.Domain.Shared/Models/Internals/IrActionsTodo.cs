@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_actions_todo")]
 //[Index("ActionId", Name = "ir_actions_todo_action_id_index")]
-public partial class IrActionsTodo: Entity<Guid>, IEntityDto<Guid>
+public partial class IrActionsTodo: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("action_id")]
     public Guid? ActionId { get; set; }
@@ -37,7 +40,7 @@ public partial class IrActionsTodo: Entity<Guid>, IEntityDto<Guid>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

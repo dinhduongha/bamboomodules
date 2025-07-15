@@ -93,7 +93,7 @@ public partial class MailMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime? Date { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_demo")]
-public partial class IrDemo: Entity<Guid>, IEntityDto<Guid>
+public partial class IrDemo: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -24,7 +27,7 @@ public partial class IrDemo: Entity<Guid>, IEntityDto<Guid>
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

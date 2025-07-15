@@ -14,11 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("Model", Name = "ir_model_relation_model_index")]
 //[Index("Module", Name = "ir_model_relation_module_index")]
 //[Index("Name", Name = "ir_model_relation_name_index")]
-public partial class IrModelRelation: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModelRelation: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("model")]
     public Guid? Model { get; set; }
@@ -39,7 +42,7 @@ public partial class IrModelRelation: Entity<Guid>, IEntityDto<Guid>
     public DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrModelRelationCreateUs")]

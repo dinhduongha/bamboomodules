@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_module_module_dependency")]
 //[Index("Name", Name = "ir_module_module_dependency_name_index")]
-public partial class IrModuleModuleDependency: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModuleModuleDependency: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }

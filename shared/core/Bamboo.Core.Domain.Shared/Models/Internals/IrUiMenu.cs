@@ -13,11 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("ir_ui_menu")]
 //[Index("ParentId", Name = "ir_ui_menu_parent_id_index")]
 //[Index("ParentPath", Name = "ir_ui_menu_parent_path_index")]
-public partial class IrUiMenu: Entity<Guid>, IEntityDto<Guid>
+public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
@@ -47,7 +50,7 @@ public partial class IrUiMenu: Entity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -57,26 +60,26 @@ public partial class IrUiMenu: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Parent")]
+    [NotMapped]
+    public virtual ICollection<IrUiMenu> InverseParent { get; set; } = new List<IrUiMenu>();
+
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
     [NotMapped]
     public virtual IrUiMenu? Parent { get; set; }
+
+    //[InverseProperty("Menu")]
+    [NotMapped]
+    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreates { get; set; } = new List<WizardIrModelMenuCreate>();
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrUiMenuWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<IrUiMenu> InverseParent { get; } = new List<IrUiMenu>();
-
-    //[InverseProperty("Menu")]
-    [NotMapped]
-    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreates { get; } = new List<WizardIrModelMenuCreate>();
-
     [ForeignKey("MenuId")]
     //[InverseProperty("Menus")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
 }

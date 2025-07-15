@@ -20,14 +20,14 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("field_id")]
     public Guid? FieldId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

@@ -11,12 +11,16 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_cron_trigger")]
+//[Index("CallAt", Name = "ir_cron_trigger__call_at_index")]
 //[Index("CronId", Name = "ir_cron_trigger_cron_id_index")]
-public partial class IrCronTrigger: Entity<Guid>, IEntityDto<Guid>
+public partial class IrCronTrigger: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("cron_id")]
     public Guid? CronId { get; set; }
@@ -31,10 +35,14 @@ public partial class IrCronTrigger: Entity<Guid>, IEntityDto<Guid>
     public DateTime? CallAt { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    //[InverseProperty("Trigger")]
+    [NotMapped]
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; set; } = new List<CalendarRecurrence>();
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrCronTriggerCreateUs")]

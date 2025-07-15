@@ -42,7 +42,7 @@ public partial class MailGuest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public string? Timezone { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

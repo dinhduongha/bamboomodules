@@ -37,7 +37,7 @@ public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Key { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [ForeignKey("UserId")]
     //[InverseProperty("AuthTotpDevices")]

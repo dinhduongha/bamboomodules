@@ -19,7 +19,10 @@ public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
+    [Column("model_id")]
+    public Guid? ModelId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -35,11 +38,17 @@ public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("format")]
     public string? Format { get; set; }
 
+    [Column("export_type")]
+    public string? ExportType { get; set; }
+
+    [Column("domain")]
+    public string? Domain { get; set; }
+
     [Column("state")]
     public string? State { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -52,6 +61,11 @@ public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Gui
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("ModelId")]
+    //[InverseProperty("BaseLanguageExports")]
+    [NotMapped]
+    public virtual IrModel? Model { get; set; }
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("BaseLanguageExportWriteUs")]
     [NotMapped]
@@ -60,5 +74,5 @@ public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("WizId")]
     //[InverseProperty("Wizs")]
     [NotMapped]
-    public virtual ICollection<IrModuleModule> Modules { get; } = new List<IrModuleModule>();
+    public virtual ICollection<IrModuleModule> Modules { get; set; } = new List<IrModuleModule>();
 }

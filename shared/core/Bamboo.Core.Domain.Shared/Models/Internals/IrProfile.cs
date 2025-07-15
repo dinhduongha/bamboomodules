@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_profile")]
 //[Index("Session", Name = "ir_profile_session_index")]
-public partial class IrProfile: Entity<Guid>, IEntityDto<Guid>
+public partial class IrProfile: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sql_count")]
     public long? SqlCount { get; set; }
@@ -46,7 +49,7 @@ public partial class IrProfile: Entity<Guid>, IEntityDto<Guid>
     public string? Qweb { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("duration")]
     public double? Duration { get; set; }

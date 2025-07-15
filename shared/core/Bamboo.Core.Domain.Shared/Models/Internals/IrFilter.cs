@@ -11,18 +11,28 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_filters")]
+//[Index("ModelId", "UserId", "ActionId", "EmbeddedActionId", "EmbeddedParentResId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
 //[Index("ModelId", "UserId", "ActionId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
-public partial class IrFilter: Entity<Guid>, IEntityDto<Guid>
+public partial class IrFilter: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
     [Column("action_id")]
     public Guid? ActionId { get; set; }
+
+    [Column("embedded_action_id")]
+    public Guid? EmbeddedActionId { get; set; }
+
+    [Column("embedded_parent_res_id")]
+    public Guid? EmbeddedParentResId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -33,6 +43,9 @@ public partial class IrFilter: Entity<Guid>, IEntityDto<Guid>
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("sort")]
+    public string? Sort { get; set; }
+
     [Column("model_id")]
     public string? ModelId { get; set; }
 
@@ -42,9 +55,6 @@ public partial class IrFilter: Entity<Guid>, IEntityDto<Guid>
     [Column("context")]
     public string? Context { get; set; }
 
-    [Column("sort")]
-    public string? Sort { get; set; }
-
     [Column("is_default")]
     public bool? IsDefault { get; set; }
 
@@ -52,7 +62,7 @@ public partial class IrFilter: Entity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -62,18 +72,22 @@ public partial class IrFilter: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("EmbeddedActionId")]
+    //[InverseProperty("IrFilters")]
+    [NotMapped]
+    public virtual IrEmbeddedAction? EmbeddedAction { get; set; }
+
     [ForeignKey("UserId")]
     //[InverseProperty("IrFilterUsers")]
     [NotMapped]
     public virtual ResUser? User { get; set; }
 
+    //[InverseProperty("Filter")]
+    [NotMapped]
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } = new List<WebsiteSnippetFilter>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrFilterWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Filter")]
-    [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; } = new List<WebsiteSnippetFilter>();
-
 }

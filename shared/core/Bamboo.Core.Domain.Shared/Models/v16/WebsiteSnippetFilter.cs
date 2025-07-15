@@ -50,7 +50,7 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     public bool? IsPublished { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

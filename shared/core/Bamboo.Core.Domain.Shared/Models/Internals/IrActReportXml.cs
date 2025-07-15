@@ -11,11 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_act_report_xml")]
-public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
+//[Index("Path", Name = "ir_act_report_xml_path_unique", IsUnique = true)]
+public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("binding_model_id")]
     public Guid? BindingModelId { get; set; }
@@ -28,6 +32,9 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
 
     [Column("type")]
     public string? Type { get; set; }
+
+    [Column("path")]
+    public string? Path { get; set; }
 
     [Column("binding_type")]
     public string? BindingType { get; set; }
@@ -42,7 +49,7 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
     public string? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -65,6 +72,9 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
     [Column("attachment")]
     public string? Attachment { get; set; }
 
+    [Column("domain")]
+    public string? Domain { get; set; }
+
     [Column("print_report_name", TypeName = "jsonb")]
     public string? PrintReportName { get; set; }
 
@@ -73,6 +83,13 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
 
     [Column("attachment_use")]
     public bool? AttachmentUse { get; set; }
+
+    [Column("is_invoice_report")]
+    public bool? IsInvoiceReport { get; set; }
+
+    //[InverseProperty("PdfReport")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizards { get; set; } = new List<AccountMoveSendWizard>();
 
     [ForeignKey("BindingModelId")]
     //[InverseProperty("IrActReportXmls")]
@@ -84,6 +101,7 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // TODO: v16-Compat
     //[InverseProperty("ReportTemplateNavigation")]
     [NotMapped]
     public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
@@ -93,9 +111,13 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ReportPaperformat? Paperformat { get; set; }
 
+    //[InverseProperty("InvoiceTemplatePdfReport")]
+    [NotMapped]
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+
     //[InverseProperty("ReportTemplateNavigation")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; } = new List<SnailmailLetter>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrActReportXmlWriteUs")]
@@ -105,5 +127,10 @@ public partial class IrActReportXml: Entity<Guid>, IEntityDto<Guid>
     [ForeignKey("Uid")]
     //[InverseProperty("Uids")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+
+    // [ForeignKey("IrActionsReportId")]
+    // //[InverseProperty("IrActionsReports")]
+    // [NotMapped]
+    // public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
 }

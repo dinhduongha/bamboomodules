@@ -11,11 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_act_url")]
-public partial class IrActUrl: Entity<Guid>, IEntityDto<Guid>
+//[Index("Path", Name = "ir_act_url_path_unique", IsUnique = true)]
+public partial class IrActUrl: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("binding_model_id")]
     public Guid? BindingModelId { get; set; }
@@ -28,6 +32,9 @@ public partial class IrActUrl: Entity<Guid>, IEntityDto<Guid>
 
     [Column("type")]
     public string? Type { get; set; }
+
+    [Column("path")]
+    public string? Path { get; set; }
 
     [Column("binding_type")]
     public string? BindingType { get; set; }
@@ -42,7 +49,7 @@ public partial class IrActUrl: Entity<Guid>, IEntityDto<Guid>
     public string? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

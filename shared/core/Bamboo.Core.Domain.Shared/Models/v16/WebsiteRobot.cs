@@ -30,7 +30,7 @@ public partial class WebsiteRobot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public string? Content { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

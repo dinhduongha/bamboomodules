@@ -14,11 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("GroupId", Name = "ir_model_access_group_id_index")]
 //[Index("ModelId", Name = "ir_model_access_model_id_index")]
 //[Index("Name", Name = "ir_model_access_name_index")]
-public partial class IrModelAccess: Entity<Guid>, IEntityDto<Guid>
+public partial class IrModelAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -51,7 +54,7 @@ public partial class IrModelAccess: Entity<Guid>, IEntityDto<Guid>
     public bool? PermUnlink { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -33,7 +33,7 @@ public partial class UtmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

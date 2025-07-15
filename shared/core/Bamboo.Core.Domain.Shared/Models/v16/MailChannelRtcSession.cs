@@ -50,7 +50,7 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
     public DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [ForeignKey("ChannelId")]
     //[InverseProperty("MailChannelRtcSessions")]

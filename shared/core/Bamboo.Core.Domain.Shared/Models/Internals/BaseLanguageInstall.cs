@@ -19,7 +19,7 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -30,7 +30,7 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
     public bool? Overwrite { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -48,10 +48,10 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("LanguageWizardId")]
     //[InverseProperty("LanguageWizards")]
     [NotMapped]
-    public virtual ICollection<ResLang> Langs { get; } = new List<ResLang>();
+    public virtual ICollection<ResLang> Langs { get; set; } = new List<ResLang>();
 
     [ForeignKey("BaseLanguageInstallId")]
     //[InverseProperty("BaseLanguageInstalls")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
 }

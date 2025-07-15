@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_asset")]
-public partial class IrAsset: Entity<Guid>, IEntityDto<Guid>
+public partial class IrAsset: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
@@ -45,7 +48,7 @@ public partial class IrAsset: Entity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

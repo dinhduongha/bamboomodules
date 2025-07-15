@@ -51,7 +51,7 @@ public partial class SnailmailLetterMissingRequiredField: FullAuditedEntity<Guid
     public string? City { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

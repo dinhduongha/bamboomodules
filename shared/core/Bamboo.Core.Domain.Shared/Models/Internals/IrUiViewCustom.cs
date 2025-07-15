@@ -14,11 +14,14 @@ namespace Bamboo.Core.Models;
 //[Index("RefId", Name = "ir_ui_view_custom_ref_id_index")]
 //[Index("UserId", Name = "ir_ui_view_custom_user_id_index")]
 //[Index("UserId", "RefId", Name = "ir_ui_view_custom_user_id_ref_id")]
-public partial class IrUiViewCustom: Entity<Guid>, IEntityDto<Guid>
+public partial class IrUiViewCustom: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("ref_id")]
     public Guid? RefId { get; set; }
@@ -36,7 +39,7 @@ public partial class IrUiViewCustom: Entity<Guid>, IEntityDto<Guid>
     public string? Arch { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

@@ -19,7 +19,7 @@ public partial class BaseLanguageImport: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -39,7 +39,7 @@ public partial class BaseLanguageImport: FullAuditedEntity<Guid>, IEntityDto<Gui
     public bool? Overwrite { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

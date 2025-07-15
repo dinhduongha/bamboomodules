@@ -39,7 +39,7 @@ public partial class AuthTotpWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Code { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

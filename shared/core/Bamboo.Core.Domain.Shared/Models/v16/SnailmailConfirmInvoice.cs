@@ -33,7 +33,7 @@ public partial class SnailmailConfirmInvoice: FullAuditedEntity<Guid>, IEntityDt
     public string? ModelName { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

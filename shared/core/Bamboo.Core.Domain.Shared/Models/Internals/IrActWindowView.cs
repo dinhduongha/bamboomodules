@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_act_window_view")]
 //[Index("ActWindowId", "ViewMode", Name = "act_window_view_unique_mode_per_action", IsUnique = true)]
-public partial class IrActWindowView: Entity<Guid>, IEntityDto<Guid>
+public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -40,7 +43,7 @@ public partial class IrActWindowView: Entity<Guid>, IEntityDto<Guid>
     public bool? Multi { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

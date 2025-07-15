@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_mail_server")]
 //[Index("Name", Name = "ir_mail_server_name_index")]
-public partial class IrMailServer: Entity<Guid>, IEntityDto<Guid>
+public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("smtp_port")]
     public long? SmtpPort { get; set; }
@@ -58,10 +61,13 @@ public partial class IrMailServer: Entity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("max_email_size")]
+    public double? MaxEmailSize { get; set; }
 
     [Column("smtp_ssl_certificate")]
     public byte[]? SmtpSslCertificate { get; set; }
@@ -86,21 +92,32 @@ public partial class IrMailServer: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("MailServer")]
+    [NotMapped]
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+
+    //[InverseProperty("MailServer")]
+    [NotMapped]
+    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+
+    //[InverseProperty("MailServer")]
+    [NotMapped]
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+
+    //[InverseProperty("MailServer")]
+    [NotMapped]
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+
+    //[InverseProperty("MassMailingMailServer")]
+    [NotMapped]
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+
+    //[InverseProperty("MailServer")]
+    [NotMapped]
+    public virtual ICollection<SurveyInvite> SurveyInvites { get; set; } = new List<SurveyInvite>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrMailServerWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("MailServer")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; } = new List<MailComposeMessage>();
-
-    //[InverseProperty("MailServer")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; } = new List<MailMessage>();
-
-    //[InverseProperty("MailServer")]
-    [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
-
 }

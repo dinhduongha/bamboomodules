@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_exports")]
 //[Index("Resource", Name = "ir_exports_resource_index")]
-public partial class IrExport: Entity<Guid>, IEntityDto<Guid>
+public partial class IrExport: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -31,7 +34,7 @@ public partial class IrExport: Entity<Guid>, IEntityDto<Guid>
     public string? Resource { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -41,13 +44,12 @@ public partial class IrExport: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Export")]
+    [NotMapped]
+    public virtual ICollection<IrExportsLine> IrExportsLines { get; set; } = new List<IrExportsLine>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrExportWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Export")]
-    [NotMapped]
-    public virtual ICollection<IrExportsLine> IrExportsLines { get; } = new List<IrExportsLine>();
-
 }

@@ -11,11 +11,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_act_window")]
-public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
+//[Index("Path", Name = "ir_act_window_path_unique", IsUnique = true)]
+public partial class IrActWindow: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("binding_model_id")]
     public Guid? BindingModelId { get; set; }
@@ -28,6 +32,9 @@ public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
 
     [Column("type")]
     public string? Type { get; set; }
+
+    [Column("path")]
+    public string? Path { get; set; }
 
     [Column("binding_type")]
     public string? BindingType { get; set; }
@@ -42,7 +49,7 @@ public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
     public string? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -74,11 +81,18 @@ public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
     [Column("view_mode")]
     public string? ViewMode { get; set; }
 
+    [Column("mobile_view_mode")]
+    public string? MobileViewMode { get; set; }
+
     [Column("usage")]
     public string? Usage { get; set; }
 
     [Column("filter")]
     public bool? Filter { get; set; }
+
+    //[InverseProperty("CustomAuditAction")]
+    // [NotMapped]
+    // public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } = new List<AccountReportColumn>();
 
     [ForeignKey("BindingModelId")]
     //[InverseProperty("IrActWindows")]
@@ -90,10 +104,30 @@ public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Action")]
+    [NotMapped]
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } = new List<GamificationGoalDefinition>();
+
+    //[InverseProperty("ActWindow")]
+    // [NotMapped]
+    // public virtual ICollection<IrActWindowView> IrActWindowViews { get; set; } = new List<IrActWindowView>();
+
+    //[InverseProperty("ParentAction")]
+    [NotMapped]
+    public virtual ICollection<IrEmbeddedAction> IrEmbeddedActions { get; set; } = new List<IrEmbeddedAction>();
+
+    //[InverseProperty("RefIrActWindowNavigation")]
+    // [NotMapped]
+    // public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+
     [ForeignKey("SearchViewId")]
     //[InverseProperty("IrActWindowSearchViews")]
     [NotMapped]
     public virtual IrUiView? SearchView { get; set; }
+
+    //[InverseProperty("SidebarAction")]
+    // [NotMapped]
+    // public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
 
     [ForeignKey("ViewId")]
     //[InverseProperty("IrActWindowViews")]
@@ -105,18 +139,22 @@ public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     //[InverseProperty("CustomAuditAction")]
     [NotMapped]
     public virtual ICollection<AccountReportColumn> AccountReportColumns { get; } = new List<AccountReportColumn>();
 
+    // v16-Compat
     //[InverseProperty("ActWindow")]
     [NotMapped]
     public virtual ICollection<IrActWindowView> IrActWindowViews { get; } = new List<IrActWindowView>();
 
+    // v16-Compat
     //[InverseProperty("RefIrActWindowNavigation")]
     [NotMapped]
     public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
 
+    // v16-Compat
     //[InverseProperty("SidebarAction")]
     [NotMapped]
     public virtual ICollection<SmsTemplate> SmsTemplates { get; } = new List<SmsTemplate>();
@@ -124,5 +162,5 @@ public partial class IrActWindow: Entity<Guid>, IEntityDto<Guid>
     [ForeignKey("ActId")]
     //[InverseProperty("ActsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
 }

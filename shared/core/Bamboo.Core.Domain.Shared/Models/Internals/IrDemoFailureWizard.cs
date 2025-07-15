@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_demo_failure_wizard")]
-public partial class IrDemoFailureWizard: Entity<Guid>, IEntityDto<Guid>
+public partial class IrDemoFailureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -24,7 +27,7 @@ public partial class IrDemoFailureWizard: Entity<Guid>, IEntityDto<Guid>
     public Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
@@ -34,13 +37,12 @@ public partial class IrDemoFailureWizard: Entity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Wizard")]
+    [NotMapped]
+    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } = new List<IrDemoFailure>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrDemoFailureWizardWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Wizard")]
-    [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; } = new List<IrDemoFailure>();
-
 }

@@ -12,11 +12,14 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_exports_line")]
 //[Index("ExportId", Name = "ir_exports_line_export_id_index")]
-public partial class IrExportsLine: Entity<Guid>, IEntityDto<Guid>
+public partial class IrExportsLine: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("export_id")]
     public Guid? ExportId { get; set; }
@@ -31,7 +34,7 @@ public partial class IrExportsLine: Entity<Guid>, IEntityDto<Guid>
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime? CreationTime { get; set; }
+    public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
