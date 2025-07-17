@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("applicant_get_refuse_reason")]
-public partial class ApplicantGetRefuseReason : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ApplicantGetRefuseReason: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,6 +34,9 @@ public partial class ApplicantGetRefuseReason : FullAuditedEntity<Guid>, IEntity
 
     [Column("send_mail")]
     public bool? SendMail { get; set; }
+
+    [Column("duplicates")]
+    public bool? Duplicates { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -68,5 +71,5 @@ public partial class ApplicantGetRefuseReason : FullAuditedEntity<Guid>, IEntity
     [ForeignKey("ApplicantGetRefuseReasonId")]
     //[InverseProperty("ApplicantGetRefuseReasons")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 }

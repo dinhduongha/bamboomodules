@@ -68,10 +68,10 @@ public partial class AccountReportPartnerLedger: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("AccountReportPartnerLedgerId")]
     //[InverseProperty("AccountReportPartnerLedgers")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     [ForeignKey("AccountReportPartnerLedgerId")]
     //[InverseProperty("AccountReportPartnerLedgers")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

@@ -17,6 +17,9 @@ public partial class BaseEnableProfilingWizard: Entity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 

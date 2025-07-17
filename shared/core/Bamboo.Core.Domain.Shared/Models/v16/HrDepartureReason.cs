@@ -19,9 +19,12 @@ public partial class HrDepartureReason : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
+
+    [Column("reason_code")]
+    public Guid? ReasonCode { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -50,10 +53,10 @@ public partial class HrDepartureReason : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("DepartureReason")]
     [NotMapped]
-    public virtual ICollection<HrDepartureWizard> HrDepartureWizards { get; } = new List<HrDepartureWizard>();
+    public virtual ICollection<HrDepartureWizard> HrDepartureWizards { get; set; } = new List<HrDepartureWizard>();
 
     //[InverseProperty("DepartureReason")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 
 }

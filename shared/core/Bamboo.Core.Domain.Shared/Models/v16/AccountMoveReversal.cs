@@ -17,11 +17,11 @@ public partial class AccountMoveReversal: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("journal_id")]
-    public Guid? JournalId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -29,12 +29,14 @@ public partial class AccountMoveReversal: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat
     [Column("date_mode")]
     public string? DateMode { get; set; }
 
     [Column("reason")]
     public string? Reason { get; set; }
 
+    // v16-Compat
     [Column("refund_method")]
     public string? RefundMethod { get; set; }
 
@@ -70,10 +72,11 @@ public partial class AccountMoveReversal: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ReversalId")]
     //[InverseProperty("Reversals")]
     [NotMapped]
-    public virtual ICollection<AccountMove> Moves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> Moves { get; set; } = new List<AccountMove>();
 
+    // v16-Compat
     //[ForeignKey("ReversalId")]
     //[InverseProperty("ReversalsNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountMove> NewMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> NewMoves { get; set; } = new List<AccountMove>();
 }

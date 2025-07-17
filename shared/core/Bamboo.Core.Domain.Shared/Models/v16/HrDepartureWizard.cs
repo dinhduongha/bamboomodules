@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_departure_wizard")]
-public partial class HrDepartureWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -38,6 +38,7 @@ public partial class HrDepartureWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("departure_description")]
     public string? DepartureDescription { get; set; }
 
+    // v16-Compat
     [Column("archive_private_address")]
     public bool? ArchivePrivateAddress { get; set; }
 
@@ -50,6 +51,10 @@ public partial class HrDepartureWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("set_date_end")]
     public bool? SetDateEnd { get; set; }
 
+    [Column("unassign_equipment")]
+    public bool? UnassignEquipment { get; set; }
+
+    // v16-Compat
     [Column("cancel_leaves")]
     public bool? CancelLeaves { get; set; }
 
@@ -59,6 +64,7 @@ public partial class HrDepartureWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("release_campany_car")]
     public bool? ReleaseCampanyCar { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }

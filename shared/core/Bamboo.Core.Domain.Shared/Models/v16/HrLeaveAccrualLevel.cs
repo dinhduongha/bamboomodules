@@ -44,11 +44,15 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("yearly_day")]
     public long? YearlyDay { get; set; }
 
+    // v16-Compat
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
     [Column("postpone_max_days")]
     public long? PostponeMaxDays { get; set; }
+
+    [Column("accrual_validity_count")]
+    public long? AccrualValidityCount { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -80,6 +84,28 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("action_with_unused_accruals")]
     public string? ActionWithUnusedAccruals { get; set; }
 
+    [Column("accrual_validity_type")]
+    public string? AccrualValidityType { get; set; }
+
+    [Column("added_value")]
+    public decimal? AddedValue { get; set; }
+
+    [Column("maximum_leave")]
+    public decimal? MaximumLeave { get; set; }
+
+    [Column("maximum_leave_yearly")]
+    public decimal? MaximumLeaveYearly { get; set; }
+
+    [Column("cap_accrued_time")]
+    public bool? CapAccruedTime { get; set; }
+
+    [Column("cap_accrued_time_yearly")]
+    public bool? CapAccruedTimeYearly { get; set; }
+
+    [Column("accrual_validity")]
+    public bool? AccrualValidity { get; set; }
+
+    // v16-Compat
     [Column("is_based_on_worked_time")]
     public bool? IsBasedOnWorkedTime { get; set; }
 
@@ -89,12 +115,18 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [Column("added_value")]
-    public double? AddedValue { get; set; }
+    [Column("frequency_hourly_source")]
+    public string? FrequencyHourlySource { get; set; }
 
-    [Column("maximum_leave")]
-    public double? MaximumLeave { get; set; }
+    // v16-Compat
+    // [Column("added_value")]
+    // public double? AddedValue { get; set; }
 
+    // v16-Compat
+    // [Column("maximum_leave")]
+    // public double? MaximumLeave { get; set; }
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -109,6 +141,7 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
     [NotMapped]
@@ -119,8 +152,9 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; } = new List<HrLeaveAccrualLevel>();
+    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; set; } = new List<HrLeaveAccrualLevel>();
 
 }

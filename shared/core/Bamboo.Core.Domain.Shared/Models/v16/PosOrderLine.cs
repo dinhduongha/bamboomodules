@@ -30,6 +30,12 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("refunded_orderline_id")]
     public Guid? RefundedOrderlineId { get; set; }
 
+    [Column("combo_parent_id")]
+    public Guid? ComboParentId { get; set; }
+
+    [Column("combo_item_id")]
+    public Guid? ComboItemId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -42,11 +48,20 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("notice")]
     public string? Notice { get; set; }
 
+    [Column("price_type")]
+    public string? PriceType { get; set; }
+
     [Column("full_product_name")]
     public string? FullProductName { get; set; }
 
     [Column("customer_note")]
     public string? CustomerNote { get; set; }
+
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
+    [Column("note")]
+    public string? Note { get; set; }
 
     [Column("price_unit")]
     public decimal? PriceUnit { get; set; }
@@ -66,8 +81,14 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("discount")]
     public decimal? Discount { get; set; }
 
+    [Column("skip_change")]
+    public bool? SkipChange { get; set; }
+
     [Column("is_total_cost_computed")]
     public bool? IsTotalCostComputed { get; set; }
+
+    [Column("is_edited")]
+    public bool? IsEdited { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -86,6 +107,30 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("down_payment_details")]
     public string? DownPaymentDetails { get; set; }
+
+    [Column("qty_delivered")]
+    public double? QtyDelivered { get; set; }
+
+    [Column("combo_id")]
+    public Guid? ComboId { get; set; }
+
+    [Column("event_ticket_id")]
+    public Guid? EventTicketId { get; set; }
+
+    [ForeignKey("ComboId")]
+    //[InverseProperty("PosOrderLines")]
+    [NotMapped]
+    public virtual ProductCombo? Combo { get; set; }
+
+    [ForeignKey("ComboItemId")]
+    //[InverseProperty("PosOrderLines")]
+    [NotMapped]
+    public virtual ProductComboItem? ComboItem { get; set; }
+
+    [ForeignKey("ComboParentId")]
+    //[InverseProperty("InverseComboParent")]
+    [NotMapped]
+    public virtual PosOrderLine? ComboParent { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("PosOrderLines")]
@@ -129,14 +174,14 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("RefundedOrderline")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; set; } = new List<PosOrderLine>();
 
     //[InverseProperty("PosOrderLine")]
     [NotMapped]
-    public virtual ICollection<PosPackOperationLot> PosPackOperationLots { get; } = new List<PosPackOperationLot>();
+    public virtual ICollection<PosPackOperationLot> PosPackOperationLots { get; set; } = new List<PosPackOperationLot>();
 
     [ForeignKey("PosOrderLineId")]
     //[InverseProperty("PosOrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 }

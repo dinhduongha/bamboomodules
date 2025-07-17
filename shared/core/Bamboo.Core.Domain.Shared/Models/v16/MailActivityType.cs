@@ -12,6 +12,7 @@ namespace Bamboo.Core.Models;
 
 // May-Copy-To-Tenants
 [Table("mail_activity_type")]
+//[Index("CreateUid", Name = "mail_activity_type__create_uid_index")]
 //[Index("CreationTime", Name = "mail_activity_type_create_uid_index")]
 public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -21,7 +22,7 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -73,6 +74,9 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("keep_done")]
+    public bool? KeepDone { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -101,52 +105,52 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("SaleActivityType")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     //[InverseProperty("ActivityType")]
     [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypes { get; } = new List<HrPlanActivityType>();
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypes { get; set; } = new List<HrPlanActivityType>();
 
     //[InverseProperty("TriggeredNextType")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> InverseTriggeredNextType { get; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> InverseTriggeredNextType { get; set; } = new List<MailActivityType>();
 
     //[InverseProperty("ActivityType")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
 
     //[InverseProperty("ActivityType")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityActivityTypes { get; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivityActivityTypes { get; set; } = new List<MailActivity>();
 
     //[InverseProperty("PreviousActivityType")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityPreviousActivityTypes { get; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivityPreviousActivityTypes { get; set; } = new List<MailActivity>();
 
     //[InverseProperty("RecommendedActivityType")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityRecommendedActivityTypes { get; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivityRecommendedActivityTypes { get; set; } = new List<MailActivity>();
 
     //[InverseProperty("MailActivityType")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
 
     //[InverseProperty("MailActivityType")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
 
     [ForeignKey("RecommendedId")]
     //[InverseProperty("Recommendeds")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> Activities { get; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> Activities { get; set; } = new List<MailActivityType>();
 
     [ForeignKey("MailActivityTypeId")]
     //[InverseProperty("MailActivityTypes")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
 
     [ForeignKey("ActivityId")]
     //[InverseProperty("Activities")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> Recommendeds { get; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> Recommendeds { get; set; } = new List<MailActivityType>();
 }

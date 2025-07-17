@@ -12,6 +12,9 @@ namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement")]
 //[Index("FirstLineIndex", Name = "account_bank_statement_first_line_index_index")]
+//[Index("Date", Name = "account_bank_statement__date_index")]
+//[Index("JournalId", "FirstLineIndex", Name = "account_bank_statement_first_line_index_idx")]
+//[Index("JournalId", "Date", "Id", Name = "account_bank_statement_journal_id_date_desc_id_desc_idx", IsDescending = new[] { false, true, true })]
 public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -59,7 +62,15 @@ public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
- 
+
+    //[InverseProperty("Statement")]
+    [NotMapped]
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+
+    //[InverseProperty("Statement")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountBankStatements")]
     [NotMapped]
@@ -80,16 +91,8 @@ public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Statement")]
-    [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; } = new List<AccountBankStatementLine>();
-
-    //[InverseProperty("Statement")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
-
     [ForeignKey("AccountBankStatementId")]
     //[InverseProperty("AccountBankStatements")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
 }

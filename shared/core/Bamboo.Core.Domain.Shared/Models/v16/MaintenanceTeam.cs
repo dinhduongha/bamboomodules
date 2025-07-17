@@ -51,21 +51,21 @@ public partial class MaintenanceTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("MaintenanceTeam")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } = new List<MaintenanceEquipment>();
+
+    //[InverseProperty("MaintenanceTeam")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MaintenanceTeamWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("MaintenanceTeam")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; } = new List<MaintenanceEquipment>();
-
-    //[InverseProperty("MaintenanceTeam")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; } = new List<MaintenanceRequest>();
-
     [ForeignKey("MaintenanceTeamId")]
     //[InverseProperty("MaintenanceTeams")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 }

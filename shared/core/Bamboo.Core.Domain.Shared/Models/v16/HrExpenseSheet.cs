@@ -18,11 +18,17 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
+
+    [Column("department_id")]
+    public Guid? DepartmentId { get; set; }
 
     [Column("address_id")]
     public Guid? AddressId { get; set; }
@@ -30,23 +36,29 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
+
+    [Column("employee_journal_id")]
+    public Guid? EmployeeJournalId { get; set; }
+
+    [Column("payment_method_line_id")]
+    public Guid? PaymentMethodLineId { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
+    // v16-Compat
     [Column("bank_journal_id")]
     public Guid? BankJournalId { get; set; }
 
+    // v16-Compat
     [Column("account_move_id")]
     public Guid? AccountMoveId { get; set; }
 
-    [Column("department_id")]
-    public Guid? DepartmentId { get; set; }
+    // v16-Compat
+    // [Column("department_id")]
+    // public Guid? DepartmentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -60,6 +72,9 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("state")]
     public string? State { get; set; }
 
+    [Column("approval_state")]
+    public string? ApprovalState { get; set; }
+
     [Column("payment_state")]
     public string? PaymentState { get; set; }
 
@@ -72,6 +87,10 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("untaxed_amount")]
     public decimal? UntaxedAmount { get; set; }
 
+    [Column("total_tax_amount")]
+    public decimal? TotalTaxAmount { get; set; }
+
+    // v16-Compat
     [Column("total_amount_taxes")]
     public decimal? TotalAmountTaxes { get; set; }
 
@@ -149,14 +168,14 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Sheet")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
 
     //[InverseProperty("HrExpenseSheet")]
     [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; } = new List<HrExpenseRefuseWizard>();
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } = new List<HrExpenseRefuseWizard>();
 
     [ForeignKey("HrExpenseSheetId")]
     //[InverseProperty("HrExpenseSheets")]
     [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; } = new List<HrExpenseApproveDuplicate>();
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } = new List<HrExpenseApproveDuplicate>();
 }

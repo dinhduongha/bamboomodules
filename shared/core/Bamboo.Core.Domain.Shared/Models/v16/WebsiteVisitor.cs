@@ -20,7 +20,7 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
@@ -57,6 +57,9 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("livechat_operator_id")]
+    public Guid? LivechatOperatorId { get; set; }
+
     [ForeignKey("CountryId")]
     //[InverseProperty("WebsiteVisitors")]
     [NotMapped]
@@ -72,8 +75,19 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResLang? Lang { get; set; }
 
+    [ForeignKey("LivechatOperatorId")]
+    //[InverseProperty("WebsiteVisitorLivechatOperators")]
+    [NotMapped]
+    public virtual ResPartner? LivechatOperator { get; set; }
+
+    // v16-Compat
+    // [ForeignKey("PartnerId")]
+    // //[InverseProperty("WebsiteVisitors")]
+    // [NotMapped]
+    // public virtual ResPartner? Partner { get; set; }
+
     [ForeignKey("PartnerId")]
-    //[InverseProperty("WebsiteVisitors")]
+    //[InverseProperty("WebsiteVisitorPartners")]
     [NotMapped]
     public virtual ResPartner? Partner { get; set; }
 
@@ -87,12 +101,20 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    //[InverseProperty("LivechatVisitor")]
+    [NotMapped]
+    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } = new List<DiscussChannel>();
+
     //[InverseProperty("Visitor")]
     [NotMapped]
-    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; } = new List<WebsiteTrack>();
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
+
+    //[InverseProperty("Visitor")]
+    [NotMapped]
+    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; set; } = new List<WebsiteTrack>();
 
     [ForeignKey("WebsiteVisitorId")]
     //[InverseProperty("WebsiteVisitors")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
 }

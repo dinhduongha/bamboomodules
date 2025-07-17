@@ -22,14 +22,17 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("color")]
-    public long? Color { get; set; }
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
+
+    [Column("color")]
+    public long? Color { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -43,9 +46,14 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
+    [Column("visible_on_ecommerce")]
+    public bool? VisibleOnEcommerce { get; set; }
+
+    // v16-Compat
     [Column("ribbon_id")]
     public Guid? RibbonId { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -55,6 +63,7 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
     [ForeignKey("RibbonId")]
     //[InverseProperty("ProductTags")]
     [NotMapped]
@@ -73,10 +82,10 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("ProductTagId")]
     //[InverseProperty("ProductTags")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
 
     [ForeignKey("ProductTagId")]
     //[InverseProperty("ProductTags")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 }

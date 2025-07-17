@@ -68,20 +68,20 @@ public partial class AccountReportGeneralLedger: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("AccountReportGeneralLedgerId")]
     //[InverseProperty("AccountReportGeneralLedgers")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
 
     [ForeignKey("AccountReportGeneralLedgerId")]
     //[InverseProperty("AccountReportGeneralLedgers")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } = new List<AccountAnalyticAccount>();
 
     [ForeignKey("AccountId")]
     //[InverseProperty("AccountsNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> Journals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> Journals { get; set; } = new List<AccountJournal>();
 
     [ForeignKey("AccountReportGeneralLedgerId")]
     //[InverseProperty("AccountReportGeneralLedgers")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

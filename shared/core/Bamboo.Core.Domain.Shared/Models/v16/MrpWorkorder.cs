@@ -20,6 +20,9 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
 
@@ -50,6 +53,9 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("barcode")]
+    public string? Barcode { get; set; }
+
     [Column("production_availability")]
     public string? ProductionAvailability { get; set; }
 
@@ -65,9 +71,11 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("qty_reported_from_previous_wo")]
     public decimal? QtyReportedFromPreviousWo { get; set; }
 
+    // v16-Compat
     [Column("date_planned_start", TypeName = "timestamp without time zone")]
     public DateTime? DatePlannedStart { get; set; }
 
+    // v16-Compat
     [Column("date_planned_finished", TypeName = "timestamp without time zone")]
     public DateTime? DatePlannedFinished { get; set; }
 
@@ -95,12 +103,15 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("costs_hour")]
     public double? CostsHour { get; set; }
 
+    // v16-Compat
     [Column("mo_analytic_account_line_id")]
     public Guid? MoAnalyticAccountLineId { get; set; }
 
+    // v16-Compat
     [Column("wc_analytic_account_line_id")]
     public Guid? WcAnalyticAccountLineId { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -157,27 +168,27 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } = new List<MrpWorkcenterProductivity>();
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
 
     [ForeignKey("WorkorderId")]
     //[InverseProperty("Workorders")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> BlockedBies { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> BlockedBies { get; set; } = new List<MrpWorkorder>();
 
     [ForeignKey("BlockedById")]
     //[InverseProperty("BlockedBies")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> Workorders { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> Workorders { get; set; } = new List<MrpWorkorder>();
 }

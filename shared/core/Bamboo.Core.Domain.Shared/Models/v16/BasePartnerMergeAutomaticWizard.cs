@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_partner_merge_automatic_wizard")]
-public partial class BasePartnerMergeAutomaticWizard: Entity<Guid>, IEntityDto<Guid>
+public partial class BasePartnerMergeAutomaticWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("number_group")]
     public long? NumberGroup { get; set; }
@@ -65,6 +68,10 @@ public partial class BasePartnerMergeAutomaticWizard: Entity<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("Wizard")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; set; } = new List<BasePartnerMergeLine>();
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("BasePartnerMergeAutomaticWizardCreateUs")]
     [NotMapped]
@@ -85,12 +92,8 @@ public partial class BasePartnerMergeAutomaticWizard: Entity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Wizard")]
-    [NotMapped]
-    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; } = new List<BasePartnerMergeLine>();
-
     [ForeignKey("BasePartnerMergeAutomaticWizardId")]
     //[InverseProperty("BasePartnerMergeAutomaticWizardsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

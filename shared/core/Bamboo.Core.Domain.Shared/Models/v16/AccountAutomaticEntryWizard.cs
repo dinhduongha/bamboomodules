@@ -73,5 +73,5 @@ public partial class AccountAutomaticEntryWizard: FullAuditedEntity<Guid>, IEnti
     [ForeignKey("AccountAutomaticEntryWizardId")]
     //[InverseProperty("AccountAutomaticEntryWizards")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 }

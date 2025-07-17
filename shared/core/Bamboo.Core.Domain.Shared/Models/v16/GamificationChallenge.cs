@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_challenge")]
-public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationChallenge : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +22,11 @@ public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("manager_id")]
     public Guid? ManagerId { get; set; }
+
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
 
     [Column("reward_id")]
     public Guid? RewardId { get; set; }
@@ -103,6 +108,12 @@ public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("AccountAccounts")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+
     //[InverseProperty("Challenge")]
     [NotMapped]
     public virtual ICollection<GamificationBadgeUser> GamificationBadgeUsers { get; set; } = new List<GamificationBadgeUser>();
@@ -155,12 +166,14 @@ public partial class GamificationChallenge: FullAuditedEntity<Guid>, IEntityDto<
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    [ForeignKey("GamificationChallengeId")]
+    //TODO: Remove FK for multiple navigations, fix in Fluent API
+    //[ForeignKey("GamificationChallengeId")]
     //[InverseProperty("GamificationChallenges")]
     [NotMapped]
     public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 
-    [ForeignKey("GamificationChallengeId")]
+    //TODO: multiple navigations
+    //[ForeignKey("GamificationChallengeId")]
     //[InverseProperty("GamificationChallengesNavigation")]
     [NotMapped]
     public virtual ICollection<ResUser> ResUsersNavigation { get; set; } = new List<ResUser>();

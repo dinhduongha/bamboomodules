@@ -44,22 +44,21 @@ public partial class BarcodeNomenclature : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("is_gs1_nomenclature")]
     public bool? IsGs1Nomenclature { get; set; }
 
+    //[InverseProperty("BarcodeNomenclature")]
+    [NotMapped]
+    public virtual ICollection<BarcodeRule> BarcodeRules { get; set; } = new List<BarcodeRule>();
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("BarcodeNomenclatureCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Nomenclature")]
+    [NotMapped]
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("BarcodeNomenclatureWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("BarcodeNomenclature")]
-    [NotMapped]
-    public virtual ICollection<BarcodeRule> BarcodeRules { get; } = new List<BarcodeRule>();
-
-    //[InverseProperty("Nomenclature")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
-
 }

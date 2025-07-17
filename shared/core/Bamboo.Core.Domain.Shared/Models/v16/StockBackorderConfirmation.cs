@@ -51,10 +51,10 @@ public partial class StockBackorderConfirmation : FullAuditedEntity<Guid>, IEnti
 
     //[InverseProperty("BackorderConfirmation")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLines { get; } = new List<StockBackorderConfirmationLine>();
+    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLines { get; set; } = new List<StockBackorderConfirmationLine>();
 
     [ForeignKey("StockBackorderConfirmationId")]
     //[InverseProperty("StockBackorderConfirmations")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 }

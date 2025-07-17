@@ -18,14 +18,15 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("past_months_limit")]
     public long? PastMonthsLimit { get; set; }
@@ -36,7 +37,8 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
     [Column("rule_type")]
@@ -44,6 +46,9 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("matching_order")]
     public string? MatchingOrder { get; set; }
+
+    [Column("counterpart_type")]
+    public string? CounterpartType { get; set; }
 
     [Column("match_nature")]
     public string? MatchNature { get; set; }
@@ -139,28 +144,28 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("ReconcileModel")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLines { get; } = new List<AccountReconcileModelLine>();
+    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLines { get; set; } = new List<AccountReconcileModelLine>();
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; } = new List<AccountReconcileModelPartnerMapping>();
+    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; set; } = new List<AccountReconcileModelPartnerMapping>();
 
     [ForeignKey("AccountReconcileModelId")]
     //[InverseProperty("AccountReconcileModels")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     [ForeignKey("AccountReconcileModelId")]
     //[InverseProperty("AccountReconcileModels")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; set; } = new List<ResPartnerCategory>();
 
     [ForeignKey("AccountReconcileModelId")]
     //[InverseProperty("AccountReconcileModels")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

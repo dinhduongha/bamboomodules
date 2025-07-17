@@ -44,14 +44,16 @@ public partial class StockRequestCount : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("accounting_date")]
     public DateTime? AccountingDate { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("StockRequestCountCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("TenantId")]
+    [NotMapped]
+    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("UserId")]
     //[InverseProperty("StockRequestCountUsers")]
@@ -66,5 +68,5 @@ public partial class StockRequestCount : FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("StockRequestCountId")]
     //[InverseProperty("StockRequestCounts")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 }

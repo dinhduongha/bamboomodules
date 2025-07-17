@@ -17,14 +17,14 @@ public partial class ProductPricelist: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("sequence")]
     public long Sequence { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -32,6 +32,7 @@ public partial class ProductPricelist: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat
     [Column("discount_policy")]
     public string? DiscountPolicy { get; set; }
 
@@ -83,44 +84,44 @@ public partial class ProductPricelist: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
 
     //[InverseProperty("BasePricelist")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItemBasePricelists { get; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItemBasePricelists { get; set; } = new List<ProductPricelistItem>();
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItemPricelists { get; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItemPricelists { get; set; } = new List<ProductPricelistItem>();
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("PosPricelist")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } = new List<ResConfigSetting>();
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     [ForeignKey("ProductPricelistId")]
     //[InverseProperty("ProductPricelists")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
 
     [ForeignKey("ProductPricelistId")]
     //[InverseProperty("ProductPricelists")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 
     [ForeignKey("PricelistId")]
     //[InverseProperty("Pricelists")]
     [NotMapped]
-    public virtual ICollection<ResCountryGroup> ResCountryGroups { get; } = new List<ResCountryGroup>();
+    public virtual ICollection<ResCountryGroup> ResCountryGroups { get; set; } = new List<ResCountryGroup>();
 }

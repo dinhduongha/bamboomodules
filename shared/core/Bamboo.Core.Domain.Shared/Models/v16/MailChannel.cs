@@ -57,6 +57,42 @@ public partial class MailChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    /// <summary>
+    /// Chatbot Current Step
+    /// </summary>
+    [Column("chatbot_current_step_id")]
+    public Guid? ChatbotCurrentStepId { get; set; }
+
+    /// <summary>
+    /// Country
+    /// </summary>
+    [Column("country_id")]
+    public Guid? CountryId { get; set; }
+
+    /// <summary> 
+    /// Anonymous Name
+    /// </summary>
+    [Column("anonymous_name", TypeName = "character varying")]
+    public string? AnonymousName { get; set; }
+
+    /// <summary>
+    /// Is livechat ongoing?
+    /// </summary>
+    [Column("livechat_active")]
+    public bool? LivechatActive { get; set; }
+
+    [Column("livechat_channel_id")]
+    public Guid? LivechatChannelId { get; set; }
+
+    [Column("livechat_operator_id")]
+    public Guid? LivechatOperatorId { get; set; }
+
+    [Column("livechat_visitor_id")]
+    public Guid? LivechatVisitorId { get; set; }
+
+    [Column("rating_last_value")]
+    public double? RatingLastValue { get; set; }
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("MailChannelCreateUs")]
     [NotMapped]
@@ -79,23 +115,23 @@ public partial class MailChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("VideocallChannel")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } = new List<MailChannelMember>();
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessions { get; } = new List<MailChannelRtcSession>();
+    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessions { get; set; } = new List<MailChannelRtcSession>();
 
     [ForeignKey("MailChannelId")]
     //[InverseProperty("MailChannels")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartments { get; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> HrDepartments { get; set; } = new List<HrDepartment>();
 
     [ForeignKey("MailChannelId")]
     //[InverseProperty("MailChannelsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
 }

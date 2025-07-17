@@ -23,6 +23,9 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
 
@@ -32,14 +35,15 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("medium_id")]
     public Guid? MediumId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("partner_invoice_id")]
     public Guid? PartnerInvoiceId { get; set; }
@@ -65,6 +69,7 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("team_id")]
     public Guid? TeamId { get; set; }
 
+    // v16-Compat
     [Column("analytic_account_id")]
     public Guid? AnalyticAccountId { get; set; }
 
@@ -116,6 +121,9 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("amount_total")]
     public decimal? AmountTotal { get; set; }
 
+    [Column("locked")]
+    public bool? Locked { get; set; }
+
     [Column("require_signature")]
     public bool? RequireSignature { get; set; }
 
@@ -137,8 +145,20 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("prepayment_percent")]
+    public double? PrepaymentPercent { get; set; }
+
+    [Column("pending_email_template_id")]
+    public Guid? PendingEmailTemplateId { get; set; }
+
+    [Column("opportunity_id")]
+    public Guid? OpportunityId { get; set; }
+
     [Column("sale_order_template_id")]
     public Guid? SaleOrderTemplateId { get; set; }
+
+    [Column("customizable_pdf_form_fields", TypeName = "jsonb")]
+    public string? CustomizablePdfFormFields { get; set; }
 
     [Column("incoterm")]
     public Guid? Incoterm { get; set; }
@@ -164,11 +184,27 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("amount_unpaid")]
     public decimal? AmountUnpaid { get; set; }
 
-    [Column("opportunity_id")]
-    public Guid? OpportunityId { get; set; }
+    // v16-Compat
+    // [Column("opportunity_id")]
+    // public Guid? OpportunityId { get; set; }
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
+
+    [Column("carrier_id")]
+    public Guid? CarrierId { get; set; }
+
+    [Column("delivery_message")]
+    public string? DeliveryMessage { get; set; }
+
+    [Column("pickup_location_data", TypeName = "jsonb")]
+    public string? PickupLocationData { get; set; }
+
+    [Column("recompute_delivery_price")]
+    public bool? RecomputeDeliveryPrice { get; set; }
+
+    [Column("shipping_weight")]
+    public double? ShippingWeight { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -179,6 +215,7 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("cart_recovery_email_sent")]
     public bool? CartRecoveryEmailSent { get; set; }
 
+    // v16-Compat
     [ForeignKey("AnalyticAccountId")]
     //[InverseProperty("SaleOrders")]
     [NotMapped]
@@ -188,6 +225,11 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     //[InverseProperty("SaleOrders")]
     [NotMapped]
     public virtual UtmCampaign? Campaign { get; set; }
+
+    [ForeignKey("CarrierId")]
+    //[InverseProperty("SaleOrders")]
+    [NotMapped]
+    public virtual DeliveryCarrier? Carrier { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("SaleOrders")]
@@ -219,6 +261,12 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual UtmMedium? Medium { get; set; }
 
+    [ForeignKey("JournalId")]
+    //[InverseProperty("SaleOrders")]
+    [NotMapped]
+    public virtual AccountJournal? Journal { get; set; }
+
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("SaleOrders")]
     [NotMapped]
@@ -248,6 +296,11 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     //[InverseProperty("SaleOrders")]
     [NotMapped]
     public virtual AccountPaymentTerm? PaymentTerm { get; set; }
+
+    [ForeignKey("PendingEmailTemplateId")]
+    //[InverseProperty("SaleOrders")]
+    [NotMapped]
+    public virtual MailTemplate? PendingEmailTemplate { get; set; }
 
     [ForeignKey("PricelistId")]
     //[InverseProperty("SaleOrders")]
@@ -299,62 +352,63 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("SaleOrder")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } = new List<HrExpenseSplit>();
 
     //[InverseProperty("SaleOrder")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
 
     //[InverseProperty("SaleOrderOrigin")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
 
     //[InverseProperty("Sale")]
     [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; } = new List<ProcurementGroup>();
+    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } = new List<ProcurementGroup>();
 
     //[InverseProperty("SaleOrder")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
     //[InverseProperty("SaleOrder")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
 
     //[InverseProperty("SaleOrder")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; } = new List<SaleOrderCancel>();
+    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; set; } = new List<SaleOrderCancel>();
 
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; } = new List<SaleOrderOption>();
+    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; set; } = new List<SaleOrderOption>();
 
     //[InverseProperty("Sale")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 
     [ForeignKey("SaleOrderId")]
     //[InverseProperty("SaleOrders")]
     [NotMapped]
-    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; } = new List<SaleAdvancePaymentInv>();
+    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; } = new List<SaleAdvancePaymentInv>();
 
     [ForeignKey("OrderId")]
     //[InverseProperty("Orders")]
     [NotMapped]
-    public virtual ICollection<CrmTag> Tags { get; } = new List<CrmTag>();
+    public virtual ICollection<CrmTag> Tags { get; set; } = new List<CrmTag>();
 
     [ForeignKey("SaleOrderId")]
     //[InverseProperty("SaleOrders")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> Transactions { get; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
 }

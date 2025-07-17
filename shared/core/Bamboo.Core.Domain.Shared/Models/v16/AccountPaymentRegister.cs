@@ -17,6 +17,9 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
@@ -26,11 +29,11 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("partner_bank_id")]
     public Guid? PartnerBankId { get; set; }
 
+    [Column("custom_user_currency_id")]
+    public Guid? CustomUserCurrencyId { get; set; }
+
     [Column("source_currency_id")]
     public Guid? SourceCurrencyId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -50,6 +53,9 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("communication")]
     public string? Communication { get; set; }
 
+    [Column("installments_mode")]
+    public string? InstallmentsMode { get; set; }
+
     [Column("payment_type")]
     public string? PaymentType { get; set; }
 
@@ -67,6 +73,9 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("amount")]
     public decimal? Amount { get; set; }
+
+    [Column("custom_user_amount")]
+    public decimal? CustomUserAmount { get; set; }
 
     [Column("source_amount")]
     public decimal? SourceAmount { get; set; }
@@ -106,6 +115,11 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     //[InverseProperty("AccountPaymentRegisterCurrencies")]
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
+
+    [ForeignKey("CustomUserCurrencyId")]
+    //[InverseProperty("AccountPaymentRegisterCustomUserCurrencies")]
+    [NotMapped]
+    public virtual ResCurrency? CustomUserCurrency { get; set; }
 
     [ForeignKey("JournalId")]
     //[InverseProperty("AccountPaymentRegisters")]
@@ -150,5 +164,5 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> Lines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> Lines { get; set; } = new List<AccountMoveLine>();
 }

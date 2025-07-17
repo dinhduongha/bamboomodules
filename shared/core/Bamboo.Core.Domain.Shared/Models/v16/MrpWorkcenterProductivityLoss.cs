@@ -32,7 +32,8 @@ public partial class MrpWorkcenterProductivityLoss : FullAuditedEntity<Guid>, IE
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
     [Column("loss_type")]
@@ -68,6 +69,6 @@ public partial class MrpWorkcenterProductivityLoss : FullAuditedEntity<Guid>, IE
 
     //[InverseProperty("Loss")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } = new List<MrpWorkcenterProductivity>();
 
 }

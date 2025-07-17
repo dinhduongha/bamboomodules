@@ -22,6 +22,9 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
@@ -33,9 +36,6 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("posz")]
     public long? Posz { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("removal_strategy_id")]
     public Guid? RemovalStrategyId { get; set; }
@@ -85,6 +85,7 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("scrap_location")]
     public bool? ScrapLocation { get; set; }
 
+    // v16-Compat
     [Column("return_location")]
     public bool? ReturnLocation { get; set; }
 
@@ -150,174 +151,174 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockLocation> InverseLocation { get; } = new List<StockLocation>();
+    public virtual ICollection<StockLocation> InverseLocation { get; set; } = new List<StockLocation>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionLocationDests { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductionLocationDests { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("LocationSrc")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionLocationSrcs { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductionLocationSrcs { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("ProductionLocation")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionProductionLocations { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductionProductionLocations { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuildLocationDests { get; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuildLocationDests { get; set; } = new List<MrpUnbuild>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuildLocations { get; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuildLocations { get; set; } = new List<MrpUnbuild>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLineLocationDests { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLineLocationDests { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLineLocations { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLineLocations { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("InternalTransitLocation")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineLocationDests { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLineLocationDests { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineLocations { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLineLocations { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveLocationDests { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveLocationDests { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveLocations { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveLocations { get; set; } = new List<StockMove>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<StockPackageDestination> StockPackageDestinations { get; } = new List<StockPackageDestination>();
+    public virtual ICollection<StockPackageDestination> StockPackageDestinations { get; set; } = new List<StockPackageDestination>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; } = new List<StockPackageLevel>();
+    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } = new List<StockPackageLevel>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingLocationDests { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickingLocationDests { get; set; } = new List<StockPicking>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingLocations { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickingLocations { get; set; } = new List<StockPicking>();
 
     //[InverseProperty("DefaultLocationDest")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationDests { get; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationDests { get; set; } = new List<StockPickingType>();
 
     //[InverseProperty("DefaultLocationSrc")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationSrcs { get; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationSrcs { get; set; } = new List<StockPickingType>();
 
     //[InverseProperty("LocationIn")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationIns { get; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationIns { get; set; } = new List<StockPutawayRule>();
 
     //[InverseProperty("LocationOut")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationOuts { get; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationOuts { get; set; } = new List<StockPutawayRule>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; } = new List<StockQuantPackage>();
+    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; set; } = new List<StockQuantPackage>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingLocations { get; } = new List<StockReturnPicking>();
+    public virtual ICollection<StockReturnPicking> StockReturnPickingLocations { get; set; } = new List<StockReturnPicking>();
 
     //[InverseProperty("OriginalLocation")]
     [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingOriginalLocations { get; } = new List<StockReturnPicking>();
+    public virtual ICollection<StockReturnPicking> StockReturnPickingOriginalLocations { get; set; } = new List<StockReturnPicking>();
 
     //[InverseProperty("ParentLocation")]
     [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingParentLocations { get; } = new List<StockReturnPicking>();
+    public virtual ICollection<StockReturnPicking> StockReturnPickingParentLocations { get; set; } = new List<StockReturnPicking>();
 
     //[InverseProperty("LocationDest")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRuleLocationDests { get; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRuleLocationDests { get; set; } = new List<StockRule>();
 
     //[InverseProperty("LocationSrc")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRuleLocationSrcs { get; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRuleLocationSrcs { get; set; } = new List<StockRule>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScrapLocations { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScrapLocations { get; set; } = new List<StockScrap>();
 
     //[InverseProperty("ScrapLocation")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScrapScrapLocations { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScrapScrapLocations { get; set; } = new List<StockScrap>();
 
     //[InverseProperty("LotStock")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseLotStocks { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseLotStocks { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
 
     //[InverseProperty("PbmLoc")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmLocs { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmLocs { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("SamLoc")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamLocs { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseSamLocs { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("ViewLocation")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseViewLocations { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseViewLocations { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("WhInputStockLoc")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhInputStockLocs { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseWhInputStockLocs { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("WhOutputStockLoc")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhOutputStockLocs { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseWhOutputStockLocs { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("WhPackStockLoc")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhPackStockLocs { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseWhPackStockLocs { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("WhQcStockLoc")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhQcStockLocs { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseWhQcStockLocs { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; } = new List<StockWarnInsufficientQtyRepair>();
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; set; } = new List<StockWarnInsufficientQtyRepair>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScraps { get; } = new List<StockWarnInsufficientQtyScrap>();
+    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScraps { get; set; } = new List<StockWarnInsufficientQtyScrap>();
 
     //[InverseProperty("Location")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; } = new List<StockWarnInsufficientQtyUnbuild>();
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; set; } = new List<StockWarnInsufficientQtyUnbuild>();
 
 }

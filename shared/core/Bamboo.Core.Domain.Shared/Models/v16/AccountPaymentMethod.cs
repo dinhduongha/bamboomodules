@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_method")]
 //[Index("Code", "PaymentType", Name = "account_payment_method_name_code_unique", IsUnique = true)]
-public partial class AccountPaymentMethod : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -42,6 +42,15 @@ public partial class AccountPaymentMethod : FullAuditedEntity<Guid>, IEntityDto<
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("PaymentMethod")]
+    [NotMapped]
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } = new List<AccountPaymentMethodLine>();
+
+    //[InverseProperty("PaymentMethod")]
+    [NotMapped]
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -55,12 +64,4 @@ public partial class AccountPaymentMethod : FullAuditedEntity<Guid>, IEntityDto<
     //[InverseProperty("AccountPaymentMethodWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("PaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; } = new List<AccountPaymentMethodLine>();
-
-    //[InverseProperty("PaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
 }

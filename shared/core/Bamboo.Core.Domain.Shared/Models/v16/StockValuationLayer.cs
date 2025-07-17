@@ -26,6 +26,9 @@ public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
+    [Column("categ_id")]
+    public Guid? CategId { get; set; }
+
     [Column("stock_valuation_layer_id")]
     public Guid? StockValuationLayerId { get; set; }
 
@@ -37,6 +40,9 @@ public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("account_move_line_id")]
     public Guid? AccountMoveLineId { get; set; }
+
+    [Column("lot_id")]
+    public Guid? LotId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -81,6 +87,11 @@ public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
+    [ForeignKey("CategId")]
+    //[InverseProperty("StockValuationLayers")]
+    [NotMapped]
+    public virtual ProductCategory? Categ { get; set; }
+
     [ForeignKey("TenantId")]
     //[InverseProperty("StockValuationLayers")]
     [NotMapped]
@@ -90,6 +101,11 @@ public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Gu
     //[InverseProperty("StockValuationLayerCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("LotId")]
+    //[InverseProperty("StockValuationLayers")]
+    [NotMapped]
+    public virtual StockLot? Lot { get; set; }
 
     [ForeignKey("ProductId")]
     //[InverseProperty("StockValuationLayers")]
@@ -113,6 +129,6 @@ public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("StockValuationLayerNavigation")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> InverseStockValuationLayerNavigation { get; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> InverseStockValuationLayerNavigation { get; set; } = new List<StockValuationLayer>();
 
 }

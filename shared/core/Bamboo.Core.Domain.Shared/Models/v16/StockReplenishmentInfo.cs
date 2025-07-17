@@ -49,17 +49,17 @@ public partial class StockReplenishmentInfo : FullAuditedEntity<Guid>, IEntityDt
     [NotMapped]
     public virtual StockWarehouseOrderpoint? Orderpoint { get; set; }
 
+    //[InverseProperty("ReplenishmentInfo")]
+    [NotMapped]
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } = new List<StockReplenishmentOption>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("StockReplenishmentInfoWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("ReplenishmentInfo")]
-    [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; } = new List<StockReplenishmentOption>();
-
     [ForeignKey("StockReplenishmentInfoId")]
     //[InverseProperty("StockReplenishmentInfos")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; } = new List<ProductSupplierinfo>();
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } = new List<ProductSupplierinfo>();
 }

@@ -17,11 +17,12 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -38,6 +39,7 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("owner_id")]
     public Guid? OwnerId { get; set; }
 
+    // v16-Compat
     [Column("move_id")]
     public Guid? MoveId { get; set; }
 
@@ -68,6 +70,9 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("scrap_qty")]
     public decimal? ScrapQty { get; set; }
 
+    [Column("should_replenish")]
+    public bool? ShouldReplenish { get; set; }
+
     [Column("date_done", TypeName = "timestamp without time zone")]
     public DateTime? DateDone { get; set; }
 
@@ -82,6 +87,14 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("workorder_id")]
     public Guid? WorkorderId { get; set; }
+
+    [Column("bom_id")]
+    public Guid? BomId { get; set; }
+
+    [ForeignKey("BomId")]
+    //[InverseProperty("StockScraps")]
+    [NotMapped]
+    public virtual MrpBom? Bom { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("StockScraps")]
@@ -103,11 +116,13 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual StockLot? Lot { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("StockScraps")]
     [NotMapped]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // v16-Compat
     [ForeignKey("MoveId")]
     //[InverseProperty("StockScraps")]
     [NotMapped]
@@ -160,7 +175,7 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Scrap")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScraps { get; } = new List<StockWarnInsufficientQtyScrap>();
+    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScraps { get; set; } = new List<StockWarnInsufficientQtyScrap>();
 
 
 }

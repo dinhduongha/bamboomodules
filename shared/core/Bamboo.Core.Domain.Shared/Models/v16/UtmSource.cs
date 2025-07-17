@@ -48,22 +48,22 @@ public partial class UtmSource: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Source")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("Source")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
 
     //[InverseProperty("Source")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 
     //[InverseProperty("Source")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } = new List<HrRecruitmentSource>();
 
     //[InverseProperty("Source")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
 }

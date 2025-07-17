@@ -17,14 +17,15 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
@@ -109,6 +110,10 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual AccountAnalyticAccount? AccountAnalytic { get; set; }
 
+    //[InverseProperty("Asset")]
+    [NotMapped]
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } = new List<AccountAssetDepreciationLine>();
+
     [ForeignKey("CategoryId")]
     //[InverseProperty("AccountAssetAssets")]
     [NotMapped]
@@ -134,6 +139,7 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual AccountMove? Invoice { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("AccountAssetAssets")]
     [NotMapped]
@@ -149,8 +155,9 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     //[InverseProperty("Asset")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; } = new List<AccountAssetDepreciationLine>();
+    // [NotMapped]
+    // public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } = new List<AccountAssetDepreciationLine>();
 
 }

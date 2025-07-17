@@ -56,5 +56,5 @@ public partial class FleetVehicleTag : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> VehicleTags { get; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> VehicleTags { get; set; } = new List<FleetVehicle>();
 }

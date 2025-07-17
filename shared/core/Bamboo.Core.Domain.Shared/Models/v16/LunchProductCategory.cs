@@ -55,10 +55,10 @@ public partial class LunchProductCategory: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrders { get; set; } = new List<LunchOrder>();
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<LunchProduct> LunchProducts { get; } = new List<LunchProduct>();
+    public virtual ICollection<LunchProduct> LunchProducts { get; set; } = new List<LunchProduct>();
 
 }

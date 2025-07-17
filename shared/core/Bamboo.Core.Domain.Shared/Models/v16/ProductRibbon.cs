@@ -32,9 +32,17 @@ public partial class ProductRibbon : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("text_color")]
     public string? TextColor { get; set; }
 
+    [Column("position")]
+    public string? Position { get; set; }
+
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    // v16-Compat
     [Column("html_class")]
     public string? HtmlClass { get; set; }
 
+    // v16-Compat
     [Column("html", TypeName = "jsonb")]
     public string? Html { get; set; }
 
@@ -44,6 +52,7 @@ public partial class ProductRibbon : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -60,10 +69,10 @@ public partial class ProductRibbon : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Ribbon")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTags { get; } = new List<ProductTag>();
+    public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
 
     //[InverseProperty("WebsiteRibbon")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 
 }

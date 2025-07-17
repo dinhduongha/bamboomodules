@@ -23,7 +23,7 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("sequence")]
     public long? Sequence { get; set; }
 
-    [Column("chatbot_script_id")]
+    [Column("chatbot_script_id")] 
     public Guid? ChatbotScriptId { get; set; }
 
     [Column("create_uid")]

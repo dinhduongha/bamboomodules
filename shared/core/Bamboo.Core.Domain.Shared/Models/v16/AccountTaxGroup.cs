@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_tax_group")]
-public partial class AccountTaxGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +23,15 @@ public partial class AccountTaxGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("sequence")]
     public long Sequence { get; set; }
 
+    [Column("tax_payable_account_id")]
+    public Guid? TaxPayableAccountId { get; set; }
+
+    [Column("tax_receivable_account_id")]
+    public Guid? TaxReceivableAccountId { get; set; }
+
+    [Column("advance_tax_payment_account_id")]
+    public Guid? AdvanceTaxPaymentAccountId { get; set; }
+
     [Column("country_id")]
     public Guid? CountryId { get; set; }
 
@@ -32,11 +41,15 @@ public partial class AccountTaxGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("preceding_subtotal")]
-    public string? PrecedingSubtotal { get; set; }
+    [Column("pos_receipt_label")]
+    public string? PosReceiptLabel { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    //[Column("preceding_subtotal")]
+    [Column("preceding_subtotal", TypeName = "jsonb")]
+    public string? PrecedingSubtotal { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -45,6 +58,7 @@ public partial class AccountTaxGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("TenantId")]
+    //[InverseProperty("AccountTaxGroups")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
 
@@ -65,14 +79,14 @@ public partial class AccountTaxGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("TaxGroup")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("TaxGroup")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } = new List<AccountTaxTemplate>();
 
     //[InverseProperty("TaxGroup")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 
 }

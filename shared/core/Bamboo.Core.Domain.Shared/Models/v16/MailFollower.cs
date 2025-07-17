@@ -41,5 +41,5 @@ public partial class MailFollower: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("MailFollowersId")]
     //[InverseProperty("MailFollowers")]
     [NotMapped]
-    public virtual ICollection<MailMessageSubtype> MailMessageSubtypes { get; } = new List<MailMessageSubtype>();
+    public virtual ICollection<MailMessageSubtype> MailMessageSubtypes { get; set; } = new List<MailMessageSubtype>();
 }

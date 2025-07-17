@@ -29,6 +29,7 @@ public partial class StockInventoryAdjustmentName : FullAuditedEntity<Guid>, IEn
     [Column("inventory_adjustment_name")]
     public string? InventoryAdjustmentName { get; set; }
 
+    // v16-Compat
     [Column("show_info")]
     public bool? ShowInfo { get; set; }
 
@@ -55,5 +56,5 @@ public partial class StockInventoryAdjustmentName : FullAuditedEntity<Guid>, IEn
     [ForeignKey("StockInventoryAdjustmentNameId")]
     //[InverseProperty("StockInventoryAdjustmentNames")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 }

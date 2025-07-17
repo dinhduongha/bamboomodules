@@ -20,6 +20,7 @@ public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("hr_expense_sheet_id")]
     public Guid? HrExpenseSheetId { get; set; }
 
@@ -38,6 +39,7 @@ public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -47,6 +49,7 @@ public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
     [ForeignKey("HrExpenseSheetId")]
     //[InverseProperty("HrExpenseRefuseWizards")]
     [NotMapped]
@@ -60,5 +63,5 @@ public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("HrExpenseRefuseWizardId")]
     //[InverseProperty("HrExpenseRefuseWizards")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenseSheets { get; set; } = new List<HrExpense>();
 }

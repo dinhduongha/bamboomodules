@@ -17,14 +17,14 @@ public partial class AccountRecurringTemplate: FullAuditedEntity<Guid>, IEntityD
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
     [Column("recurring_interval")]
     public long? RecurringInterval { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -75,6 +75,6 @@ public partial class AccountRecurringTemplate: FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<RecurringPayment> RecurringPayments { get; } = new List<RecurringPayment>();
+    public virtual ICollection<RecurringPayment> RecurringPayments { get; set; } = new List<RecurringPayment>();
 
 }

@@ -29,6 +29,12 @@ public partial class ResUsersApikeysDescription : FullAuditedEntity<Guid>, IEnti
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("duration")]
+    public string? Duration { get; set; }
+
+    [Column("expiration_date", TypeName = "timestamp without time zone")]
+    public DateTime? ExpirationDate { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 

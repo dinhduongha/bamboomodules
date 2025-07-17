@@ -17,14 +17,15 @@ public partial class MaintenanceEquipmentCategory: FullAuditedEntity<Guid>, IEnt
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("technician_user_id")]
     public Guid? TechnicianUserId { get; set; }
@@ -43,6 +44,9 @@ public partial class MaintenanceEquipmentCategory: FullAuditedEntity<Guid>, IEnt
 
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
+
+    [Column("equipment_properties_definition", TypeName = "jsonb")]
+    public string? EquipmentPropertiesDefinition { get; set; }
 
     [Column("fold")]
     public bool? Fold { get; set; }
@@ -85,11 +89,11 @@ public partial class MaintenanceEquipmentCategory: FullAuditedEntity<Guid>, IEnt
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } = new List<MaintenanceEquipment>();
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
 
 
 }

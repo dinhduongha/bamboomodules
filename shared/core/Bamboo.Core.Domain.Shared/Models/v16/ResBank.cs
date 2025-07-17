@@ -18,6 +18,9 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModif
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("state")]
     public Guid? State { get; set; }
 
@@ -83,8 +86,9 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModif
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Bank")]
     [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; } = new List<ResPartnerBank>();
+    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } = new List<ResPartnerBank>();
 
 }

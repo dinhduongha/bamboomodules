@@ -47,21 +47,21 @@ public partial class FleetServiceType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("CostSubtype")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractsNavigation { get; set; } = new List<FleetVehicleLogContract>();
+
+    //[InverseProperty("ServiceType")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } = new List<FleetVehicleLogService>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FleetServiceTypeWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("CostSubtype")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractsNavigation { get; } = new List<FleetVehicleLogContract>();
-
-    //[InverseProperty("ServiceType")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; } = new List<FleetVehicleLogService>();
-
     [ForeignKey("FleetServiceTypeId")]
     //[InverseProperty("FleetServiceTypes")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } = new List<FleetVehicleLogContract>();
 }

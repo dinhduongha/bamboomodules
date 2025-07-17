@@ -17,11 +17,11 @@ public partial class AccountReportExternalValue: FullAuditedEntity<Guid>, IEntit
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("target_report_expression_id")]
-    public Guid? TargetReportExpressionId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("target_report_expression_id")]
+    public Guid? TargetReportExpressionId { get; set; }
 
     [Column("foreign_vat_fiscal_position_id")]
     public Guid? ForeignVatFiscalPositionId { get; set; }
@@ -37,6 +37,9 @@ public partial class AccountReportExternalValue: FullAuditedEntity<Guid>, IEntit
 
     [Column("name")]
     public string? Name { get; set; }
+
+    [Column("text_value")]
+    public string? TextValue { get; set; }
 
     [Column("carryover_origin_expression_label")]
     public string? CarryoverOriginExpressionLabel { get; set; }

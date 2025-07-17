@@ -41,6 +41,12 @@ public partial class CalendarProviderConfig : FullAuditedEntity<Guid>, IEntityDt
     [Column("microsoft_outlook_client_secret")]
     public string? MicrosoftOutlookClientSecret { get; set; }
 
+    [Column("cal_sync_paused")]
+    public bool? CalSyncPaused { get; set; }
+
+    [Column("microsoft_outlook_sync_paused")]
+    public bool? MicrosoftOutlookSyncPaused { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 

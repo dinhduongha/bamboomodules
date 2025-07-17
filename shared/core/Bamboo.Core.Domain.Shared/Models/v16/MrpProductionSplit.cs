@@ -67,6 +67,6 @@ public partial class MrpProductionSplit : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("MrpProductionSplit")]
     [NotMapped]
-    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLines { get; } = new List<MrpProductionSplitLine>();
+    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLines { get; set; } = new List<MrpProductionSplitLine>();
 
 }

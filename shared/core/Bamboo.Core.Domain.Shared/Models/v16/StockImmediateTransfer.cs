@@ -51,10 +51,10 @@ public partial class StockImmediateTransfer : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("ImmediateTransfer")]
     [NotMapped]
-    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLines { get; } = new List<StockImmediateTransferLine>();
+    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLines { get; set; } = new List<StockImmediateTransferLine>();
 
     [ForeignKey("StockImmediateTransferId")]
     //[InverseProperty("StockImmediateTransfers")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 }

@@ -51,6 +51,6 @@ public partial class MrpWorkcenterProductivityLossType : FullAuditedEntity<Guid>
 
     //[InverseProperty("Loss")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivityLoss> MrpWorkcenterProductivityLosses { get; } = new List<MrpWorkcenterProductivityLoss>();
+    public virtual ICollection<MrpWorkcenterProductivityLoss> MrpWorkcenterProductivityLosses { get; set; } = new List<MrpWorkcenterProductivityLoss>();
 
 }

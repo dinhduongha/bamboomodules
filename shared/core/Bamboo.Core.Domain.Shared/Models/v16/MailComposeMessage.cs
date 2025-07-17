@@ -19,7 +19,7 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
 
@@ -29,6 +29,16 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
 
+    [Column("res_domain_user_id")]
+    public Guid? ResDomainUserId { get; set; }
+
+    [Column("record_alias_domain_id")]
+    public Guid? RecordAliasDomainId { get; set; }
+
+    [Column("record_company_id")]
+    public Guid? RecordCompanyId { get; set; }
+
+    // v16-Compat
     [Column("res_id")]
     public Guid? ResId { get; set; }
 
@@ -74,21 +84,37 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("reply_to")]
     public string? ReplyTo { get; set; }
 
+    [Column("scheduled_date")]
+    public string? ScheduledDate { get; set; }
+
+    [Column("template_name")]
+    public string? TemplateName { get; set; }
+
     [Column("body")]
     public string? Body { get; set; }
 
+    [Column("res_ids")]
+    public string? ResIds { get; set; }
+
+    [Column("res_domain")]
+    public string? ResDomain { get; set; }
+
+    // v16-Compat
     [Column("active_domain")]
     public string? ActiveDomain { get; set; }
 
     [Column("email_add_signature")]
     public bool? EmailAddSignature { get; set; }
 
+    // v16-Compat
     [Column("use_active_domain")]
     public bool? UseActiveDomain { get; set; }
 
+    // v16-Compat
     [Column("is_log")]
     public bool? IsLog { get; set; }
 
+    // v16-Compat
     [Column("notify")]
     public bool? Notify { get; set; }
 
@@ -98,6 +124,16 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("auto_delete")]
     public bool? AutoDelete { get; set; }
 
+    [Column("auto_delete_keep_log")]
+    public bool? AutoDeleteKeepLog { get; set; }
+
+    [Column("force_send")]
+    public bool? ForceSend { get; set; }
+
+    [Column("use_exclusion_list")]
+    public bool? UseExclusionList { get; set; }
+
+    // v16-Compat
     [Column("auto_delete_message")]
     public bool? AutoDeleteMessage { get; set; }
 
@@ -107,10 +143,24 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("mass_mailing_id")]
+    public Guid? MassMailingId { get; set; }
+
+    [Column("campaign_id")]
+    public Guid? CampaignId { get; set; }
+
+    [Column("mass_mailing_name")]
+    public string? MassMailingName { get; set; }
+
     [ForeignKey("AuthorId")]
     //[InverseProperty("MailComposeMessages")]
     [NotMapped]
     public virtual ResPartner? Author { get; set; }
+
+    [ForeignKey("CampaignId")]
+    //[InverseProperty("MailComposeMessages")]
+    [NotMapped]
+    public virtual UtmCampaign? Campaign { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("MailComposeMessageCreateUs")]
@@ -149,15 +199,15 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Composer")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } = new List<AccountInvoiceSend>();
 
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
 
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
 }

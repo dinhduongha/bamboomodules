@@ -21,11 +21,11 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("product_id")]
-    public Guid? ProductId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("product_id")]
+    public Guid? ProductId { get; set; }
 
     [Column("location_id")]
     public Guid? LocationId { get; set; }
@@ -134,30 +134,35 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("StockQuantId")]
     //[InverseProperty("StockQuants")]
     [NotMapped]
-    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentNames { get; } = new List<StockInventoryAdjustmentName>();
+    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentNames { get; set; } = new List<StockInventoryAdjustmentName>();
 
     [ForeignKey("StockQuantId")]
     //[InverseProperty("StockQuants")]
     [NotMapped]
-    public virtual ICollection<StockInventoryConflict> StockInventoryConflicts { get; } = new List<StockInventoryConflict>();
+    public virtual ICollection<StockInventoryConflict> StockInventoryConflicts { get; set; } = new List<StockInventoryConflict>();
 
     [ForeignKey("StockQuantId")]
     //[InverseProperty("StockQuantsNavigation")]
     [NotMapped]
-    public virtual ICollection<StockInventoryConflict> StockInventoryConflictsNavigation { get; } = new List<StockInventoryConflict>();
+    public virtual ICollection<StockInventoryConflict> StockInventoryConflictsNavigation { get; set; } = new List<StockInventoryConflict>();
 
     [ForeignKey("StockQuantId")]
     //[InverseProperty("StockQuants")]
     [NotMapped]
-    public virtual ICollection<StockInventoryWarning> StockInventoryWarnings { get; } = new List<StockInventoryWarning>();
+    public virtual ICollection<StockInventoryWarning> StockInventoryWarnings { get; set; } = new List<StockInventoryWarning>();
 
     [ForeignKey("StockQuantId")]
     //[InverseProperty("StockQuants")]
     [NotMapped]
-    public virtual ICollection<StockRequestCount> StockRequestCounts { get; } = new List<StockRequestCount>();
+    public virtual ICollection<StockQuantRelocate> StockQuantRelocates { get; set; } = new List<StockQuantRelocate>();
 
     [ForeignKey("StockQuantId")]
     //[InverseProperty("StockQuants")]
     [NotMapped]
-    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmations { get; } = new List<StockTrackConfirmation>();
+    public virtual ICollection<StockRequestCount> StockRequestCounts { get; set; } = new List<StockRequestCount>();
+
+    [ForeignKey("StockQuantId")]
+    //[InverseProperty("StockQuants")]
+    [NotMapped]
+    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmations { get; set; } = new List<StockTrackConfirmation>();
 }

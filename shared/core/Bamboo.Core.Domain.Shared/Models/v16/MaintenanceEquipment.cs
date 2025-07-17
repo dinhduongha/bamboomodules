@@ -18,14 +18,27 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
+    [Column("maintenance_team_id")]
+    public Guid? MaintenanceTeamId { get; set; }
+
     [Column("technician_user_id")]
     public Guid? TechnicianUserId { get; set; }
+
+    [Column("maintenance_count")]
+    public long? MaintenanceCount { get; set; }
+
+    [Column("maintenance_open_count")]
+    public long? MaintenanceOpenCount { get; set; }
+
+    [Column("expected_mtbf")]
+    public long? ExpectedMtbf { get; set; }
 
     [Column("owner_user_id")]
     public Guid? OwnerUserId { get; set; }
@@ -39,17 +52,21 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("color")]
     public long? Color { get; set; }
 
-    [Column("maintenance_count")]
-    public long? MaintenanceCount { get; set; }
+    // v16-Compat
+    // [Column("maintenance_count")]
+    // public long? MaintenanceCount { get; set; }
 
-    [Column("maintenance_open_count")]
-    public long? MaintenanceOpenCount { get; set; }
+    // v16-Compat
+    // [Column("maintenance_open_count")]
+    // public long? MaintenanceOpenCount { get; set; }
 
+    // v16-Compat
     [Column("period")]
     public long? Period { get; set; }
 
-    [Column("maintenance_team_id")]
-    public Guid? MaintenanceTeamId { get; set; }
+    // v16-Compat
+    // [Column("maintenance_team_id")]
+    // public Guid? MaintenanceTeamId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -69,11 +86,14 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("serial_no")]
     public string? SerialNo { get; set; }
 
+    [Column("effective_date")]
+    public DateTime? EffectiveDate { get; set; }
+
     [Column("assign_date")]
     public DateTime? AssignDate { get; set; }
 
-    [Column("effective_date")]
-    public DateTime? EffectiveDate { get; set; }
+    // [Column("effective_date")]
+    // public DateTime? EffectiveDate { get; set; }
 
     [Column("warranty_date")]
     public DateTime? WarrantyDate { get; set; }
@@ -86,6 +106,9 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("equipment_properties", TypeName = "jsonb")]
+    public string? EquipmentProperties { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
@@ -102,6 +125,7 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("cost")]
     public double? Cost { get; set; }
 
+    // v16-Compat
     [Column("maintenance_duration")]
     public double? MaintenanceDuration { get; set; }
 
@@ -171,7 +195,7 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Equipment")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
 
 
 }

@@ -20,11 +20,11 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("resource_id")]
-    public Guid? ResourceId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("resource_id")]
+    public Guid? ResourceId { get; set; }
 
     [Column("resource_calendar_id")]
     public Guid? ResourceCalendarId { get; set; }
@@ -80,6 +80,13 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("oee_target")]
     public double? OeeTarget { get; set; }
 
+    [Column("expense_account_id")]
+    public Guid? ExpenseAccountId { get; set; }
+
+    [Column("analytic_distribution", TypeName = "jsonb")]
+    public string? AnalyticDistribution { get; set; }
+
+    // v16-Compat
     [Column("costs_hour_account_id")]
     public Guid? CostsHourAccountId { get; set; }
 
@@ -115,32 +122,32 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } = new List<MrpRoutingWorkcenter>();
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacities { get; } = new List<MrpWorkcenterCapacity>();
+    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacities { get; set; } = new List<MrpWorkcenterCapacity>();
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } = new List<MrpWorkcenterProductivity>();
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
 
     [ForeignKey("WorkcenterId")]
     //[InverseProperty("Workcenters")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> AlternativeWorkcenters { get; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> AlternativeWorkcenters { get; set; } = new List<MrpWorkcenter>();
 
     [ForeignKey("MrpWorkcenterId")]
     //[InverseProperty("MrpWorkcenters")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTags { get; } = new List<MrpWorkcenterTag>();
+    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTags { get; set; } = new List<MrpWorkcenterTag>();
 
     [ForeignKey("AlternativeWorkcenterId")]
     //[InverseProperty("AlternativeWorkcenters")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> Workcenters { get; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> Workcenters { get; set; } = new List<MrpWorkcenter>();
 }

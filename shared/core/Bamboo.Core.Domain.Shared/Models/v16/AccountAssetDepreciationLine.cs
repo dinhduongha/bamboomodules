@@ -64,6 +64,7 @@ public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEn
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }

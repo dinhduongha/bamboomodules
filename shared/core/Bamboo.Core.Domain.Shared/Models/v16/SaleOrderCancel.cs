@@ -42,6 +42,7 @@ public partial class SaleOrderCancel : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("subject")]
     public string? Subject { get; set; }
 
+    // v16-Compat
     [Column("email_from")]
     public string? EmailFrom { get; set; }
 
@@ -54,6 +55,7 @@ public partial class SaleOrderCancel : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }

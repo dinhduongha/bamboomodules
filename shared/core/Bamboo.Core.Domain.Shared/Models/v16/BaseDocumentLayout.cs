@@ -35,6 +35,9 @@ public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("from_invoice")]
+    public bool? FromInvoice { get; set; }
+
     [ForeignKey("TenantId")]
     //[InverseProperty("BaseDocumentLayouts")]
     [NotMapped]

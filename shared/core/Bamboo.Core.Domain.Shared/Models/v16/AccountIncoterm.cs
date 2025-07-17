@@ -41,6 +41,11 @@ public partial class AccountIncoterm : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("InvoiceIncoterm")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -50,25 +55,20 @@ public partial class AccountIncoterm : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Incoterm")]
+    [NotMapped]
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+
+    //[InverseProperty("Incoterm")]
+    [NotMapped]
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+
+    //[InverseProperty("IncotermNavigation")]
+    [NotMapped]
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountIncotermWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("InvoiceIncoterm")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
-
-    //[InverseProperty("Incoterm")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; } = new List<PurchaseOrder>();
-
-    //[InverseProperty("Incoterm")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
-
-    //[InverseProperty("IncotermNavigation")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
-
 }

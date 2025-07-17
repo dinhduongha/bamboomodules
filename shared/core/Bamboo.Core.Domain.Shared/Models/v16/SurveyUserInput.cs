@@ -22,6 +22,10 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("survey_id")]
     public Guid? SurveyId { get; set; }
 
@@ -129,6 +133,12 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     //[InverseProperty("SurveyUserInputWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     [ForeignKey("SurveyUserInputId")]
     //[InverseProperty("SurveyUserInputs")]

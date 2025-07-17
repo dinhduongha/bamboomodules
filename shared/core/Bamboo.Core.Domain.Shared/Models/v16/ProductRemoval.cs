@@ -26,10 +26,12 @@ public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    [Column("method")]
+    //[Column("method")]
+    [Column("method", TypeName = "jsonb")]
     public string? Method { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
@@ -54,10 +56,10 @@ public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("RemovalStrategy")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> ProductCategories { get; } = new List<ProductCategory>();
+    public virtual ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
 
     //[InverseProperty("RemovalStrategy")]
     [NotMapped]
-    public virtual ICollection<StockLocation> StockLocations { get; } = new List<StockLocation>();
+    public virtual ICollection<StockLocation> StockLocations { get; set; } = new List<StockLocation>();
 
 }

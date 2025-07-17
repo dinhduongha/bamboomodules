@@ -35,6 +35,12 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    [Column("profit_account_id", TypeName = "jsonb")]
+    public string? ProfitAccountId { get; set; }
+
+    [Column("loss_account_id", TypeName = "jsonb")]
+    public string? LossAccountId { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -44,6 +50,11 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("rounding")]
     public double? Rounding { get; set; }
 
+    //[InverseProperty("InvoiceCashRounding")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -53,17 +64,12 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("RoundingMethodNavigation")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountCashRoundingWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("InvoiceCashRounding")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
-
-    //[InverseProperty("RoundingMethodNavigation")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
-
 }

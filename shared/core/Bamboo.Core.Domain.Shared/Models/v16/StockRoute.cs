@@ -18,6 +18,9 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("sequence")]
     public long Sequence { get; set; }
 
@@ -26,9 +29,6 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("supplier_wh_id")]
     public Guid? SupplierWhId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -63,6 +63,9 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("sale_selectable")]
     public bool? SaleSelectable { get; set; }
 
+    [Column("shipping_selectable")]
+    public bool? ShippingSelectable { get; set; }
+
     [ForeignKey("TenantId")]
     //[InverseProperty("StockRoutes")]
     [NotMapped]
@@ -90,72 +93,72 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; } = new List<StockReplenishmentOption>();
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } = new List<StockReplenishmentOption>();
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRules { get; set; } = new List<StockRule>();
 
     //[InverseProperty("CrossdockRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoutes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoutes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("DeliveryRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoutes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoutes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
 
     //[InverseProperty("PbmRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmRoutes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmRoutes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("ReceptionRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoutes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoutes { get; set; } = new List<StockWarehouse>();
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> Categs { get; } = new List<ProductCategory>();
+    public virtual ICollection<ProductCategory> Categs { get; set; } = new List<ProductCategory>();
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<StockMove> Moves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> Moves { get; set; } = new List<StockMove>();
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<ProductPackaging> Packagings { get; } = new List<ProductPackaging>();
+    public virtual ICollection<ProductPackaging> Packagings { get; set; } = new List<ProductPackaging>();
 
     [ForeignKey("StockRouteId")]
     //[InverseProperty("StockRoutes")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; } = new List<ProductReplenish>();
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> Products { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> Products { get; set; } = new List<ProductTemplate>();
 
     [ForeignKey("StockRouteId")]
     //[InverseProperty("StockRoutes")]
     [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; } = new List<StockRulesReport>();
+    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } = new List<StockRulesReport>();
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> Warehouses { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> Warehouses { get; set; } = new List<StockWarehouse>();
 }

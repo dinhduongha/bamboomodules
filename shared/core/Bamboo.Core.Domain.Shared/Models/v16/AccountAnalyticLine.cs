@@ -21,11 +21,14 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("product_uom_id")]
-    public Guid? ProductUomId { get; set; }
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
+
+    [Column("product_uom_id")]
+    public Guid? ProductUomId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -33,12 +36,10 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
+    // v16-Compat
     [Column("plan_id")]
     public Guid? PlanId { get; set; }
 
@@ -68,6 +69,12 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("unit_amount")]
     public double? UnitAmount { get; set; }
+
+    [Column("x_plan2_id")]
+    public Guid? XPlan2Id { get; set; }
+
+    [Column("x_plan3_id")]
+    public Guid? XPlan3Id { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -162,14 +169,14 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("MoAnalyticAccountLine")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLines { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLines { get; set; } = new List<MrpWorkorder>();
 
     //[InverseProperty("WcAnalyticAccountLine")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLines { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLines { get; set; } = new List<MrpWorkorder>();
 
     //[InverseProperty("AnalyticAccountLine")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
 }

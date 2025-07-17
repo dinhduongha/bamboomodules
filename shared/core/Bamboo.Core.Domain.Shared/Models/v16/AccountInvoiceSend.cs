@@ -76,10 +76,10 @@ public partial class AccountInvoiceSend : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("InvoiceSend")]
     [NotMapped]
-    public virtual ICollection<SnailmailConfirmInvoice> SnailmailConfirmInvoices { get; } = new List<SnailmailConfirmInvoice>();
+    public virtual ICollection<SnailmailConfirmInvoice> SnailmailConfirmInvoices { get; set; } = new List<SnailmailConfirmInvoice>();
 
     [ForeignKey("AccountInvoiceSendId")]
     //[InverseProperty("AccountInvoiceSends")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 }

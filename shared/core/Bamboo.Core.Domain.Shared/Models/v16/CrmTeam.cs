@@ -18,14 +18,15 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -51,11 +52,13 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [Column("use_quotations")]
     public bool? UseQuotations { get; set; }
 
-    [Column("invoiced_target")]
-    public double? InvoicedTarget { get; set; }
+    // v16-Compat
+    // [Column("invoiced_target")]
+    // public double? InvoicedTarget { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }
@@ -74,6 +77,13 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("assignment_optout")]
     public bool? AssignmentOptout { get; set; }
+
+    [Column("invoiced_target")]
+    public double? InvoicedTarget { get; set; }
+
+    //[InverseProperty("Team")]
+    // [NotMapped]
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     [ForeignKey("AliasId")]
     //[InverseProperty("CrmTeams")]
@@ -107,70 +117,70 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } = new List<CrmIapLeadMiningRequest>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } = new List<CrmLead2opportunityPartnerMass>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } = new List<CrmLead2opportunityPartner>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencies { get; } = new List<CrmLeadScoringFrequency>();
+    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencies { get; set; } = new List<CrmLeadScoringFrequency>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunities { get; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunities { get; set; } = new List<CrmMergeOpportunity>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmStage> CrmStages { get; } = new List<CrmStage>();
+    public virtual ICollection<CrmStage> CrmStages { get; set; } = new List<CrmStage>();
 
     //[InverseProperty("CrmTeam")]
     [NotMapped]
-    public virtual ICollection<CrmTeamMember> CrmTeamMembers { get; } = new List<CrmTeamMember>();
+    public virtual ICollection<CrmTeamMember> CrmTeamMembers { get; set; } = new List<CrmTeamMember>();
 
     //[InverseProperty("CrmTeam")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("CrmTeam")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 
     //[InverseProperty("SaleTeam")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     //[InverseProperty("CrmDefaultTeam")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteCrmDefaultTeams { get; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteCrmDefaultTeams { get; set; } = new List<Website>();
 
     //[InverseProperty("Salesteam")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteSalesteams { get; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteSalesteams { get; set; } = new List<Website>();
 
     [ForeignKey("TeamId")]
     //[InverseProperty("Teams")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
 }

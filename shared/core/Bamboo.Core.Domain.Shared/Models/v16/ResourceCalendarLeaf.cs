@@ -70,24 +70,23 @@ public partial class ResourceCalendarLeaf: FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    [ForeignKey("HolidayId")]
-    //[InverseProperty("ResourceCalendarLeaves")]
-    [NotMapped]
-    public virtual HrLeave? Holiday { get; set; }
-
-    [ForeignKey("ResourceId")]
-    //[InverseProperty("ResourceCalendarLeaves")]
-    [NotMapped]
-    public virtual ResourceResource? Resource { get; set; }
-
     [ForeignKey("LastModifierId")]
     //[InverseProperty("ResourceCalendarLeafWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    [ForeignKey("HolidayId")]
+    //[InverseProperty("ResourceCalendarLeaves")]
+    [NotMapped]
+    public virtual HrLeave? Holiday { get; set; }
+
     //[InverseProperty("Leave")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
 
+    [ForeignKey("ResourceId")]
+    //[InverseProperty("ResourceCalendarLeaves")]
+    [NotMapped]
+    public virtual ResourceResource? Resource { get; set; }
 
 }

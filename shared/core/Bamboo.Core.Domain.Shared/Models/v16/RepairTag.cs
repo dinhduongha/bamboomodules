@@ -52,5 +52,5 @@ public partial class RepairTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("RepairTagsId")]
     //[InverseProperty("RepairTags")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 }

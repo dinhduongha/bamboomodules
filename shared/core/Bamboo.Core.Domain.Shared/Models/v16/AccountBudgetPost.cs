@@ -45,18 +45,17 @@ public partial class AccountBudgetPost: FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("GeneralBudget")]
+    [NotMapped]
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } = new List<CrossoveredBudgetLine>();
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountBudgetPostWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("GeneralBudget")]
-    [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; } = new List<CrossoveredBudgetLine>();
-
     [ForeignKey("BudgetId")]
     //[InverseProperty("Budgets")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> Accounts { get; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> Accounts { get; set; } = new List<AccountAccount>();
 }

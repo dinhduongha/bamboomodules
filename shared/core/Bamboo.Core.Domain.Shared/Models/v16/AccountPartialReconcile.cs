@@ -19,6 +19,9 @@ public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDt
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("debit_move_id")]
     public Guid? DebitMoveId { get; set; }
 
@@ -36,9 +39,6 @@ public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("credit_currency_id")]
     public Guid? CreditCurrencyId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -63,6 +63,10 @@ public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    //[InverseProperty("TaxCashBasisRec")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountPartialReconciles")]
@@ -108,10 +112,4 @@ public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDt
     //[InverseProperty("AccountPartialReconcileWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("TaxCashBasisRec")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
-
-
 }

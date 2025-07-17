@@ -19,6 +19,9 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
@@ -30,9 +33,6 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -61,8 +61,30 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("has_iban_warning")]
+    public bool? HasIbanWarning { get; set; }
+
+    [Column("has_money_transfer_warning")]
+    public bool? HasMoneyTransferWarning { get; set; }
+
+    [Column("proxy_type")]
+    public string? ProxyType { get; set; }
+
+    [Column("proxy_value")]
+    public string? ProxyValue { get; set; }
+
+    [Column("include_reference")]
+    public bool? IncludeReference { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("ResPartnerBanks")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     [ForeignKey("BankId")]
     //[InverseProperty("ResPartnerBanks")]
@@ -84,11 +106,6 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
 
-    [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("ResPartnerBanks")]
-    [NotMapped]
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
     [ForeignKey("PartnerId")]
     //[InverseProperty("ResPartnerBanks")]
     [NotMapped]
@@ -99,28 +116,28 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("BankAccount")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
-
-    //[InverseProperty("BankAccount")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     //[InverseProperty("PartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("PartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } = new List<AccountPaymentRegister>();
 
     //[InverseProperty("PartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("ResPartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigs { get; } = new List<AccountSetupBankManualConfig>();
+    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigs { get; set; } = new List<AccountSetupBankManualConfig>();
 
+    //[InverseProperty("BankAccount")]
+    [NotMapped]
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 }

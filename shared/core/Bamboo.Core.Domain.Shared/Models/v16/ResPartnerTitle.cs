@@ -39,6 +39,7 @@ public partial class ResPartnerTitle : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -53,12 +54,16 @@ public partial class ResPartnerTitle : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("TitleNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
+    //[InverseProperty("Title")]
+    [NotMapped]
+    public virtual ICollection<MailingContact> MailingContacts { get; set; } = new List<MailingContact>();
 
     //[InverseProperty("TitleNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
-
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

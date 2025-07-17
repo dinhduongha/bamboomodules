@@ -32,6 +32,9 @@ public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("location_type")]
+    public string? LocationType { get; set; }
+
     [Column("location_number")]
     public string? LocationNumber { get; set; }
 
@@ -66,6 +69,6 @@ public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("WorkLocation")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 
 }

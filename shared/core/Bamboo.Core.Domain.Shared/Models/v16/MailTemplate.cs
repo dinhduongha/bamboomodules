@@ -20,10 +20,14 @@ public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
+    // v16-Compat
     [Column("report_template")]
     public Guid? ReportTemplate { get; set; }
 
@@ -63,6 +67,9 @@ public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("reply_to")]
     public string? ReplyTo { get; set; }
 
+    [Column("email_layout_xmlid")]
+    public string? EmailLayoutXmlid { get; set; }
+
     [Column("scheduled_date")]
     public string? ScheduledDate { get; set; }
 
@@ -78,6 +85,7 @@ public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("body_html", TypeName = "jsonb")]
     public string? BodyHtml { get; set; }
 
+    // v16-Compat
     [Column("report_name", TypeName = "jsonb")]
     public string? ReportName { get; set; }
 
@@ -128,88 +136,88 @@ public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } = new List<AccountInvoiceSend>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; } = new List<ApplicantGetRefuseReason>();
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } = new List<ApplicantGetRefuseReason>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; } = new List<ApplicantSendMail>();
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } = new List<ApplicantSendMail>();
 
     //[InverseProperty("MailTemplate")]
     [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; } = new List<CalendarAlarm>();
+    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; set; } = new List<CalendarAlarm>();
 
     //[InverseProperty("EmailTemplate")]
     [NotMapped]
-    public virtual ICollection<FollowupLine> FollowupLines { get; } = new List<FollowupLine>();
+    public virtual ICollection<FollowupLine> FollowupLines { get; set; } = new List<FollowupLine>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReasons { get; } = new List<HrApplicantRefuseReason>();
+    public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReasons { get; set; } = new List<HrApplicantRefuseReason>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; } = new List<HrRecruitmentStage>();
+    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; set; } = new List<HrRecruitmentStage>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
 
     //[InverseProperty("MailTemplate")]
     [NotMapped]
-    public virtual ICollection<MailTemplatePreview> MailTemplatePreviews { get; } = new List<MailTemplatePreview>();
+    public virtual ICollection<MailTemplatePreview> MailTemplatePreviews { get; set; } = new List<MailTemplatePreview>();
 
     //[InverseProperty("MailTemplate")]
     [NotMapped]
-    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; } = new List<ProjectProjectStage>();
+    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; set; } = new List<ProjectProjectStage>();
 
     //[InverseProperty("MailTemplate")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypeMailTemplates { get; } = new List<ProjectTaskType>();
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypeMailTemplates { get; set; } = new List<ProjectTaskType>();
 
     //[InverseProperty("RatingTemplate")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypeRatingTemplates { get; } = new List<ProjectTaskType>();
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypeRatingTemplates { get; set; } = new List<ProjectTaskType>();
 
     //[InverseProperty("StockMailConfirmationTemplate")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
     //[InverseProperty("InvoiceMailTemplate")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; } = new List<SaleOrderCancel>();
+    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; set; } = new List<SaleOrderCancel>();
 
     //[InverseProperty("MailTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplates { get; } = new List<SaleOrderTemplate>();
+    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplates { get; set; } = new List<SaleOrderTemplate>();
 
     //[InverseProperty("CartRecoveryMailTemplate")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
 
     [ForeignKey("EmailTemplateId")]
     //[InverseProperty("EmailTemplates")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
 
     [ForeignKey("MailTemplateId")]
     //[InverseProperty("MailTemplates")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> MailActivityTypes { get; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> MailActivityTypes { get; set; } = new List<MailActivityType>();
 
     [ForeignKey("MailTemplateId")]
     //[InverseProperty("MailTemplates")]
     [NotMapped]
-    public virtual ICollection<MailTemplateReset> MailTemplateResets { get; } = new List<MailTemplateReset>();
+    public virtual ICollection<MailTemplateReset> MailTemplateResets { get; set; } = new List<MailTemplateReset>();
 }

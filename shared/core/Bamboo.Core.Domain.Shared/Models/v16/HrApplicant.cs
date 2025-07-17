@@ -20,6 +20,9 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
 
@@ -32,6 +35,10 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
+    [Column("candidate_id")]
+    public Guid? CandidateId { get; set; }
+    
+    // v16-Compat
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
@@ -41,24 +48,24 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("last_stage_id")]
     public Guid? LastStageId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
     [Column("job_id")]
     public Guid? JobId { get; set; }
 
+    // v16-Compat
     [Column("type_id")]
     public Guid? TypeId { get; set; }
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
 
+    // v16-Compat
     [Column("color")]
     public long? Color { get; set; }
 
+    // v16-Compat
     [Column("emp_id")]
     public Guid? EmpId { get; set; }
 
@@ -74,9 +81,11 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("email_cc")]
     public string? EmailCc { get; set; }
 
+    // v16-Compat
     [Column("name")]
     public string? Name { get; set; }
 
+    // v16-Compat
     [Column("email_from")]
     public string? EmailFrom { get; set; }
 
@@ -89,24 +98,36 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("salary_expected_extra")]
     public string? SalaryExpectedExtra { get; set; }
 
+    // v16-Compat
     [Column("partner_name")]
     public string? PartnerName { get; set; }
 
+    // v16-Compat
     [Column("partner_phone")]
     public string? PartnerPhone { get; set; }
 
+    // v16-Compat
     [Column("partner_mobile")]
     public string? PartnerMobile { get; set; }
 
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
+    [Column("applicant_properties", TypeName = "jsonb")]
+    public string? ApplicantProperties { get; set; }
+
+    [Column("applicant_notes")]
+    public string? ApplicantNotes { get; set; }
+
+    // v16-Compat
     [Column("linkedin_profile")]
     public string? LinkedinProfile { get; set; }
 
+    // v16-Compat
     [Column("availability")]
     public DateTime? Availability { get; set; }
 
+    // v16-Compat
     [Column("description")]
     public string? Description { get; set; }
 
@@ -125,6 +146,9 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("date_last_stage_update", TypeName = "timestamp without time zone")]
     public DateTime? DateLastStageUpdate { get; set; }
 
+    [Column("refuse_date", TypeName = "timestamp without time zone")]
+    public DateTime? RefuseDate { get; set; }
+
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
@@ -140,10 +164,19 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("delay_close")]
     public double? DelayClose { get; set; }
 
+    //[InverseProperty("Applicant")]
+    // [NotMapped]
+    // public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+
     [ForeignKey("CampaignId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
     public virtual UtmCampaign? Campaign { get; set; }
+
+    [ForeignKey("CandidateId")]
+    //[InverseProperty("HrApplicants")]
+    [NotMapped]
+    public virtual HrCandidate? Candidate { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("HrApplicants")]
@@ -222,34 +255,34 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Applicant")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 
     //[InverseProperty("Applicant")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } = new List<HrApplicantSkill>();
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; } = new List<ApplicantGetRefuseReason>();
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } = new List<ApplicantGetRefuseReason>();
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; } = new List<ApplicantSendMail>();
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } = new List<ApplicantSendMail>();
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<HrApplicantCategory> HrApplicantCategories { get; } = new List<HrApplicantCategory>();
+    public virtual ICollection<HrApplicantCategory> HrApplicantCategories { get; set; } = new List<HrApplicantCategory>();
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkills { get; set; } = new List<HrSkill>();
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 }

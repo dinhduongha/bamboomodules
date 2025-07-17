@@ -20,7 +20,7 @@ public partial class FleetVehicleState : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -44,13 +44,12 @@ public partial class FleetVehicleState : FullAuditedEntity<Guid>, IEntityDto<Gui
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("State")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FleetVehicleStateWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("State")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; } = new List<FleetVehicle>();
-
 }

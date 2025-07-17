@@ -18,11 +18,11 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("sequence")]
-    public long? Sequence { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("redirect_form_view_id")]
     public Guid? RedirectFormViewId { get; set; }
@@ -54,12 +54,14 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("state")]
     public string? State { get; set; }
 
+    // v16-Compat
     [Column("module_state")]
     public string? ModuleState { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    // v16-Compat
     [Column("display_as", TypeName = "jsonb")]
     public string? DisplayAs { get; set; }
 
@@ -93,6 +95,7 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("allow_express_checkout")]
     public bool? AllowExpressCheckout { get; set; }
 
+    // v16-Compat
     [Column("fees_active")]
     public bool? FeesActive { get; set; }
 
@@ -102,15 +105,19 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [Column("fees_dom_fixed")]
     public double? FeesDomFixed { get; set; }
 
+    // v16-Compat
     [Column("fees_dom_var")]
     public double? FeesDomVar { get; set; }
 
+    // v16-Compat
     [Column("fees_int_fixed")]
     public double? FeesIntFixed { get; set; }
 
+    // v16-Compat
     [Column("fees_int_var")]
     public double? FeesIntVar { get; set; }
 
@@ -167,23 +174,23 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("PaymentProvider")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; } = new List<AccountPaymentMethodLine>();
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } = new List<AccountPaymentMethodLine>();
 
     //[InverseProperty("Provider")]
     [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; } = new List<PaymentToken>();
+    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } = new List<PaymentToken>();
 
     //[InverseProperty("Provider")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
 
     [ForeignKey("PaymentId")]
     //[InverseProperty("Payments")]
     [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
 
     [ForeignKey("PaymentProviderId")]
     //[InverseProperty("PaymentProviders")]
     [NotMapped]
-    public virtual ICollection<PaymentIcon> PaymentIcons { get; } = new List<PaymentIcon>();
+    public virtual ICollection<PaymentIcon> PaymentIcons { get; set; } = new List<PaymentIcon>();
 }

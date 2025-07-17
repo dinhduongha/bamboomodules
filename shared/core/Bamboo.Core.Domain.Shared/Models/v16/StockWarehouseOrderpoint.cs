@@ -20,6 +20,9 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("warehouse_id")]
     public Guid? WarehouseId { get; set; }
 
@@ -34,9 +37,6 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("route_id")]
     public Guid? RouteId { get; set; }
@@ -65,8 +65,12 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [Column("qty_multiple")]
     public decimal? QtyMultiple { get; set; }
 
+    // v16-Compat
     [Column("qty_to_order")]
     public decimal? QtyToOrder { get; set; }
+
+    [Column("qty_to_order_manual")]
+    public decimal? QtyToOrderManual { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -82,6 +86,9 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
 
     [Column("vendor_id")]
     public Guid? VendorId { get; set; }
+
+    [Column("product_supplier_id")]
+    public Guid? ProductSupplierId { get; set; }
 
     [Column("purchase_visibility_days")]
     public double? PurchaseVisibilityDays { get; set; }
@@ -127,6 +134,11 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [NotMapped]
     public virtual ProductCategory? ProductCategory { get; set; }
 
+    [ForeignKey("ProductSupplierId")]
+    //[InverseProperty("StockWarehouseOrderpointProductSuppliers")]
+    [NotMapped]
+    public virtual ResPartner? ProductSupplier { get; set; }
+
     [ForeignKey("RouteId")]
     //[InverseProperty("StockWarehouseOrderpoints")]
     [NotMapped]
@@ -137,8 +149,10 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [NotMapped]
     public virtual ProductSupplierinfo? Supplier { get; set; }
 
+    // v16-Compat
     [ForeignKey("VendorId")]
     //[InverseProperty("StockWarehouseOrderpoints")]
+    //[InverseProperty("StockWarehouseOrderpointVendors")]
     [NotMapped]
     public virtual ResPartner? Vendor { get; set; }
 
@@ -154,22 +168,22 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; } = new List<StockReplenishmentInfo>();
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } = new List<StockReplenishmentInfo>();
 
     [ForeignKey("StockWarehouseOrderpointId")]
     //[InverseProperty("StockWarehouseOrderpoints")]
     [NotMapped]
-    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozes { get; } = new List<StockOrderpointSnooze>();
+    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozes { get; set; } = new List<StockOrderpointSnooze>();
 }

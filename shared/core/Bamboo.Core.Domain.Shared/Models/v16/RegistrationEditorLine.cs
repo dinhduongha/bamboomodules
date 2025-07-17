@@ -47,6 +47,9 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("phone")]
     public string? Phone { get; set; }
 
+    [Column("mobile")]
+    public string? Mobile { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
 

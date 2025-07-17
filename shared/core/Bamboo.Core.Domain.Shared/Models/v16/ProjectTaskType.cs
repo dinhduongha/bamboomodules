@@ -20,7 +20,7 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -42,15 +42,19 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    // v16-Compat
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    // v16-Compat
     [Column("legend_blocked", TypeName = "jsonb")]
     public string? LegendBlocked { get; set; }
 
+    // v16-Compat
     [Column("legend_done", TypeName = "jsonb")]
     public string? LegendDone { get; set; }
 
+    // v16-Compat
     [Column("legend_normal", TypeName = "jsonb")]
     public string? LegendNormal { get; set; }
 
@@ -60,6 +64,10 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("fold")]
     public bool? Fold { get; set; }
 
+    [Column("auto_validation_state")]
+    public bool? AutoValidationState { get; set; }
+
+    // v16-Compat
     [Column("auto_validation_kanban_state")]
     public bool? AutoValidationKanbanState { get; set; }
 
@@ -104,19 +112,19 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; } = new List<ProjectTaskUserRel>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } = new List<ProjectTaskUserRel>();
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
     [ForeignKey("ProjectTaskTypeId")]
     //[InverseProperty("ProjectTaskTypes")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; } = new List<ProjectTaskTypeDeleteWizard>();
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; set; } = new List<ProjectTaskTypeDeleteWizard>();
 
     [ForeignKey("TypeId")]
     //[InverseProperty("Types")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> Projects { get; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> Projects { get; set; } = new List<ProjectProject>();
 }

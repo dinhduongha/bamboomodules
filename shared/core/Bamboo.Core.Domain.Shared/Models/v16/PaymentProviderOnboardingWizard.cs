@@ -29,15 +29,18 @@ public partial class PaymentProviderOnboardingWizard : FullAuditedEntity<Guid>, 
     [Column("payment_method")]
     public string? PaymentMethod { get; set; }
 
+    // v16-Compat
     [Column("paypal_user_type")]
     public string? PaypalUserType { get; set; }
 
     [Column("paypal_email_account")]
     public string? PaypalEmailAccount { get; set; }
 
+    // v16-Compat
     [Column("paypal_seller_account")]
     public string? PaypalSellerAccount { get; set; }
 
+    // v16-Compat
     [Column("paypal_pdt_token")]
     public string? PaypalPdtToken { get; set; }
 
@@ -59,6 +62,7 @@ public partial class PaymentProviderOnboardingWizard : FullAuditedEntity<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }

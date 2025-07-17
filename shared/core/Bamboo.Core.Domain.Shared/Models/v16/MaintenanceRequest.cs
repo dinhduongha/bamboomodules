@@ -18,11 +18,12 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("owner_user_id")]
     public Guid? OwnerUserId { get; set; }
@@ -45,6 +46,9 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("maintenance_team_id")]
     public Guid? MaintenanceTeamId { get; set; }
 
+    [Column("repeat_interval")]
+    public long? RepeatInterval { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -66,17 +70,38 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("maintenance_type")]
     public string? MaintenanceType { get; set; }
 
+    [Column("instruction_type")]
+    public string? InstructionType { get; set; }
+
+    [Column("instruction_google_slide")]
+    public string? InstructionGoogleSlide { get; set; }
+
+    [Column("repeat_unit")]
+    public string? RepeatUnit { get; set; }
+
+    [Column("repeat_type")]
+    public string? RepeatType { get; set; }
+
     [Column("request_date")]
     public DateTime? RequestDate { get; set; }
 
     [Column("close_date")]
     public DateTime? CloseDate { get; set; }
 
+   [Column("repeat_until")]
+    public DateTime? RepeatUntil { get; set; }
+
     [Column("description")]
     public string? Description { get; set; }
 
+    [Column("instruction_text")]
+    public string? InstructionText { get; set; }
+
     [Column("archive")]
     public bool? Archive { get; set; }
+
+    [Column("recurring_maintenance")]
+    public bool? RecurringMaintenance { get; set; }
 
     [Column("schedule_date", TypeName = "timestamp without time zone")]
     public DateTime? ScheduleDate { get; set; }
@@ -123,6 +148,7 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [NotMapped]
     public virtual MaintenanceTeam? MaintenanceTeam { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("MaintenanceRequests")]
     [NotMapped]

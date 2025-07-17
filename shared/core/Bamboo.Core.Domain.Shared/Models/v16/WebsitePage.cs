@@ -43,11 +43,17 @@ public partial class WebsitePage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("header_color")]
     public string? HeaderColor { get; set; }
 
+    [Column("header_text_color")]
+    public string? HeaderTextColor { get; set; }
+
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
     [Column("website_indexed")]
     public bool? WebsiteIndexed { get; set; }
+
+    [Column("is_new_page_template")]
+    public bool? IsNewPageTemplate { get; set; }
 
     [Column("header_overlay")]
     public bool? HeaderOverlay { get; set; }
@@ -94,10 +100,10 @@ public partial class WebsitePage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Page")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } = new List<WebsiteMenu>();
 
     //[InverseProperty("Page")]
     [NotMapped]
-    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; } = new List<WebsiteTrack>();
+    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; set; } = new List<WebsiteTrack>();
 
 }

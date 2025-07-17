@@ -17,6 +17,9 @@ public partial class RecurringPaymentLine: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("recurring_payment_id")]
     public Guid? RecurringPaymentId { get; set; }
 
@@ -25,9 +28,6 @@ public partial class RecurringPaymentLine: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }

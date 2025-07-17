@@ -29,6 +29,12 @@ public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("force_post")]
     public bool? ForcePost { get; set; }
 
+    [Column("ignore_abnormal_date")]
+    public bool? IgnoreAbnormalDate { get; set; }
+
+    [Column("ignore_abnormal_amount")]
+    public bool? IgnoreAbnormalAmount { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -48,4 +54,9 @@ public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<G
     //[InverseProperty("ValidateAccountMoveWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("ValidateAccountMoveId")]
+    //[InverseProperty("ValidateAccountMoves")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 }

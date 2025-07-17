@@ -17,14 +17,15 @@ public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("responsible_id")]
     public Guid? ResponsibleId { get; set; }
@@ -141,18 +142,18 @@ public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Supplier")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrders { get; set; } = new List<LunchOrder>();
 
     //[InverseProperty("Supplier")]
     [NotMapped]
-    public virtual ICollection<LunchProduct> LunchProducts { get; } = new List<LunchProduct>();
+    public virtual ICollection<LunchProduct> LunchProducts { get; set; } = new List<LunchProduct>();
 
     //[InverseProperty("Supplier")]
     [NotMapped]
-    public virtual ICollection<LunchTopping> LunchToppings { get; } = new List<LunchTopping>();
+    public virtual ICollection<LunchTopping> LunchToppings { get; set; } = new List<LunchTopping>();
 
     [ForeignKey("LunchSupplierId")]
     //[InverseProperty("LunchSuppliers")]
     [NotMapped]
-    public virtual ICollection<LunchLocation> LunchLocations { get; } = new List<LunchLocation>();
+    public virtual ICollection<LunchLocation> LunchLocations { get; set; } = new List<LunchLocation>();
 }

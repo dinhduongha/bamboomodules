@@ -41,6 +41,9 @@ public partial class ThemeWebsitePage: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
+    [Column("is_new_page_template")]
+    public bool? IsNewPageTemplate { get; set; }
+
     [Column("header_overlay")]
     public bool? HeaderOverlay { get; set; }
 
@@ -73,10 +76,10 @@ public partial class ThemeWebsitePage: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Page")]
     [NotMapped]
-    public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenus { get; } = new List<ThemeWebsiteMenu>();
+    public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenus { get; set; } = new List<ThemeWebsiteMenu>();
 
     //[InverseProperty("ThemeTemplate")]
     [NotMapped]
-    public virtual ICollection<WebsitePage> WebsitePages { get; } = new List<WebsitePage>();
+    public virtual ICollection<WebsitePage> WebsitePages { get; set; } = new List<WebsitePage>();
 
 }

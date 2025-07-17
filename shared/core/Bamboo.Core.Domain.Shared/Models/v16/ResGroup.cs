@@ -49,6 +49,10 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("api_key_duration")]
+    public double? ApiKeyDuration { get; set; }
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -68,83 +72,84 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<DigestTip> DigestTips { get; } = new List<DigestTip>();
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<IrModelAccess> IrModelAccesses { get; } = new List<IrModelAccess>();
+    public virtual ICollection<DigestTip> DigestTips { get; set; } = new List<DigestTip>();
 
     //[InverseProperty("GroupPublic")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannels { get; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannels { get; set; } = new List<MailChannel>();
+
+    //[InverseProperty("Group")]
+    [NotMapped]
+    public virtual ICollection<IrModelAccess> IrModelAccesses { get; set; } = new List<IrModelAccess>();
 
     //[InverseProperty("GroupPosManager")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigGroupPosManagers { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigGroupPosManagers { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("GroupPosUser")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigGroupPosUsers { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigGroupPosUsers { get; set; } = new List<PosConfig>();
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrActServer> Acts { get; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> Acts { get; set; } = new List<IrActServer>();
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrActWindow> ActsNavigation { get; } = new List<IrActWindow>();
+    public virtual ICollection<IrActWindow> ActsNavigation { get; set; } = new List<IrActWindow>();
 
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]
     [NotMapped]
-    public virtual ICollection<IrModelField> Fields { get; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> Fields { get; set; } = new List<IrModelField>();
 
     [ForeignKey("Hid")]
     //[InverseProperty("Hids")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Hids { get; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Hids { get; set; } = new List<ResGroup>();
 
     [ForeignKey("ResGroupsId")]
     //[InverseProperty("ResGroups")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannelsNavigation { get; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannelsNavigation { get; set; } = new List<MailChannel>();
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrUiMenu> Menus { get; } = new List<IrUiMenu>();
+    public virtual ICollection<IrUiMenu> Menus { get; set; } = new List<IrUiMenu>();
 
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]
     [NotMapped]
-    public virtual ICollection<IrRule> RuleGroups { get; } = new List<IrRule>();
+    public virtual ICollection<IrRule> RuleGroups { get; set; } = new List<IrRule>();
 
     [ForeignKey("ResGroupsId")]
     //[InverseProperty("ResGroups")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; } = new List<SpreadsheetDashboard>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } = new List<SpreadsheetDashboard>();
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> Uids { get; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> Uids { get; set; } = new List<IrActReportXml>();
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<ResUser> UidsNavigation { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> UidsNavigation { get; set; } = new List<ResUser>();
 
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]
     [NotMapped]
-    public virtual ICollection<IrUiView> Views { get; } = new List<IrUiView>();
+    public virtual ICollection<IrUiView> Views { get; set; } = new List<IrUiView>();
 }

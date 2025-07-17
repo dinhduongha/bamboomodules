@@ -56,6 +56,9 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
 
+    [Column("sms_notify_responsible")]
+    public bool? SmsNotifyResponsible { get; set; }
+
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -83,5 +86,5 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("CalendarAlarmId")]
     //[InverseProperty("CalendarAlarms")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 }

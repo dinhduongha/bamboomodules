@@ -25,6 +25,9 @@ public partial class ProductTemplateAttributeLine : FullAuditedEntity<Guid>, IEn
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("attribute_id")]
     public Guid? AttributeId { get; set; }
 
@@ -72,10 +75,10 @@ public partial class ProductTemplateAttributeLine : FullAuditedEntity<Guid>, IEn
 
     //[InverseProperty("AttributeLine")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
 
     [ForeignKey("ProductTemplateAttributeLineId")]
     //[InverseProperty("ProductTemplateAttributeLines")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; } = new List<ProductAttributeValue>();
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; set; } = new List<ProductAttributeValue>();
 }

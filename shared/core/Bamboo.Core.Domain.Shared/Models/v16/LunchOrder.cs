@@ -20,6 +20,9 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
@@ -34,9 +37,6 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("lunch_location_id")]
     public Guid? LunchLocationId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -53,6 +53,7 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("date")]
     public DateTime? Date { get; set; }
 
+    // v16-Compat
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
@@ -128,5 +129,5 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("OrderId")]
     //[InverseProperty("Orders")]
     [NotMapped]
-    public virtual ICollection<LunchTopping> Toppings { get; } = new List<LunchTopping>();
+    public virtual ICollection<LunchTopping> Toppings { get; set; } = new List<LunchTopping>();
 }

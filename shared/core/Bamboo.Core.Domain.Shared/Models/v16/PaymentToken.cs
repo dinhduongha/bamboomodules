@@ -18,14 +18,17 @@ public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
 
+    [Column("payment_method_id")]
+    public Guid? PaymentMethodId { get; set; }
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -39,6 +42,7 @@ public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("provider_ref")]
     public string? ProviderRef { get; set; }
 
+    // v16-Compat
     [Column("verified")]
     public bool? Verified { get; set; }
 
@@ -78,14 +82,14 @@ public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("PaymentToken")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } = new List<AccountPaymentRegister>();
 
     //[InverseProperty("PaymentToken")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("Token")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
 
 }

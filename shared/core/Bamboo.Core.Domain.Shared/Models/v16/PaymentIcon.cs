@@ -55,5 +55,5 @@ public partial class PaymentIcon : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("PaymentIconId")]
     //[InverseProperty("PaymentIcons")]
     [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; } = new List<PaymentProvider>();
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
 }

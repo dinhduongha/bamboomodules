@@ -20,10 +20,14 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
+    [Column("alias_domain_id")]
+    public Guid? AliasDomainId { get; set; }
+
     [Column("alias_model_id")]
     public Guid? AliasModelId { get; set; }
 
+    // v16-Compat
     [Column("alias_user_id")]
     public Guid? AliasUserId { get; set; }
 
@@ -45,8 +49,14 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("alias_name")]
     public string? AliasName { get; set; }
 
+    [Column("alias_full_name")]
+    public string? AliasFullName { get; set; }
+
     [Column("alias_contact")]
     public string? AliasContact { get; set; }
+
+    [Column("alias_status")]
+    public string? AliasStatus { get; set; }
 
     [Column("alias_bounced_content", TypeName = "jsonb")]
     public string? AliasBouncedContent { get; set; }
@@ -54,11 +64,23 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("alias_defaults")]
     public string? AliasDefaults { get; set; }
 
+    [Column("alias_incoming_local")]
+    public bool? AliasIncomingLocal { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    //[InverseProperty("Alias")]
+    // [NotMapped]
+    // public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+
+    [ForeignKey("AliasDomainId")]
+    //[InverseProperty("MailAliases")]
+    [NotMapped]
+    public virtual MailAliasDomain? AliasDomain { get; set; }
 
     [ForeignKey("AliasModelId")]
     //[InverseProperty("MailAliasAliasModels")]
@@ -87,26 +109,26 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<CrmTeam> CrmTeams { get; } = new List<CrmTeam>();
+    public virtual ICollection<CrmTeam> CrmTeams { get; set; } = new List<CrmTeam>();
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } = new List<HrRecruitmentSource>();
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategories { get; } = new List<MaintenanceEquipmentCategory>();
+    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategories { get; set; } = new List<MaintenanceEquipmentCategory>();
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
 
 }

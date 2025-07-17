@@ -24,7 +24,7 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
 
@@ -61,14 +61,23 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("summary")]
     public string? Summary { get; set; }
 
+    [Column("user_tz")]
+    public string? UserTz { get; set; }
+
     [Column("date_deadline")]
     public DateTime? DateDeadline { get; set; }
+
+    [Column("date_done")]
+    public DateTime? DateDone { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
 
     [Column("automated")]
     public bool? Automated { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -79,6 +88,7 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("calendar_event_id")]
     public Guid? CalendarEventId { get; set; }
 
+    // v16-Compat
     [Column("note_id")]
     public Guid? NoteId { get; set; }
 
@@ -97,6 +107,7 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
     [ForeignKey("NoteId")]
     //[InverseProperty("MailActivities")]
     [NotMapped]
@@ -131,4 +142,9 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("MailActivityWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("ActivityId")]
+    //[InverseProperty("Activities")]
+    [NotMapped]
+    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
 }

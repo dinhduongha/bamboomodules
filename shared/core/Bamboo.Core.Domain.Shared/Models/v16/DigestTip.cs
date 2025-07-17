@@ -62,5 +62,5 @@ public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     [ForeignKey("DigestTipId")]
     //[InverseProperty("DigestTips")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 }

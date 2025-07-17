@@ -32,11 +32,11 @@ public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
-
     [Column("applicability")]
     public string? Applicability { get; set; }
+
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -50,6 +50,7 @@ public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -69,33 +70,35 @@ public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Gui
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } = new List<AccountAccountTemplate>();
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
+    // v16-Compat
+    [ForeignKey("AccountAccountTagId")]
+    //[InverseProperty("AccountAccountTags")]
+    [NotMapped]
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; } = new List<AccountTaxRepartitionLine>();
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; } = new List<AccountTaxRepartitionLine>();
-
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 }

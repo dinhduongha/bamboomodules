@@ -20,12 +20,14 @@ public partial class ProjectTaskRecurrence : FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("recurrence_left")]
     public long? RecurrenceLeft { get; set; }
 
     [Column("repeat_interval")]
     public long? RepeatInterval { get; set; }
 
+    // v16-Compat
     [Column("repeat_number")]
     public long? RepeatNumber { get; set; }
 
@@ -41,48 +43,62 @@ public partial class ProjectTaskRecurrence : FullAuditedEntity<Guid>, IEntityDto
     [Column("repeat_type")]
     public string? RepeatType { get; set; }
 
+    // v16-Compat
     [Column("repeat_on_month")]
     public string? RepeatOnMonth { get; set; }
 
+    // v16-Compat
     [Column("repeat_on_year")]
     public string? RepeatOnYear { get; set; }
 
+    // v16-Compat
     [Column("repeat_day")]
     public string? RepeatDay { get; set; }
 
+    // v16-Compat
     [Column("repeat_week")]
     public string? RepeatWeek { get; set; }
 
+    // v16-Compat
     [Column("repeat_weekday")]
     public string? RepeatWeekday { get; set; }
 
+    // v16-Compat
     [Column("repeat_month")]
     public string? RepeatMonth { get; set; }
 
+    // v16-Compat
     [Column("next_recurrence_date")]
     public DateTime? NextRecurrenceDate { get; set; }
 
     [Column("repeat_until")]
     public DateTime? RepeatUntil { get; set; }
 
+    // v16-Compat
     [Column("mon")]
     public bool? Mon { get; set; }
 
+    // v16-Compat
     [Column("tue")]
     public bool? Tue { get; set; }
 
+    // v16-Compat
     [Column("wed")]
     public bool? Wed { get; set; }
 
+    // v16-Compat
     [Column("thu")]
     public bool? Thu { get; set; }
 
+    // v16-Compat
     [Column("fri")]
     public bool? Fri { get; set; }
 
+    // v16-Compat
     [Column("sat")]
     public bool? Sat { get; set; }
 
+    // v16-Compat
     [Column("sun")]
     public bool? Sun { get; set; }
 
@@ -108,6 +124,6 @@ public partial class ProjectTaskRecurrence : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("Recurrence")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
 }

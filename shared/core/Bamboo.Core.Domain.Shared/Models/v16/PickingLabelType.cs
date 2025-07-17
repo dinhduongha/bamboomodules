@@ -52,5 +52,10 @@ public partial class PickingLabelType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("PickingLabelTypeId")]
     //[InverseProperty("PickingLabelTypes")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+
+    [ForeignKey("PickingLabelTypeId")]
+    //[InverseProperty("PickingLabelTypes")]
+    [NotMapped]
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 }

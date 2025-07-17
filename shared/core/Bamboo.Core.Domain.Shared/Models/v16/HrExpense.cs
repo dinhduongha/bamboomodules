@@ -18,6 +18,9 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -30,17 +33,17 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    [Column("sheet_id")]
+    public Guid? SheetId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
+    [Column("vendor_id")]
+    public Guid? VendorId { get; set; }
+
     [Column("account_id")]
     public Guid? AccountId { get; set; }
-
-    [Column("sheet_id")]
-    public Guid? SheetId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -51,11 +54,11 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("payment_mode")]
-    public string? PaymentMode { get; set; }
-
     [Column("state")]
     public string? State { get; set; }
+
+    [Column("payment_mode")]
+    public string? PaymentMode { get; set; }
 
     [Column("reference")]
     public string? Reference { get; set; }
@@ -84,8 +87,23 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("amount_tax_company")]
     public decimal? AmountTaxCompany { get; set; }
 
+    [Column("tax_amount_currency")]
+    public decimal? TaxAmountCurrency { get; set; }
+
+    [Column("tax_amount")]
+    public decimal? TaxAmount { get; set; }
+
+    [Column("total_amount_currency")]
+    public decimal? TotalAmountCurrency { get; set; }
+
+    [Column("untaxed_amount_currency")]
+    public decimal? UntaxedAmountCurrency { get; set; }
+
     [Column("total_amount")]
     public decimal? TotalAmount { get; set; }
+
+    [Column("price_unit")]
+    public decimal? PriceUnit { get; set; }
 
     [Column("untaxed_amount")]
     public decimal? UntaxedAmount { get; set; }
@@ -165,28 +183,28 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Expense")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("Expense")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizards { get; } = new List<HrExpenseSplitWizard>();
+    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizards { get; set; } = new List<HrExpenseSplitWizard>();
 
     //[InverseProperty("Expense")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } = new List<HrExpenseSplit>();
 
     [ForeignKey("HrExpenseId")]
     //[InverseProperty("HrExpenses")]
     [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; } = new List<HrExpenseApproveDuplicate>();
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } = new List<HrExpenseApproveDuplicate>();
 
     [ForeignKey("HrExpenseId")]
     //[InverseProperty("HrExpenses")]
     [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; } = new List<HrExpenseRefuseWizard>();
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } = new List<HrExpenseRefuseWizard>();
 
     [ForeignKey("ExpenseId")]
     //[InverseProperty("Expenses")]
     [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> Taxes { get; set; } = new List<AccountTax>();
 }

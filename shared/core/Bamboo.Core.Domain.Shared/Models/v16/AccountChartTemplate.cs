@@ -283,38 +283,38 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } = new List<AccountAccountTemplate>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; } = new List<AccountFiscalPositionTemplate>();
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } = new List<AccountFiscalPositionTemplate>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplates { get; } = new List<AccountGroupTemplate>();
+    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplates { get; set; } = new List<AccountGroupTemplate>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; } = new List<AccountReconcileModelTemplate>();
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } = new List<AccountReconcileModelTemplate>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<AccountReport> AccountReports { get; } = new List<AccountReport>();
+    public virtual ICollection<AccountReport> AccountReports { get; set; } = new List<AccountReport>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } = new List<AccountTaxTemplate>();
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> InverseParent { get; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> InverseParent { get; set; } = new List<AccountChartTemplate>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
     //[InverseProperty("ChartTemplate")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 
 }

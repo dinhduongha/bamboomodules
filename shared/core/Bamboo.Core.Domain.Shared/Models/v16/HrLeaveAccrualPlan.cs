@@ -23,6 +23,9 @@ public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("time_off_type_id")]
     public Guid? TimeOffTypeId { get; set; }
 
+    [Column("carryover_day")]
+    public long? CarryoverDay { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -34,6 +37,24 @@ public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("transition_mode")]
     public string? TransitionMode { get; set; }
+
+    [Column("accrued_gain_time")]
+    public string? AccruedGainTime { get; set; }
+
+    [Column("carryover_date")]
+    public string? CarryoverDate { get; set; }
+
+    [Column("carryover_month")]
+    public string? CarryoverMonth { get; set; }
+
+    [Column("added_value_type")]
+    public string? AddedValueType { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("is_based_on_worked_time")]
+    public bool? IsBasedOnWorkedTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -62,10 +83,10 @@ public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("AccrualPlan")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevels { get; } = new List<HrLeaveAccrualLevel>();
+    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevels { get; set; } = new List<HrLeaveAccrualLevel>();
 
     //[InverseProperty("AccrualPlan")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
 
 }

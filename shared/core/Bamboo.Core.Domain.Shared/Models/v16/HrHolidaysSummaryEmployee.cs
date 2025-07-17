@@ -55,5 +55,5 @@ public partial class HrHolidaysSummaryEmployee : FullAuditedEntity<Guid>, IEntit
     [ForeignKey("SumId")]
     //[InverseProperty("Sums")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> Emps { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> Emps { get; set; } = new List<HrEmployee>();
 }

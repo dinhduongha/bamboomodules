@@ -65,14 +65,14 @@ public partial class HrSkillLevel : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("SkillLevel")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } = new List<HrApplicantSkill>();
 
     //[InverseProperty("SkillLevel")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; } = new List<HrEmployeeSkillLog>();
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } = new List<HrEmployeeSkillLog>();
 
     //[InverseProperty("SkillLevel")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; } = new List<HrEmployeeSkill>();
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; set; } = new List<HrEmployeeSkill>();
 
 }

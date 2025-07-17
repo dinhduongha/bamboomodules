@@ -58,17 +58,17 @@ public partial class StockStorageCategory: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("StorageCategory")]
     [NotMapped]
-    public virtual ICollection<StockLocation> StockLocations { get; } = new List<StockLocation>();
+    public virtual ICollection<StockLocation> StockLocations { get; set; } = new List<StockLocation>();
 
     //[InverseProperty("StorageCategory")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } = new List<StockPutawayRule>();
 
     //[InverseProperty("StorageCategory")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 
     //[InverseProperty("StorageCategory")]
     [NotMapped]
-    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacities { get; } = new List<StockStorageCategoryCapacity>();
+    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacities { get; set; } = new List<StockStorageCategoryCapacity>();
 }

@@ -49,10 +49,10 @@ public partial class HrExpenseApproveDuplicate : FullAuditedEntity<Guid>, IEntit
     [ForeignKey("HrExpenseApproveDuplicateId")]
     //[InverseProperty("HrExpenseApproveDuplicates")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
 
     [ForeignKey("HrExpenseApproveDuplicateId")]
     //[InverseProperty("HrExpenseApproveDuplicates")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
 }

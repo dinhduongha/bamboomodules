@@ -23,6 +23,10 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -47,14 +51,14 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
 
+    [Column("location_final_id")]
+    public Guid? LocationFinalId { get; set; }
+
     [Column("bom_id")]
     public Guid? BomId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("procurement_group_id")]
     public Guid? ProcurementGroupId { get; set; }
@@ -110,9 +114,14 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("allow_workorder_dependencies")]
     public bool? AllowWorkorderDependencies { get; set; }
 
+    [Column("is_outdated_bom")]
+    public bool? IsOutdatedBom { get; set; }
+
+    // v16-Compat
     [Column("date_planned_start", TypeName = "timestamp without time zone")]
     public DateTime? DatePlannedStart { get; set; }
 
+    // v16-Compat
     [Column("date_planned_finished", TypeName = "timestamp without time zone")]
     public DateTime? DatePlannedFinished { get; set; }
 
@@ -134,12 +143,20 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("product_uom_qty")]
     public double? ProductUomQty { get; set; }
 
+    // v16-Compat
     [Column("analytic_account_id")]
     public Guid? AnalyticAccountId { get; set; }
 
     [Column("extra_cost")]
     public double? ExtraCost { get; set; }
 
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
+
+    [Column("sale_line_id")]
+    public Guid? SaleLineId { get; set; }
+
+    // v16-Compat
     [ForeignKey("AnalyticAccountId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
@@ -149,6 +166,10 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     //[InverseProperty("MrpProductions")]
     [NotMapped]
     public virtual MrpBom? Bom { get; set; }
+
+    //[InverseProperty("Mo")]
+    //[NotMapped]
+    //public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
 
     [ForeignKey("TenantId")]
     //[InverseProperty("MrpProductions")]
@@ -222,68 +243,68 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Mo")]
     [NotMapped]
-    public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; } = new List<ChangeProductionQty>();
+    public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
 
     //[InverseProperty("MrpProduction")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; } = new List<MrpConsumptionWarningLine>();
+    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; } = new List<MrpConsumptionWarningLine>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLines { get; } = new List<MrpImmediateProductionLine>();
+    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLines { get; set; } = new List<MrpImmediateProductionLine>();
 
     //[InverseProperty("MrpProduction")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLines { get; } = new List<MrpProductionBackorderLine>();
+    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLines { get; set; } = new List<MrpProductionBackorderLine>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpProductionSplit> MrpProductionSplits { get; } = new List<MrpProductionSplit>();
+    public virtual ICollection<MrpProductionSplit> MrpProductionSplits { get; set; } = new List<MrpProductionSplit>();
 
     //[InverseProperty("Mo")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; } = new List<StockAssignSerial>();
+    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } = new List<StockAssignSerial>();
 
     //[InverseProperty("CreatedProduction")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveCreatedProductions { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveCreatedProductions { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveProductions { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveProductions { get; set; } = new List<StockMove>();
 
     //[InverseProperty("RawMaterialProduction")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveRawMaterialProductions { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveRawMaterialProductions { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarnings { get; } = new List<MrpConsumptionWarning>();
+    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarnings { get; set; } = new List<MrpConsumptionWarning>();
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductions { get; } = new List<MrpImmediateProduction>();
+    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductions { get; set; } = new List<MrpImmediateProduction>();
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorders { get; } = new List<MrpProductionBackorder>();
+    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorders { get; set; } = new List<MrpProductionBackorder>();
 }

@@ -17,6 +17,9 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
 
@@ -28,9 +31,6 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -47,6 +47,10 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 
+    [Column("total_amount_currency")]
+    public decimal? TotalAmountCurrency { get; set; }
+
+    // v16-Compat
     [Column("total_amount")]
     public decimal? TotalAmount { get; set; }
 
@@ -110,5 +114,5 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("HrExpenseSplitId")]
     //[InverseProperty("HrExpenseSplits")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 }

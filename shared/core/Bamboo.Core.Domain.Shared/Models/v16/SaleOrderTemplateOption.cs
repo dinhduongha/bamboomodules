@@ -19,11 +19,11 @@ public partial class SaleOrderTemplateOption: FullAuditedEntity<Guid>, IEntityDt
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("sale_order_template_id")]
-    public Guid? SaleOrderTemplateId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("sale_order_template_id")]
+    public Guid? SaleOrderTemplateId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

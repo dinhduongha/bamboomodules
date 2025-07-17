@@ -39,6 +39,9 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -64,18 +67,18 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Attribute")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; } = new List<ProductAttributeValue>();
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; set; } = new List<ProductAttributeValue>();
 
     //[InverseProperty("Attribute")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; } = new List<ProductTemplateAttributeLine>();
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } = new List<ProductTemplateAttributeLine>();
 
     //[InverseProperty("Attribute")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
 
     [ForeignKey("ProductAttributeId")]
     //[InverseProperty("ProductAttributes")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 }

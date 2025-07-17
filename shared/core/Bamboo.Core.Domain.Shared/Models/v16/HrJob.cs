@@ -20,11 +20,14 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
+
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("expected_employees")]
     public long? ExpectedEmployees { get; set; }
@@ -35,14 +38,12 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("no_of_recruitment")]
     public long? NoOfRecruitment { get; set; }
 
-    [Column("no_of_hired_employee")]
-    public long? NoOfHiredEmployee { get; set; }
+    // v16-Compat
+    // [Column("no_of_hired_employee")]
+    // public long? NoOfHiredEmployee { get; set; }
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("contract_type_id")]
     public Guid? ContractTypeId { get; set; }
@@ -56,7 +57,8 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    [Column("description")]
+    //[Column("description")]
+    [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
     [Column("requirements")]
@@ -83,17 +85,39 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
+    // v16-Compat
     [Column("hr_responsible_id")]
     public Guid? HrResponsibleId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
 
+    [Column("industry_id")]
+    public Guid? IndustryId { get; set; }
+
+    [Column("no_of_hired_employee")]
+    public long? NoOfHiredEmployee { get; set; }
+
+    [Column("date_from")]
+    public DateTime? DateFrom { get; set; }
+
+    [Column("date_to")]
+    public DateTime? DateTo { get; set; }
+
+    [Column("job_properties", TypeName = "jsonb")]
+    public string? JobProperties { get; set; }
+
+    [Column("applicant_properties_definition", TypeName = "jsonb")]
+    public string? ApplicantPropertiesDefinition { get; set; }
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
+
+    [Column("published_date")]
+    public DateTime? PublishedDate { get; set; }
 
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
@@ -178,37 +202,37 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } = new List<HrRecruitmentSource>();
 
     [ForeignKey("HrJobId")]
     //[InverseProperty("HrJobs")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; } = new List<HrRecruitmentStage>();
+    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; set; } = new List<HrRecruitmentStage>();
 
     //[ForeignKey("HrJobId")]
     //[InverseProperty("HrJobs")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 
     //[ForeignKey("HrJobId")]
     //[InverseProperty("HrJobsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsersNavigation { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsersNavigation { get; set; } = new List<ResUser>();
 
     [ForeignKey("JobId")]
     //[InverseProperty("Jobs")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
 }

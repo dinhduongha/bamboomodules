@@ -19,11 +19,11 @@ public partial class AccountGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("parent_id")]
-    public Guid? ParentId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("parent_id")]
+    public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -59,6 +59,15 @@ public partial class AccountGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
+    //[InverseProperty("Group")]
+    [NotMapped]
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+
+    //[InverseProperty("Parent")]
+    [NotMapped]
+    public virtual ICollection<AccountGroup> InverseParent { get; set; } = new List<AccountGroup>();
+
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
     [NotMapped]
@@ -68,14 +77,4 @@ public partial class AccountGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("AccountGroupWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; } = new List<AccountAccount>();
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<AccountGroup> InverseParent { get; } = new List<AccountGroup>();
-
-
 }

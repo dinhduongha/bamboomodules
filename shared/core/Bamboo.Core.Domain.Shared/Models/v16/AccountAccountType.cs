@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 // Copy-To-Tenants (?)
 [Table("account_account_type")]
-public partial class AccountAccountType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -39,6 +39,7 @@ public partial class AccountAccountType : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -56,5 +57,5 @@ public partial class AccountAccountType : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("AccountTypeId")]
     //[InverseProperty("AccountTypes")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialReport> Reports { get; } = new List<AccountFinancialReport>();
+    public virtual ICollection<AccountFinancialReport> Reports { get; set; } = new List<AccountFinancialReport>();
 }

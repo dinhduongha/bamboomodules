@@ -21,6 +21,10 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("rule_max_number")]
     public long? RuleMaxNumber { get; set; }
 
@@ -64,6 +68,12 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     //[InverseProperty("GamificationBadgeCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     //[InverseProperty("Badge")]
     [NotMapped]

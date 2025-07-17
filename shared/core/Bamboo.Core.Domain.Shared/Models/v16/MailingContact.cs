@@ -20,6 +20,10 @@ public partial class MailingContact: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("message_bounce")]
     public long? MessageBounce { get; set; }
 
@@ -74,6 +78,12 @@ public partial class MailingContact: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     //[InverseProperty("MailingContactCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     //[InverseProperty("Contact")]
     [NotMapped]

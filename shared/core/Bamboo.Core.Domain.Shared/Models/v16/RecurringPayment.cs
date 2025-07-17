@@ -17,11 +17,11 @@ public partial class RecurringPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("partner_id")]
-    public Guid? PartnerId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("partner_id")]
+    public Guid? PartnerId { get; set; }
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -86,5 +86,5 @@ public partial class RecurringPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("RecurringPayment")]
     [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; } = new List<RecurringPaymentLine>();
+    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } = new List<RecurringPaymentLine>();
 }

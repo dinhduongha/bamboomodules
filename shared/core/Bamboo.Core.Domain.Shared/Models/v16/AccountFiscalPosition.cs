@@ -17,11 +17,11 @@ public partial class AccountFiscalPosition: FullAuditedEntity<Guid>, IEntityDto<
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("sequence")]
-    public long Sequence { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long Sequence { get; set; }
 
     [Column("country_id")]
     public Guid? CountryId { get; set; }
@@ -92,52 +92,52 @@ public partial class AccountFiscalPosition: FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Position")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccounts { get; } = new List<AccountFiscalPositionAccount>();
+    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccounts { get; set; } = new List<AccountFiscalPositionAccount>();
 
     //[InverseProperty("Position")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxes { get; } = new List<AccountFiscalPositionTax>();
+    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxes { get; set; } = new List<AccountFiscalPositionTax>();
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("ForeignVatFiscalPosition")]
     [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; } = new List<AccountReportExternalValue>();
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } = new List<AccountReportExternalValue>();
 
     //[InverseProperty("DefaultFiscalPosition")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
 
     //[InverseProperty("PosDefaultFiscalPosition")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } = new List<ResConfigSetting>();
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     [ForeignKey("AccountFiscalPositionId")]
     //[InverseProperty("AccountFiscalPositions")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     [ForeignKey("AccountFiscalPositionId")]
     //[InverseProperty("AccountFiscalPositions")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 
     [ForeignKey("AccountFiscalPositionId")]
     //[InverseProperty("AccountFiscalPositions")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStates { get; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } = new List<ResCountryState>();
 }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 // Must-Copy-To-Tenants
 [Table("mail_message_subtype")]
-public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -68,6 +68,26 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("AllocationNotifSubtype")]
+    [NotMapped]
+    public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtypes { get; set; } = new List<HrLeaveType>();
+
+    //[InverseProperty("LeaveNotifSubtype")]
+    [NotMapped]
+    public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtypes { get; set; } = new List<HrLeaveType>();
+
+    //[InverseProperty("Parent")]
+    [NotMapped]
+    public virtual ICollection<MailMessageSubtype> InverseParent { get; set; } = new List<MailMessageSubtype>();
+
+    //[InverseProperty("Subtype")]
+    [NotMapped]
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+
+    //[InverseProperty("Subtype")]
+    [NotMapped]
+    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
     [NotMapped]
@@ -78,28 +98,8 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("AllocationNotifSubtype")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtypes { get; } = new List<HrLeaveType>();
-
-    //[InverseProperty("LeaveNotifSubtype")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtypes { get; } = new List<HrLeaveType>();
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<MailMessageSubtype> InverseParent { get; } = new List<MailMessageSubtype>();
-
-    //[InverseProperty("Subtype")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; } = new List<MailComposeMessage>();
-
-    //[InverseProperty("Subtype")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; } = new List<MailMessage>();
-
     [ForeignKey("MailMessageSubtypeId")]
     //[InverseProperty("MailMessageSubtypes")]
     [NotMapped]
-    public virtual ICollection<MailFollower> MailFollowers { get; } = new List<MailFollower>();
+    public virtual ICollection<MailFollower> MailFollowers { get; set; } = new List<MailFollower>();
 }

@@ -49,13 +49,12 @@ public partial class MaintenanceStage : FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Stage")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MaintenanceStageWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Stage")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; } = new List<MaintenanceRequest>();
-
 }

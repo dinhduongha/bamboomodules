@@ -70,6 +70,9 @@ public partial class ResourceCalendarAttendance : FullAuditedEntity<Guid>, IEnti
     [Column("hour_to")]
     public double? HourTo { get; set; }
 
+    [Column("duration_days")]
+    public double? DurationDays { get; set; }
+
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }

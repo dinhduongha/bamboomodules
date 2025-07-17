@@ -21,7 +21,7 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("message_id")]
     public Guid? MessageId { get; set; }
 
@@ -40,6 +40,9 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("og_title")]
     public string? OgTitle { get; set; }
 
+    [Column("og_site_name")]
+    public string? OgSiteName { get; set; }
+
     [Column("og_image")]
     public string? OgImage { get; set; }
 
@@ -51,6 +54,9 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("og_description")]
     public string? OgDescription { get; set; }
+
+    [Column("is_hidden")]
+    public bool? IsHidden { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

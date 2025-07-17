@@ -47,6 +47,6 @@ public partial class WebEditorConverterTestSub: FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("Many2oneNavigation")]
     [NotMapped]
-    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTests { get; } = new List<WebEditorConverterTest>();
+    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTests { get; set; } = new List<WebEditorConverterTest>();
 
 }

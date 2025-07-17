@@ -19,15 +19,22 @@ public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
+    [Column("color")]
+    public long? Color { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -47,22 +54,22 @@ public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("SkillType")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } = new List<HrApplicantSkill>();
 
     //[InverseProperty("SkillType")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; } = new List<HrEmployeeSkillLog>();
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } = new List<HrEmployeeSkillLog>();
 
     //[InverseProperty("SkillType")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; } = new List<HrEmployeeSkill>();
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; set; } = new List<HrEmployeeSkill>();
 
     //[InverseProperty("SkillType")]
     [NotMapped]
-    public virtual ICollection<HrSkillLevel> HrSkillLevels { get; } = new List<HrSkillLevel>();
+    public virtual ICollection<HrSkillLevel> HrSkillLevels { get; set; } = new List<HrSkillLevel>();
 
     //[InverseProperty("SkillType")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkills { get; set; } = new List<HrSkill>();
 
 }

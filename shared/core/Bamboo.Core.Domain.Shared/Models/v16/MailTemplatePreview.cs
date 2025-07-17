@@ -19,7 +19,7 @@ public partial class MailTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }
 
@@ -35,6 +35,7 @@ public partial class MailTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("lang")]
     public string? Lang { get; set; }
 
+    // v16-Compat
     [Column("error_msg")]
     public string? ErrorMsg { get; set; }
 

@@ -19,7 +19,7 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
@@ -65,104 +65,105 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("AssociatedUom")]
     [NotMapped]
-    public virtual ICollection<BarcodeRule> BarcodeRules { get; } = new List<BarcodeRule>();
+    public virtual ICollection<BarcodeRule> BarcodeRules { get; set; } = new List<BarcodeRule>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } = new List<MrpBomByproduct>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } = new List<MrpBomLine>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; } = new List<ProductReplenish>();
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
 
     //[InverseProperty("UomPo")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplateUomPos { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplateUomPos { get; set; } = new List<ProductTemplate>();
 
     //[InverseProperty("Uom")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplateUoms { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplateUoms { get; set; } = new List<ProductTemplate>();
 
     //[InverseProperty("ProductUomNavigation")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
 
     //[InverseProperty("ProductUomNavigation")]
     [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; } = new List<RepairFee>();
+    public virtual ICollection<RepairFee> RepairFees { get; set; } = new List<RepairFee>();
 
     //[InverseProperty("ProductUomNavigation")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("ProductUomNavigation")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("ProductUomNavigation")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
     //[InverseProperty("Uom")]
     [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; } = new List<SaleOrderOption>();
+    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; set; } = new List<SaleOrderOption>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; } = new List<SaleOrderTemplateLine>();
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; } = new List<SaleOrderTemplateLine>();
 
     //[InverseProperty("Uom")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; } = new List<SaleOrderTemplateOption>();
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; } = new List<SaleOrderTemplateOption>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<StockLot> StockLots { get; } = new List<StockLot>();
+    public virtual ICollection<StockLot> StockLots { get; set; } = new List<StockLot>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("ProductUomNavigation")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("ProductUom")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
 
 }

@@ -27,11 +27,11 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("sequence")]
-    public long Sequence { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long Sequence { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -45,11 +45,17 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
 
+    [Column("location_final_id")]
+    public Guid? LocationFinalId { get; set; }
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
+
+    [Column("scrap_id")]
+    public Guid? ScrapId { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
@@ -120,6 +126,13 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("product_uom_qty")]
     public decimal? ProductUomQty { get; set; }
 
+    [Column("quantity")]
+    public decimal? Quantity { get; set; }
+
+    [Column("picked")]
+    public bool? Picked { get; set; }
+    
+    // v16-Compat
     [Column("quantity_done")]
     public decimal? QuantityDone { get; set; }
 
@@ -153,6 +166,7 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("price_unit")]
     public double? PriceUnit { get; set; }
 
+    // v16-Compat
     [Column("analytic_account_line_id")]
     public Guid? AnalyticAccountLineId { get; set; }
 
@@ -165,11 +179,15 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("purchase_line_id")]
     public Guid? PurchaseLineId { get; set; }
 
+    // v16-Compat
     [Column("created_purchase_line_id")]
     public Guid? CreatedPurchaseLineId { get; set; }
 
     [Column("repair_id")]
     public Guid? RepairId { get; set; }
+
+    [Column("repair_line_type")]
+    public string? RepairLineType { get; set; }
 
     [Column("is_done")]
     public bool? IsDone { get; set; }
@@ -213,6 +231,10 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("manual_consumption")]
     public bool? ManualConsumption { get; set; }
 
+    [Column("weight")]
+    public decimal? Weight { get; set; }
+
+    // v16-Compat
     [ForeignKey("AnalyticAccountLineId")]
     //[InverseProperty("StockMoves")]
     [NotMapped]
@@ -358,6 +380,11 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual SaleOrderLine? SaleLine { get; set; }
 
+    [ForeignKey("ScrapId")]
+    //[InverseProperty("StockMoves")]
+    [NotMapped]
+    public virtual StockScrap? Scrap { get; set; }
+
     [ForeignKey("UnbuildId")]
     //[InverseProperty("StockMoveUnbuilds")]
     [NotMapped]
@@ -378,54 +405,55 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("StockMove")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("OriginReturnedMove")]
     [NotMapped]
-    public virtual ICollection<StockMove> InverseOriginReturnedMove { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> InverseOriginReturnedMove { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; } = new List<StockAssignSerial>();
+    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } = new List<StockAssignSerial>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; } = new List<StockReturnPickingLine>();
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } = new List<StockReturnPickingLine>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
 
     //[InverseProperty("StockMove")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
 
     [ForeignKey("MoveOrigId")]
     //[InverseProperty("MoveOrigs")]
     [NotMapped]
-    public virtual ICollection<StockMove> MoveDests { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> MoveDests { get; set; } = new List<StockMove>();
 
     [ForeignKey("MoveDestId")]
     //[InverseProperty("MoveDests")]
     [NotMapped]
-    public virtual ICollection<StockMove> MoveOrigs { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> MoveOrigs { get; set; } = new List<StockMove>();
 
     [ForeignKey("MoveId")]
     //[InverseProperty("Moves")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
 }

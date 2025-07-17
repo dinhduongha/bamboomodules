@@ -76,14 +76,14 @@ public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("LastStage")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantLastStages { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicantLastStages { get; set; } = new List<HrApplicant>();
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantStages { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicantStages { get; set; } = new List<HrApplicant>();
 
     [ForeignKey("HrRecruitmentStageId")]
     //[InverseProperty("HrRecruitmentStages")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
 }

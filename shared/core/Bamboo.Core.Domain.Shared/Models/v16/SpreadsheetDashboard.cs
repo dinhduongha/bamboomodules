@@ -32,14 +32,26 @@ public partial class SpreadsheetDashboard: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    [Column("sample_dashboard_file_path")]
+    public string? SampleDashboardFilePath { get; set; }
+
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("is_published")]
+    public bool? IsPublished { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("TenantId")]
+    //[InverseProperty("SpreadsheetDashboards")]
+    [NotMapped]
+    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("SpreadsheetDashboardCreateUs")]
@@ -56,8 +68,17 @@ public partial class SpreadsheetDashboard: FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    //[InverseProperty("Dashboard")]
+    [NotMapped]
+    public virtual ICollection<SpreadsheetDashboardShare> SpreadsheetDashboardShares { get; set; } = new List<SpreadsheetDashboardShare>();
+
     [ForeignKey("SpreadsheetDashboardId")]
     //[InverseProperty("SpreadsheetDashboards")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; } = new List<ResGroup>();
+    public virtual ICollection<IrModel> IrModels { get; set; } = new List<IrModel>();
+
+    [ForeignKey("SpreadsheetDashboardId")]
+    //[InverseProperty("SpreadsheetDashboards")]
+    [NotMapped]
+    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
 }

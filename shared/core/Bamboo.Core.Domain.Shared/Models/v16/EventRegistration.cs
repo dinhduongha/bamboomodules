@@ -24,6 +24,10 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("event_id")]
     public Guid? EventId { get; set; }
 
@@ -59,6 +63,10 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("phone")]
     public string? Phone { get; set; }
+
+    [Column("mobile")]
+    public string? Mobile { get; set; }
+
 
     [Column("company_name")]
     public string? CompanyName { get; set; }
@@ -96,6 +104,9 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("sale_status")]
     public string? SaleStatus { get; set; }
 
+    [Column("is_paid")]
+    public bool? IsPaid { get; set; }
+
     [ForeignKey("CompanyId")]
     //[InverseProperty("EventRegistrations")]
     [NotMapped]
@@ -110,6 +121,12 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     //[InverseProperty("EventRegistrations")]
     [NotMapped]
     public virtual EventEvent? Event { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("AccountAccounts")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     //[InverseProperty("Registration")]
     [NotMapped]

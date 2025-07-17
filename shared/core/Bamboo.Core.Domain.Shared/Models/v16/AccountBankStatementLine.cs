@@ -13,6 +13,8 @@ namespace Bamboo.Core.Models;
 [Table("account_bank_statement_line")]
 //[Index("InternalIndex", Name = "account_bank_statement_line_internal_index_index")]
 //[Index("UniqueImportId", Name = "account_bank_statement_line_unique_import_id", IsUnique = true)]
+//[Index("MoveId", Name = "account_bank_statement_line__move_id_index")]
+//[Index("JournalId", "CompanyId", "InternalIndex", Name = "account_bank_statement_line_main_idx")]
 public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -24,6 +26,9 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("statement_id")]
     public Guid? StatementId { get; set; }
@@ -61,6 +66,9 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("internal_index")]
     public string? InternalIndex { get; set; }
 
+    [Column("transaction_details", TypeName = "jsonb")]
+    public string? TransactionDetails { get; set; }
+
     [Column("amount")]
     public decimal? Amount { get; set; }
 
@@ -82,10 +90,23 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("pos_session_id")]
     public Guid? PosSessionId { get; set; }
 
+    // v16-Compat
     [Column("unique_import_id")]
     public string? UniqueImportId { get; set; }
 
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
+
+    //[InverseProperty("StatementLine")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
+    //[InverseProperty("StatementLine")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+
     [ForeignKey("TenantId")]
+    //[InverseProperty("AccountBankStatementLines")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
 
@@ -129,16 +150,8 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("StatementLine")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
-
-    //[InverseProperty("StatementLine")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
-    
     [ForeignKey("AccountBankStatementLineId")]
     //[InverseProperty("AccountBankStatementLines")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 }

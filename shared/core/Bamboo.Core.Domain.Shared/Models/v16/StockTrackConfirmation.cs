@@ -48,15 +48,15 @@ public partial class StockTrackConfirmation : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<StockTrackLine> StockTrackLines { get; } = new List<StockTrackLine>();
+    public virtual ICollection<StockTrackLine> StockTrackLines { get; set; } = new List<StockTrackLine>();
 
     [ForeignKey("StockTrackConfirmationId")]
     //[InverseProperty("StockTrackConfirmations")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
 
     [ForeignKey("StockTrackConfirmationId")]
     //[InverseProperty("StockTrackConfirmations")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 }

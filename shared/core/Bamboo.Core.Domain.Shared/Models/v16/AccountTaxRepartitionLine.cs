@@ -17,17 +17,20 @@ public partial class AccountTaxRepartitionLine: FullAuditedEntity<Guid>, IEntity
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("account_id")]
     public Guid? AccountId { get; set; }
+
+    [Column("tax_id")]
+    public Guid? TaxId { get; set; }
 
     [Column("invoice_tax_id")]
     public Guid? InvoiceTaxId { get; set; }
 
     [Column("refund_tax_id")]
     public Guid? RefundTaxId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
@@ -40,6 +43,9 @@ public partial class AccountTaxRepartitionLine: FullAuditedEntity<Guid>, IEntity
 
     [Column("repartition_type")]
     public string? RepartitionType { get; set; }
+
+    [Column("document_type")]
+    public string? DocumentType { get; set; }
 
     [Column("use_in_tax_closing")]
     public bool? UseInTaxClosing { get; set; }
@@ -60,7 +66,7 @@ public partial class AccountTaxRepartitionLine: FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("TaxRepartitionLine")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountTaxRepartitionLines")]
@@ -90,5 +96,5 @@ public partial class AccountTaxRepartitionLine: FullAuditedEntity<Guid>, IEntity
     [ForeignKey("AccountTaxRepartitionLineId")]
     //[InverseProperty("AccountTaxRepartitionLines")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } = new List<AccountAccountTag>();
 }

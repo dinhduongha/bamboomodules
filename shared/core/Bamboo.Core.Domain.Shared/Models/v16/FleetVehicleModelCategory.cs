@@ -55,10 +55,10 @@ public partial class FleetVehicleModelCategory : FullAuditedEntity<Guid>, IEntit
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModel> FleetVehicleModels { get; } = new List<FleetVehicleModel>();
+    public virtual ICollection<FleetVehicleModel> FleetVehicleModels { get; set; } = new List<FleetVehicleModel>();
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
 
 }

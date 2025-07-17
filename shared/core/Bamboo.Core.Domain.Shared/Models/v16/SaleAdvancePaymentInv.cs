@@ -17,15 +17,17 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
+    // v16-Compat
     [Column("deposit_account_id")]
     public Guid? DepositAccountId { get; set; }
 
@@ -43,6 +45,9 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("deduct_down_payments")]
     public bool? DeductDownPayments { get; set; }
+
+    [Column("consolidated_billing")]
+    public bool? ConsolidatedBilling { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -68,11 +73,13 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
 
+    // v16-Compat
     [ForeignKey("DepositAccountId")]
     //[InverseProperty("SaleAdvancePaymentInvs")]
     [NotMapped]
     public virtual AccountAccount? DepositAccount { get; set; }
 
+    // v16-Compat
     [ForeignKey("ProductId")]
     //[InverseProperty("SaleAdvancePaymentInvs")]
     [NotMapped]
@@ -83,13 +90,14 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     [ForeignKey("SaleAdvancePaymentInvId")]
     //[InverseProperty("SaleAdvancePaymentInvs")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 
     [ForeignKey("SaleAdvancePaymentInvId")]
     //[InverseProperty("SaleAdvancePaymentInvs")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 }

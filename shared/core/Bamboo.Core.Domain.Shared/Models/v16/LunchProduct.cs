@@ -17,14 +17,14 @@ public partial class LunchProduct: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
     [Column("supplier_id")]
     public Guid? SupplierId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -80,10 +80,10 @@ public partial class LunchProduct: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Product")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrders { get; set; } = new List<LunchOrder>();
 
     [ForeignKey("ProductId")]
     //[InverseProperty("Products")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
 }

@@ -22,6 +22,11 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
@@ -72,6 +77,9 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("completed_template_id")]
     public Guid? CompletedTemplateId { get; set; }
+
+    [Column("karma_gen_slide_vote")]
+    public long? KarmaGenSlideVote { get; set; }
 
     [Column("karma_gen_channel_rank")]
     public long? KarmaGenChannelRank { get; set; }
@@ -178,6 +186,12 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("SlideChannelCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     //[InverseProperty("Channel")]
     [NotMapped]

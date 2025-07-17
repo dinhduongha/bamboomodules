@@ -17,6 +17,12 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("route_id")]
+    public Guid? RouteId { get; set; }
+
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
@@ -28,9 +34,6 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("warehouse_id")]
     public Guid? WarehouseId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -52,6 +55,17 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("quantity")]
     public double? Quantity { get; set; }
+
+    [Column("supplier_id")]
+    public Guid? SupplierId { get; set; }
+
+    [Column("bom_id")]
+    public Guid? BomId { get; set; }
+
+    [ForeignKey("BomId")]
+    //[InverseProperty("ProductReplenishes")]
+    [NotMapped]
+    public virtual MrpBom? Bom { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("ProductReplenishes")]
@@ -78,6 +92,16 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual UomUom? ProductUom { get; set; }
 
+    [ForeignKey("RouteId")]
+    //[InverseProperty("ProductReplenishes")]
+    [NotMapped]
+    public virtual StockRoute? Route { get; set; }
+
+    [ForeignKey("SupplierId")]
+    //[InverseProperty("ProductReplenishes")]
+    [NotMapped]
+    public virtual ProductSupplierinfo? Supplier { get; set; }
+
     [ForeignKey("WarehouseId")]
     //[InverseProperty("ProductReplenishes")]
     [NotMapped]
@@ -91,5 +115,5 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("ProductReplenishId")]
     //[InverseProperty("ProductReplenishes")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRoutes { get; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> StockRoutes { get; set; } = new List<StockRoute>();
 }

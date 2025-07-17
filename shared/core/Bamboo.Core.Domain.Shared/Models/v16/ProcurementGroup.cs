@@ -78,34 +78,34 @@ public partial class ProcurementGroup : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("ProcurementGroup")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("ProcurementGroup")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
 
     //[InverseProperty("ProcurementGroup")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRules { get; set; } = new List<StockRule>();
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
 
 }

@@ -19,7 +19,7 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("res_id")]
     public Guid? ResId { get; set; }
 
@@ -35,6 +35,10 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("message")]
     public string? Message { get; set; }
 
+    [Column("notify")]
+    public bool? Notify { get; set; }
+
+    // v16-Compat
     [Column("send_mail")]
     public bool? SendMail { get; set; }
 
@@ -57,5 +61,5 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("MailWizardInviteId")]
     //[InverseProperty("MailWizardInvites")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

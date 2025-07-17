@@ -19,14 +19,14 @@ public partial class ProductPackaging: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("sequence")]
     public long Sequence { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -85,18 +85,18 @@ public partial class ProductPackaging: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("ProductPackaging")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
 
     //[InverseProperty("ProductPackaging")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
     //[InverseProperty("ProductPackaging")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     [ForeignKey("PackagingId")]
     //[InverseProperty("Packagings")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
 }

@@ -105,5 +105,5 @@ public partial class LunchAlert : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("LunchAlertId")]
     //[InverseProperty("LunchAlerts")]
     [NotMapped]
-    public virtual ICollection<LunchLocation> LunchLocations { get; } = new List<LunchLocation>();
+    public virtual ICollection<LunchLocation> LunchLocations { get; set; } = new List<LunchLocation>();
 }

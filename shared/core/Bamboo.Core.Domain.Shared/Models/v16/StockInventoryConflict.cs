@@ -49,10 +49,10 @@ public partial class StockInventoryConflict : FullAuditedEntity<Guid>, IEntityDt
     //[ForeignKey("StockInventoryConflictId")]
     //[InverseProperty("StockInventoryConflicts")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 
     //[ForeignKey("StockInventoryConflictId")]
     //[InverseProperty("StockInventoryConflictsNavigation")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuantsNavigation { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuantsNavigation { get; set; } = new List<StockQuant>();
 }

@@ -19,6 +19,13 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("account_id")]
+    public Guid? AccountId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -31,9 +38,7 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
+    // v16-Compat
     [Column("analytic_account_id")]
     public Guid? AnalyticAccountId { get; set; }
 
@@ -58,9 +63,11 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("access_token")]
     public string? AccessToken { get; set; }
 
+    // v16-Compat
     [Column("partner_email")]
     public string? PartnerEmail { get; set; }
 
+    // v16-Compat
     [Column("partner_phone")]
     public string? PartnerPhone { get; set; }
 
@@ -97,9 +104,11 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("active")]
     public bool? Active { get; set; }
 
+    // v16-Compat
     [Column("allow_subtasks")]
     public bool? AllowSubtasks { get; set; }
 
+    // v16-Compat
     [Column("allow_recurring_tasks")]
     public bool? AllowRecurringTasks { get; set; }
 
@@ -121,8 +130,17 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("x_plan2_id")]
+    public Guid? XPlan2Id { get; set; }
+
+    [Column("x_plan3_id")]
+    public Guid? XPlan3Id { get; set; }
+
     [Column("sale_line_id")]
     public Guid? SaleLineId { get; set; }
+
+    [Column("reinvoiced_sale_order_id")]
+    public Guid? ReinvoicedSaleOrderId { get; set; }
 
     [Column("allow_billable")]
     public bool? AllowBillable { get; set; }
@@ -184,49 +202,49 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Project")]
     [NotMapped]
-    public virtual ICollection<ProjectCollaborator> ProjectCollaborators { get; } = new List<ProjectCollaborator>();
+    public virtual ICollection<ProjectCollaborator> ProjectCollaborators { get; set; } = new List<ProjectCollaborator>();
 
     //[InverseProperty("Project")]
     [NotMapped]
-    public virtual ICollection<ProjectMilestone> ProjectMilestones { get; } = new List<ProjectMilestone>();
+    public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; } = new List<ProjectMilestone>();
 
     //[InverseProperty("DisplayProject")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTaskDisplayProjects { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTaskDisplayProjects { get; set; } = new List<ProjectTask>();
 
     //[InverseProperty("Project")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTaskProjects { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTaskProjects { get; set; } = new List<ProjectTask>();
 
     //[InverseProperty("Project")]
     [NotMapped]
-    public virtual ICollection<ProjectUpdate> ProjectUpdates { get; } = new List<ProjectUpdate>();
+    public virtual ICollection<ProjectUpdate> ProjectUpdates { get; set; } = new List<ProjectUpdate>();
 
     //[InverseProperty("Project")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
     //[InverseProperty("Project")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     [ForeignKey("ProjectProjectId")]
     //[InverseProperty("ProjectProjects")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTags { get; } = new List<ProjectTag>();
+    public virtual ICollection<ProjectTag> ProjectTags { get; set; } = new List<ProjectTag>();
 
     [ForeignKey("ProjectProjectId")]
     //[InverseProperty("ProjectProjects")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; } = new List<ProjectTaskTypeDeleteWizard>();
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; set; } = new List<ProjectTaskTypeDeleteWizard>();
 
     [ForeignKey("ProjectId")]
     //[InverseProperty("Projects")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> Types { get; } = new List<ProjectTaskType>();
+    public virtual ICollection<ProjectTaskType> Types { get; set; } = new List<ProjectTaskType>();
 
     [ForeignKey("ProjectId")]
     //[InverseProperty("Projects")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
 }

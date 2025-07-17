@@ -51,22 +51,34 @@ public partial class UtmMedium: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Medium")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("Medium")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
+    //[InverseProperty("UtmMedium")]
+    [NotMapped]
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
 
     //[InverseProperty("Medium")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 
     //[InverseProperty("Medium")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } = new List<HrRecruitmentSource>();
 
     //[InverseProperty("Medium")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } = new List<LinkTracker>();
+
+    //[InverseProperty("Medium")]
+    [NotMapped]
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+
+    //[InverseProperty("Medium")]
+    [NotMapped]
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
 }

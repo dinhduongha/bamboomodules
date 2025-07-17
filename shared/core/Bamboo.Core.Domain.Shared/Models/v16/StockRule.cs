@@ -11,20 +11,25 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_rule")]
+//[Index("Action", Name = "stock_rule__action_index")]
+//[Index("LocationDestId", Name = "stock_rule__location_dest_id_index")]
+//[Index("LocationSrcId", Name = "stock_rule__location_src_id_index")]
+//[Index("RouteId", Name = "stock_rule__route_id_index")]
+//[Index("WarehouseId", Name = "stock_rule__warehouse_id_index")]
 public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("group_id")]
     public Guid? GroupId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
@@ -71,11 +76,17 @@ public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("auto")]
     public string? Auto { get; set; }
 
+    [Column("push_domain")]
+    public string? PushDomain { get; set; }
+
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
+
+    [Column("location_dest_from_rule")]
+    public bool? LocationDestFromRule { get; set; }
 
     [Column("propagate_cancel")]
     public bool? PropagateCancel { get; set; }
@@ -146,30 +157,34 @@ public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Rule")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("BuyPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseBuyPulls { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseBuyPulls { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("ManufactureMtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManufactureMtoPulls { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseManufactureMtoPulls { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("ManufacturePull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManufacturePulls { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseManufacturePulls { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("MtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseMtoPulls { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseMtoPulls { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("PbmMtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPulls { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPulls { get; set; } = new List<StockWarehouse>();
+
+    //[InverseProperty("RepairMtoPull")]
+    [NotMapped]
+    public virtual ICollection<StockWarehouse> StockWarehouseRepairMtoPulls { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("SamRule")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamRules { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseSamRules { get; set; } = new List<StockWarehouse>();
 
 }

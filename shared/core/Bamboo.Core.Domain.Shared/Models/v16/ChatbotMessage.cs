@@ -24,6 +24,9 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
+    [Column("mail_channel_id")]
+    public Guid? MailChannelId { get; set; }
+
     [Column("discuss_channel_id")]
     public Guid? DiscussChannelId { get; set; }
 

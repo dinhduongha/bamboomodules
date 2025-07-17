@@ -19,6 +19,10 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -36,9 +40,6 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("resource_calendar_id")]
     public Guid? ResourceCalendarId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("contract_type_id")]
     public Guid? ContractTypeId { get; set; }
@@ -110,6 +111,10 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual HrEmployee? Employee { get; set; }
 
+    //[InverseProperty("Contract")]
+    [NotMapped]
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+
     [ForeignKey("HrResponsibleId")]
     //[InverseProperty("HrContractHrResponsibles")]
     [NotMapped]
@@ -120,6 +125,7 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual HrJob? Job { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("HrContracts")]
     [NotMapped]
@@ -139,10 +145,4 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     //[InverseProperty("HrContractWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Contract")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
-
-
 }

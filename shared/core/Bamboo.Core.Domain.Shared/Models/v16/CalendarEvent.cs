@@ -22,6 +22,7 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -109,6 +110,9 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("applicant_id")]
     public Guid? ApplicantId { get; set; }
 
+    [Column("candidate_id")]
+    public Guid? CandidateId { get; set; }
+
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -160,32 +164,32 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<CalendarAttendee> CalendarAttendees { get; } = new List<CalendarAttendee>();
+    public virtual ICollection<CalendarAttendee> CalendarAttendees { get; set; } = new List<CalendarAttendee>();
 
     //[InverseProperty("BaseEvent")]
     [NotMapped]
-    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; } = new List<CalendarRecurrence>();
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; set; } = new List<CalendarRecurrence>();
 
     //[InverseProperty("Meeting")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
 
     //[InverseProperty("CalendarEvent")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivities { get; set; } = new List<MailActivity>();
 
     [ForeignKey("CalendarEventId")]
     //[InverseProperty("CalendarEvents")]
     [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; } = new List<CalendarAlarm>();
+    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; set; } = new List<CalendarAlarm>();
 
     [ForeignKey("CalendarEventId")]
     //[InverseProperty("CalendarEvents")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 
     [ForeignKey("EventId")]
     //[InverseProperty("Events")]
     [NotMapped]
-    public virtual ICollection<CalendarEventType> Types { get; } = new List<CalendarEventType>();
+    public virtual ICollection<CalendarEventType> Types { get; set; } = new List<CalendarEventType>();
 }

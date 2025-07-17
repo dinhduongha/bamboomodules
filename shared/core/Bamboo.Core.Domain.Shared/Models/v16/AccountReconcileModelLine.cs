@@ -17,11 +17,11 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("model_id")]
-    public Guid? ModelId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("model_id")]
+    public Guid? ModelId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
@@ -38,7 +38,8 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("label")]
+    //[Column("label")]
+    [Column("label", TypeName = "jsonb")]
     public string? Label { get; set; }
 
     [Column("amount_type")]
@@ -95,5 +96,5 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [ForeignKey("AccountReconcileModelLineId")]
     //[InverseProperty("AccountReconcileModelLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 }

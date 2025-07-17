@@ -63,6 +63,6 @@ public partial class HrPayrollStructureType : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("StructureType")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
 
 }

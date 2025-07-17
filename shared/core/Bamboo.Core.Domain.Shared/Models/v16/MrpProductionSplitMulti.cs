@@ -48,6 +48,6 @@ public partial class MrpProductionSplitMulti : FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("ProductionSplitMulti")]
     [NotMapped]
-    public virtual ICollection<MrpProductionSplit> MrpProductionSplits { get; } = new List<MrpProductionSplit>();
+    public virtual ICollection<MrpProductionSplit> MrpProductionSplits { get; set; } = new List<MrpProductionSplit>();
 
 }

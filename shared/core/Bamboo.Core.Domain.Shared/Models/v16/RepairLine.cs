@@ -142,5 +142,5 @@ public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("RepairOperationLineId")]
     //[InverseProperty("RepairOperationLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> Taxes { get; set; } = new List<AccountTax>();
 }

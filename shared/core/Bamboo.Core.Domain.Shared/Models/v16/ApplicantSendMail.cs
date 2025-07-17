@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("applicant_send_mail")]
-public partial class ApplicantSendMail : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -74,5 +74,10 @@ public partial class ApplicantSendMail : FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("ApplicantSendMailId")]
     //[InverseProperty("ApplicantSendMails")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+
+    [ForeignKey("ApplicantSendMailId")]
+    //[InverseProperty("ApplicantSendMails")]
+    [NotMapped]
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
 }

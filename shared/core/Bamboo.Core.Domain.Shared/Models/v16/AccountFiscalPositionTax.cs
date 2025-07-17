@@ -18,11 +18,11 @@ public partial class AccountFiscalPositionTax: FullAuditedEntity<Guid>, IEntityD
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("position_id")]
-    public Guid? PositionId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("position_id")]
+    public Guid? PositionId { get; set; }
 
     [Column("tax_src_id")]
     public Guid? TaxSrcId { get; set; }

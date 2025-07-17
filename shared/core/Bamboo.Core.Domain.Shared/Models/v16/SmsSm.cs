@@ -33,6 +33,9 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
     [Column("number")]
     public string? Number { get; set; }
 
@@ -45,11 +48,17 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("body")]
     public string? Body { get; set; }
 
+    [Column("to_delete")]
+    public bool? ToDelete { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("mailing_id")]
+    public Guid? MailingId { get; set; }
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -65,6 +74,11 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [NotMapped]
     public virtual MailMessage? MailMessage { get; set; }
 
+    [ForeignKey("MailingId")]
+    //[InverseProperty("SmsSms")]
+    [NotMapped]
+    public virtual MailingMailing? Mailing { get; set; }
+
     [ForeignKey("PartnerId")]
     //[InverseProperty("SmsSms")]
     [NotMapped]
@@ -75,8 +89,9 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     //[InverseProperty("Sms")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
 
 }

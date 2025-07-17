@@ -45,8 +45,14 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("groupby")]
     public string? Groupby { get; set; }
 
+    [Column("user_groupby")]
+    public string? UserGroupby { get; set; }
+
     [Column("code")]
     public string? Code { get; set; }
+
+    [Column("horizontal_split_side")]
+    public string? HorizontalSplitSide { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -66,6 +72,15 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("ReportLine")]
+    [NotMapped]
+    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } = new List<AccountReportExpression>();
+
+    //[InverseProperty("CarryoverOriginReportLine")]
+    [NotMapped]
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } = new List<AccountReportExternalValue>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -74,6 +89,10 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     //[InverseProperty("AccountReportLineCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    //[InverseProperty("Parent")]
+    [NotMapped]
+    public virtual ICollection<AccountReportLine> InverseParent { get; set; } = new List<AccountReportLine>();
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -89,18 +108,4 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     //[InverseProperty("AccountReportLineWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("ReportLine")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; } = new List<AccountReportExpression>();
-
-    //[InverseProperty("CarryoverOriginReportLine")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; } = new List<AccountReportExternalValue>();
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<AccountReportLine> InverseParent { get; } = new List<AccountReportLine>();
-
-
 }

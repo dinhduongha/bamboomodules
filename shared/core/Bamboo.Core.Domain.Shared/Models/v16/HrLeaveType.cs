@@ -17,6 +17,9 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -26,9 +29,7 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("icon_id")]
     public Guid? IconId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
+    // v16-Compat
     [Column("responsible_id")]
     public Guid? ResponsibleId { get; set; }
 
@@ -38,12 +39,16 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("allocation_notif_subtype_id")]
     public Guid? AllocationNotifSubtypeId { get; set; }
 
+    [Column("max_allowed_negative")]
+    public long? MaxAllowedNegative { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat
     [Column("color_name")]
     public string? ColorName { get; set; }
 
@@ -74,11 +79,20 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("show_on_dashboard")]
+    public bool? ShowOnDashboard { get; set; }
+
     [Column("unpaid")]
     public bool? Unpaid { get; set; }
 
+    [Column("include_public_holidays_in_duration")]
+    public bool? IncludePublicHolidaysInDuration { get; set; }
+
     [Column("support_document")]
     public bool? SupportDocument { get; set; }
+
+    [Column("allows_negative")]
+    public bool? AllowsNegative { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -127,16 +141,16 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     // ForeignKey???
     //[InverseProperty("TimeOffType")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlans { get; } = new List<HrLeaveAccrualPlan>();
+    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlans { get; set; } = new List<HrLeaveAccrualPlan>();
 
     // ForeignKey???
     //[InverseProperty("HolidayStatus")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
 
     // ForeignKey???
     //[InverseProperty("HolidayStatus")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
 
 }

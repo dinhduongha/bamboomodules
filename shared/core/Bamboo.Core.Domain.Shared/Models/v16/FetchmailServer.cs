@@ -99,6 +99,10 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("FetchmailServer")]
+    [NotMapped]
+    public virtual ICollection<MailMail> MailMails { get; set; } = new List<MailMail>();
+
     [ForeignKey("ObjectId")]
     //[InverseProperty("FetchmailServers")]
     [NotMapped]
@@ -108,9 +112,4 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     //[InverseProperty("FetchmailServerWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("FetchmailServer")]
-    [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; } = new List<MailMail>();
-
 }

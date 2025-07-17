@@ -56,6 +56,9 @@ public partial class ReportPaperformat : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("disable_shrinking")]
     public bool? DisableShrinking { get; set; }
 
+    [Column("css_margins")]
+    public bool? CssMargins { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -86,10 +89,10 @@ public partial class ReportPaperformat : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Paperformat")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> IrActReportXmls { get; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> IrActReportXmls { get; set; } = new List<IrActReportXml>();
 
     //[InverseProperty("Paperformat")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
 }

@@ -17,6 +17,10 @@ public partial class FleetVehicleLogService: FullAuditedEntity<Guid>, IEntityDto
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -29,8 +33,6 @@ public partial class FleetVehicleLogService: FullAuditedEntity<Guid>, IEntityDto
     [Column("odometer_id")]
     public Guid? OdometerId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("purchaser_id")]
     public Guid? PurchaserId { get; set; }
@@ -39,7 +41,7 @@ public partial class FleetVehicleLogService: FullAuditedEntity<Guid>, IEntityDto
     public Guid? VendorId { get; set; }
 
     [Column("service_type_id")]
-    public Guid ServiceTypeId { get; set; }
+    public Guid? ServiceTypeId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -74,8 +76,16 @@ public partial class FleetVehicleLogService: FullAuditedEntity<Guid>, IEntityDto
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("account_move_line_id")]
+    public Guid? AccountMoveLineId { get; set; }
+
     [Column("purchaser_employee_id")]
     public Guid? PurchaserEmployeeId { get; set; }
+
+    [ForeignKey("AccountMoveLineId")]
+    //[InverseProperty("FleetVehicleLogServices")]
+    [NotMapped]
+    public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("FleetVehicleLogServices")]
@@ -92,6 +102,7 @@ public partial class FleetVehicleLogService: FullAuditedEntity<Guid>, IEntityDto
     [NotMapped]
     public virtual ResUser? Manager { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("FleetVehicleLogServices")]
     [NotMapped]
@@ -115,7 +126,7 @@ public partial class FleetVehicleLogService: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("ServiceTypeId")]
     //[InverseProperty("FleetVehicleLogServices")]
     [NotMapped]
-    public virtual FleetServiceType ServiceType { get; set; } = null!;
+    public virtual FleetServiceType? ServiceType { get; set; } = null!;
 
     [ForeignKey("VehicleId")]
     //[InverseProperty("FleetVehicleLogServices")]

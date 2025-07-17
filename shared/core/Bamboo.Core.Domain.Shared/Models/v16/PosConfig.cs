@@ -17,6 +17,9 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
 
@@ -26,6 +29,7 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("invoice_journal_id")]
     public Guid? InvoiceJournalId { get; set; }
 
+    // v16-Compat
     [Column("iface_start_categ_id")]
     public Guid? IfaceStartCategId { get; set; }
 
@@ -37,9 +41,6 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("group_pos_manager_id")]
     public Guid? GroupPosManagerId { get; set; }
@@ -62,9 +63,11 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("route_id")]
     public Guid? RouteId { get; set; }
 
+    // v16-Compat
     [Column("limited_products_amount")]
     public long? LimitedProductsAmount { get; set; }
 
+    // v16-Compat
     [Column("limited_partners_amount")]
     public long? LimitedPartnersAmount { get; set; }
 
@@ -74,11 +77,20 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("access_token")]
+    public string? AccessToken { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
 
     [Column("iface_tax_included")]
     public string? IfaceTaxIncluded { get; set; }
+
+    [Column("customer_display_type")]
+    public string? CustomerDisplayType { get; set; }
+
+    [Column("customer_display_bg_img_name")]
+    public string? CustomerDisplayBgImgName { get; set; }
 
     [Column("proxy_ip")]
     public string? ProxyIp { get; set; }
@@ -95,15 +107,20 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("receipt_footer")]
     public string? ReceiptFooter { get; set; }
 
+    [Column("is_order_printer")]
+    public bool? IsOrderPrinter { get; set; }
+
     [Column("iface_cashdrawer")]
     public bool? IfaceCashdrawer { get; set; }
 
     [Column("iface_electronic_scale")]
     public bool? IfaceElectronicScale { get; set; }
 
+    // v16-Compat
     [Column("iface_customer_facing_display_via_proxy")]
     public bool? IfaceCustomerFacingDisplayViaProxy { get; set; }
 
+    // v16-Compat
     [Column("iface_customer_facing_display_local")]
     public bool? IfaceCustomerFacingDisplayLocal { get; set; }
 
@@ -131,6 +148,9 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("set_maximum_difference")]
     public bool? SetMaximumDifference { get; set; }
 
+    [Column("basic_receipt")]
+    public bool? BasicReceipt { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -143,6 +163,7 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("tax_regime_selection")]
     public bool? TaxRegimeSelection { get; set; }
 
+    // v16-Compat
     [Column("start_category")]
     public bool? StartCategory { get; set; }
 
@@ -152,9 +173,13 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("module_pos_restaurant")]
     public bool? ModulePosRestaurant { get; set; }
 
+    [Column("module_pos_avatax")]
+    public bool? ModulePosAvatax { get; set; }
+
     [Column("module_pos_discount")]
     public bool? ModulePosDiscount { get; set; }
 
+    // v16-Compat
     [Column("module_pos_mercury")]
     public bool? ModulePosMercury { get; set; }
 
@@ -182,15 +207,40 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("ship_later")]
     public bool? ShipLater { get; set; }
 
+    [Column("auto_validate_terminal_payment")]
+    public bool? AutoValidateTerminalPayment { get; set; }
+
+    [Column("show_product_images")]
+    public bool? ShowProductImages { get; set; }
+
+    [Column("show_category_images")]
+    public bool? ShowCategoryImages { get; set; }
+
+    [Column("module_pos_sms")]
+    public bool? ModulePosSms { get; set; }
+
+    [Column("is_closing_entry_by_product")]
+    public bool? IsClosingEntryByProduct { get; set; }
+
+    [Column("order_edit_tracking")]
+    public bool? OrderEditTracking { get; set; }
+
+    [Column("orderlines_sequence_in_cart_by_category")]
+    public bool? OrderlinesSequenceInCartByCategory { get; set; }
+
+    // v16-Compat
     [Column("limited_products_loading")]
     public bool? LimitedProductsLoading { get; set; }
 
+    // v16-Compat
     [Column("product_load_background")]
     public bool? ProductLoadBackground { get; set; }
 
+    // v16-Compat
     [Column("limited_partners_loading")]
     public bool? LimitedPartnersLoading { get; set; }
 
+    // v16-Compat
     [Column("partner_load_background")]
     public bool? PartnerLoadBackground { get; set; }
 
@@ -211,6 +261,51 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("down_payment_product_id")]
     public Guid? DownPaymentProductId { get; set; }
+
+    [Column("takeaway_fp_id")]
+    public Guid? TakeawayFpId { get; set; }
+
+    [Column("iface_splitbill")]
+    public bool? IfaceSplitbill { get; set; }
+
+    [Column("iface_printbill")]
+    public bool? IfacePrintbill { get; set; }
+
+    [Column("set_tip_after_payment")]
+    public bool? SetTipAfterPayment { get; set; }
+
+    [Column("module_pos_restaurant_appointment")]
+    public bool? ModulePosRestaurantAppointment { get; set; }
+
+    [Column("takeaway")]
+    public bool? Takeaway { get; set; }
+
+    [Column("self_ordering_default_language_id")]
+    public Guid? SelfOrderingDefaultLanguageId { get; set; }
+
+    [Column("self_ordering_default_user_id")]
+    public Guid? SelfOrderingDefaultUserId { get; set; }
+
+    [Column("self_ordering_mode")]
+    public string? SelfOrderingMode { get; set; }
+
+    [Column("self_ordering_service_mode")]
+    public string? SelfOrderingServiceMode { get; set; }
+
+    [Column("self_ordering_pay_after")]
+    public string? SelfOrderingPayAfter { get; set; }
+
+    [Column("self_ordering_image_brand_name")]
+    public string? SelfOrderingImageBrandName { get; set; }
+
+    [Column("self_ordering_takeaway")]
+    public bool? SelfOrderingTakeaway { get; set; }
+
+    [Column("has_paper")]
+    public bool? HasPaper { get; set; }
+
+    [Column("self_order_online_payment_method_id")]
+    public Guid? SelfOrderOnlinePaymentMethodId { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("PosConfigs")]
@@ -309,48 +404,48 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Config")]
     [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePayments { get; } = new List<PosMakePayment>();
+    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } = new List<PosMakePayment>();
 
     //[InverseProperty("Config")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessions { get; } = new List<PosSession>();
+    public virtual ICollection<PosSession> PosSessions { get; set; } = new List<PosSession>();
 
     //[InverseProperty("PosConfig")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } = new List<AccountFiscalPosition>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosBill> PosBills { get; } = new List<PosBill>();
+    public virtual ICollection<PosBill> PosBills { get; set; } = new List<PosBill>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosCategory> PosCategories { get; } = new List<PosCategory>();
+    public virtual ICollection<PosCategory> PosCategories { get; set; } = new List<PosCategory>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosDetailsWizard> PosDetailsWizards { get; } = new List<PosDetailsWizard>();
+    public virtual ICollection<PosDetailsWizard> PosDetailsWizards { get; set; } = new List<PosDetailsWizard>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosPaymentMethod> PosPaymentMethods { get; } = new List<PosPaymentMethod>();
+    public virtual ICollection<PosPaymentMethod> PosPaymentMethods { get; set; } = new List<PosPaymentMethod>();
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigsNavigation")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelists { get; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } = new List<ProductPricelist>();
 }

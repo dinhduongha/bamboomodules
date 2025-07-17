@@ -55,5 +55,10 @@ public partial class LotLabelLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("LotLabelLayoutId")]
     //[InverseProperty("LotLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+
+    [ForeignKey("LotLabelLayoutId")]
+    //[InverseProperty("LotLabelLayouts")]
+    [NotMapped]
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 }

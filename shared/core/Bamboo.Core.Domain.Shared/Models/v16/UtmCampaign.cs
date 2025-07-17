@@ -18,6 +18,9 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
@@ -39,6 +42,9 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("is_auto_campaign")]
     public bool? IsAutoCampaign { get; set; }
 
@@ -48,8 +54,36 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    /// <summary>
+    /// Total A/B test percentage
+    /// </summary>
+    [Column("ab_testing_total_pc")]
+    public int? AbTestingTotalPc { get; set; }
+
+
+    [Column("ab_testing_winner_mailing_id")]
+    public Guid? AbTestingWinnerMailingId { get; set; }
+
+    [Column("ab_testing_winner_selection")]
+    public string? AbTestingWinnerSelection { get; set; }
+
+    [Column("ab_testing_completed")]
+    public bool? AbTestingCompleted { get; set; }
+
+    [Column("ab_testing_schedule_datetime", TypeName = "timestamp without time zone")]
+    public DateTime? AbTestingScheduleDatetime { get; set; }
+
+    [Column("ab_testing_sms_winner_selection")]
+    public string? AbTestingSmsWinnerSelection { get; set; }
+
+    [ForeignKey("AbTestingWinnerMailingId")]
+    //[InverseProperty("UtmCampaigns")]
+    [NotMapped]
+    public virtual MailingMailing? AbTestingWinnerMailing { get; set; }
+
+    //[InverseProperty("Campaign")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     [ForeignKey("TenantId")]
     //[InverseProperty("UtmCampaigns")]
@@ -76,24 +110,53 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // v16-Compat
     //[InverseProperty("Campaign")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    // [NotMapped]
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
+    //[InverseProperty("UtmCampaign")]
+    [NotMapped]
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } = new List<LinkTrackerClick>();
+
+    //[InverseProperty("Campaign")]
+    [NotMapped]
+    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } = new List<LinkTracker>();
+
+    //[InverseProperty("Campaign")]
+    [NotMapped]
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+
+    //[InverseProperty("Campaign")]
+    [NotMapped]
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+
+    //[InverseProperty("Campaign")]
+    [NotMapped]
+    public virtual ICollection<MailingTrace> MailingTraces { get; set; } = new List<MailingTrace>();
+
+    //[InverseProperty("Campaign")]
+    [NotMapped]
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+
+    //[InverseProperty("UtmCampaign")]
+    [NotMapped]
+    public virtual ICollection<SmsComposer> SmsComposers { get; set; } = new List<SmsComposer>();
 
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<UtmTag> Campaigns { get; } = new List<UtmTag>();
+    public virtual ICollection<UtmTag> Campaigns { get; set; } = new List<UtmTag>();
 }

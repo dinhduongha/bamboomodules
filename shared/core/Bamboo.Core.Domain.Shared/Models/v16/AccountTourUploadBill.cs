@@ -52,5 +52,5 @@ public partial class AccountTourUploadBill : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("AccountTourUploadBillId")]
     //[InverseProperty("AccountTourUploadBills")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
 }

@@ -49,5 +49,5 @@ public partial class SmsTemplateReset : FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("SmsTemplateResetId")]
     //[InverseProperty("SmsTemplateResets")]
     [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplates { get; } = new List<SmsTemplate>();
+    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
 }

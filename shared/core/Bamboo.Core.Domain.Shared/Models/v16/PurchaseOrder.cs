@@ -24,6 +24,10 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -50,9 +54,6 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -93,11 +94,20 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("amount_total")]
     public decimal? AmountTotal { get; set; }
 
+    [Column("amount_total_cc")]
+    public decimal? AmountTotalCc { get; set; }
+
+    [Column("currency_rate")]
+    public decimal? CurrencyRate { get; set; }
+
     [Column("mail_reminder_confirmed")]
     public bool? MailReminderConfirmed { get; set; }
 
     [Column("mail_reception_confirmed")]
     public bool? MailReceptionConfirmed { get; set; }
+
+    [Column("mail_reception_declined")]
+    public bool? MailReceptionDeclined { get; set; }
 
     [Column("date_order", TypeName = "timestamp without time zone")]
     public DateTime? DateOrder { get; set; }
@@ -117,8 +127,12 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
-    [Column("currency_rate")]
-    public double? CurrencyRate { get; set; }
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
+
+    // v16-Compat
+    // [Column("currency_rate")]
+    // public double? CurrencyRate { get; set; }
 
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
@@ -202,15 +216,15 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
 
     [ForeignKey("PurchaseOrderId")]
     //[InverseProperty("PurchaseOrders")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     [ForeignKey("PurchaseOrderId")]
     //[InverseProperty("PurchaseOrders")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 }

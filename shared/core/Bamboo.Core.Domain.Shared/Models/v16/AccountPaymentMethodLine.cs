@@ -86,10 +86,10 @@ public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("PaymentMethodLine")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } = new List<AccountPaymentRegister>();
 
     //[InverseProperty("PaymentMethodLine")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
 }

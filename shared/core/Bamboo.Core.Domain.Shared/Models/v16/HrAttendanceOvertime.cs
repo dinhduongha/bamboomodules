@@ -69,10 +69,10 @@ public partial class HrAttendanceOvertime : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Overtime")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
 
     //[InverseProperty("Overtime")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
 
 }

@@ -36,6 +36,7 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("holiday_status_id")]
     public Guid? HolidayStatusId { get; set; }
 
+    // v16-Compat
     [Column("holiday_allocation_id")]
     public Guid? HolidayAllocationId { get; set; }
 
@@ -48,15 +49,21 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
 
+    [Column("resource_calendar_id")]
+    public Guid? ResourceCalendarId { get; set; }
+
     [Column("meeting_id")]
     public Guid? MeetingId { get; set; }
 
+    // v16-Compat
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
+    // v16-Compat
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
+    // v16-Compat
     [Column("mode_company_id")]
     public Guid? ModeCompanyId { get; set; }
 
@@ -131,6 +138,15 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("number_of_days")]
     public double? NumberOfDays { get; set; }
+
+    [Column("number_of_hours")]
+    public double? NumberOfHours { get; set; }
+
+    // [Column("request_hour_from")]
+    // public double? RequestHourFrom { get; set; }
+
+    // [Column("request_hour_to")]
+    // public double? RequestHourTo { get; set; }
 
     [Column("overtime_id")]
     public Guid? OvertimeId { get; set; }
@@ -226,18 +242,18 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("Leave")]
     [NotMapped]
-    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaves { get; } = new List<HrHolidaysCancelLeave>();
+    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaves { get; set; } = new List<HrHolidaysCancelLeave>();
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<HrLeave> InverseParent { get; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> InverseParent { get; set; } = new List<HrLeave>();
 
     //[InverseProperty("Holiday")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; } = new List<ResourceCalendarLeaf>();
+    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } = new List<ResourceCalendarLeaf>();
 
     [ForeignKey("HrLeaveId")]
     //[InverseProperty("HrLeaves")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 }

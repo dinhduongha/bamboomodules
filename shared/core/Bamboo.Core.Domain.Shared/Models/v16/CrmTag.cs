@@ -56,15 +56,20 @@ public partial class CrmTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [ForeignKey("CrmTagId")]
     //[InverseProperty("CrmTags")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } = new List<CrmIapLeadMiningRequest>();
+
+    [ForeignKey("CrmTagId")]
+    //[InverseProperty("CrmTags")]
+    [NotMapped]
+    public virtual ICollection<EventLeadRule> EventLeadRules { get; set; } = new List<EventLeadRule>();
 
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<CrmLead> Leads { get; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> Leads { get; set; } = new List<CrmLead>();
 
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> Orders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> Orders { get; set; } = new List<SaleOrder>();
 }

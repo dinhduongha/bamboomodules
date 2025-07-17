@@ -47,11 +47,17 @@ public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto
     [Column("is_custom")]
     public bool? IsCustom { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("default_extra_price")]
+    public double? DefaultExtraPrice { get; set; }
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -74,10 +80,10 @@ public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("ProductAttributeValue")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
 
     [ForeignKey("ProductAttributeValueId")]
     //[InverseProperty("ProductAttributeValues")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; } = new List<ProductTemplateAttributeLine>();
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } = new List<ProductTemplateAttributeLine>();
 }

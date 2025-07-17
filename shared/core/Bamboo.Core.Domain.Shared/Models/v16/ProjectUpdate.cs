@@ -20,6 +20,7 @@ public partial class ProjectUpdate : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -31,6 +32,12 @@ public partial class ProjectUpdate : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
+
+    [Column("task_count")]
+    public long? TaskCount { get; set; }
+
+    [Column("closed_task_count")]
+    public long? ClosedTaskCount { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -90,6 +97,6 @@ public partial class ProjectUpdate : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("LastUpdate")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
 
 }

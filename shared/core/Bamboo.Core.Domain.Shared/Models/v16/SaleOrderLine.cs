@@ -23,14 +23,14 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("order_id")]
     public Guid? OrderId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -47,6 +47,12 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("product_uom")]
     public Guid? ProductUom { get; set; }
 
+    [Column("linked_line_id")]
+    public Guid? LinkedLineId { get; set; }
+
+    [Column("combo_item_id")]
+    public Guid? ComboItemId { get; set; }
+
     [Column("product_packaging_id")]
     public Guid? ProductPackagingId { get; set; }
 
@@ -61,6 +67,12 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("display_type")]
     public string? DisplayType { get; set; }
+
+    [Column("virtual_id")]
+    public string? VirtualId { get; set; }
+
+    [Column("linked_virtual_id")]
+    public string? LinkedVirtualId { get; set; }
 
     [Column("qty_delivered_method")]
     public string? QtyDeliveredMethod { get; set; }
@@ -83,6 +95,7 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("discount")]
     public decimal? Discount { get; set; }
 
+    // v16-Compat
     [Column("price_reduce")]
     public decimal? PriceReduce { get; set; }
 
@@ -125,6 +138,9 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("technical_price_unit")]
+    public double? TechnicalPriceUnit { get; set; }
+
     [Column("price_tax")]
     public double? PriceTax { get; set; }
 
@@ -137,6 +153,9 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("route_id")]
     public Guid? RouteId { get; set; }
 
+    [Column("warehouse_id")]
+    public Guid? WarehouseId { get; set; }
+
     [Column("is_service")]
     public bool? IsService { get; set; }
 
@@ -146,11 +165,25 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("task_id")]
     public Guid? TaskId { get; set; }
 
-    [Column("linked_line_id")]
-    public Guid? LinkedLineId { get; set; }
+    [Column("is_delivery")]
+    public bool? IsDelivery { get; set; }
+
+    // [Column("linked_line_id")]
+    // public Guid? LinkedLineId { get; set; }
 
     [Column("shop_warning")]
     public string? ShopWarning { get; set; }
+
+    [Column("event_id")]
+    public Guid? EventId { get; set; }
+
+    [Column("event_ticket_id")]
+    public Guid? EventTicketId { get; set; }
+
+    [ForeignKey("ComboItemId")]
+    //[InverseProperty("SaleOrderLines")]
+    [NotMapped]
+    public virtual ProductComboItem? ComboItem { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("SaleOrderLines")]
@@ -222,58 +255,59 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("SoLineNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
 
     //[InverseProperty("LinkedLine")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> InverseLinkedLine { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> InverseLinkedLine { get; set; } = new List<SaleOrderLine>();
 
     //[InverseProperty("SaleOrderLine")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
 
     //[InverseProperty("SaleOrderLine")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; } = new List<ProductAttributeCustomValue>();
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; set; } = new List<ProductAttributeCustomValue>();
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<ProjectMilestone> ProjectMilestones { get; } = new List<ProjectMilestone>();
+    public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; } = new List<ProjectMilestone>();
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
 
     //[InverseProperty("Line")]
     [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; } = new List<SaleOrderOption>();
+    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; set; } = new List<SaleOrderOption>();
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     [ForeignKey("SaleOrderLineId")]
     //[InverseProperty("SaleOrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 
     [ForeignKey("OrderLineId")]
     //[InverseProperty("OrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> InvoiceLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> InvoiceLines { get; set; } = new List<AccountMoveLine>();
 
     [ForeignKey("SaleOrderLineId")]
     //[InverseProperty("SaleOrderLines")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
 }

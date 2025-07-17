@@ -67,10 +67,10 @@ public partial class AccountBankbookReport : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("AccountBankbookReportId")]
     //[InverseProperty("AccountBankbookReports")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     [ForeignKey("ReportLineId")]
     //[InverseProperty("ReportLines")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> Accounts { get; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> Accounts { get; set; } = new List<AccountAccount>();
 }

@@ -32,6 +32,9 @@ public partial class FleetVehicleModelBrand : FullAuditedEntity<Guid>, IEntityDt
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -54,10 +57,10 @@ public partial class FleetVehicleModelBrand : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("Brand")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModel> FleetVehicleModels { get; } = new List<FleetVehicleModel>();
+    public virtual ICollection<FleetVehicleModel> FleetVehicleModels { get; set; } = new List<FleetVehicleModel>();
 
     //[InverseProperty("Brand")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
 
 }

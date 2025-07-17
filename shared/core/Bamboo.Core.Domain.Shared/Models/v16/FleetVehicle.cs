@@ -17,14 +17,15 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("manager_id")]
     public Guid? ManagerId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("driver_id")]
     public Guid? DriverId { get; set; }
@@ -55,6 +56,9 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
+
+    [Column("vehicle_range")]
+    public long? VehicleRange { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -89,6 +93,9 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("fuel_type")]
     public string? FuelType { get; set; }
 
+    [Column("power_unit")]
+    public string? PowerUnit { get; set; }
+
     [Column("co2_standard")]
     public string? Co2Standard { get; set; }
 
@@ -98,6 +105,9 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("next_assignation_date")]
     public DateTime? NextAssignationDate { get; set; }
 
+    [Column("order_date")]
+    public DateTime? OrderDate { get; set; }
+
     [Column("acquisition_date")]
     public DateTime? AcquisitionDate { get; set; }
 
@@ -106,6 +116,9 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("first_contract_date")]
     public DateTime? FirstContractDate { get; set; }
+
+    [Column("vehicle_properties", TypeName = "jsonb")]
+    public string? VehicleProperties { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -158,6 +171,10 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("mobility_card")]
     public string? MobilityCard { get; set; }
 
+    //[InverseProperty("Vehicle")]
+    // [NotMapped]
+    // public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
     [ForeignKey("BrandId")]
     //[InverseProperty("FleetVehicles")]
     [NotMapped]
@@ -203,6 +220,7 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ResUser? Manager { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("FleetVehicles")]
     [NotMapped]
@@ -225,26 +243,26 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; } = new List<FleetVehicleAssignationLog>();
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } = new List<FleetVehicleAssignationLog>();
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } = new List<FleetVehicleLogContract>();
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } = new List<FleetVehicleLogService>();
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometers { get; } = new List<FleetVehicleOdometer>();
+    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometers { get; set; } = new List<FleetVehicleOdometer>();
 
     [ForeignKey("VehicleTagId")]
     //[InverseProperty("VehicleTags")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleTag> Tags { get; } = new List<FleetVehicleTag>();
+    public virtual ICollection<FleetVehicleTag> Tags { get; set; } = new List<FleetVehicleTag>();
 }

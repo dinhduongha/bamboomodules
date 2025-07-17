@@ -39,6 +39,7 @@ public partial class HrEmployeeCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -48,21 +49,32 @@ public partial class HrEmployeeCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
+
+    // v16-Compat
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
+
+
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizards { get; set; } = new List<HrLeaveAllocationGenerateMultiWizard>();
+
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizards { get; set; } = new List<HrLeaveGenerateMultiWizard>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("HrEmployeeCategoryWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; } = new List<HrLeaveAllocation>();
-
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; } = new List<HrLeave>();
-
     [ForeignKey("CategoryId")]
     //[InverseProperty("Categories")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> Emps { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> Employees { get; set; } = new List<HrEmployee>();
 }

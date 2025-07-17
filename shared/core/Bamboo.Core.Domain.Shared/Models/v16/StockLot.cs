@@ -19,6 +19,10 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -28,8 +32,8 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    [Column("location_id")]
+    public Guid? LocationId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -43,6 +47,9 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("ref")]
     public string? Ref { get; set; }
 
+    [Column("lot_properties", TypeName = "jsonb")]
+    public string? LotProperties { get; set; }
+
     [Column("note")]
     public string? Note { get; set; }
 
@@ -51,6 +58,9 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("standard_price", TypeName = "jsonb")]
+    public string? StandardPrice { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("StockLots")]
@@ -62,6 +72,12 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("LocationId")]
+    //[InverseProperty("StockLots")]
+    [NotMapped]
+    public virtual StockLocation? Location { get; set; }
+
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("StockLots")]
     [NotMapped]
@@ -82,36 +98,37 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("LotProducing")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("OrderFinishedLot")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
 
 }

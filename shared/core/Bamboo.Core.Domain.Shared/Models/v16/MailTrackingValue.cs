@@ -21,7 +21,11 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
+    [Column("field_id")]
+    public Guid? FieldId { get; set; }
+
+    // v16-Compat
     [Column("field")]
     public Guid? Field { get; set; }
 
@@ -37,6 +41,7 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
+    // v16-Compat
     [Column("tracking_sequence")]
     public long? TrackingSequence { get; set; }
 
@@ -46,9 +51,11 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat
     [Column("field_desc")]
     public string? FieldDesc { get; set; }
 
+    // v16-Compat
     [Column("field_type")]
     public string? FieldType { get; set; }
 
@@ -57,6 +64,9 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("new_value_char")]
     public string? NewValueChar { get; set; }
+
+    [Column("field_info", TypeName = "jsonb")]
+    public string? FieldInfo { get; set; }
 
     [Column("old_value_text")]
     public string? OldValueText { get; set; }
@@ -79,12 +89,14 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("old_value_float")]
     public double? OldValueFloat { get; set; }
 
+    // v16-Compat
     [Column("old_value_monetary")]
     public double? OldValueMonetary { get; set; }
 
     [Column("new_value_float")]
     public double? NewValueFloat { get; set; }
 
+    // v16-Compat
     [Column("new_value_monetary")]
     public double? NewValueMonetary { get; set; }
 
@@ -98,10 +110,16 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
 
+    // v16-Compat
     [ForeignKey("Field")]
     //[InverseProperty("MailTrackingValues")]
     [NotMapped]
     public virtual IrModelField? FieldNavigation { get; set; }
+
+    // [ForeignKey("FieldId")]
+    // //[InverseProperty("MailTrackingValues")]
+    // [NotMapped]
+    // public virtual IrModelField? Field { get; set; }
 
     [ForeignKey("MailMessageId")]
     //[InverseProperty("MailTrackingValues")]

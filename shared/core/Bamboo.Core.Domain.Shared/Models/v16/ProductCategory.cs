@@ -40,17 +40,53 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
+    [Column("product_properties_definition", TypeName = "jsonb")]
+    public string? ProductPropertiesDefinition { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("property_account_income_categ_id", TypeName = "jsonb")]
+    public string? PropertyAccountIncomeCategId { get; set; }
+
+    [Column("property_account_expense_categ_id", TypeName = "jsonb")]
+    public string? PropertyAccountExpenseCategId { get; set; }
+
+    [Column("property_account_downpayment_categ_id", TypeName = "jsonb")]
+    public string? PropertyAccountDownpaymentCategId { get; set; }
+
     [Column("removal_strategy_id")]
     public Guid? RemovalStrategyId { get; set; }
 
     [Column("packaging_reserve_method")]
     public string? PackagingReserveMethod { get; set; }
+
+    [Column("property_valuation", TypeName = "jsonb")]
+    public string? PropertyValuation { get; set; }
+
+    [Column("property_cost_method", TypeName = "jsonb")]
+    public string? PropertyCostMethod { get; set; }
+
+    [Column("property_stock_journal", TypeName = "jsonb")]
+    public string? PropertyStockJournal { get; set; }
+
+    [Column("property_stock_account_input_categ_id", TypeName = "jsonb")]
+    public string? PropertyStockAccountInputCategId { get; set; }
+
+    [Column("property_stock_account_output_categ_id", TypeName = "jsonb")]
+    public string? PropertyStockAccountOutputCategId { get; set; }
+
+    [Column("property_stock_valuation_account_id", TypeName = "jsonb")]
+    public string? PropertyStockValuationAccountId { get; set; }
+
+    [Column("property_account_creditor_price_difference_categ", TypeName = "jsonb")]
+    public string? PropertyAccountCreditorPriceDifferenceCateg { get; set; }
+
+    [Column("property_stock_account_production_cost_id", TypeName = "jsonb")]
+    public string? PropertyStockAccountProductionCostId { get; set; }
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -78,34 +114,34 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("ProductCateg")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilities { get; } = new List<AccountAnalyticApplicability>();
+    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilities { get; set; } = new List<AccountAnalyticApplicability>();
 
     //[InverseProperty("ProductCateg")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } = new List<AccountAnalyticDistributionModel>();
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> InverseParent { get; } = new List<ProductCategory>();
+    public virtual ICollection<ProductCategory> InverseParent { get; set; } = new List<ProductCategory>();
 
     //[InverseProperty("Categ")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } = new List<ProductPricelistItem>();
 
     //[InverseProperty("Categ")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } = new List<StockPutawayRule>();
 
     //[InverseProperty("ProductCategory")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
 
     [ForeignKey("CategId")]
     //[InverseProperty("Categs")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
 }

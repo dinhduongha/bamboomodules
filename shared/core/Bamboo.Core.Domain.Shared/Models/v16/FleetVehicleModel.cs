@@ -21,7 +21,7 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("brand_id")]
-    public Guid BrandId { get; set; }
+    public Guid? BrandId { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
@@ -40,6 +40,9 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("horsepower")]
     public long? Horsepower { get; set; }
+
+    [Column("vehicle_range")]
+    public long? VehicleRange { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -64,6 +67,12 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("default_fuel_type")]
     public string? DefaultFuelType { get; set; }
+
+    [Column("power_unit")]
+    public string? PowerUnit { get; set; }
+
+    [Column("vehicle_properties_definition", TypeName = "jsonb")]
+    public string? VehiclePropertiesDefinition { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -93,7 +102,7 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("BrandId")]
     //[InverseProperty("FleetVehicleModels")]
     [NotMapped]
-    public virtual FleetVehicleModelBrand Brand { get; set; } = null!;
+    public virtual FleetVehicleModelBrand? Brand { get; set; } = null!;
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("FleetVehicleModels")]
@@ -112,10 +121,10 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
 
     [ForeignKey("ModelId")]
     //[InverseProperty("Models")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
 }

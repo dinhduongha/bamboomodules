@@ -63,6 +63,9 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
+    [Column("website_footer", TypeName = "jsonb")]
+    public string? WebsiteFooter { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -96,10 +99,10 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ProductPublicCategory> InverseParent { get; } = new List<ProductPublicCategory>();
+    public virtual ICollection<ProductPublicCategory> InverseParent { get; set; } = new List<ProductPublicCategory>();
 
     [ForeignKey("ProductPublicCategoryId")]
     //[InverseProperty("ProductPublicCategories")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 }

@@ -20,6 +20,9 @@ public partial class HrApplicantRefuseReason : FullAuditedEntity<Guid>, IEntityD
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
 
@@ -41,6 +44,11 @@ public partial class HrApplicantRefuseReason : FullAuditedEntity<Guid>, IEntityD
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("RefuseReason")]
+    [NotMapped]
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } = new List<ApplicantGetRefuseReason>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -49,6 +57,10 @@ public partial class HrApplicantRefuseReason : FullAuditedEntity<Guid>, IEntityD
     //[InverseProperty("HrApplicantRefuseReasonCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    //[InverseProperty("RefuseReason")]
+    [NotMapped]
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 
     [ForeignKey("TemplateId")]
     //[InverseProperty("HrApplicantRefuseReasons")]
@@ -59,13 +71,4 @@ public partial class HrApplicantRefuseReason : FullAuditedEntity<Guid>, IEntityD
     //[InverseProperty("HrApplicantRefuseReasonWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("RefuseReason")]
-    [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; } = new List<ApplicantGetRefuseReason>();
-
-    //[InverseProperty("RefuseReason")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
-
 }

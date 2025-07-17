@@ -62,6 +62,7 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -71,10 +72,22 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
     [NotMapped]
     public virtual AccountFinancialReport? AccountReport { get; set; }
 
+    //[InverseProperty("AccountReport")]
+    [NotMapped]
+    public virtual ICollection<AccountingReport> AccountingReports { get; set; } = new List<AccountingReport>();
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("AccountFinancialReportCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    //[InverseProperty("AccountReport")]
+    [NotMapped]
+    public virtual ICollection<AccountFinancialReport> InverseAccountReport { get; set; } = new List<AccountFinancialReport>();
+
+    //[InverseProperty("Parent")]
+    [NotMapped]
+    public virtual ICollection<AccountFinancialReport> InverseParent { get; set; } = new List<AccountFinancialReport>();
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -86,25 +99,13 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("AccountReport")]
-    [NotMapped]
-    public virtual ICollection<AccountingReport> AccountingReports { get; } = new List<AccountingReport>();
-
-    //[InverseProperty("AccountReport")]
-    [NotMapped]
-    public virtual ICollection<AccountFinancialReport> InverseAccountReport { get; } = new List<AccountFinancialReport>();
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<AccountFinancialReport> InverseParent { get; } = new List<AccountFinancialReport>();
-
     [ForeignKey("ReportId")]
     //[InverseProperty("Reports")]
     [NotMapped]
-    public virtual ICollection<AccountAccountType> AccountTypes { get; } = new List<AccountAccountType>();
+    public virtual ICollection<AccountAccountType> AccountTypes { get; set; } = new List<AccountAccountType>();
 
     [ForeignKey("ReportLineId")]
     //[InverseProperty("ReportLines2")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> Accounts { get; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> Accounts { get; set; } = new List<AccountAccount>();
 }

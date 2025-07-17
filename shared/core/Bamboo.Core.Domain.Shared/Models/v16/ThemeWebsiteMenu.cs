@@ -82,10 +82,10 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ThemeWebsiteMenu> InverseParent { get; } = new List<ThemeWebsiteMenu>();
+    public virtual ICollection<ThemeWebsiteMenu> InverseParent { get; set; } = new List<ThemeWebsiteMenu>();
 
     //[InverseProperty("ThemeTemplate")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } = new List<WebsiteMenu>();
 
 }

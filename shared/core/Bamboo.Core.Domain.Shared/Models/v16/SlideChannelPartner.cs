@@ -44,6 +44,9 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("member_status")]
     public string? MemberStatus { get; set; }
 
+    [Column("completed")]
+    public bool? Completed { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 

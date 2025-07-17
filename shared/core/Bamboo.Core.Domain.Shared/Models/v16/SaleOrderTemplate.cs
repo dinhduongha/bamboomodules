@@ -20,6 +20,9 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }
 
@@ -38,6 +41,9 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 
+    [Column("journal_id", TypeName = "jsonb")]
+    public string? JournalId { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -52,6 +58,9 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("prepayment_percent")]
+    public double? PrepaymentPercent { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("SaleOrderTemplates")]
@@ -75,18 +84,22 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; } = new List<SaleOrderTemplateLine>();
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; } = new List<SaleOrderTemplateLine>();
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; } = new List<SaleOrderTemplateOption>();
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; } = new List<SaleOrderTemplateOption>();
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
+    [ForeignKey("SaleOrderTemplateId")]
+    //[InverseProperty("SaleOrderTemplates")]
+    [NotMapped]
+    public virtual ICollection<QuotationDocument> QuotationDocuments { get; set; } = new List<QuotationDocument>();
 }

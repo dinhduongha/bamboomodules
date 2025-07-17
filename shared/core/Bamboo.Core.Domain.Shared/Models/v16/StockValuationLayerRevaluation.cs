@@ -23,6 +23,9 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
+    [Column("lot_id")]
+    public Guid? LotId { get; set; }
+
     [Column("account_journal_id")]
     public Guid? AccountJournalId { get; set; }
 
@@ -70,6 +73,11 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("LotId")]
+    //[InverseProperty("StockValuationLayerRevaluations")]
+    [NotMapped]
+    public virtual StockLot? Lot { get; set; }
+
     [ForeignKey("ProductId")]
     //[InverseProperty("StockValuationLayerRevaluations")]
     [NotMapped]
@@ -79,4 +87,9 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     //[InverseProperty("StockValuationLayerRevaluationWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("StockValuationLayerRevaluationId")]
+    //[InverseProperty("StockValuationLayerRevaluations")]
+    [NotMapped]
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
 }

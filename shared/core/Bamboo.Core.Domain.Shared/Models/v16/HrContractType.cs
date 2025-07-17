@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_contract_type")]
-public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,15 +19,21 @@ public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
+
+    [Column("country_id")]
+    public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -37,6 +43,11 @@ public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [ForeignKey("CountryId")]
+    //[InverseProperty("HrContractTypes")]
+    [NotMapped]
+    public virtual ResCountry? Country { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("HrContractTypeCreateUs")]
@@ -50,10 +61,10 @@ public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("ContractType")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
 
     //[InverseProperty("ContractType")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
 
 }

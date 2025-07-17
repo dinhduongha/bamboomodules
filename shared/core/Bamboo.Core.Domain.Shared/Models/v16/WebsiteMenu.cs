@@ -25,6 +25,9 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("page_id")]
     public Guid? PageId { get; set; }
 
+    [Column("controller_page_id")]
+    public Guid? ControllerPageId { get; set; }
+
     [Column("sequence")]
     public long Sequence { get; set; }
 
@@ -67,6 +70,11 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [ForeignKey("ControllerPageId")]
+    //[InverseProperty("WebsiteMenus")]
+    [NotMapped]
+    public virtual WebsiteControllerPage? ControllerPage { get; set; }
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("WebsiteMenuCreateUs")]
     [NotMapped]
@@ -99,6 +107,6 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> InverseParent { get; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> InverseParent { get; set; } = new List<WebsiteMenu>();
 
 }

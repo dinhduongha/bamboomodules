@@ -17,6 +17,12 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("outstanding_account_id")]
     public Guid? OutstandingAccountId { get; set; }
 
@@ -26,9 +32,6 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -37,6 +40,12 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("use_payment_terminal")]
     public string? UsePaymentTerminal { get; set; }
+
+    [Column("payment_method_type")]
+    public string? PaymentMethodType { get; set; }
+
+    [Column("qr_code_method")]
+    public string? QrCodeMethod { get; set; }
 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -55,6 +64,13 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("is_online_payment")]
+    public bool? IsOnlinePayment { get; set; }
+
+    //[InverseProperty("PosPaymentMethod")]
+    // [NotMapped]
+    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     [ForeignKey("TenantId")]
     //[InverseProperty("PosPaymentMethods")]
@@ -88,18 +104,18 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("PosPaymentMethod")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePayments { get; } = new List<PosMakePayment>();
+    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } = new List<PosMakePayment>();
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
 
     [ForeignKey("PosPaymentMethodId")]
     //[InverseProperty("PosPaymentMethods")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 }

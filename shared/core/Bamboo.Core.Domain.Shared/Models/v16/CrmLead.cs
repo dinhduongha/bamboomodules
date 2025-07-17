@@ -28,6 +28,9 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
 
@@ -37,6 +40,7 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("medium_id")]
     public Guid? MediumId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -48,9 +52,6 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("team_id")]
     public Guid? TeamId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("stage_id")]
     public Guid? StageId { get; set; }
@@ -118,6 +119,9 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("email_from")]
     public string? EmailFrom { get; set; }
 
+    [Column("email_domain_criterion")]
+    public string? EmailDomainCriterion { get; set; }
+
     [Column("phone")]
     public string? Phone { get; set; }
 
@@ -169,12 +173,19 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("recurring_revenue_monthly_prorated")]
     public decimal? RecurringRevenueMonthlyProrated { get; set; }
 
+    [Column("recurring_revenue_prorated")]
+    public decimal? RecurringRevenueProrated { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("date_closed", TypeName = "timestamp without time zone")]
     public DateTime? DateClosed { get; set; }
 
+    [Column("date_automation_last", TypeName = "timestamp without time zone")]
+    public DateTime? DateAutomationLast { get; set; }
+
+    // v16-Compat
     [Column("date_action_last", TypeName = "timestamp without time zone")]
     public DateTime? DateActionLast { get; set; }
 
@@ -213,6 +224,16 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("lead_mining_request_id")]
     public Guid? LeadMiningRequestId { get; set; }
+
+    [Column("event_lead_rule_id")]
+    public Guid? EventLeadRuleId { get; set; }
+
+    [Column("event_id")]
+    public Guid? EventId { get; set; }
+
+    //[InverseProperty("Opportunity")]
+    // [NotMapped]
+    // public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 
     [ForeignKey("CampaignId")]
     //[InverseProperty("CrmLeads")]
@@ -306,51 +327,51 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Opportunity")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 
     //[InverseProperty("Lead")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassesNavigation { get; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassesNavigation { get; set; } = new List<CrmLead2opportunityPartnerMass>();
 
     //[InverseProperty("Lead")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } = new List<CrmLead2opportunityPartner>();
 
     //[InverseProperty("Lead")]
     [NotMapped]
-    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; } = new List<CrmQuotationPartner>();
+    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; set; } = new List<CrmQuotationPartner>();
 
     //[InverseProperty("Opportunity")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeads")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } = new List<CrmLead2opportunityPartnerMass>();
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeadsNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses1 { get; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses1 { get; set; } = new List<CrmLead2opportunityPartnerMass>();
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeads")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnersNavigation { get; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnersNavigation { get; set; } = new List<CrmLead2opportunityPartner>();
 
     [ForeignKey("OpportunityId")]
     //[InverseProperty("Opportunities")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> Merges { get; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmMergeOpportunity> Merges { get; set; } = new List<CrmMergeOpportunity>();
 
     [ForeignKey("LeadId")]
     //[InverseProperty("Leads")]
     [NotMapped]
-    public virtual ICollection<CrmTag> Tags { get; } = new List<CrmTag>();
+    public virtual ICollection<CrmTag> Tags { get; set; } = new List<CrmTag>();
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeads")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } = new List<WebsiteVisitor>();
 }

@@ -21,11 +21,14 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    [Column("payment_method_id")]
+    public Guid? PaymentMethodId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -36,9 +39,11 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("source_transaction_id")]
     public Guid? SourceTransactionId { get; set; }
 
+    // v16-Compat
     [Column("callback_model_id")]
     public Guid? CallbackModelId { get; set; }
 
+    // v16-Compat
     [Column("callback_res_id")]
     public Guid? CallbackResId { get; set; }
 
@@ -72,9 +77,11 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("landing_route")]
     public string? LandingRoute { get; set; }
 
+    // v16-Compat
     [Column("callback_method")]
     public string? CallbackMethod { get; set; }
 
+    // v16-Compat
     [Column("callback_hash")]
     public string? CallbackHash { get; set; }
 
@@ -105,6 +112,7 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("amount")]
     public decimal? Amount { get; set; }
 
+    // v16-Compat
     [Column("fees")]
     public decimal? Fees { get; set; }
 
@@ -114,6 +122,7 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("tokenize")]
     public bool? Tokenize { get; set; }
 
+    // v16-Compat
     [Column("callback_is_done")]
     public bool? CallbackIsDone { get; set; }
 
@@ -128,6 +137,9 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }
+
+    [Column("pos_order_id")]
+    public Guid? PosOrderId { get; set; }
 
     [Column("is_donation")]
     public bool? IsDonation { get; set; }
@@ -194,19 +206,19 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("PaymentTransaction")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("SourceTransaction")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> InverseSourceTransaction { get; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> InverseSourceTransaction { get; set; } = new List<PaymentTransaction>();
 
     [ForeignKey("TransactionId")]
     //[InverseProperty("Transactions")]
     [NotMapped]
-    public virtual ICollection<AccountMove> Invoices { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> Invoices { get; set; } = new List<AccountMove>();
 
     [ForeignKey("TransactionId")]
     //[InverseProperty("Transactions")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 }

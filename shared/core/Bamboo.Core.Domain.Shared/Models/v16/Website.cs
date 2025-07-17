@@ -18,11 +18,11 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("sequence")]
-    public long Sequence { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("sequence")]
+    public long Sequence { get; set; }
 
     [Column("default_lang_id")]
     public Guid? DefaultLangId { get; set; }
@@ -63,6 +63,9 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("social_instagram")]
     public string? SocialInstagram { get; set; }
 
+    [Column("social_tiktok")]
+    public string? SocialTiktok { get; set; }
+
     [Column("google_analytics_key")]
     public string? GoogleAnalyticsKey { get; set; }
 
@@ -87,6 +90,9 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("auth_signup_uninvited")]
     public string? AuthSignupUninvited { get; set; }
 
+    [Column("custom_blocked_third_party_domains")]
+    public string? CustomBlockedThirdPartyDomains { get; set; }
+
     [Column("cdn_filters")]
     public string? CdnFilters { get; set; }
 
@@ -107,6 +113,9 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("configurator_done")]
     public bool? ConfiguratorDone { get; set; }
+
+    [Column("block_third_party_domains")]
+    public bool? BlockThirdPartyDomains { get; set; }
 
     [Column("has_social_default_image")]
     public bool? HasSocialDefaultImage { get; set; }
@@ -147,14 +156,24 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("product_page_grid_columns")]
     public long? ProductPageGridColumns { get; set; }
 
-    [Column("shop_default_sort")]
-    public string? ShopDefaultSort { get; set; }
+    [Column("show_line_subtotals_tax_selection")]
+    public string? ShowLineSubtotalsTaxSelection { get; set; }
+
+    // v16-Compat
+    // [Column("shop_default_sort")]
+    // public string? ShopDefaultSort { get; set; }
 
     [Column("add_to_cart_action")]
     public string? AddToCartAction { get; set; }
 
     [Column("account_on_checkout")]
     public string? AccountOnCheckout { get; set; }
+
+    [Column("shop_gap")]
+    public string? ShopGap { get; set; }
+
+    [Column("shop_default_sort")]
+    public string? ShopDefaultSort { get; set; }
 
     [Column("product_page_image_layout")]
     public string? ProductPageImageLayout { get; set; }
@@ -165,11 +184,21 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("product_page_image_spacing")]
     public string? ProductPageImageSpacing { get; set; }
 
-    [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
-    public string? PreventZeroPriceSaleText { get; set; }
+    [Column("ecommerce_access")]
+    public string? EcommerceAccess { get; set; }
+
+    // v16-Compat
+    // [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
+    // public string? PreventZeroPriceSaleText { get; set; }
 
     [Column("contact_us_button_url", TypeName = "jsonb")]
     public string? ContactUsButtonUrl { get; set; }
+
+    [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
+    public string? PreventZeroPriceSaleText { get; set; }
+
+    [Column("enabled_portal_reorder_button")]
+    public bool? EnabledPortalReorderButton { get; set; }
 
     [Column("send_abandoned_cart_email")]
     public bool? SendAbandonedCartEmail { get; set; }
@@ -177,8 +206,9 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("prevent_zero_price_sale")]
     public bool? PreventZeroPriceSale { get; set; }
 
-    [Column("enabled_portal_reorder_button")]
-    public bool? EnabledPortalReorderButton { get; set; }
+    // v16-Compat
+    // [Column("enabled_portal_reorder_button")]
+    // public bool? EnabledPortalReorderButton { get; set; }
 
     [Column("cart_abandoned_delay")]
     public double? CartAbandonedDelay { get; set; }
@@ -186,10 +216,27 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("warehouse_id")]
     public Guid? WarehouseId { get; set; }
 
+    [Column("karma_profile_min")]
+    public long? KarmaProfileMin { get; set; }
+
+    [Column("website_slide_google_app_key")]
+    public string? WebsiteSlideGoogleAppKey { get; set; }
+
+    [Column("newsletter_id")]
+    public Guid? NewsletterId { get; set; }
+
+    [Column("channel_id")]
+    public Guid? ChannelId { get; set; }
+
     [ForeignKey("CartRecoveryMailTemplateId")]
     //[InverseProperty("Websites")]
     [NotMapped]
     public virtual MailTemplate? CartRecoveryMailTemplate { get; set; }
+
+    [ForeignKey("ChannelId")]
+    //[InverseProperty("Websites")]
+    [NotMapped]
+    public virtual ImLivechatChannel? Channel { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("Websites")]
@@ -215,6 +262,11 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     //[InverseProperty("Websites")]
     [NotMapped]
     public virtual ResLang? DefaultLang { get; set; }
+
+    [ForeignKey("NewsletterId")]
+    //[InverseProperty("Websites")]
+    [NotMapped]
+    public virtual MailingList? Newsletter { get; set; }
 
     [ForeignKey("SalespersonId")]
     //[InverseProperty("WebsiteSalespeople")]
@@ -248,99 +300,99 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<IrAsset> IrAssets { get; } = new List<IrAsset>();
+    public virtual ICollection<IrAsset> IrAssets { get; set; } = new List<IrAsset>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<IrUiView> IrUiViews { get; } = new List<IrUiView>();
+    public virtual ICollection<IrUiView> IrUiViews { get; set; } = new List<IrUiView>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; } = new List<PaymentProvider>();
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelists { get; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } = new List<ProductPricelist>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ProductPublicCategory> ProductPublicCategories { get; } = new List<ProductPublicCategory>();
+    public virtual ICollection<ProductPublicCategory> ProductPublicCategories { get; set; } = new List<ProductPublicCategory>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTags { get; } = new List<ProductTag>();
+    public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 
     //[InverseProperty("WebsiteNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } = new List<WebsiteMenu>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<WebsitePage> WebsitePages { get; } = new List<WebsitePage>();
+    public virtual ICollection<WebsitePage> WebsitePages { get; set; } = new List<WebsitePage>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<WebsiteRewrite> WebsiteRewrites { get; } = new List<WebsiteRewrite>();
+    public virtual ICollection<WebsiteRewrite> WebsiteRewrites { get; set; } = new List<WebsiteRewrite>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFields { get; } = new List<WebsiteSaleExtraField>();
+    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFields { get; set; } = new List<WebsiteSaleExtraField>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; } = new List<WebsiteSnippetFilter>();
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } = new List<WebsiteSnippetFilter>();
 
     //[InverseProperty("Website")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } = new List<WebsiteVisitor>();
 
     [ForeignKey("WebsiteId")]
     //[InverseProperty("Websites")]
     [NotMapped]
-    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstalls { get; } = new List<BaseLanguageInstall>();
+    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstalls { get; set; } = new List<BaseLanguageInstall>();
 
     [ForeignKey("WebsiteId")]
     //[InverseProperty("WebsitesNavigation")]
     [NotMapped]
-    public virtual ICollection<ResLang> Langs { get; } = new List<ResLang>();
+    public virtual ICollection<ResLang> Langs { get; set; } = new List<ResLang>();
 }

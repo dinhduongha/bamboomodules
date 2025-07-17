@@ -70,13 +70,12 @@ public partial class FollowupPrint : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual FollowupFollowup? Followup { get; set; }
 
+    //[InverseProperty("OsvMemory")]
+    [NotMapped]
+    public virtual ICollection<PartnerStatRel> PartnerStatRels { get; set; } = new List<PartnerStatRel>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FollowupPrintWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("OsvMemory")]
-    [NotMapped]
-    public virtual ICollection<PartnerStatRel> PartnerStatRels { get; } = new List<PartnerStatRel>();
-
 }

@@ -32,12 +32,14 @@ public partial class ProjectShareWizard : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("res_model")]
     public string? ResModel { get; set; }
 
+    // v16-Compat
     [Column("access_mode")]
     public string? AccessMode { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
 
+    // v16-Compat
     [Column("display_access_mode")]
     public bool? DisplayAccessMode { get; set; }
 
@@ -64,5 +66,5 @@ public partial class ProjectShareWizard : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ProjectShareWizardId")]
     //[InverseProperty("ProjectShareWizards")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

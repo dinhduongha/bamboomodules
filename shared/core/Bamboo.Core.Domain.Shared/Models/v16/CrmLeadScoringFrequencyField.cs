@@ -57,5 +57,5 @@ public partial class CrmLeadScoringFrequencyField : FullAuditedEntity<Guid>, IEn
     [ForeignKey("CrmLeadScoringFrequencyFieldId")]
     //[InverseProperty("CrmLeadScoringFrequencyFields")]
     [NotMapped]
-    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdates { get; } = new List<CrmLeadPlsUpdate>();
+    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdates { get; set; } = new List<CrmLeadPlsUpdate>();
 }

@@ -42,6 +42,9 @@ public partial class ProductAttributeCustomValue : FullAuditedEntity<Guid>, IEnt
     [Column("sale_order_line_id")]
     public Guid? SaleOrderLineId { get; set; }
 
+    [Column("pos_order_line_id")]
+    public Guid? PosOrderLineId { get; set; }
+
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -55,6 +58,11 @@ public partial class ProductAttributeCustomValue : FullAuditedEntity<Guid>, IEnt
     //[InverseProperty("ProductAttributeCustomValues")]
     [NotMapped]
     public virtual ProductTemplateAttributeValue? CustomProductTemplateAttributeValue { get; set; }
+
+    [ForeignKey("PosOrderLineId")]
+    //[InverseProperty("ProductAttributeCustomValues")]
+    [NotMapped]
+    public virtual PosOrderLine? PosOrderLine { get; set; }
 
     [ForeignKey("SaleOrderLineId")]
     //[InverseProperty("ProductAttributeCustomValues")]

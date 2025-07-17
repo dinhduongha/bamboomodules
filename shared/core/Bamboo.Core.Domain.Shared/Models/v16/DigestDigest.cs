@@ -53,17 +53,17 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("kpi_account_total_revenue")]
     public bool? KpiAccountTotalRevenue { get; set; }
 
-    [Column("kpi_all_sale_total")]
-    public bool? KpiAllSaleTotal { get; set; }
-
-    [Column("kpi_pos_total")]
-    public bool? KpiPosTotal { get; set; }
-
     [Column("kpi_crm_lead_created")]
     public bool? KpiCrmLeadCreated { get; set; }
 
     [Column("kpi_crm_opportunities_won")]
     public bool? KpiCrmOpportunitiesWon { get; set; }
+
+    [Column("kpi_all_sale_total")]
+    public bool? KpiAllSaleTotal { get; set; }
+
+    [Column("kpi_pos_total")]
+    public bool? KpiPosTotal { get; set; }
 
     [Column("kpi_project_task_opened")]
     public bool? KpiProjectTaskOpened { get; set; }
@@ -73,6 +73,15 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("kpi_website_sale_total")]
     public bool? KpiWebsiteSaleTotal { get; set; }
+
+    [Column("kpi_livechat_rating")]
+    public bool? KpiLivechatRating { get; set; }
+
+    [Column("kpi_livechat_conversations")]
+    public bool? KpiLivechatConversations { get; set; }
+
+    [Column("kpi_livechat_response")]
+    public bool? KpiLivechatResponse { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("DigestDigests")]
@@ -84,17 +93,17 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Digest")]
+    [NotMapped]
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("DigestDigestWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Digest")]
-    [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
-
     [ForeignKey("DigestDigestId")]
     //[InverseProperty("DigestDigests")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 }

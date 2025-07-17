@@ -18,6 +18,10 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -26,9 +30,6 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("cost_subtype_id")]
     public Guid? CostSubtypeId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -101,6 +102,7 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     [NotMapped]
     public virtual ResPartner? Insurer { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("FleetVehicleLogContracts")]
     [NotMapped]
@@ -124,5 +126,5 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("FleetVehicleLogContractId")]
     //[InverseProperty("FleetVehicleLogContracts")]
     [NotMapped]
-    public virtual ICollection<FleetServiceType> FleetServiceTypes { get; } = new List<FleetServiceType>();
+    public virtual ICollection<FleetServiceType> FleetServiceTypes { get; set; } = new List<FleetServiceType>();
 }

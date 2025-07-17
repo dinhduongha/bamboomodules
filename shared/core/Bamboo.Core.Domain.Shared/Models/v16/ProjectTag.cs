@@ -56,10 +56,10 @@ public partial class ProjectTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("ProjectTagsId")]
     //[InverseProperty("ProjectTags")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
 
     [ForeignKey("ProjectTagsId")]
     //[InverseProperty("ProjectTags")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 }

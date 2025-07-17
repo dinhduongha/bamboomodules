@@ -30,6 +30,9 @@ public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("scope")]
     public string? Scope { get; set; }
 
+    [Column("expiration_date", TypeName = "timestamp without time zone")]
+    public DateTime? ExpirationDate { get; set; }
+
     [Column("index")]
     public string? Index { get; set; }
 

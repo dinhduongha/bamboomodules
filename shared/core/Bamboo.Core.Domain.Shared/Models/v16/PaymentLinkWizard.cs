@@ -38,9 +38,11 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("res_model")]
     public string? ResModel { get; set; }
 
+    // v16-Compat
     [Column("description")]
     public string? Description { get; set; }
 
+    // v16-Compat
     [Column("payment_provider_selection")]
     public string? PaymentProviderSelection { get; set; }
 
@@ -55,6 +57,18 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("discount_date")]
+    public DateTime? DiscountDate { get; set; }
+
+    [Column("open_installments", TypeName = "jsonb")]
+    public string? OpenInstallments { get; set; }
+
+    [Column("has_eligible_epd")]
+    public bool? HasEligibleEpd { get; set; }
+
+    [Column("amount_paid")]
+    public decimal? AmountPaid { get; set; }
 
     [ForeignKey("TenantId")]
     [NotMapped]

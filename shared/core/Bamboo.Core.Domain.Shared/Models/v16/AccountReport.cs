@@ -20,9 +20,13 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("root_report_id")]
     public Guid? RootReportId { get; set; }
 
+    // v16-Compat
     [Column("chart_template_id")]
     public Guid? ChartTemplateId { get; set; }
 
@@ -32,26 +36,50 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("load_more_limit")]
     public long? LoadMoreLimit { get; set; }
 
+    [Column("prefix_groups_threshold")]
+    public long? PrefixGroupsThreshold { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("chart_template")]
+    public string? ChartTemplate { get; set; }
+
     [Column("availability_condition")]
     public string? AvailabilityCondition { get; set; }
+
+    [Column("integer_rounding")]
+    public string? IntegerRounding { get; set; }
 
     [Column("default_opening_date_filter")]
     public string? DefaultOpeningDateFilter { get; set; }
 
+    [Column("currency_translation")]
+    public string? CurrencyTranslation { get; set; }
+
     [Column("filter_multi_company")]
     public string? FilterMultiCompany { get; set; }
+
+    [Column("filter_hide_0_lines")]
+    public string? FilterHide0Lines { get; set; }
 
     [Column("filter_hierarchy")]
     public string? FilterHierarchy { get; set; }
 
+    [Column("filter_account_type")]
+    public string? FilterAccountType { get; set; }
+
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("use_sections")]
+    public bool? UseSections { get; set; }
 
     [Column("only_tax_exigible")]
     public bool? OnlyTaxExigible { get; set; }
@@ -83,14 +111,21 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("filter_analytic")]
     public bool? FilterAnalytic { get; set; }
 
-    [Column("filter_account_type")]
-    public bool? FilterAccountType { get; set; }
+    // v16-Compat
+    // [Column("filter_account_type")]
+    // public bool? FilterAccountType { get; set; }
 
     [Column("filter_partner")]
     public bool? FilterPartner { get; set; }
 
     [Column("filter_fiscal_position")]
     public bool? FilterFiscalPosition { get; set; }
+
+    [Column("filter_aml_ir_filters")]
+    public bool? FilterAmlIrFilters { get; set; }
+
+    [Column("filter_budgets")]
+    public bool? FilterBudgets { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -102,10 +137,11 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
 
+    // v16-Compat
     [ForeignKey("ChartTemplateId")]
     //[InverseProperty("AccountReports")]
     [NotMapped]
-    public virtual AccountChartTemplate? ChartTemplate { get; set; }
+    public virtual AccountChartTemplate? ChartTemplateObject { get; set; }
 
     [ForeignKey("CountryId")]
     //[InverseProperty("AccountReports")]
@@ -129,14 +165,14 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Report")]
     [NotMapped]
-    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; } = new List<AccountReportColumn>();
+    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } = new List<AccountReportColumn>();
 
     //[InverseProperty("Report")]
     [NotMapped]
-    public virtual ICollection<AccountReportLine> AccountReportLines { get; } = new List<AccountReportLine>();
+    public virtual ICollection<AccountReportLine> AccountReportLines { get; set; } = new List<AccountReportLine>();
 
     //[InverseProperty("RootReport")]
     [NotMapped]
-    public virtual ICollection<AccountReport> InverseRootReport { get; } = new List<AccountReport>();
+    public virtual ICollection<AccountReport> InverseRootReport { get; set; } = new List<AccountReport>();
 
 }

@@ -26,14 +26,23 @@ public partial class ChangeLockDate: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("tax_lock_date")]
+    public DateTime? TaxLockDate { get; set; }
+
+    [Column("sale_lock_date")]
+    public DateTime? SaleLockDate { get; set; }
+
+    [Column("purchase_lock_date")]
+    public DateTime? PurchaseLockDate { get; set; }
+
+    [Column("hard_lock_date")]
+    public DateTime? HardLockDate { get; set; }
+
     [Column("period_lock_date")]
     public DateTime? PeriodLockDate { get; set; }
 
     [Column("fiscalyear_lock_date")]
     public DateTime? FiscalyearLockDate { get; set; }
-
-    [Column("tax_lock_date")]
-    public DateTime? TaxLockDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

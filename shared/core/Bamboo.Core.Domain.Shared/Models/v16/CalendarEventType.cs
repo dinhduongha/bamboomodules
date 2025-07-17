@@ -56,5 +56,5 @@ public partial class CalendarEventType : FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("TypeId")]
     //[InverseProperty("Types")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> Events { get; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> Events { get; set; } = new List<CalendarEvent>();
 }

@@ -18,14 +18,15 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
@@ -123,14 +124,14 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("ConsumeUnbuild")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveConsumeUnbuilds { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveConsumeUnbuilds { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Unbuild")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveUnbuilds { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveUnbuilds { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Unbuild")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; } = new List<StockWarnInsufficientQtyUnbuild>();
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; set; } = new List<StockWarnInsufficientQtyUnbuild>();
 
 }

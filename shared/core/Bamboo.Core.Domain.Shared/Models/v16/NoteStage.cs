@@ -62,5 +62,5 @@ public partial class NoteStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAud
     [ForeignKey("StageId")]
     //[InverseProperty("Stages")]
     [NotMapped]
-    public virtual ICollection<NoteNote> Notes { get; } = new List<NoteNote>();
+    public virtual ICollection<NoteNote> Notes { get; set; } = new List<NoteNote>();
 }

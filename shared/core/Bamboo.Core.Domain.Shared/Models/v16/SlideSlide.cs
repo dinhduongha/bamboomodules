@@ -21,6 +21,10 @@ public partial class SlideSlide: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -167,6 +171,13 @@ public partial class SlideSlide: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     //[InverseProperty("SlideSlideCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+
 
     //[InverseProperty("Category")]
     [NotMapped]

@@ -17,6 +17,9 @@ public partial class SnailmailLetter: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
@@ -25,9 +28,6 @@ public partial class SnailmailLetter: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("report_template")]
     public Guid? ReportTemplate { get; set; }
@@ -141,11 +141,10 @@ public partial class SnailmailLetter: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Letter")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
 
     //[InverseProperty("Letter")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; } = new List<SnailmailLetterMissingRequiredField>();
-
+    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } = new List<SnailmailLetterMissingRequiredField>();
 
 }

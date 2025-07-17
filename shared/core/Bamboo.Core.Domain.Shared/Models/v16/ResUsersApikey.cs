@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_users_apikeys")]
 //[Index("UserId", "Index", Name = "res_users_apikeys_user_id_index_idx")]
-public partial class ResUsersApikey : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersApikey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,6 +29,9 @@ public partial class ResUsersApikey : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("scope")]
     public string? Scope { get; set; }
+
+    [Column("expiration_date", TypeName = "timestamp without time zone")]
+    public DateTime? ExpirationDate { get; set; }
 
     [Column("index")]
     public string? Index { get; set; }

@@ -49,6 +49,7 @@ public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -68,27 +69,34 @@ public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    /// TODO: DISABLE INVERSE
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("PartnerCategory")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } = new List<AccountAnalyticDistributionModel>();
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> InverseParent { get; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> InverseParent { get; set; } = new List<ResPartnerCategory>();
+
+    // v16-Compat
+    [ForeignKey("ResPartnerCategoryId")]
+    //[InverseProperty("ResPartnerCategories")]
+    [NotMapped]
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } = new List<AccountReconcileModelTemplate>();
 
     [ForeignKey("ResPartnerCategoryId")]
     //[InverseProperty("ResPartnerCategories")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; } = new List<AccountReconcileModelTemplate>();
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } = new List<AccountReconcileModel>();
 
     [ForeignKey("ResPartnerCategoryId")]
     //[InverseProperty("ResPartnerCategories")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; } = new List<AccountReconcileModel>();
+    public virtual ICollection<MailingContact> MailingContacts { get; set; } = new List<MailingContact>();
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("Categories")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
+
 }

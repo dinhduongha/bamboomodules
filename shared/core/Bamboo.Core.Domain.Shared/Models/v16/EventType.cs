@@ -47,6 +47,12 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("has_seats_limitation")]
     public bool? HasSeatsLimitation { get; set; }
 
+    [Column("auto_confirm")]
+    public bool? AutoConfirm { get; set; }
+
+    [Column("menu_register_cta")]
+    public bool? MenuRegisterCta { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 

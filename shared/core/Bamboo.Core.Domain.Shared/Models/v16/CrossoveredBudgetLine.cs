@@ -18,6 +18,9 @@ public partial class CrossoveredBudgetLine: FullAuditedEntity<Guid>, IEntityDto<
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("crossovered_budget_id")]
     public Guid? CrossoveredBudgetId { get; set; }
 
@@ -26,9 +29,6 @@ public partial class CrossoveredBudgetLine: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("general_budget_id")]
     public Guid? GeneralBudgetId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

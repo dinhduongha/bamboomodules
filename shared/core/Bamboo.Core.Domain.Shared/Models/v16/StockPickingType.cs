@@ -18,6 +18,9 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("color")]
     public long? Color { get; set; }
 
@@ -45,9 +48,6 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("reservation_days_before_priority")]
     public long? ReservationDaysBeforePriority { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -63,14 +63,29 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("reservation_method")]
     public string? ReservationMethod { get; set; }
 
+    [Column("product_label_format")]
+    public string? ProductLabelFormat { get; set; }
+
+    [Column("lot_label_format")]
+    public string? LotLabelFormat { get; set; }
+
+    [Column("package_label_to_print")]
+    public string? PackageLabelToPrint { get; set; }
+
     [Column("barcode")]
     public string? Barcode { get; set; }
 
     [Column("create_backorder")]
     public string? CreateBackorder { get; set; }
 
+    [Column("move_type")]
+    public string? MoveType { get; set; }
+
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("picking_properties_definition", TypeName = "jsonb")]
+    public string? PickingPropertiesDefinition { get; set; }
 
     [Column("show_entire_packs")]
     public bool? ShowEntirePacks { get; set; }
@@ -90,11 +105,36 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("show_operations")]
     public bool? ShowOperations { get; set; }
 
+    // v16-Compat
     [Column("show_reserved")]
     public bool? ShowReserved { get; set; }
 
     [Column("auto_show_reception_report")]
     public bool? AutoShowReceptionReport { get; set; }
+
+    [Column("auto_print_delivery_slip")]
+    public bool? AutoPrintDeliverySlip { get; set; }
+
+    [Column("auto_print_return_slip")]
+    public bool? AutoPrintReturnSlip { get; set; }
+
+    [Column("auto_print_product_labels")]
+    public bool? AutoPrintProductLabels { get; set; }
+
+    [Column("auto_print_lot_labels")]
+    public bool? AutoPrintLotLabels { get; set; }
+
+    [Column("auto_print_reception_report")]
+    public bool? AutoPrintReceptionReport { get; set; }
+
+    [Column("auto_print_reception_report_labels")]
+    public bool? AutoPrintReceptionReportLabels { get; set; }
+
+    [Column("auto_print_packages")]
+    public bool? AutoPrintPackages { get; set; }
+
+    [Column("auto_print_package_label")]
+    public bool? AutoPrintPackageLabel { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
@@ -102,14 +142,60 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("analytic_costs")]
+    public bool? AnalyticCosts { get; set; }
+
+    [Column("default_product_location_src_id")]
+    public Guid? DefaultProductLocationSrcId { get; set; }
+
+    [Column("default_product_location_dest_id")]
+    public Guid? DefaultProductLocationDestId { get; set; }
+
+    [Column("default_remove_location_dest_id")]
+    public Guid? DefaultRemoveLocationDestId { get; set; }
+
+    [Column("default_recycle_location_dest_id")]
+    public Guid? DefaultRecycleLocationDestId { get; set; }
+
+    [Column("repair_properties_definition", TypeName = "jsonb")]
+    public string? RepairPropertiesDefinition { get; set; }
+
     [Column("is_repairable")]
     public bool? IsRepairable { get; set; }
+
+    [Column("mrp_product_label_to_print")]
+    public string? MrpProductLabelToPrint { get; set; }
+
+    [Column("done_mrp_lot_label_to_print")]
+    public string? DoneMrpLotLabelToPrint { get; set; }
+
+    [Column("generated_mrp_lot_label_to_print")]
+    public string? GeneratedMrpLotLabelToPrint { get; set; }
 
     [Column("use_create_components_lots")]
     public bool? UseCreateComponentsLots { get; set; }
 
+    // v16-Compat
     [Column("use_auto_consume_components_lots")]
     public bool? UseAutoConsumeComponentsLots { get; set; }
+
+    [Column("auto_print_done_production_order")]
+    public bool? AutoPrintDoneProductionOrder { get; set; }
+
+    [Column("auto_print_done_mrp_product_labels")]
+    public bool? AutoPrintDoneMrpProductLabels { get; set; }
+
+    [Column("auto_print_done_mrp_lot")]
+    public bool? AutoPrintDoneMrpLot { get; set; }
+
+    [Column("auto_print_mrp_reception_report")]
+    public bool? AutoPrintMrpReceptionReport { get; set; }
+
+    [Column("auto_print_mrp_reception_report_labels")]
+    public bool? AutoPrintMrpReceptionReportLabels { get; set; }
+
+    [Column("auto_print_generated_mrp_lot")]
+    public bool? AutoPrintGeneratedMrpLot { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("StockPickingTypes")]
@@ -130,6 +216,26 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     //[InverseProperty("StockPickingTypeDefaultLocationSrcs")]
     [NotMapped]
     public virtual StockLocation? DefaultLocationSrc { get; set; }
+
+    [ForeignKey("DefaultProductLocationDestId")]
+    //[InverseProperty("StockPickingTypeDefaultProductLocationDests")]
+    [NotMapped]
+    public virtual StockLocation? DefaultProductLocationDest { get; set; }
+
+    [ForeignKey("DefaultProductLocationSrcId")]
+    //[InverseProperty("StockPickingTypeDefaultProductLocationSrcs")]
+    [NotMapped]
+    public virtual StockLocation? DefaultProductLocationSrc { get; set; }
+
+    [ForeignKey("DefaultRecycleLocationDestId")]
+    //[InverseProperty("StockPickingTypeDefaultRecycleLocationDests")]
+    [NotMapped]
+    public virtual StockLocation? DefaultRecycleLocationDest { get; set; }
+
+    [ForeignKey("DefaultRemoveLocationDestId")]
+    //[InverseProperty("StockPickingTypeDefaultRemoveLocationDests")]
+    [NotMapped]
+    public virtual StockLocation? DefaultRemoveLocationDest { get; set; }
 
     [ForeignKey("ReturnPickingTypeId")]
     //[InverseProperty("InverseReturnPickingType")]
@@ -154,74 +260,74 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     /// TODO: DISABLE INVERSE
     //[InverseProperty("ReturnPickingType")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> InverseReturnPickingType { get; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; } = new List<StockPickingType>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRules { get; set; } = new List<StockRule>();
 
     //[InverseProperty("InType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseInTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseInTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("IntType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseIntTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseIntTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("ManuType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManuTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseManuTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("OutType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseOutTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseOutTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("PackType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePackTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePackTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("PbmType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("PickType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePickTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePickTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("PosType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePosTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePosTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("ReturnType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseReturnTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseReturnTypes { get; set; } = new List<StockWarehouse>();
 
     //[InverseProperty("SamType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamTypes { get; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseSamTypes { get; set; } = new List<StockWarehouse>();
 
 }

@@ -47,6 +47,6 @@ public partial class WebsiteRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<WebsiteRewrite> WebsiteRewrites { get; } = new List<WebsiteRewrite>();
+    public virtual ICollection<WebsiteRewrite> WebsiteRewrites { get; set; } = new List<WebsiteRewrite>();
 
 }

@@ -65,10 +65,10 @@ public partial class AccountAgedTrialBalance: FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("AccountAgedTrialBalanceId")]
     //[InverseProperty("AccountAgedTrialBalances")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     [ForeignKey("AccountAgedTrialBalanceId")]
     //[InverseProperty("AccountAgedTrialBalances")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

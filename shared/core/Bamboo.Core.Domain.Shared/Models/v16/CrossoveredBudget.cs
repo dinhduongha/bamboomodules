@@ -18,14 +18,15 @@ public partial class CrossoveredBudget: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -61,6 +62,11 @@ public partial class CrossoveredBudget: FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("CrossoveredBudget")]
+    [NotMapped]
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } = new List<CrossoveredBudgetLine>();
+
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("CrossoveredBudgets")]
     [NotMapped]
@@ -75,9 +81,4 @@ public partial class CrossoveredBudget: FullAuditedEntity<Guid>, IEntityDto<Guid
     //[InverseProperty("CrossoveredBudgetWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("CrossoveredBudget")]
-    [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; } = new List<CrossoveredBudgetLine>();
-
 }

@@ -20,6 +20,9 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
@@ -66,6 +69,11 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     //[InverseProperty("AccountAccruedOrdersWizards")]
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
+
+    [ForeignKey("JournalId")]
+    //[InverseProperty("AccountAccruedOrdersWizards")]
+    [NotMapped]
+    public virtual AccountJournal? Journal { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountAccruedOrdersWizardWriteUs")]

@@ -19,7 +19,7 @@ public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntity
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -29,7 +29,8 @@ public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntity
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
@@ -50,6 +51,6 @@ public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("DashboardGroup")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; } = new List<SpreadsheetDashboard>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } = new List<SpreadsheetDashboard>();
 
 }

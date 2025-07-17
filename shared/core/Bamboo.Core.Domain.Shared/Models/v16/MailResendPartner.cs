@@ -19,7 +19,11 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
+    [Column("notification_id")]
+    public Guid? NotificationId { get; set; }
+
+    // v16-Compat
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
@@ -48,6 +52,11 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
     //[InverseProperty("MailResendPartnerCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("NotificationId")]
+    //[InverseProperty("MailResendPartners")]
+    [NotMapped]
+    public virtual MailNotification? Notification { get; set; }
 
     [ForeignKey("PartnerId")]
     //[InverseProperty("MailResendPartners")]

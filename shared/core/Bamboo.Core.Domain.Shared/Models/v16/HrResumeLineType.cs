@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_resume_line_type")]
-public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,7 +19,7 @@ public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -29,7 +29,8 @@ public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    //[Column("name")]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
@@ -43,13 +44,12 @@ public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("LineType")]
+    [NotMapped]
+    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } = new List<HrResumeLine>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("HrResumeLineTypeWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("LineType")]
-    [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLines { get; } = new List<HrResumeLine>();
-
 }

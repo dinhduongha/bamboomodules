@@ -50,6 +50,6 @@ public partial class UtmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<UtmCampaign> UtmCampaigns { get; } = new List<UtmCampaign>();
+    public virtual ICollection<UtmCampaign> UtmCampaigns { get; set; } = new List<UtmCampaign>();
 
 }

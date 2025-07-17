@@ -74,6 +74,6 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("RtcInvitingSession")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } = new List<MailChannelMember>();
 
 }

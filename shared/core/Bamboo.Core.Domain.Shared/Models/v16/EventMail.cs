@@ -41,6 +41,9 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("notification_type")]
+    public string? NotificationType { get; set; }
+
     [Column("interval_unit")]
     public string? IntervalUnit { get; set; }
 

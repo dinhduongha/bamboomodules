@@ -18,6 +18,9 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("pos_order_id")]
     public Guid? PosOrderId { get; set; }
 
@@ -26,9 +29,6 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("session_id")]
     public Guid? SessionId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("account_move_id")]
     public Guid? AccountMoveId { get; set; }
@@ -45,8 +45,26 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("card_type")]
     public string? CardType { get; set; }
 
+    [Column("card_brand")]
+    public string? CardBrand { get; set; }
+
+    [Column("card_no")]
+    public string? CardNo { get; set; }
+
     [Column("cardholder_name")]
     public string? CardholderName { get; set; }
+
+    [Column("payment_ref_no")]
+    public string? PaymentRefNo { get; set; }
+
+    [Column("payment_method_authcode")]
+    public string? PaymentMethodAuthcode { get; set; }
+
+    [Column("payment_method_issuer_bank")]
+    public string? PaymentMethodIssuerBank { get; set; }
+
+    [Column("payment_method_payment_mode")]
+    public string? PaymentMethodPaymentMode { get; set; }
 
     [Column("transaction_id")]
     public string? TransactionId { get; set; }
@@ -56,6 +74,9 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("ticket")]
     public string? Ticket { get; set; }
+
+    [Column("uuid")]
+    public string? Uuid { get; set; }
 
     [Column("amount")]
     public decimal? Amount { get; set; }
@@ -71,6 +92,12 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("online_account_payment_id")]
+    public Guid? OnlineAccountPaymentId { get; set; }
+
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("PosPayments")]

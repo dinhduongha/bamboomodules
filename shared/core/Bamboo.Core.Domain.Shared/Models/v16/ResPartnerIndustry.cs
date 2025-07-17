@@ -51,8 +51,12 @@ public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Industry")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
 
+    //[InverseProperty("Industry")]
+    [NotMapped]
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

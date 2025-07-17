@@ -45,6 +45,9 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("subject")]
     public string? Subject { get; set; }
 
+    [Column("email_from")]
+    public string? EmailFrom { get; set; }
+
     [Column("existing_mode")]
     public string? ExistingMode { get; set; }
 

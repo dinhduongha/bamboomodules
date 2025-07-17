@@ -23,6 +23,9 @@ public partial class ProductLabelLayout : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("custom_quantity")]
     public long? CustomQuantity { get; set; }
 
+    [Column("pricelist_id")]
+    public Guid? PricelistId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -41,9 +44,14 @@ public partial class ProductLabelLayout : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("move_quantity")]
+    public string? MoveQuantity { get; set; }
+
+    // v16-Compat
     [Column("picking_quantity")]
     public string? PickingQuantity { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -53,6 +61,11 @@ public partial class ProductLabelLayout : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("PricelistId")]
+    //[InverseProperty("ProductLabelLayouts")]
+    [NotMapped]
+    public virtual ProductPricelist? Pricelist { get; set; }
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("ProductLabelLayoutWriteUs")]
     [NotMapped]
@@ -61,15 +74,15 @@ public partial class ProductLabelLayout : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ProductLabelLayoutId")]
     //[InverseProperty("ProductLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
 
     [ForeignKey("ProductLabelLayoutId")]
     //[InverseProperty("ProductLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 
     [ForeignKey("ProductLabelLayoutId")]
     //[InverseProperty("ProductLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 }

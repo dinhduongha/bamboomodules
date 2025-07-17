@@ -32,6 +32,9 @@ public partial class CalendarRecurrence : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("day")]
     public long? Day { get; set; }
 
+    [Column("trigger_id")]
+    public Guid? TriggerId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -103,12 +106,17 @@ public partial class CalendarRecurrence : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Recurrence")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CalendarRecurrenceCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("TriggerId")]
+    //[InverseProperty("CalendarRecurrences")]
+    [NotMapped]
+    public virtual IrCronTrigger? Trigger { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CalendarRecurrenceWriteUs")]

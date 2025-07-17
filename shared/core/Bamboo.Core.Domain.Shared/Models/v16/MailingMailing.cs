@@ -21,6 +21,10 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("source_id")]
     public Guid? SourceId { get; set; }
 
@@ -102,6 +106,9 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("ab_testing_enabled")]
     public bool? AbTestingEnabled { get; set; }
 
+    [Column("ab_testing_completed")]
+    public bool? AbTestingCompleted { get; set; }
+
     [Column("kpi_mail_required")]
     public bool? KpiMailRequired { get; set; }
 
@@ -152,6 +159,12 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     //[InverseProperty("MailingMailingCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     //[InverseProperty("MassMailing")]
     [NotMapped]

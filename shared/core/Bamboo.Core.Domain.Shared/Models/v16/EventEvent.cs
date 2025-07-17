@@ -22,6 +22,10 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
@@ -85,6 +89,9 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("seats_limited")]
     public bool? SeatsLimited { get; set; }
 
+    [Column("auto_confirm")]
+    public bool? AutoConfirm { get; set; }
+
     [Column("date_begin", TypeName = "timestamp without time zone")]
     public DateTime? DateBegin { get; set; }
 
@@ -133,6 +140,9 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("website_menu")]
     public bool? WebsiteMenu { get; set; }
 
+    [Column("menu_register_cta")]
+    public bool? MenuRegisterCta { get; set; }
+
     [Column("introduction_menu")]
     public bool? IntroductionMenu { get; set; }
 
@@ -165,6 +175,12 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("AccountAccounts")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+    
     //[InverseProperty("Event")]
     [NotMapped]
     public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();

@@ -25,14 +25,14 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("move_id")]
     public Guid? MoveId { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("company_currency_id")]
     public Guid? CompanyCurrencyId { get; set; }
@@ -76,6 +76,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("full_reconcile_id")]
     public Guid? FullReconcileId { get; set; }
 
+    // v16-Compat
     [Column("account_root_id")]
     public Guid? AccountRootId { get; set; }
 
@@ -103,6 +104,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("name")]
     public string? Name { get; set; }
 
+    // v16-Compat
     [Column("tax_audit")]
     public string? TaxAudit { get; set; }
 
@@ -166,12 +168,16 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("discount_balance")]
     public decimal? DiscountBalance { get; set; }
 
+    [Column("is_imported")]
+    public bool? IsImported { get; set; }
+
     [Column("tax_tag_invert")]
     public bool? TaxTagInvert { get; set; }
 
     [Column("reconciled")]
     public bool? Reconciled { get; set; }
 
+    // v16-Compat
     [Column("blocked")]
     public bool? Blocked { get; set; }
 
@@ -181,14 +187,17 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [Column("discount_percentage")]
     public double? DiscountPercentage { get; set; }
 
-    [Column("is_downpayment")]
-    public bool? IsDownpayment { get; set; }
+    // v16-Compat
+    // [Column("is_downpayment")]
+    // public bool? IsDownpayment { get; set; }
 
-    [Column("purchase_line_id")]
-    public Guid? PurchaseLineId { get; set; }
+    // v16-Compat
+    // [Column("purchase_line_id")]
+    // public Guid? PurchaseLineId { get; set; }
 
     [Column("asset_category_id")]
     public Guid? AssetCategoryId { get; set; }
@@ -207,6 +216,15 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("followup_date")]
     public DateTime? FollowupDate { get; set; }
+
+    [Column("is_downpayment")]
+    public bool? IsDownpayment { get; set; }
+
+    [Column("cogs_origin_id")]
+    public Guid? CogsOriginId { get; set; }
+
+    [Column("purchase_line_id")]
+    public Guid? PurchaseLineId { get; set; }
 
     [Column("expense_id")]
     public Guid? ExpenseId { get; set; }
@@ -341,50 +359,50 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("MoveLine")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
 
     //[InverseProperty("CreditMove")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditMoves { get; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditMoves { get; set; } = new List<AccountPartialReconcile>();
 
     //[InverseProperty("DebitMove")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitMoves { get; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitMoves { get; set; } = new List<AccountPartialReconcile>();
 
     //[InverseProperty("InvoiceLine")]
     [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; } = new List<RepairFee>();
+    public virtual ICollection<RepairFee> RepairFees { get; set; } = new List<RepairFee>();
 
     //[InverseProperty("InvoiceLine")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("AccountMoveLine")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
 
     [ForeignKey("AccountMoveLineId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } = new List<AccountAccountTag>();
 
     [ForeignKey("AccountMoveLineId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]
-    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizards { get; } = new List<AccountAutomaticEntryWizard>();
+    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizards { get; set; } = new List<AccountAutomaticEntryWizard>();
 
     [ForeignKey("AccountMoveLineId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 
     [ForeignKey("InvoiceLineId")]
     //[InverseProperty("InvoiceLines")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> OrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> OrderLines { get; set; } = new List<SaleOrderLine>();
 
     [ForeignKey("LineId")]
     //[InverseProperty("Lines")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> Wizards { get; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> Wizards { get; set; } = new List<AccountPaymentRegister>();
 }

@@ -26,6 +26,10 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -38,14 +42,12 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
 
+    // v16-Compat
     [Column("display_project_id")]
     public Guid? DisplayProjectId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -56,6 +58,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
+    // v16-Compat
     [Column("ancestor_id")]
     public Guid? AncestorId { get; set; }
 
@@ -65,6 +68,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("recurrence_id")]
     public Guid? RecurrenceId { get; set; }
 
+    // v16-Compat
     [Column("analytic_account_id")]
     public Guid? AnalyticAccountId { get; set; }
 
@@ -86,20 +90,31 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("priority")]
     public string? Priority { get; set; }
 
+    [Column("state")]
+    public string? State { get; set; }
+
+    [Column("html_field_history", TypeName = "jsonb")]
+    public string? HtmlFieldHistory { get; set; }
+
+    // v16-Compat
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
+    // v16-Compat
     [Column("partner_email")]
     public string? PartnerEmail { get; set; }
 
-    [Column("partner_phone")]
-    public string? PartnerPhone { get; set; }
+    // v16-Compat
+    //[Column("partner_phone")]
+    //public string? PartnerPhone { get; set; }
 
-    [Column("email_from")]
-    public string? EmailFrom { get; set; }
+    // v16-Compat
+    //[Column("email_from")]
+    //public string? EmailFrom { get; set; }
 
-    [Column("date_deadline")]
-    public DateTime? DateDeadline { get; set; }
+    // v16-Compat
+    // [Column("date_deadline")]
+    // public DateTime? DateDeadline { get; set; }
 
     [Column("task_properties", TypeName = "jsonb")]
     public string? TaskProperties { get; set; }
@@ -116,15 +131,21 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("display_in_project")]
+    public bool? DisplayInProject { get; set; }
+
+    // v16-Compat
     [Column("is_closed")]
     public bool? IsClosed { get; set; }
 
+    // v16-Compat
     [Column("is_blocked")]
     public bool? IsBlocked { get; set; }
 
     [Column("recurring_task")]
     public bool? RecurringTask { get; set; }
 
+    // v16-Compat
     [Column("is_analytic_account_id_changed")]
     public bool? IsAnalyticAccountIdChanged { get; set; }
 
@@ -140,12 +161,19 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("date_assign", TypeName = "timestamp without time zone")]
     public DateTime? DateAssign { get; set; }
 
+    [Column("date_deadline", TypeName = "timestamp without time zone")]
+    public DateTime? DateDeadline { get; set; }
+
     [Column("date_last_stage_update", TypeName = "timestamp without time zone")]
     public DateTime? DateLastStageUpdate { get; set; }
 
     [Column("rating_last_value")]
     public double? RatingLastValue { get; set; }
 
+    [Column("allocated_hours")]
+    public double? AllocatedHours { get; set; }
+
+    // v16-Compat
     [Column("planned_hours")]
     public double? PlannedHours { get; set; }
 
@@ -160,6 +188,18 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("sale_line_id")]
     public Guid? SaleLineId { get; set; }
+
+    [Column("email_from")]
+    public string? EmailFrom { get; set; }
+
+    [Column("partner_name")]
+    public string? PartnerName { get; set; }
+
+    [Column("partner_phone")]
+    public string? PartnerPhone { get; set; }
+
+    [Column("partner_company_name")]
+    public string? PartnerCompanyName { get; set; }
 
     [ForeignKey("AnalyticAccountId")]
     //[InverseProperty("ProjectTasks")]
@@ -243,32 +283,32 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Ancestor")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> InverseAncestor { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> InverseAncestor { get; set; } = new List<ProjectTask>();
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> InverseParent { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> InverseParent { get; set; } = new List<ProjectTask>();
 
     //[InverseProperty("Task")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; } = new List<ProjectTaskUserRel>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } = new List<ProjectTaskUserRel>();
 
     //[InverseProperty("Task")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
     [ForeignKey("TaskId")]
     //[InverseProperty("Tasks")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> DependsOns { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> DependsOns { get; set; } = new List<ProjectTask>();
 
     [ForeignKey("ProjectTaskId")]
     //[InverseProperty("ProjectTasks")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTags { get; } = new List<ProjectTag>();
+    public virtual ICollection<ProjectTag> ProjectTags { get; set; } = new List<ProjectTag>();
 
     [ForeignKey("DependsOnId")]
     //[InverseProperty("DependsOns")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> Tasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
 }

@@ -55,10 +55,10 @@ public partial class AccountEdiFormat : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("EdiFormat")]
     [NotMapped]
-    public virtual ICollection<AccountEdiDocument> AccountEdiDocuments { get; } = new List<AccountEdiDocument>();
+    public virtual ICollection<AccountEdiDocument> AccountEdiDocuments { get; set; } = new List<AccountEdiDocument>();
 
     [ForeignKey("AccountEdiFormatId")]
     //[InverseProperty("AccountEdiFormats")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 }

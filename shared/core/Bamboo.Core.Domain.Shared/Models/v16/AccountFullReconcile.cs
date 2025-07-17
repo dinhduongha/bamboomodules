@@ -38,6 +38,15 @@ public partial class AccountFullReconcile : FullAuditedEntity<Guid>, IEntityDto<
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("FullReconcile")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
+    //[InverseProperty("FullReconcile")]
+    [NotMapped]
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } = new List<AccountPartialReconcile>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -56,14 +65,4 @@ public partial class AccountFullReconcile : FullAuditedEntity<Guid>, IEntityDto<
     //[InverseProperty("AccountFullReconcileWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("FullReconcile")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
-
-    //[InverseProperty("FullReconcile")]
-    [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; } = new List<AccountPartialReconcile>();
-
-
 }

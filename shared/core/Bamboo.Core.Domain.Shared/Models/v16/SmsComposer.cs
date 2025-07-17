@@ -68,6 +68,16 @@ public partial class SmsComposer : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("mailing_id")]
+    public Guid? MailingId { get; set; }
+
+    [Column("utm_campaign_id")]
+    public Guid? UtmCampaignId { get; set; }
+
+    [Column("mass_sms_allow_unsubscribe")]
+    public bool? MassSmsAllowUnsubscribe { get; set; }
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -77,10 +87,20 @@ public partial class SmsComposer : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("MailingId")]
+    //[InverseProperty("SmsComposers")]
+    [NotMapped]
+    public virtual MailingMailing? Mailing { get; set; }
+
     [ForeignKey("TemplateId")]
     //[InverseProperty("SmsComposers")]
     [NotMapped]
     public virtual SmsTemplate? Template { get; set; }
+
+    [ForeignKey("UtmCampaignId")]
+    //[InverseProperty("SmsComposers")]
+    [NotMapped]
+    public virtual UtmCampaign? UtmCampaign { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SmsComposerWriteUs")]

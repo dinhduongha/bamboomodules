@@ -25,8 +25,18 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
+
+    [Column("partner_id")]
+    public Guid? PartnerId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
+    [Column("move_id")]
+    public Guid? MoveId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -34,35 +44,58 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("product_uom")]
     public Guid? ProductUom { get; set; }
 
-    [Column("partner_id")]
-    public Guid? PartnerId { get; set; }
+    [Column("lot_id")]
+    public Guid? LotId { get; set; }
 
+    [Column("picking_type_id")]
+    public Guid? PickingTypeId { get; set; }
+
+    [Column("procurement_group_id")]
+    public Guid? ProcurementGroupId { get; set; }
+
+    // v16-Compat
     [Column("address_id")]
     public Guid? AddressId { get; set; }
 
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
-    [Column("lot_id")]
-    public Guid? LotId { get; set; }
+    [Column("product_location_src_id")]
+    public Guid? ProductLocationSrcId { get; set; }
 
+    [Column("product_location_dest_id")]
+    public Guid? ProductLocationDestId { get; set; }
+
+    [Column("location_dest_id")]
+    public Guid? LocationDestId { get; set; }
+
+    [Column("parts_location_id")]
+    public Guid? PartsLocationId { get; set; }
+
+    [Column("recycle_location_id")]
+    public Guid? RecycleLocationId { get; set; }
+
+    // v16-Compat
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
 
+    // v16-Compat
     [Column("partner_invoice_id")]
     public Guid? PartnerInvoiceId { get; set; }
 
+    // v16-Compat
     [Column("invoice_id")]
     public Guid? InvoiceId { get; set; }
 
-    [Column("move_id")]
-    public Guid? MoveId { get; set; }
-
-    [Column("user_id")]
-    public Guid? UserId { get; set; }
+    // v16-Compat
+    // [Column("move_id")]
+    // public Guid? MoveId { get; set; }
 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
+
+    [Column("sale_order_line_id")]
+    public Guid? SaleOrderLineId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
@@ -76,36 +109,58 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("name")]
     public string? Name { get; set; }
 
+    // v16-Compat
     [Column("description")]
     public string? Description { get; set; }
 
     [Column("state")]
     public string? State { get; set; }
 
+    // v16-Compat
     [Column("invoice_method")]
     public string? InvoiceMethod { get; set; }
 
     [Column("priority")]
     public string? Priority { get; set; }
 
-    [Column("schedule_date")]
-    public DateTime? ScheduleDate { get; set; }
+    [Column("repair_properties", TypeName = "jsonb")]
+    public string? RepairProperties { get; set; }
 
+    // v16-Compat
+    // [Column("schedule_date")]
+    // public DateTime? ScheduleDate { get; set; }
+
+    // v16-Compat
     [Column("guarantee_limit")]
     public DateTime? GuaranteeLimit { get; set; }
 
     [Column("internal_notes")]
     public string? InternalNotes { get; set; }
 
+    // v16-Compat
     [Column("quotation_notes")]
     public string? QuotationNotes { get; set; }
 
     [Column("product_qty")]
     public decimal? ProductQty { get; set; }
 
+    [Column("under_warranty")]
+    public bool? UnderWarranty { get; set; }
+
+    [Column("is_parts_available")]
+    public bool? IsPartsAvailable { get; set; }
+
+    [Column("is_parts_late")]
+    public bool? IsPartsLate { get; set; }
+
+    [Column("schedule_date", TypeName = "timestamp without time zone")]
+    public DateTime? ScheduleDate { get; set; }
+
+    // v16-Compat
     [Column("invoiced")]
     public bool? Invoiced { get; set; }
 
+    // v16-Compat
     [Column("repaired")]
     public bool? Repaired { get; set; }
 
@@ -115,12 +170,15 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [Column("amount_untaxed")]
     public double? AmountUntaxed { get; set; }
 
+    // v16-Compat
     [Column("amount_tax")]
     public double? AmountTax { get; set; }
 
+    // v16-Compat
     [Column("amount_total")]
     public double? AmountTotal { get; set; }
 
@@ -211,22 +269,22 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; } = new List<RepairFee>();
+    public virtual ICollection<RepairFee> RepairFees { get; set; } = new List<RepairFee>();
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; } = new List<StockWarnInsufficientQtyRepair>();
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; set; } = new List<StockWarnInsufficientQtyRepair>();
 
     [ForeignKey("RepairOrderId")]
     //[InverseProperty("RepairOrders")]
     [NotMapped]
-    public virtual ICollection<RepairTag> RepairTags { get; } = new List<RepairTag>();
+    public virtual ICollection<RepairTag> RepairTags { get; set; } = new List<RepairTag>();
 }

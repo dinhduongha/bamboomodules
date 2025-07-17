@@ -48,24 +48,23 @@ public partial class ResCountryGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("ResCountryGroupWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
     /// TODO: DISABLE INVERSE
+    //[InverseProperty("CountryGroup")]
+    [NotMapped]
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } = new List<AccountFiscalPositionTemplate>();
 
     //[InverseProperty("CountryGroup")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; } = new List<AccountFiscalPositionTemplate>();
-
-    //[InverseProperty("CountryGroup")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } = new List<AccountFiscalPosition>();
 
     [ForeignKey("ResCountryGroupId")]
     //[InverseProperty("ResCountryGroups")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> Pricelists { get; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> Pricelists { get; set; } = new List<ProductPricelist>();
 
     [ForeignKey("ResCountryGroupId")]
     //[InverseProperty("ResCountryGroups")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; } = new List<ResCountry>();
-
+    public virtual ICollection<ResCountry> ResCountries { get; set; } = new List<ResCountry>();
 }

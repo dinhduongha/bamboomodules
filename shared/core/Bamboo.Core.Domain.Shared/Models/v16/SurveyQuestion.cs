@@ -53,6 +53,12 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("triggering_answer_id")]
+    public Guid? TriggeringQuestionId { get; set; }
+
+    [Column("triggering_answer_id")]
+    public Guid? TriggeringAnswerId { get; set; }
+
     [Column("question_type")]
     public string? QuestionType { get; set; }
 
@@ -128,6 +134,9 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("constr_mandatory")]
     public bool? ConstrMandatory { get; set; }
 
+    [Column("is_conditional")]
+    public bool? IsConditional { get; set; }
+
     [Column("answer_datetime", TypeName = "timestamp without time zone")]
     public DateTime? AnswerDatetime { get; set; }
 
@@ -169,10 +178,22 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual SurveyQuestion? Page { get; set; }
 
+    [ForeignKey("TriggeringQuestionId")]
+    //[InverseProperty("SurveyQuestions")]
+    [NotMapped]
+    public virtual SurveyQuestion? TriggeringQuestion { get; set; }
+
+    [ForeignKey("TriggeringAnswerId")]
+    //[InverseProperty("SurveyQuestions")]
+    [NotMapped]
+    public virtual SurveyQuestionAnswer? TriggeringAnswer { get; set; }
+
+
     [ForeignKey("SurveyId")]
     //[InverseProperty("SurveyQuestions")]
     [NotMapped]
     public virtual SurveySurvey? Survey { get; set; }
+
 
     //[InverseProperty("MatrixQuestion")]
     [NotMapped]

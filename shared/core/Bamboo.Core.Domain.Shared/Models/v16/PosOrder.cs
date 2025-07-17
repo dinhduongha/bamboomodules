@@ -20,11 +20,11 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("user_id")]
-    public Guid? UserId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
 
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
@@ -37,6 +37,9 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("session_id")]
     public Guid? SessionId { get; set; }
+
+    [Column("config_id")]
+    public Guid? ConfigId { get; set; }
 
     [Column("account_move")]
     public Guid? AccountMove { get; set; }
@@ -65,12 +68,40 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("last_order_preparation_change")]
+    public string? LastOrderPreparationChange { get; set; }
+
     [Column("state")]
     public string? State { get; set; }
+
+    [Column("floating_order_name")]
+    public string? FloatingOrderName { get; set; }
 
     [Column("pos_reference")]
     public string? PosReference { get; set; }
 
+    [Column("ticket_code")]
+    public string? TicketCode { get; set; }
+
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
+    [Column("email")]
+    public string? Email { get; set; }
+
+    [Column("mobile")]
+    public string? Mobile { get; set; }
+
+    [Column("shipping_date")]
+    public DateTime? ShippingDate { get; set; }
+
+    [Column("general_note")]
+    public string? GeneralNote { get; set; }
+
+    [Column("amount_difference")]
+    public decimal? AmountDifference { get; set; }
+
+    // v16-Compat
     [Column("note")]
     public string? Note { get; set; }
 
@@ -95,11 +126,15 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("to_invoice")]
     public bool? ToInvoice { get; set; }
 
+    // v16-Compat
     [Column("to_ship")]
     public bool? ToShip { get; set; }
 
     [Column("is_tipped")]
     public bool? IsTipped { get; set; }
+
+    [Column("has_deleted_line")]
+    public bool? HasDeletedLine { get; set; }
 
     [Column("date_order", TypeName = "timestamp without time zone")]
     public DateTime? DateOrder { get; set; }
@@ -110,8 +145,26 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("next_online_payment_amount")]
+    public decimal? NextOnlinePaymentAmount { get; set; }
+
     [Column("crm_team_id")]
     public Guid? CrmTeamId { get; set; }
+
+    [Column("table_id")]
+    public Guid? TableId { get; set; }
+
+    [Column("customer_count")]
+    public long? CustomerCount { get; set; }
+
+    [Column("takeaway")]
+    public bool? Takeaway { get; set; }
+
+    [Column("table_stand_number")]
+    public string? TableStandNumber { get; set; }
+
+    [Column("use_self_order_online_payment")]
+    public bool? UseSelfOrderOnlinePayment { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -186,18 +239,18 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
 
     //[InverseProperty("PosOrder")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
 
     //[InverseProperty("PosOrder")]
     [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; } = new List<ProcurementGroup>();
+    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } = new List<ProcurementGroup>();
 
     //[InverseProperty("PosOrder")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 
 }

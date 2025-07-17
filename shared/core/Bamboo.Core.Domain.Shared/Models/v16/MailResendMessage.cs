@@ -52,10 +52,10 @@ public partial class MailResendMessage: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("ResendWizard")]
     [NotMapped]
-    public virtual ICollection<MailResendPartner> MailResendPartners { get; } = new List<MailResendPartner>();
+    public virtual ICollection<MailResendPartner> MailResendPartners { get; set; } = new List<MailResendPartner>();
 
     [ForeignKey("MailResendMessageId")]
     //[InverseProperty("MailResendMessages")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
 }

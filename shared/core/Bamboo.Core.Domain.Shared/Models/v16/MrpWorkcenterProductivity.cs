@@ -20,11 +20,11 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("workcenter_id")]
-    public Guid? WorkcenterId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("workcenter_id")]
+    public Guid? WorkcenterId { get; set; }
 
     [Column("workorder_id")]
     public Guid? WorkorderId { get; set; }
@@ -62,8 +62,17 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
     [Column("duration")]
     public double? Duration { get; set; }
 
+    // v16-Compat
     [Column("cost_already_recorded")]
     public bool? CostAlreadyRecorded { get; set; }
+
+    [Column("account_move_line_id")]
+    public Guid? AccountMoveLineId { get; set; }
+
+    [ForeignKey("AccountMoveLineId")]
+    //[InverseProperty("MrpWorkcenterProductivities")]
+    [NotMapped]
+    public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("MrpWorkcenterProductivities")]

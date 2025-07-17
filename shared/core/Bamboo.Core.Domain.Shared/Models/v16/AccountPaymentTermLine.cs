@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_term_line")]
 //[Index("PaymentId", Name = "account_payment_term_line_payment_id_index")]
-public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,15 +21,22 @@ public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDt
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("nb_days")]
+    public long? NbDays { get; set; }
+
+    // v16-Compat
     [Column("months")]
     public long? Months { get; set; }
 
+    // v16-Compat
     [Column("days")]
     public long? Days { get; set; }
 
+    // v16-Compat
     [Column("days_after")]
     public long? DaysAfter { get; set; }
 
+    // v16-Compat
     [Column("discount_days")]
     public long? DiscountDays { get; set; }
 
@@ -45,9 +52,16 @@ public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDt
     [Column("value")]
     public string? Value { get; set; }
 
+    [Column("delay_type")]
+    public string? DelayType { get; set; }
+
+    [Column("days_next_month")]
+    public string? DaysNextMonth { get; set; }
+
     [Column("value_amount")]
     public decimal? ValueAmount { get; set; }
 
+    // v16-Compat
     [Column("end_month")]
     public bool? EndMonth { get; set; }
 
@@ -57,9 +71,11 @@ public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDt
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [Column("discount_percentage")]
     public double? DiscountPercentage { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }

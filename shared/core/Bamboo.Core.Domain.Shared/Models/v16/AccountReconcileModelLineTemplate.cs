@@ -80,5 +80,5 @@ public partial class AccountReconcileModelLineTemplate : FullAuditedEntity<Guid>
     [ForeignKey("AccountReconcileModelLineTemplateId")]
     //[InverseProperty("AccountReconcileModelLineTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } = new List<AccountTaxTemplate>();
 }

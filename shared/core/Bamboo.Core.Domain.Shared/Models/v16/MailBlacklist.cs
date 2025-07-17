@@ -42,6 +42,9 @@ public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("opt_out_reason_id")]
+    public Guid? OptOutReasonId { get; set; }
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("MailBlacklistCreateUs")]
     [NotMapped]

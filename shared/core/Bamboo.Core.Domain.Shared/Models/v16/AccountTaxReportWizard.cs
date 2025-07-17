@@ -59,5 +59,5 @@ public partial class AccountTaxReportWizard: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("AccountTaxReportWizardId")]
     //[InverseProperty("AccountTaxReportWizards")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 }

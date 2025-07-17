@@ -23,12 +23,15 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
 
+    // v16-Compat
     [Column("original_location_id")]
     public Guid? OriginalLocationId { get; set; }
 
+    // v16-Compat
     [Column("parent_location_id")]
     public Guid? ParentLocationId { get; set; }
 
+    // v16-Compat
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
@@ -38,6 +41,7 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat
     [Column("move_dest_exists")]
     public bool? MoveDestExists { get; set; }
 
@@ -47,6 +51,7 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -56,16 +61,19 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
     [ForeignKey("LocationId")]
     //[InverseProperty("StockReturnPickingLocations")]
     [NotMapped]
     public virtual StockLocation? Location { get; set; }
 
+    // v16-Compat
     [ForeignKey("OriginalLocationId")]
     //[InverseProperty("StockReturnPickingOriginalLocations")]
     [NotMapped]
     public virtual StockLocation? OriginalLocation { get; set; }
 
+    // v16-Compat
     [ForeignKey("ParentLocationId")]
     //[InverseProperty("StockReturnPickingParentLocations")]
     [NotMapped]
@@ -76,13 +84,12 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual StockPicking? Picking { get; set; }
 
+    //[InverseProperty("Wizard")]
+    [NotMapped]
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } = new List<StockReturnPickingLine>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("StockReturnPickingWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Wizard")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; } = new List<StockReturnPickingLine>();
-
 }

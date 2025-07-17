@@ -19,6 +19,10 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -36,9 +40,6 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("method_number")]
     public long? MethodNumber { get; set; }
@@ -104,6 +105,9 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual AccountAccount? AccountAsset { get; set; }
 
+    //[InverseProperty("Category")]
+    [NotMapped]
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
 
     [ForeignKey("AccountDepreciationId")]
     //[InverseProperty("AccountAssetCategoryAccountDepreciations")]
@@ -114,6 +118,10 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     //[InverseProperty("AccountAssetCategoryAccountDepreciationExpenses")]
     [NotMapped]
     public virtual AccountAccount? AccountDepreciationExpense { get; set; }
+
+    //[InverseProperty("AssetCategory")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountAssetCategories")]
@@ -130,6 +138,7 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [NotMapped]
     public virtual AccountJournal? Journal { get; set; }
 
+    // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("AccountAssetCategories")]
     [NotMapped]
@@ -139,13 +148,4 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     //[InverseProperty("AccountAssetCategoryWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; } = new List<AccountAssetAsset>();
-
-    //[InverseProperty("AssetCategory")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
-
 }

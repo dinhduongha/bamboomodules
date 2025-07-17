@@ -20,6 +20,10 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -38,8 +42,11 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    [Column("produce_delay")]
+    public long? ProduceDelay { get; set; }
+
+    [Column("days_to_prepare_mo")]
+    public long? DaysToPrepareMo { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -73,6 +80,9 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("MrpBoms")]
@@ -116,26 +126,26 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } = new List<MrpBomByproduct>();
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } = new List<MrpBomLine>();
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } = new List<MrpRoutingWorkcenter>();
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
 
 }

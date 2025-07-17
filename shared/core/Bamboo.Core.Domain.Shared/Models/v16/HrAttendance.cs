@@ -30,6 +30,51 @@ public partial class HrAttendance : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("overtime_status")]
+    public string? OvertimeStatus { get; set; }
+
+    [Column("in_country_name")]
+    public string? InCountryName { get; set; }
+
+    [Column("in_city")]
+    public string? InCity { get; set; }
+
+    [Column("in_ip_address")]
+    public string? InIpAddress { get; set; }
+
+    [Column("in_browser")]
+    public string? InBrowser { get; set; }
+
+    [Column("in_mode")]
+    public string? InMode { get; set; }
+
+    [Column("out_country_name")]
+    public string? OutCountryName { get; set; }
+
+    [Column("out_city")]
+    public string? OutCity { get; set; }
+
+    [Column("out_ip_address")]
+    public string? OutIpAddress { get; set; }
+
+    [Column("out_browser")]
+    public string? OutBrowser { get; set; }
+
+    [Column("out_mode")]
+    public string? OutMode { get; set; }
+
+    [Column("in_latitude")]
+    public decimal? InLatitude { get; set; }
+
+    [Column("in_longitude")]
+    public decimal? InLongitude { get; set; }
+
+    [Column("out_latitude")]
+    public decimal? OutLatitude { get; set; }
+
+    [Column("out_longitude")]
+    public decimal? OutLongitude { get; set; }
+
     [Column("check_in", TypeName = "timestamp without time zone")]
     public DateTime? CheckIn { get; set; }
 
@@ -44,6 +89,15 @@ public partial class HrAttendance : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("worked_hours")]
     public double? WorkedHours { get; set; }
+
+    [Column("overtime_hours")]
+    public double? OvertimeHours { get; set; }
+
+    [Column("validated_overtime_hours")]
+    public double? ValidatedOvertimeHours { get; set; }
+
+    [Column("expected_hours")]
+    public double? ExpectedHours { get; set; }
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -66,6 +120,6 @@ public partial class HrAttendance : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("LastAttendance")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
 
 }

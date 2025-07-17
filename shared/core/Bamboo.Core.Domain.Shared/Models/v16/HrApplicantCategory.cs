@@ -56,5 +56,10 @@ public partial class HrApplicantCategory : FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("HrApplicantCategoryId")]
     //[InverseProperty("HrApplicantCategories")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+
+    [ForeignKey("HrApplicantCategoryId")]
+    //[InverseProperty("HrApplicantCategories")]
+    [NotMapped]
+    public virtual ICollection<HrCandidate> HrCandidates { get; set; } = new List<HrCandidate>();
 }

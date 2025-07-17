@@ -59,5 +59,5 @@ public partial class AccountCommonReport: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("AccountCommonReportId")]
     //[InverseProperty("AccountCommonReports")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 }

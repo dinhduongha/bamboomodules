@@ -20,6 +20,9 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModifi
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -46,6 +49,9 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModifi
 
     [Column("time_format")]
     public string? TimeFormat { get; set; }
+
+    [Column("short_time_format")]
+    public string? ShortTimeFormat { get; set; }
 
     [Column("week_start")]
     public string? WeekStart { get; set; }
@@ -79,26 +85,39 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModifi
     public virtual ResUser? WriteU { get; set; }
 
     /// TODO: DISABLE INVERSE
+    //[InverseProperty("Lang")]
+    [NotMapped]
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
+    //[InverseProperty("SelfOrderingDefaultLanguage")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("Lang")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
-
-    //[InverseProperty("Lang")]
-    [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } = new List<WebsiteVisitor>();
 
     //[InverseProperty("DefaultLang")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
 
     [ForeignKey("LangId")]
     //[InverseProperty("Langs")]
     [NotMapped]
-    public virtual ICollection<BaseLanguageInstall> LanguageWizards { get; } = new List<BaseLanguageInstall>();
+    public virtual ICollection<BaseLanguageInstall> LanguageWizards { get; set; } = new List<BaseLanguageInstall>();
+
+    [ForeignKey("ResLangId")]
+    //[InverseProperty("ResLangs")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
+
+    [ForeignKey("ResLangId")]
+    //[InverseProperty("ResLangs")]
+    [NotMapped]
+    public virtual ICollection<ResUsersSetting> ResUsersSettings { get; set; } = new List<ResUsersSetting>();
 
     [ForeignKey("LangId")]
     //[InverseProperty("Langs")]
     [NotMapped]
-    public virtual ICollection<Website> WebsitesNavigation { get; } = new List<Website>();
+    public virtual ICollection<Website> WebsitesNavigation { get; set; } = new List<Website>();
 }

@@ -19,6 +19,9 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
@@ -34,9 +37,6 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("sequence")]
     public long Sequence { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("storage_category_id")]
     public Guid? StorageCategoryId { get; set; }
 
@@ -45,6 +45,9 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
+
+    [Column("sublocation")]
+    public string? Sublocation { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -98,5 +101,5 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("StockPutawayRuleId")]
     //[InverseProperty("StockPutawayRules")]
     [NotMapped]
-    public virtual ICollection<StockPackageType> StockPackageTypes { get; } = new List<StockPackageType>();
+    public virtual ICollection<StockPackageType> StockPackageTypes { get; set; } = new List<StockPackageType>();
 }

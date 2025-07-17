@@ -27,6 +27,9 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [Column("color")]
+    public long? Color { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -42,6 +45,13 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("hour_until")]
+    public double? HourUntil { get; set; }
+
+    [Column("hour_after")]
+    public double? HourAfter { get; set; }
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -50,6 +60,10 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("PosCategoryCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    //[InverseProperty("Parent")]
+    // [NotMapped]
+    // public virtual ICollection<PosCategory> InverseParent { get; set; } = new List<PosCategory>();
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -63,27 +77,27 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<PosCategory> InverseParent { get; } = new List<PosCategory>();
+    public virtual ICollection<PosCategory> InverseParent { get; set; } = new List<PosCategory>();
 
     //[InverseProperty("IfaceStartCateg")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
 
     //[InverseProperty("PosCateg")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
 
     //[InverseProperty("PosIfaceStartCateg")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } = new List<ResConfigSetting>();
 
     [ForeignKey("PosCategoryId")]
     //[InverseProperty("PosCategories")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 
     [ForeignKey("PosCategoryId")]
     //[InverseProperty("PosCategories")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
 }

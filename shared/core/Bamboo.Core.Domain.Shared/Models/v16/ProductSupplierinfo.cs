@@ -19,14 +19,14 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("sequence")]
     public long Sequence { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -64,6 +64,9 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("price")]
     public decimal? Price { get; set; }
 
+    [Column("discount")]
+    public decimal? Discount { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
@@ -95,6 +98,10 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ProductProduct? Product { get; set; }
 
+    //[InverseProperty("Supplier")]
+    [NotMapped]
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
+
     [ForeignKey("ProductTmplId")]
     //[InverseProperty("ProductSupplierinfos")]
     [NotMapped]
@@ -107,10 +114,10 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Supplier")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
 
     [ForeignKey("ProductSupplierinfoId")]
     //[InverseProperty("ProductSupplierinfos")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; } = new List<StockReplenishmentInfo>();
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } = new List<StockReplenishmentInfo>();
 }

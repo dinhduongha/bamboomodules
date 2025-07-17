@@ -20,6 +20,7 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -56,6 +57,7 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("quantity_percentage")]
     public double? QuantityPercentage { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -87,6 +89,6 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Milestone")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
 }

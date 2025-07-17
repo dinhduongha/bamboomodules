@@ -21,14 +21,14 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -63,6 +63,7 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat
     [Column("product_category_name")]
     public string? ProductCategoryName { get; set; }
 
@@ -78,12 +79,24 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("description_picking")]
     public string? DescriptionPicking { get; set; }
 
+    [Column("quantity")]
+    public decimal? Quantity { get; set; }
+
+    [Column("quantity_product_uom")]
+    public decimal? QuantityProductUom { get; set; }
+
+    [Column("picked")]
+    public bool? Picked { get; set; }
+
+    // v16-Compat
     [Column("reserved_qty")]
     public decimal? ReservedQty { get; set; }
 
+    // v16-Compat
     [Column("reserved_uom_qty")]
     public decimal? ReservedUomQty { get; set; }
 
+    // v16-Compat
     [Column("qty_done")]
     public decimal? QtyDone { get; set; }
 
@@ -101,6 +114,14 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("production_id")]
     public Guid? ProductionId { get; set; }
+
+    [Column("carrier_id")]
+    public Guid? CarrierId { get; set; }
+
+    [ForeignKey("CarrierId")]
+    //[InverseProperty("StockMoveLines")]
+    [NotMapped]
+    public virtual DeliveryCarrier? Carrier { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("StockMoveLines")]
@@ -185,15 +206,15 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("ProduceLineId")]
     //[InverseProperty("ProduceLines")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> ConsumeLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> ConsumeLines { get; set; } = new List<StockMoveLine>();
 
     [ForeignKey("ConsumeLineId")]
     //[InverseProperty("ConsumeLines")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> ProduceLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> ProduceLines { get; set; } = new List<StockMoveLine>();
 
     [ForeignKey("StockMoveLineId")]
     //[InverseProperty("StockMoveLines")]
     [NotMapped]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; } = new List<ProductLabelLayout>();
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; set; } = new List<ProductLabelLayout>();
 }

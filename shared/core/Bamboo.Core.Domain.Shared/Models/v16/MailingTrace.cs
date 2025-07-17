@@ -81,8 +81,11 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("sms_sms_id")]
+    public Guid? SmsSmsId { get; set; }
+
     [Column("sms_id_int")]
-    public Guid? SmsIdInt { get; set; }
+    public Guid? SmsSmsIdInt { get; set; }
 
     [Column("sms_number")]
     public string? SmsNumber { get; set; }
@@ -113,6 +116,11 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("MailingTraces")]
     [NotMapped]
     public virtual MailingMailing? MassMailing { get; set; }
+
+    [ForeignKey("SmsSmsId")] 
+    //[InverseProperty("MailingTraces")]
+    [NotMapped]
+    public virtual SmsSm? SmsSms { get; set; }
 
     //[InverseProperty("MailingTrace")]
     [NotMapped]

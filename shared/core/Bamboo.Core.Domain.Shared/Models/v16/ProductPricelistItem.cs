@@ -19,11 +19,11 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("pricelist_id")]
-    public Guid? PricelistId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("pricelist_id")]
+    public Guid? PricelistId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -49,6 +49,9 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("applied_on")]
     public string? AppliedOn { get; set; }
 
+    [Column("display_applied_on")]
+    public string? DisplayAppliedOn { get; set; }
+
     [Column("base")]
     public string? Base { get; set; }
 
@@ -70,12 +73,16 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("price_surcharge")]
     public decimal? PriceSurcharge { get; set; }
 
+    [Column("price_markup")]
+    public decimal? PriceMarkup { get; set; }
+
     [Column("price_min_margin")]
     public decimal? PriceMinMargin { get; set; }
 
     [Column("price_max_margin")]
     public decimal? PriceMaxMargin { get; set; }
 
+    // v16-Compat
     [Column("active")]
     public bool? Active { get; set; }
 

@@ -93,14 +93,14 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
 
     //[InverseProperty("Position")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplates { get; } = new List<AccountFiscalPositionAccountTemplate>();
+    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplates { get; set; } = new List<AccountFiscalPositionAccountTemplate>();
 
     //[InverseProperty("Position")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplates { get; } = new List<AccountFiscalPositionTaxTemplate>();
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplates { get; set; } = new List<AccountFiscalPositionTaxTemplate>();
 
     [ForeignKey("AccountFiscalPositionTemplateId")]
     //[InverseProperty("AccountFiscalPositionTemplates")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStates { get; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } = new List<ResCountryState>();
 }

@@ -57,6 +57,10 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("read_date", TypeName = "timestamp without time zone")]
     public DateTime? ReadDate { get; set; }
 
+    [Column("sms_id_int")]
+    public Guid? SmsIdInt { get; set; }
+
+    // v16-Compat
     [Column("sms_id")]
     public Guid? SmsId { get; set; }
 
@@ -98,10 +102,10 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Notification")]
     [NotMapped]
-    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; } = new List<SmsResendRecipient>();
+    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; set; } = new List<SmsResendRecipient>();
 
     [ForeignKey("MailNotificationId")]
     //[InverseProperty("MailNotifications")]
     [NotMapped]
-    public virtual ICollection<MailResendMessage> MailResendMessages { get; } = new List<MailResendMessage>();
+    public virtual ICollection<MailResendMessage> MailResendMessages { get; set; } = new List<MailResendMessage>();
 }

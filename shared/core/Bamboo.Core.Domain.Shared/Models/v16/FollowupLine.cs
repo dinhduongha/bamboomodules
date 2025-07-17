@@ -63,6 +63,11 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("FollowupLine")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -92,12 +97,9 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("FollowupLine")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
-
+   // v16-Compat
     //[InverseProperty("LatestFollowupLevelIdWithoutLitNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 
 }

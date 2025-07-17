@@ -55,6 +55,10 @@ public partial class CrmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("Stage")]
+    [NotMapped]
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
     [ForeignKey("TeamId")]
     //[InverseProperty("CrmStages")]
     [NotMapped]
@@ -64,9 +68,4 @@ public partial class CrmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     //[InverseProperty("CrmStageWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Stage")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
-
 }

@@ -23,6 +23,10 @@ public partial class SurveySurvey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
+
     [Column("color")]
     public long? Color { get; set; }
 
@@ -148,6 +152,13 @@ public partial class SurveySurvey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("SurveySurveyCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
+
+    // v16-Compat
+    [ForeignKey("MessageMainAttachmentId")]
+    //[InverseProperty("...")]
+    [NotMapped]
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+
 
     //[InverseProperty("Survey")]
     [NotMapped]

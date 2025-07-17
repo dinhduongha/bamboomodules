@@ -19,6 +19,9 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -30,9 +33,6 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("packaging_length")]
     public double? PackagingLength { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -58,6 +58,12 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("max_weight")]
     public double? MaxWeight { get; set; }
 
+    [Column("shipper_package_code")]
+    public string? ShipperPackageCode { get; set; }
+
+    [Column("package_carrier_type")]
+    public string? PackageCarrierType { get; set; }
+
     [ForeignKey("TenantId")]
     //[InverseProperty("StockPackageTypes")]
     [NotMapped]
@@ -75,18 +81,18 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("PackageType")]
     [NotMapped]
-    public virtual ICollection<ProductPackaging> ProductPackagings { get; } = new List<ProductPackaging>();
+    public virtual ICollection<ProductPackaging> ProductPackagings { get; set; } = new List<ProductPackaging>();
 
     //[InverseProperty("PackageType")]
     [NotMapped]
-    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; } = new List<StockQuantPackage>();
+    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; set; } = new List<StockQuantPackage>();
 
     //[InverseProperty("PackageType")]
     [NotMapped]
-    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacities { get; } = new List<StockStorageCategoryCapacity>();
+    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacities { get; set; } = new List<StockStorageCategoryCapacity>();
 
     [ForeignKey("StockPackageTypeId")]
     //[InverseProperty("StockPackageTypes")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } = new List<StockPutawayRule>();
 }

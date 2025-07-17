@@ -86,6 +86,10 @@ public partial class CrmIapLeadMiningRequest : FullAuditedEntity<Guid>, IEntityD
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("LeadMiningRequest")]
+    [NotMapped]
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
     [ForeignKey("PreferredRoleId")]
     //[InverseProperty("CrmIapLeadMiningRequests")]
     [NotMapped]
@@ -111,32 +115,28 @@ public partial class CrmIapLeadMiningRequest : FullAuditedEntity<Guid>, IEntityD
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("LeadMiningRequest")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
-
     [ForeignKey("CrmIapLeadMiningRequestId")]
     //[InverseProperty("CrmIapLeadMiningRequests")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustries { get; } = new List<CrmIapLeadIndustry>();
+    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustries { get; set; } = new List<CrmIapLeadIndustry>();
 
     [ForeignKey("CrmIapLeadMiningRequestId")]
     //[InverseProperty("CrmIapLeadMiningRequestsNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoles { get; } = new List<CrmIapLeadRole>();
+    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoles { get; set; } = new List<CrmIapLeadRole>();
 
     [ForeignKey("CrmIapLeadMiningRequestId")]
     //[InverseProperty("CrmIapLeadMiningRequests")]
     [NotMapped]
-    public virtual ICollection<CrmTag> CrmTags { get; } = new List<CrmTag>();
+    public virtual ICollection<CrmTag> CrmTags { get; set; } = new List<CrmTag>();
 
     [ForeignKey("CrmIapLeadMiningRequestId")]
     //[InverseProperty("CrmIapLeadMiningRequests")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> ResCountries { get; set; } = new List<ResCountry>();
 
     [ForeignKey("CrmIapLeadMiningRequestId")]
     //[InverseProperty("CrmIapLeadMiningRequests")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStates { get; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } = new List<ResCountryState>();
 }

@@ -41,6 +41,7 @@ public partial class AccountDaybookReport : FullAuditedEntity<Guid>, IEntityDto<
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -58,10 +59,10 @@ public partial class AccountDaybookReport : FullAuditedEntity<Guid>, IEntityDto<
     [ForeignKey("AccountDaybookReportId")]
     //[InverseProperty("AccountDaybookReports")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
 
     [ForeignKey("ReportLineId")]
     //[InverseProperty("ReportLines1")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> Accounts { get; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> Accounts { get; set; } = new List<AccountAccount>();
 }

@@ -20,7 +20,7 @@ public partial class HrRecruitmentDegree : FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("sequence", TypeName = "bigserial")]
     public long Sequence { get; set; }
 
@@ -51,6 +51,6 @@ public partial class HrRecruitmentDegree : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Type")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
 
 }

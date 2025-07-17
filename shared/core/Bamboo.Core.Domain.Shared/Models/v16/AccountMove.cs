@@ -17,6 +17,9 @@ namespace Bamboo.Core.Models;
 //[Index("InvoiceDate", Name = "account_move_invoice_date_index")]
 //[Index("MoveType", Name = "account_move_move_type_index")]
 //[Index("Name", Name = "account_move_name_index")]
+//[Index("PartnerId", Name = "account_move__partner_id_index")]
+//[Index("SecureSequenceNumber", Name = "account_move__secure_sequence_number_index")]
+//[Index("JournalId", "CompanyId", "Date", Name = "account_move_journal_id_company_id_idx")]
 //[Index("JournalId", "State", "PaymentState", "MoveType", "Date", Name = "account_move_payment_idx")]
 //[Index("JournalId", "SequencePrefix", "SequenceNumber", "Name", Name = "account_move_sequence_index", IsDescending = new[] { false, true, true, false })]
 //[Index("JournalId", "Id", "SequencePrefix", Name = "account_move_sequence_index2", IsDescending = new[] { false, true, false })]
@@ -25,6 +28,9 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("sequence_number")]
     public long SequenceNumber { get; set; }
@@ -35,11 +41,12 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
+    // v16-Compat
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }
+
+    [Column("origin_payment_id")]
+    public Guid? OriginPaymentId { get; set; }
 
     [Column("statement_line_id")]
     public Guid? StatementLineId { get; set; }
@@ -73,6 +80,9 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("fiscal_position_id")]
     public Guid? FiscalPositionId { get; set; }
+
+    [Column("preferred_payment_method_line_id")]
+    public Guid? PreferredPaymentMethodLineId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -137,6 +147,9 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("invoice_origin")]
     public string? InvoiceOrigin { get; set; }
 
+    [Column("incoterm_location")]
+    public string? IncotermLocation { get; set; }
+
     [Column("date")]
     public DateTime? Date { get; set; }
 
@@ -149,8 +162,17 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("invoice_date_due")]
     public DateTime? InvoiceDateDue { get; set; }
 
+    [Column("delivery_date")]
+    public DateTime? DeliveryDate { get; set; }
+
+    [Column("sending_data", TypeName = "jsonb")]
+    public string? SendingData { get; set; }
+
     [Column("narration")]
     public string? Narration { get; set; }
+
+    [Column("invoice_currency_rate")]
+    public decimal? InvoiceCurrencyRate { get; set; }
 
     [Column("amount_untaxed")]
     public decimal? AmountUntaxed { get; set; }
@@ -166,6 +188,9 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("amount_untaxed_signed")]
     public decimal? AmountUntaxedSigned { get; set; }
+
+    [Column("amount_untaxed_in_currency_signed")]
+    public decimal? AmountUntaxedInCurrencySigned { get; set; }
 
     [Column("amount_tax_signed")]
     public decimal? AmountTaxSigned { get; set; }
@@ -188,11 +213,21 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("always_tax_exigible")]
     public bool? AlwaysTaxExigible { get; set; }
 
+    [Column("checked")]
+    public bool? Checked { get; set; }
+
+    // v16-Compat
     [Column("to_check")]
     public bool? ToCheck { get; set; }
 
     [Column("posted_before")]
     public bool? PostedBefore { get; set; }
+
+    [Column("made_sequence_gap")]
+    public bool? MadeSequenceGap { get; set; }
+
+    [Column("is_manually_modified")]
+    public bool? IsManuallyModified { get; set; }
 
     [Column("is_move_sent")]
     public bool? IsMoveSent { get; set; }
@@ -203,6 +238,10 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [Column("l10n_vn_e_invoice_number")]
+    public string? L10nVnEInvoiceNumber { get; set; }
+
+    // v16-Compat
     [Column("edi_state")]
     public string? EdiState { get; set; }
 
@@ -220,6 +259,12 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("stock_move_id")]
     public Guid? StockMoveId { get; set; }
+
+    [Column("reversed_pos_order_id")]
+    public Guid? ReversedPosOrderId { get; set; }
+
+    [Column("expense_sheet_id")]
+    public Guid? ExpenseSheetId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -361,103 +406,103 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Invoice")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; } = new List<AccountAssetDepreciationLine>();
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } = new List<AccountAssetDepreciationLine>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountEdiDocument> AccountEdiDocuments { get; } = new List<AccountEdiDocument>();
+    public virtual ICollection<AccountEdiDocument> AccountEdiDocuments { get; set; } = new List<AccountEdiDocument>();
 
     //[InverseProperty("ExchangeMove")]
     [NotMapped]
-    public virtual ICollection<AccountFullReconcile> AccountFullReconciles { get; } = new List<AccountFullReconcile>();
+    public virtual ICollection<AccountFullReconcile> AccountFullReconciles { get; set; } = new List<AccountFullReconcile>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("ExchangeMove")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } = new List<AccountPartialReconcile>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("AccountMove")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
 
     //[InverseProperty("AutoPostOrigin")]
     [NotMapped]
-    public virtual ICollection<AccountMove> InverseAutoPostOrigin { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> InverseAutoPostOrigin { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("ReversedEntry")]
     [NotMapped]
-    public virtual ICollection<AccountMove> InverseReversedEntry { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> InverseReversedEntry { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("TaxCashBasisOriginMove")]
     [NotMapped]
-    public virtual ICollection<AccountMove> InverseTaxCashBasisOriginMove { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> InverseTaxCashBasisOriginMove { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("AccountMoveNavigation")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
 
     //[InverseProperty("AccountMove")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessions { get; } = new List<PosSession>();
+    public virtual ICollection<PosSession> PosSessions { get; set; } = new List<PosSession>();
 
     //[InverseProperty("Invoice")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
 
     //[InverseProperty("AccountOpeningMove")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
 
     //[InverseProperty("AccountMove")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } = new List<AccountInvoiceSend>();
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizards { get; } = new List<AccountResequenceWizard>();
+    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizards { get; set; } = new List<AccountResequenceWizard>();
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
 
     [ForeignKey("MoveId")]
     //[InverseProperty("Moves")]
     [NotMapped]
-    public virtual ICollection<AccountMoveReversal> Reversals { get; } = new List<AccountMoveReversal>();
+    public virtual ICollection<AccountMoveReversal> Reversals { get; set; } = new List<AccountMoveReversal>();
 
     [ForeignKey("NewMoveId")]
     //[InverseProperty("NewMoves")]
     [NotMapped]
-    public virtual ICollection<AccountMoveReversal> ReversalsNavigation { get; } = new List<AccountMoveReversal>();
+    public virtual ICollection<AccountMoveReversal> ReversalsNavigation { get; set; } = new List<AccountMoveReversal>();
 
     [ForeignKey("InvoiceId")]
     //[InverseProperty("Invoices")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> Transactions { get; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
 }

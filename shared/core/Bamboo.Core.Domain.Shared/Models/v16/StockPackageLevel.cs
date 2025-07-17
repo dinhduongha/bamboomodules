@@ -18,6 +18,9 @@ public partial class StockPackageLevel: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
     [Column("package_id")]
     public Guid? PackageId { get; set; }
 
@@ -26,9 +29,6 @@ public partial class StockPackageLevel: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
@@ -74,9 +74,9 @@ public partial class StockPackageLevel: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("PackageLevel")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
 
     //[InverseProperty("PackageLevel")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 }

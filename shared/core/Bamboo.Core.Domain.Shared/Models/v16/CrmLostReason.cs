@@ -47,17 +47,16 @@ public partial class CrmLostReason : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    //[InverseProperty("LostReason")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadLost> CrmLeadLosts { get; set; } = new List<CrmLeadLost>();
+
+    //[InverseProperty("LostReason")]
+    [NotMapped]
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CrmLostReasonWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("LostReason")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadLost> CrmLeadLosts { get; } = new List<CrmLeadLost>();
-
-    //[InverseProperty("LostReason")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; } = new List<CrmLead>();
-
 }

@@ -20,7 +20,7 @@ public partial class MailMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
@@ -63,6 +63,7 @@ public partial class MailMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("auto_delete")]
     public bool? AutoDelete { get; set; }
 
+    // v16-Compat
     [Column("to_delete")]
     public bool? ToDelete { get; set; }
 
@@ -74,6 +75,9 @@ public partial class MailMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("mailing_id")]
+    public Guid? MailingId { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("MailMailCreateUs")]
@@ -97,10 +101,10 @@ public partial class MailMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("MailMail")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
 
     [ForeignKey("MailMailId")]
     //[InverseProperty("MailMails")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
 }

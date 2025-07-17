@@ -25,6 +25,7 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -52,6 +53,9 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("access_token")]
+    public string? AccessToken { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
 
@@ -60,6 +64,9 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("opening_notes")]
     public string? OpeningNotes { get; set; }
+
+    [Column("closing_notes")]
+    public string? ClosingNotes { get; set; }
 
     [Column("cash_register_balance_end_real")]
     public decimal? CashRegisterBalanceEndReal { get; set; }
@@ -87,6 +94,17 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
+
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
+
+    //[InverseProperty("PosSession")]
+    // [NotMapped]
+    // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+
+    //[InverseProperty("PosSession")]
+    // [NotMapped]
+    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -129,22 +147,22 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("PosSession")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
 
     //[InverseProperty("PosSession")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("Session")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
 
     //[InverseProperty("Session")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
 
     //[InverseProperty("PosSession")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
 
 }

@@ -32,12 +32,16 @@ public partial class PosBill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("value")]
     public decimal? Value { get; set; }
 
+    [Column("for_all_config")]
+    public bool? ForAllConfig { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -55,5 +59,5 @@ public partial class PosBill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [ForeignKey("PosBillId")]
     //[InverseProperty("PosBills")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
 }

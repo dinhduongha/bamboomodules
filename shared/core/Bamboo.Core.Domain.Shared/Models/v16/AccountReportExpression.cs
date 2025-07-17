@@ -65,6 +65,11 @@ public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityD
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    //[InverseProperty("TargetReportExpression")]
+    [NotMapped]
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } = new List<AccountReportExternalValue>();
+
+    // v16-Compat
     [ForeignKey("TenantId")]
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
@@ -84,17 +89,15 @@ public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityD
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("TargetReportExpression")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; } = new List<AccountReportExternalValue>();
-
+    // v16-Compat
     [ForeignKey("AccountReportExpressionId")]
     //[InverseProperty("AccountReportExpressions")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
 
+    // v16-Compat
     [ForeignKey("AccountReportExpressionId")]
     //[InverseProperty("AccountReportExpressionsNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplatesNavigation { get; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplatesNavigation { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
 }

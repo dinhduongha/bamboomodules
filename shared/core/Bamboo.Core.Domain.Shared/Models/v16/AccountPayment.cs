@@ -11,7 +11,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_payment")]
-public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("MoveId", Name = "account_payment__move_id_index")]
+//[Index("JournalId", "CompanyId", Name = "account_payment_journal_id_company_id_idx")]
+public partial class AccountPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,6 +27,9 @@ public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("partner_bank_id")]
     public Guid? PartnerBankId { get; set; }
@@ -59,14 +64,26 @@ public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [Column("name")]
+    public string? Name { get; set; }
+
+    [Column("state")]
+    public string? State { get; set; }
+
     [Column("payment_type")]
     public string? PaymentType { get; set; }
 
     [Column("partner_type")]
     public string? PartnerType { get; set; }
 
+    [Column("memo")]
+    public string? Memo { get; set; }
+
     [Column("payment_reference")]
     public string? PaymentReference { get; set; }
+
+    [Column("date")]
+    public DateTime? Date { get; set; }
 
     [Column("amount")]
     public decimal? Amount { get; set; }
@@ -79,6 +96,9 @@ public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("is_matched")]
     public bool? IsMatched { get; set; }
+
+    [Column("is_sent")]
+    public bool? IsSent { get; set; }
 
     [Column("is_internal_transfer")]
     public bool? IsInternalTransfer { get; set; }
@@ -106,6 +126,17 @@ public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("pos_session_id")]
     public Guid? PosSessionId { get; set; }
+
+    [Column("pos_order_id")]
+    public Guid? PosOrderId { get; set; }
+
+    //[InverseProperty("Payment")]
+    // [NotMapped]
+    // public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+
+    //[InverseProperty("OriginPayment")]
+    // [NotMapped]
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -208,34 +239,34 @@ public partial class AccountPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Payment")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
     //[InverseProperty("Payment")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
 
     //[InverseProperty("PairedInternalTransferPayment")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> InversePairedInternalTransferPayment { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> InversePairedInternalTransferPayment { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("SourcePayment")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> InverseSourcePayment { get; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> InverseSourcePayment { get; set; } = new List<AccountPayment>();
 
     //[InverseProperty("Payment")]
     [NotMapped]
-    public virtual ICollection<PaymentRefundWizard> PaymentRefundWizards { get; } = new List<PaymentRefundWizard>();
+    public virtual ICollection<PaymentRefundWizard> PaymentRefundWizards { get; set; } = new List<PaymentRefundWizard>();
 
     //[InverseProperty("Payment")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
 
     //[InverseProperty("Payment")]
     [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; } = new List<RecurringPaymentLine>();
+    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } = new List<RecurringPaymentLine>();
 
     [ForeignKey("AccountPaymentId")]
     //[InverseProperty("AccountPayments")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
 }

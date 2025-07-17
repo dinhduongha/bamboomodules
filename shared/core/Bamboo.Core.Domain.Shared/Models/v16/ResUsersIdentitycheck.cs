@@ -29,6 +29,9 @@ public partial class ResUsersIdentitycheck : FullAuditedEntity<Guid>, IEntityDto
     [Column("request")]
     public string? Request { get; set; }
 
+    [Column("auth_method")]
+    public string? AuthMethod { get; set; }
+
     [Column("password")]
     public string? Password { get; set; }
 

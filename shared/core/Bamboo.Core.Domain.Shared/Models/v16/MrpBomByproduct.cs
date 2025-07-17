@@ -19,11 +19,11 @@ public partial class MrpBomByproduct: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("product_id")]
-    public Guid? ProductId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("product_id")]
+    public Guid? ProductId { get; set; }
 
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
@@ -85,17 +85,17 @@ public partial class MrpBomByproduct: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [NotMapped]
     public virtual UomUom? ProductUom { get; set; }
 
+    //[InverseProperty("Byproduct")]
+    [NotMapped]
+    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MrpBomByproductWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    //[InverseProperty("Byproduct")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; } = new List<StockMove>();
-
     [ForeignKey("MrpBomByproductId")]
     //[InverseProperty("MrpBomByproducts")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
 }
