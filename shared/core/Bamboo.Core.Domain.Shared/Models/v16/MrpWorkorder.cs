@@ -166,6 +166,17 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    //[ForeignKey("MrpWorkorderId")]
+    //[InverseProperty("MrpWorkorders")]
+    [NotMapped]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+
+    //[ForeignKey("MrpWorkorderId")]
+    //[InverseProperty("MrpWorkordersNavigation")]
+    [NotMapped]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLinesNavigation { get; set; } = new List<AccountAnalyticLine>();
+
+
     //[InverseProperty("Workorder")]
     [NotMapped]
     public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } = new List<MrpWorkcenterProductivity>();

@@ -29,6 +29,7 @@ public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }

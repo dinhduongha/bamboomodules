@@ -45,6 +45,7 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat json=>character varying
     [Column("cron_name")]
     public string? CronName { get; set; }
 

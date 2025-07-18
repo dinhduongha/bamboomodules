@@ -57,6 +57,7 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    // v16-Compat json
     //[Column("description")]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
@@ -220,6 +221,11 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     //[InverseProperty("HrJobs")]
     [NotMapped]
     public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; set; } = new List<HrRecruitmentStage>();
+
+    [ForeignKey("HrJobId")]
+    //[InverseProperty("HrJobs")]
+    [NotMapped]
+    public virtual ICollection<HrSkill> HrSkills { get; set; } = new List<HrSkill>();
 
     //[ForeignKey("HrJobId")]
     //[InverseProperty("HrJobs")]

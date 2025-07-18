@@ -428,6 +428,26 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
 
+    [ForeignKey("AccountMoveId")]
+    //[InverseProperty("AccountMoves")]
+    [NotMapped]
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+
+    [ForeignKey("RefundAccountMove")]
+    //[InverseProperty("RefundAccountMoves")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> OriginalAccountMoves { get; set; } = new List<AccountMove>();
+
+    [ForeignKey("InvoiceId")]
+    //[InverseProperty("Invoices")]
+    [NotMapped]
+    public virtual ICollection<AccountPayment> Payments { get; set; } = new List<AccountPayment>();
+
+    [ForeignKey("OriginalAccountMove")]
+    //[InverseProperty("OriginalAccountMoves")]
+    [NotMapped]
+    public virtual ICollection<AccountMove> RefundAccountMoves { get; set; } = new List<AccountMove>();
+
     //[InverseProperty("ExchangeMove")]
     [NotMapped]
     public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } = new List<AccountPartialReconcile>();

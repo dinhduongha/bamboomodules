@@ -115,6 +115,11 @@ public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IE
     [NotMapped]
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } = new List<MrpRoutingWorkcenter>();
 
+    [ForeignKey("TemplateAttributeValueId")]
+    //[InverseProperty("TemplateAttributeValues")]
+    [NotMapped]
+    public virtual ICollection<StockMove> Moves { get; set; } = new List<StockMove>();
+
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]

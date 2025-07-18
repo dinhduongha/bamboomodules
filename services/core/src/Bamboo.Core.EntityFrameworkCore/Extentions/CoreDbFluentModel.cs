@@ -77,7 +77,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_account_write_uid_fkey");
-            
+
             // modelBuilder.SharedTypeEntity<Dictionary<string, object>>("AccountAccountAccountTag", builder =>
             // {
             //     builder.Property<Guid>("AccountAccountId");
@@ -134,6 +134,42 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountId", "TaxId").HasName("account_account_tax_default_rel_pkey");
                         j.ToTable("account_account_tax_default_rel");
                         j.HasIndex(new[] { "TaxId", "AccountId" }, "account_account_tax_default_rel_tax_id_account_id_idx");
+                    });
+
+            entity.HasMany(d => d.ResCompanies).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAccountResCompanyRel",
+                    r => r.HasOne<ResCompany>().WithMany()
+                        .HasForeignKey("TenantId")
+                        .HasConstraintName("account_account_res_company_rel_res_company_id_fkey"),
+                    l => l.HasOne<AccountAccount>().WithMany()
+                        .HasForeignKey("AccountAccountId")
+                        .HasConstraintName("account_account_res_company_rel_account_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountAccountId", "ResCompanyId").HasName("account_account_res_company_rel_pkey");
+                        j.ToTable("account_account_res_company_rel");
+                        j.HasIndex(new[] { "ResCompanyId", "AccountAccountId" }, "account_account_res_company_r_res_company_id_account_accoun_idx");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
+                        j.IndexerProperty<Guid>("ResCompanyId").HasColumnName("res_company_id");
+                    });
+
+            entity.HasMany(d => d.Taxes).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAccountTaxDefaultRel",
+                    r => r.HasOne<AccountTax>().WithMany()
+                        .HasForeignKey("TaxId")
+                        .HasConstraintName("account_account_tax_default_rel_tax_id_fkey"),
+                    l => l.HasOne<AccountAccount>().WithMany()
+                        .HasForeignKey("AccountId")
+                        .HasConstraintName("account_account_tax_default_rel_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountId", "TaxId").HasName("account_account_tax_default_rel_pkey");
+                        j.ToTable("account_account_tax_default_rel");
+                        j.HasIndex(new[] { "TaxId", "AccountId" }, "account_account_tax_default_rel_tax_id_account_id_idx");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
+                        j.IndexerProperty<Guid>("TaxId").HasColumnName("tax_id");
                     });
         });
 
@@ -512,6 +548,60 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_analytic_account_write_uid_fkey");
+
+            entity.HasMany(d => d.MrpBoms).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAnalyticAccountMrpBomRel",
+                    r => r.HasOne<MrpBom>().WithMany()
+                        .HasForeignKey("MrpBomId")
+                        .HasConstraintName("account_analytic_account_mrp_bom_rel_mrp_bom_id_fkey"),
+                    l => l.HasOne<AccountAnalyticAccount>().WithMany()
+                        .HasForeignKey("AccountAnalyticAccountId")
+                        .HasConstraintName("account_analytic_account_mrp_b_account_analytic_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountAnalyticAccountId", "MrpBomId").HasName("account_analytic_account_mrp_bom_rel_pkey");
+                        j.ToTable("account_analytic_account_mrp_bom_rel");
+                        j.HasIndex(new[] { "MrpBomId", "AccountAnalyticAccountId" }, "account_analytic_account_mrp__mrp_bom_id_account_analytic_a_idx");
+                        j.IndexerProperty<Guid>("AccountAnalyticAccountId").HasColumnName("account_analytic_account_id");
+                        j.IndexerProperty<Guid>("MrpBomId").HasColumnName("mrp_bom_id");
+                    });
+
+            entity.HasMany(d => d.MrpProductions).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAnalyticAccountMrpProductionRel",
+                    r => r.HasOne<MrpProduction>().WithMany()
+                        .HasForeignKey("MrpProductionId")
+                        .HasConstraintName("account_analytic_account_mrp_production__mrp_production_id_fkey"),
+                    l => l.HasOne<AccountAnalyticAccount>().WithMany()
+                        .HasForeignKey("AccountAnalyticAccountId")
+                        .HasConstraintName("account_analytic_account_mrp_p_account_analytic_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountAnalyticAccountId", "MrpProductionId").HasName("account_analytic_account_mrp_production_rel_pkey");
+                        j.ToTable("account_analytic_account_mrp_production_rel");
+                        j.HasIndex(new[] { "MrpProductionId", "AccountAnalyticAccountId" }, "account_analytic_account_mrp__mrp_production_id_account_ana_idx");
+                        j.IndexerProperty<Guid>("AccountAnalyticAccountId").HasColumnName("account_analytic_account_id");
+                        j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
+                    });
+
+            entity.HasMany(d => d.MrpWorkcenters).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAnalyticAccountMrpWorkcenterRel",
+                    r => r.HasOne<MrpWorkcenter>().WithMany()
+                        .HasForeignKey("MrpWorkcenterId")
+                        .HasConstraintName("account_analytic_account_mrp_workcenter__mrp_workcenter_id_fkey"),
+                    l => l.HasOne<AccountAnalyticAccount>().WithMany()
+                        .HasForeignKey("AccountAnalyticAccountId")
+                        .HasConstraintName("account_analytic_account_mrp_w_account_analytic_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountAnalyticAccountId", "MrpWorkcenterId").HasName("account_analytic_account_mrp_workcenter_rel_pkey");
+                        j.ToTable("account_analytic_account_mrp_workcenter_rel");
+                        j.HasIndex(new[] { "MrpWorkcenterId", "AccountAnalyticAccountId" }, "account_analytic_account_mrp__mrp_workcenter_id_account_ana_idx");
+                        j.IndexerProperty<Guid>("AccountAnalyticAccountId").HasColumnName("account_analytic_account_id");
+                        j.IndexerProperty<Guid>("MrpWorkcenterId").HasColumnName("mrp_workcenter_id");
+                    });
         });
 
         modelBuilder.Entity<AccountAnalyticApplicability>(entity =>
@@ -3367,6 +3457,149 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "AccountJournalId", "AccountJournalGroupId" }, "account_journal_account_journ_account_journal_id_account_jo_idx");
                     });
         });
+        modelBuilder.Entity<AccountLockException>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("account_lock_exception_pkey");
+
+            entity.ToTable("account_lock_exception");
+
+            entity.HasIndex(e => new { e.TenantId, e.UserId, e.EndDatetime }, "account_lock_exception_company_id_end_datetime_idx").HasFilter("(active = true)");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CompanyLockDate).HasColumnName("company_lock_date");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.EndDatetime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("end_datetime");
+            entity.Property(e => e.LockDate).HasColumnName("lock_date");
+            entity.Property(e => e.LockDateField).HasColumnName("lock_date_field");
+            entity.Property(e => e.Reason).HasColumnName("reason");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_lock_exception_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_lock_exception_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_lock_exception_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_lock_exception_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<AccountMergeWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("account_merge_wizard_pkey");
+
+            entity.ToTable("account_merge_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.IsGroupByName).HasColumnName("is_group_by_name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_merge_wizard_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_merge_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.AccountAccounts).WithMany(p => p.AccountMergeWizards)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAccountAccountMergeWizardRel",
+                    r => r.HasOne<AccountAccount>().WithMany()
+                        .HasForeignKey("AccountAccountId")
+                        .HasConstraintName("account_account_account_merge_wizard_re_account_account_id_fkey"),
+                    l => l.HasOne<AccountMergeWizard>().WithMany()
+                        .HasForeignKey("AccountMergeWizardId")
+                        .HasConstraintName("account_account_account_merge_wiza_account_merge_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountMergeWizardId", "AccountAccountId").HasName("account_account_account_merge_wizard_rel_pkey");
+                        j.ToTable("account_account_account_merge_wizard_rel");
+                        j.HasIndex(new[] { "AccountAccountId", "AccountMergeWizardId" }, "account_account_account_merge_account_account_id_account_me_idx");
+                        j.IndexerProperty<Guid>("AccountMergeWizardId").HasColumnName("account_merge_wizard_id");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
+                    });
+        });
+
+        modelBuilder.Entity<AccountMergeWizardLine>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("account_merge_wizard_line_pkey");
+
+            entity.ToTable("account_merge_wizard_line");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DisplayType).HasColumnName("display_type");
+            entity.Property(e => e.GroupingKey).HasColumnName("grouping_key");
+            entity.Property(e => e.IsSelected).HasColumnName("is_selected");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.WizardId).HasColumnName("wizard_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountMergeWizardLines)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_merge_wizard_line_account_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_merge_wizard_line_create_uid_fkey");
+
+            entity.HasOne(d => d.Wizard).WithMany(p => p.AccountMergeWizardLines)
+                .HasForeignKey(d => d.WizardId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_merge_wizard_line_wizard_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_merge_wizard_line_write_uid_fkey");
+        });
 
         modelBuilder.Entity<AccountMove>(entity =>
         {
@@ -3636,6 +3869,96 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("InvoiceId", "TransactionId").HasName("account_invoice_transaction_rel_pkey");
                         j.ToTable("account_invoice_transaction_rel");
                         j.HasIndex(new[] { "TransactionId", "InvoiceId" }, "account_invoice_transaction_rel_transaction_id_invoice_id_idx");
+                    });
+
+            entity.HasMany(d => d.MrpProductions).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountMoveMrpProductionRel",
+                    r => r.HasOne<MrpProduction>().WithMany()
+                        .HasForeignKey("MrpProductionId")
+                        .HasConstraintName("account_move_mrp_production_rel_mrp_production_id_fkey"),
+                    l => l.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("AccountMoveId")
+                        .HasConstraintName("account_move_mrp_production_rel_account_move_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountMoveId", "MrpProductionId").HasName("account_move_mrp_production_rel_pkey");
+                        j.ToTable("account_move_mrp_production_rel");
+                        j.HasIndex(new[] { "MrpProductionId", "AccountMoveId" }, "account_move_mrp_production_r_mrp_production_id_account_mov_idx");
+                        j.IndexerProperty<Guid>("AccountMoveId").HasColumnName("account_move_id");
+                        j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
+                    });
+
+            entity.HasMany(d => d.OriginalAccountMoves).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "RefundedInvoice",
+                    r => r.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("OriginalAccountMove")
+                        .HasConstraintName("refunded_invoices_original_account_move_fkey"),
+                    l => l.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("RefundAccountMove")
+                        .HasConstraintName("refunded_invoices_refund_account_move_fkey"),
+                    j =>
+                    {
+                        j.HasKey("RefundAccountMove", "OriginalAccountMove").HasName("refunded_invoices_pkey");
+                        j.ToTable("refunded_invoices");
+                        j.HasIndex(new[] { "OriginalAccountMove", "RefundAccountMove" }, "refunded_invoices_original_account_move_refund_account_move_idx");
+                        j.IndexerProperty<Guid>("RefundAccountMove").HasColumnName("refund_account_move");
+                        j.IndexerProperty<Guid>("OriginalAccountMove").HasColumnName("original_account_move");
+                    });
+
+            entity.HasMany(d => d.Payments).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountMoveAccountPayment",
+                    r => r.HasOne<AccountPayment>().WithMany()
+                        .HasForeignKey("PaymentId")
+                        .HasConstraintName("account_move__account_payment_payment_id_fkey"),
+                    l => l.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .HasConstraintName("account_move__account_payment_invoice_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("InvoiceId", "PaymentId").HasName("account_move__account_payment_pkey");
+                        j.ToTable("account_move__account_payment");
+                        j.HasIndex(new[] { "PaymentId", "InvoiceId" }, "account_move__account_payment_payment_id_invoice_id_idx");
+                        j.IndexerProperty<Guid>("InvoiceId").HasColumnName("invoice_id");
+                        j.IndexerProperty<Guid>("PaymentId").HasColumnName("payment_id");
+                    });
+
+            entity.HasMany(d => d.RefundAccountMoves).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "RefundedInvoice",
+                    r => r.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("RefundAccountMove")
+                        .HasConstraintName("refunded_invoices_refund_account_move_fkey"),
+                    l => l.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("OriginalAccountMove")
+                        .HasConstraintName("refunded_invoices_original_account_move_fkey"),
+                    j =>
+                    {
+                        j.HasKey("RefundAccountMove", "OriginalAccountMove").HasName("refunded_invoices_pkey");
+                        j.ToTable("refunded_invoices");
+                        j.HasIndex(new[] { "OriginalAccountMove", "RefundAccountMove" }, "refunded_invoices_original_account_move_refund_account_move_idx");
+                        j.IndexerProperty<Guid>("RefundAccountMove").HasColumnName("refund_account_move");
+                        j.IndexerProperty<Guid>("OriginalAccountMove").HasColumnName("original_account_move");
+                    });
+
+            entity.HasMany(d => d.Transactions).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountInvoiceTransactionRel",
+                    r => r.HasOne<PaymentTransaction>().WithMany()
+                        .HasForeignKey("TransactionId")
+                        .HasConstraintName("account_invoice_transaction_rel_transaction_id_fkey"),
+                    l => l.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .HasConstraintName("account_invoice_transaction_rel_invoice_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("InvoiceId", "TransactionId").HasName("account_invoice_transaction_rel_pkey");
+                        j.ToTable("account_invoice_transaction_rel");
+                        j.HasIndex(new[] { "TransactionId", "InvoiceId" }, "account_invoice_transaction_rel_transaction_id_invoice_id_idx");
+                        j.IndexerProperty<Guid>("InvoiceId").HasColumnName("invoice_id");
+                        j.IndexerProperty<Guid>("TransactionId").HasColumnName("transaction_id");
                     });
         });
 
@@ -4013,6 +4336,129 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<AccountMoveSendBatchWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("account_move_send_batch_wizard_pkey");
+
+            entity.ToTable("account_move_send_batch_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_send_batch_wizard_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_send_batch_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.AccountMoves).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountMoveAccountMoveSendBatchWizardRel",
+                    r => r.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("AccountMoveId")
+                        .HasConstraintName("account_move_account_move_send_batch_wizar_account_move_id_fkey"),
+                    l => l.HasOne<AccountMoveSendBatchWizard>().WithMany()
+                        .HasForeignKey("AccountMoveSendBatchWizardId")
+                        .HasConstraintName("account_move_account_move_sen_account_move_send_batch_wiza_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountMoveSendBatchWizardId", "AccountMoveId").HasName("account_move_account_move_send_batch_wizard_rel_pkey");
+                        j.ToTable("account_move_account_move_send_batch_wizard_rel");
+                        j.HasIndex(new[] { "AccountMoveId", "AccountMoveSendBatchWizardId" }, "account_move_account_move_sen_account_move_id_account_move__idx");
+                        j.IndexerProperty<Guid>("AccountMoveSendBatchWizardId").HasColumnName("account_move_send_batch_wizard_id");
+                        j.IndexerProperty<Guid>("AccountMoveId").HasColumnName("account_move_id");
+                    });
+        });
+
+        modelBuilder.Entity<AccountMoveSendWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("account_move_send_wizard_pkey");
+
+            entity.ToTable("account_move_send_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ExtraEdiCheckboxes)
+                .HasColumnType("jsonb")
+                .HasColumnName("extra_edi_checkboxes");
+            entity.Property(e => e.MailAttachmentsWidget)
+                .HasColumnType("jsonb")
+                .HasColumnName("mail_attachments_widget");
+            entity.Property(e => e.MailBody).HasColumnName("mail_body");
+            entity.Property(e => e.MailSubject).HasColumnName("mail_subject");
+            entity.Property(e => e.MailTemplateId).HasColumnName("mail_template_id");
+            entity.Property(e => e.MoveId).HasColumnName("move_id");
+            entity.Property(e => e.PdfReportId).HasColumnName("pdf_report_id");
+            entity.Property(e => e.SendingMethodCheckboxes)
+                .HasColumnType("jsonb")
+                .HasColumnName("sending_method_checkboxes");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_send_wizard_create_uid_fkey");
+
+            entity.HasOne(d => d.MailTemplate).WithMany()
+                .HasForeignKey(d => d.MailTemplateId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_send_wizard_mail_template_id_fkey");
+
+            entity.HasOne(d => d.Move).WithMany()
+                .HasForeignKey(d => d.MoveId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_move_send_wizard_move_id_fkey");
+
+            entity.HasOne(d => d.PdfReport).WithMany(p => p.AccountMoveSendWizards)
+                .HasForeignKey(d => d.PdfReportId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_send_wizard_pdf_report_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_send_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.ResPartners).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountMoveSendWizardResPartnerRel",
+                    r => r.HasOne<ResPartner>().WithMany()
+                        .HasForeignKey("ResPartnerId")
+                        .HasConstraintName("account_move_send_wizard_res_partner_rel_res_partner_id_fkey"),
+                    l => l.HasOne<AccountMoveSendWizard>().WithMany()
+                        .HasForeignKey("AccountMoveSendWizardId")
+                        .HasConstraintName("account_move_send_wizard_res_p_account_move_send_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountMoveSendWizardId", "ResPartnerId").HasName("account_move_send_wizard_res_partner_rel_pkey");
+                        j.ToTable("account_move_send_wizard_res_partner_rel");
+                        j.HasIndex(new[] { "ResPartnerId", "AccountMoveSendWizardId" }, "account_move_send_wizard_res__res_partner_id_account_move_s_idx");
+                        j.IndexerProperty<Guid>("AccountMoveSendWizardId").HasColumnName("account_move_send_wizard_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
+                    });
+        });
+
         modelBuilder.Entity<AccountPartialReconcile>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("account_partial_reconcile_pkey");
@@ -4103,6 +4549,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AmountCompanyCurrencySigned).HasColumnName("amount_company_currency_signed");
             entity.Property(e => e.CreationTime)
@@ -5087,6 +5534,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AvailabilityCondition).HasColumnName("availability_condition");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
@@ -5145,6 +5593,42 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_report_write_uid_fkey");
+
+            entity.HasMany(d => d.MainReports).WithMany(p => p.SubReports)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountReportSectionRel",
+                    r => r.HasOne<AccountReport>().WithMany()
+                        .HasForeignKey("MainReportId")
+                        .HasConstraintName("account_report_section_rel_main_report_id_fkey"),
+                    l => l.HasOne<AccountReport>().WithMany()
+                        .HasForeignKey("SubReportId")
+                        .HasConstraintName("account_report_section_rel_sub_report_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MainReportId", "SubReportId").HasName("account_report_section_rel_pkey");
+                        j.ToTable("account_report_section_rel");
+                        j.HasIndex(new[] { "SubReportId", "MainReportId" }, "account_report_section_rel_sub_report_id_main_report_id_idx");
+                        j.IndexerProperty<Guid>("MainReportId").HasColumnName("main_report_id");
+                        j.IndexerProperty<Guid>("SubReportId").HasColumnName("sub_report_id");
+                    });
+
+            entity.HasMany(d => d.SubReports).WithMany(p => p.MainReports)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountReportSectionRel",
+                    r => r.HasOne<AccountReport>().WithMany()
+                        .HasForeignKey("SubReportId")
+                        .HasConstraintName("account_report_section_rel_sub_report_id_fkey"),
+                    l => l.HasOne<AccountReport>().WithMany()
+                        .HasForeignKey("MainReportId")
+                        .HasConstraintName("account_report_section_rel_main_report_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MainReportId", "SubReportId").HasName("account_report_section_rel_pkey");
+                        j.ToTable("account_report_section_rel");
+                        j.HasIndex(new[] { "SubReportId", "MainReportId" }, "account_report_section_rel_sub_report_id_main_report_id_idx");
+                        j.IndexerProperty<Guid>("MainReportId").HasColumnName("main_report_id");
+                        j.IndexerProperty<Guid>("SubReportId").HasColumnName("sub_report_id");
+                    });
         });
 
         modelBuilder.Entity<AccountReportColumn>(entity =>
@@ -5594,6 +6078,42 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<AccountSecureEntriesWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("account_secure_entries_wizard_pkey");
+
+            entity.ToTable("account_secure_entries_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.HashDate).HasColumnName("hash_date");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_secure_entries_wizard_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_secure_entries_wizard_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_secure_entries_wizard_write_uid_fkey");
+        });
+
         modelBuilder.Entity<AccountSetupBankManualConfig>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("account_setup_bank_manual_config_pkey");
@@ -5755,6 +6275,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -6428,6 +6949,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ApplicantSendMailId", "HrApplicantId").HasName("applicant_send_mail_hr_applicant_rel_pkey");
                         j.ToTable("applicant_send_mail_hr_applicant_rel");
                         j.HasIndex(new[] { "HrApplicantId", "ApplicantSendMailId" }, "applicant_send_mail_hr_applic_hr_applicant_id_applicant_sen_idx");
+                    });
+
+            entity.HasMany(d => d.IrAttachments).WithMany(p => p.ApplicantSendMails)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ApplicantSendMailIrAttachmentRel",
+                    r => r.HasOne<IrAttachment>().WithMany()
+                        .HasForeignKey("IrAttachmentId")
+                        .HasConstraintName("applicant_send_mail_ir_attachment_rel_ir_attachment_id_fkey"),
+                    l => l.HasOne<ApplicantSendMail>().WithMany()
+                        .HasForeignKey("ApplicantSendMailId")
+                        .HasConstraintName("applicant_send_mail_ir_attachment_r_applicant_send_mail_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ApplicantSendMailId", "IrAttachmentId").HasName("applicant_send_mail_ir_attachment_rel_pkey");
+                        j.ToTable("applicant_send_mail_ir_attachment_rel");
+                        j.HasIndex(new[] { "IrAttachmentId", "ApplicantSendMailId" }, "applicant_send_mail_ir_attach_ir_attachment_id_applicant_se_idx");
+                        j.IndexerProperty<Guid>("ApplicantSendMailId").HasColumnName("applicant_send_mail_id");
+                        j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
                     });
         });
 
@@ -7280,6 +7819,41 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("base_import_tests_models_preview_write_uid_fkey");
         });
 
+        modelBuilder.Entity<BaseImportModule>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("base_import_module_pkey");
+
+            entity.ToTable("base_import_module");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Force).HasColumnName("force");
+            entity.Property(e => e.ImportMessage).HasColumnName("import_message");
+            entity.Property(e => e.ModuleFile).HasColumnName("module_file");
+            entity.Property(e => e.ModulesDependencies).HasColumnName("modules_dependencies");
+            entity.Property(e => e.State).HasColumnName("state");
+            entity.Property(e => e.WithDemo).HasColumnName("with_demo");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("base_import_module_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("base_import_module_write_uid_fkey");
+        });
+
         modelBuilder.Entity<BaseLanguageExport>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("base_language_export_pkey");
@@ -7709,6 +8283,47 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("base_partner_merge_line_write_uid_fkey");
         });
 
+        modelBuilder.Entity<BillToPoWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("bill_to_po_wizard_pkey");
+
+            entity.ToTable("bill_to_po_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+            entity.Property(e => e.PurchaseOrderId).HasColumnName("purchase_order_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("bill_to_po_wizard_create_uid_fkey");
+
+            entity.HasOne<ResPartner>().WithMany()
+                .HasForeignKey(d => d.PartnerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("bill_to_po_wizard_partner_id_fkey");
+
+            entity.HasOne(d => d.PurchaseOrder).WithMany()
+                .HasForeignKey(d => d.PurchaseOrderId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("bill_to_po_wizard_purchase_order_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("bill_to_po_wizard_write_uid_fkey");
+        });
+
         modelBuilder.Entity<BusBu>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("bus_bus_pkey");
@@ -8099,6 +8714,42 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("calendar_filters_write_uid_fkey");
         });
 
+        modelBuilder.Entity<CalendarPopoverDeleteWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("calendar_popover_delete_wizard_pkey");
+
+            entity.ToTable("calendar_popover_delete_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Delete).HasColumnName("delete");
+            entity.Property(e => e.Record).HasColumnName("record");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("calendar_popover_delete_wizard_create_uid_fkey");
+
+            entity.HasOne(d => d.RecordNavigation).WithMany()
+                .HasForeignKey(d => d.Record)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("calendar_popover_delete_wizard_record_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("calendar_popover_delete_wizard_write_uid_fkey");
+        });
+
         modelBuilder.Entity<CalendarProviderConfig>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("calendar_provider_config_pkey");
@@ -8189,6 +8840,292 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("calendar_recurrence_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<CandidateSendMail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("candidate_send_mail_pkey");
+
+            entity.ToTable("candidate_send_mail");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AuthorId).HasColumnName("author_id");
+            entity.Property(e => e.Body).HasColumnName("body");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Lang).HasColumnName("lang");
+            entity.Property(e => e.Subject).HasColumnName("subject");
+            entity.Property(e => e.TemplateId).HasColumnName("template_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Author).WithMany()
+                .HasForeignKey(d => d.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("candidate_send_mail_author_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("candidate_send_mail_create_uid_fkey");
+
+            entity.HasOne(d => d.Template).WithMany()
+                .HasForeignKey(d => d.TemplateId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("candidate_send_mail_template_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("candidate_send_mail_write_uid_fkey");
+
+            entity.HasMany(d => d.HrCandidates).WithMany(p => p.CandidateSendMails)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CandidateSendMailHrCandidateRel",
+                    r => r.HasOne<HrCandidate>().WithMany()
+                        .HasForeignKey("HrCandidateId")
+                        .HasConstraintName("candidate_send_mail_hr_candidate_rel_hr_candidate_id_fkey"),
+                    l => l.HasOne<CandidateSendMail>().WithMany()
+                        .HasForeignKey("CandidateSendMailId")
+                        .HasConstraintName("candidate_send_mail_hr_candidate_re_candidate_send_mail_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CandidateSendMailId", "HrCandidateId").HasName("candidate_send_mail_hr_candidate_rel_pkey");
+                        j.ToTable("candidate_send_mail_hr_candidate_rel");
+                        j.HasIndex(new[] { "HrCandidateId", "CandidateSendMailId" }, "candidate_send_mail_hr_candid_hr_candidate_id_candidate_sen_idx");
+                        j.IndexerProperty<Guid>("CandidateSendMailId").HasColumnName("candidate_send_mail_id");
+                        j.IndexerProperty<Guid>("HrCandidateId").HasColumnName("hr_candidate_id");
+                    });
+
+            entity.HasMany(d => d.IrAttachments).WithMany(p => p.CandidateSendMails)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CandidateSendMailIrAttachmentRel",
+                    r => r.HasOne<IrAttachment>().WithMany()
+                        .HasForeignKey("IrAttachmentId")
+                        .HasConstraintName("candidate_send_mail_ir_attachment_rel_ir_attachment_id_fkey"),
+                    l => l.HasOne<CandidateSendMail>().WithMany()
+                        .HasForeignKey("CandidateSendMailId")
+                        .HasConstraintName("candidate_send_mail_ir_attachment_r_candidate_send_mail_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CandidateSendMailId", "IrAttachmentId").HasName("candidate_send_mail_ir_attachment_rel_pkey");
+                        j.ToTable("candidate_send_mail_ir_attachment_rel");
+                        j.HasIndex(new[] { "IrAttachmentId", "CandidateSendMailId" }, "candidate_send_mail_ir_attach_ir_attachment_id_candidate_se_idx");
+                        j.IndexerProperty<Guid>("CandidateSendMailId").HasColumnName("candidate_send_mail_id");
+                        j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
+                    });
+        });
+
+        modelBuilder.Entity<CardCampaign>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("card_campaign_pkey");
+
+            entity.ToTable("card_campaign");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.CardTemplateId).HasColumnName("card_template_id");
+            entity.Property(e => e.ContentButton).HasColumnName("content_button");
+            entity.Property(e => e.ContentHeader).HasColumnName("content_header");
+            entity.Property(e => e.ContentHeaderColor).HasColumnName("content_header_color");
+            entity.Property(e => e.ContentHeaderDyn).HasColumnName("content_header_dyn");
+            entity.Property(e => e.ContentHeaderPath).HasColumnName("content_header_path");
+            entity.Property(e => e.ContentImage1Path).HasColumnName("content_image1_path");
+            entity.Property(e => e.ContentImage2Path).HasColumnName("content_image2_path");
+            entity.Property(e => e.ContentSection).HasColumnName("content_section");
+            entity.Property(e => e.ContentSectionDyn).HasColumnName("content_section_dyn");
+            entity.Property(e => e.ContentSectionPath).HasColumnName("content_section_path");
+            entity.Property(e => e.ContentSubHeader).HasColumnName("content_sub_header");
+            entity.Property(e => e.ContentSubHeaderColor).HasColumnName("content_sub_header_color");
+            entity.Property(e => e.ContentSubHeaderDyn).HasColumnName("content_sub_header_dyn");
+            entity.Property(e => e.ContentSubHeaderPath).HasColumnName("content_sub_header_path");
+            entity.Property(e => e.ContentSubSection1).HasColumnName("content_sub_section1");
+            entity.Property(e => e.ContentSubSection1Dyn).HasColumnName("content_sub_section1_dyn");
+            entity.Property(e => e.ContentSubSection1Path).HasColumnName("content_sub_section1_path");
+            entity.Property(e => e.ContentSubSection2).HasColumnName("content_sub_section2");
+            entity.Property(e => e.ContentSubSection2Dyn).HasColumnName("content_sub_section2_dyn");
+            entity.Property(e => e.ContentSubSection2Path).HasColumnName("content_sub_section2_path");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ImagePreview).HasColumnName("image_preview");
+            entity.Property(e => e.Lang).HasColumnName("lang");
+            entity.Property(e => e.LinkTrackerId).HasColumnName("link_tracker_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.PostSuggestion).HasColumnName("post_suggestion");
+            entity.Property(e => e.PreviewRecordRef).HasColumnName("preview_record_ref");
+            entity.Property(e => e.RequestDescription).HasColumnName("request_description");
+            entity.Property(e => e.RequestTitle).HasColumnName("request_title");
+            entity.Property(e => e.ResModel).HasColumnName("res_model");
+            entity.Property(e => e.RewardMessage).HasColumnName("reward_message");
+            entity.Property(e => e.RewardTargetUrl).HasColumnName("reward_target_url");
+            entity.Property(e => e.TargetUrl).HasColumnName("target_url");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.CardTemplate).WithMany(p => p.CardCampaigns)
+                .HasForeignKey(d => d.CardTemplateId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("card_campaign_card_template_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_campaign_create_uid_fkey");
+
+            entity.HasOne(d => d.LinkTracker).WithMany(p => p.CardCampaigns)
+                .HasForeignKey(d => d.LinkTrackerId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("card_campaign_link_tracker_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_campaign_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_campaign_write_uid_fkey");
+
+            entity.HasMany(d => d.CardCampaignTags).WithMany(p => p.CardCampaigns)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CardCampaignCardCampaignTagRel",
+                    r => r.HasOne<CardCampaignTag>().WithMany()
+                        .HasForeignKey("CardCampaignTagId")
+                        .HasConstraintName("card_campaign_card_campaign_tag_rel_card_campaign_tag_id_fkey"),
+                    l => l.HasOne<CardCampaign>().WithMany()
+                        .HasForeignKey("CardCampaignId")
+                        .HasConstraintName("card_campaign_card_campaign_tag_rel_card_campaign_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CardCampaignId", "CardCampaignTagId").HasName("card_campaign_card_campaign_tag_rel_pkey");
+                        j.ToTable("card_campaign_card_campaign_tag_rel");
+                        j.HasIndex(new[] { "CardCampaignTagId", "CardCampaignId" }, "card_campaign_card_campaign_t_card_campaign_tag_id_card_cam_idx");
+                        j.IndexerProperty<Guid>("CardCampaignId").HasColumnName("card_campaign_id");
+                        j.IndexerProperty<Guid>("CardCampaignTagId").HasColumnName("card_campaign_tag_id");
+                    });
+        });
+
+        modelBuilder.Entity<CardCampaignTag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("card_campaign_tag_pkey");
+
+            entity.ToTable("card_campaign_tag");
+
+            entity.HasIndex(e => e.Name, "card_campaign_tag_name_uniq").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Color).HasColumnName("color");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_campaign_tag_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_campaign_tag_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<CardCard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("card_card_pkey");
+
+            entity.ToTable("card_card");
+
+            entity.HasIndex(e => new { e.CampaignId, e.ResId }, "card_card_campaign_record_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.RequiresSync).HasColumnName("requires_sync");
+            entity.Property(e => e.ResId).HasColumnName("res_id");
+            entity.Property(e => e.ShareStatus).HasColumnName("share_status");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Campaign).WithMany(p => p.CardCards)
+                .HasForeignKey(d => d.CampaignId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("card_card_campaign_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_card_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_card_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<CardTemplate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("card_template_pkey");
+
+            entity.ToTable("card_template");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Body).HasColumnName("body");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.PrimaryColor).HasColumnName("primary_color");
+            entity.Property(e => e.PrimaryTextColor).HasColumnName("primary_text_color");
+            entity.Property(e => e.SecondaryColor).HasColumnName("secondary_color");
+            entity.Property(e => e.SecondaryTextColor).HasColumnName("secondary_text_color");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_template_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_template_write_uid_fkey");
         });
 
         modelBuilder.Entity<ChangeLockDate>(entity =>
@@ -8376,7 +9313,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.MailMessageId, "chatbot_message__unique_mail_message_id").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -8441,7 +9381,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("chatbot_script", tb => tb.HasComment("Chatbot Script"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -8497,7 +9440,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("chatbot_script_answer", tb => tb.HasComment("Chatbot Script Answer"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -8548,7 +9494,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("chatbot_script_step", tb => tb.HasComment("Chatbot Script Step"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChatbotScriptId)
                 .HasComment("Chatbot")
                 .HasColumnName("chatbot_script_id");
@@ -8617,6 +9566,93 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("ChatbotScriptStepId").HasColumnName("chatbot_script_step_id");
                         j.IndexerProperty<Guid>("ChatbotScriptAnswerId").HasColumnName("chatbot_script_answer_id");
                     });
+        });
+
+        modelBuilder.Entity<ChooseDeliveryCarrier>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("choose_delivery_carrier_pkey");
+
+            entity.ToTable("choose_delivery_carrier");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CarrierId).HasColumnName("carrier_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DeliveryMessage).HasColumnName("delivery_message");
+            entity.Property(e => e.DeliveryPrice).HasColumnName("delivery_price");
+            entity.Property(e => e.DisplayPrice).HasColumnName("display_price");
+            entity.Property(e => e.OrderId).HasColumnName("order_id");
+            entity.Property(e => e.WeightUomName).HasColumnName("weight_uom_name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Carrier).WithMany(p => p.ChooseDeliveryCarriers)
+                .HasForeignKey(d => d.CarrierId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("choose_delivery_carrier_carrier_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("choose_delivery_carrier_create_uid_fkey");
+
+            entity.HasOne(d => d.Order).WithMany()
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("choose_delivery_carrier_order_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("choose_delivery_carrier_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<ChooseDeliveryPackage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("choose_delivery_package_pkey");
+
+            entity.ToTable("choose_delivery_package");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DeliveryPackageTypeId).HasColumnName("delivery_package_type_id");
+            entity.Property(e => e.PickingId).HasColumnName("picking_id");
+            entity.Property(e => e.ShippingWeight).HasColumnName("shipping_weight");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("choose_delivery_package_create_uid_fkey");
+
+            entity.HasOne(d => d.DeliveryPackageType).WithMany()
+                .HasForeignKey(d => d.DeliveryPackageTypeId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("choose_delivery_package_delivery_package_type_id_fkey");
+
+            entity.HasOne(d => d.Picking).WithMany()
+                .HasForeignKey(d => d.PickingId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("choose_delivery_package_picking_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("choose_delivery_package_write_uid_fkey");
         });
 
         modelBuilder.Entity<ConfirmStockSm>(entity =>
@@ -9435,6 +10471,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("crm_lead_lost_write_uid_fkey");
+
+            entity.HasMany(d => d.CrmLeads).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "CrmLeadCrmLeadLostRel",
+                    r => r.HasOne<CrmLead>().WithMany()
+                        .HasForeignKey("CrmLeadId")
+                        .HasConstraintName("crm_lead_crm_lead_lost_rel_crm_lead_id_fkey"),
+                    l => l.HasOne<CrmLeadLost>().WithMany()
+                        .HasForeignKey("CrmLeadLostId")
+                        .HasConstraintName("crm_lead_crm_lead_lost_rel_crm_lead_lost_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CrmLeadLostId", "CrmLeadId").HasName("crm_lead_crm_lead_lost_rel_pkey");
+                        j.ToTable("crm_lead_crm_lead_lost_rel");
+                        j.HasIndex(new[] { "CrmLeadId", "CrmLeadLostId" }, "crm_lead_crm_lead_lost_rel_crm_lead_id_crm_lead_lost_id_idx");
+                        j.IndexerProperty<Guid>("CrmLeadLostId").HasColumnName("crm_lead_lost_id");
+                        j.IndexerProperty<Guid>("CrmLeadId").HasColumnName("crm_lead_id");
+                    });
         });
 
         modelBuilder.Entity<CrmLeadPlsUpdate>(entity =>
@@ -10095,7 +11149,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("data_recycle_model", tb => tb.HasComment("Recycling Model"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -10208,7 +11265,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ResId, "data_recycle_record_res_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -10301,6 +11361,264 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("decimal_precision_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<DeliveryCarrier>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("delivery_carrier_pkey");
+
+            entity.ToTable("delivery_carrier");
+
+            entity.HasIndex(e => e.IsPublished, "delivery_carrier__is_published_index");
+
+            entity.HasIndex(e => e.WebsiteId, "delivery_carrier__website_id_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.CarrierDescription)
+                .HasColumnType("jsonb")
+                .HasColumnName("carrier_description");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DebugLogging).HasColumnName("debug_logging");
+            entity.Property(e => e.DeliveryType).HasColumnName("delivery_type");
+            entity.Property(e => e.FixedMargin).HasColumnName("fixed_margin");
+            entity.Property(e => e.FixedPrice).HasColumnName("fixed_price");
+            entity.Property(e => e.FreeOver).HasColumnName("free_over");
+            entity.Property(e => e.GetReturnLabelFromPortal).HasColumnName("get_return_label_from_portal");
+            entity.Property(e => e.IntegrationLevel).HasColumnName("integration_level");
+            entity.Property(e => e.InvoicePolicy).HasColumnName("invoice_policy");
+            entity.Property(e => e.IsPublished).HasColumnName("is_published");
+            entity.Property(e => e.Margin).HasColumnName("margin");
+            entity.Property(e => e.MaxVolume).HasColumnName("max_volume");
+            entity.Property(e => e.MaxWeight).HasColumnName("max_weight");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.ProdEnvironment).HasColumnName("prod_environment");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.ReturnLabelOnDelivery).HasColumnName("return_label_on_delivery");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.ShippingInsurance).HasColumnName("shipping_insurance");
+            entity.Property(e => e.TrackingUrl).HasColumnName("tracking_url");
+            entity.Property(e => e.WebsiteId).HasColumnName("website_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_carrier_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_carrier_create_uid_fkey");
+
+            entity.HasOne(d => d.Product).WithMany()
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("delivery_carrier_product_id_fkey");
+
+            entity.HasOne(d => d.Website).WithMany()
+                .HasForeignKey(d => d.WebsiteId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("delivery_carrier_website_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_carrier_write_uid_fkey");
+
+            entity.HasMany(d => d.Countries).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "DeliveryCarrierCountryRel",
+                    r => r.HasOne<ResCountry>().WithMany()
+                        .HasForeignKey("CountryId")
+                        .HasConstraintName("delivery_carrier_country_rel_country_id_fkey"),
+                    l => l.HasOne<DeliveryCarrier>().WithMany()
+                        .HasForeignKey("CarrierId")
+                        .HasConstraintName("delivery_carrier_country_rel_carrier_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CarrierId", "CountryId").HasName("delivery_carrier_country_rel_pkey");
+                        j.ToTable("delivery_carrier_country_rel");
+                        j.HasIndex(new[] { "CountryId", "CarrierId" }, "delivery_carrier_country_rel_country_id_carrier_id_idx");
+                        j.IndexerProperty<Guid>("CarrierId").HasColumnName("carrier_id");
+                        j.IndexerProperty<Guid>("CountryId").HasColumnName("country_id");
+                    });
+
+            entity.HasMany(d => d.ProductTags).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductTagDeliveryCarrierExcludedRel",
+                    r => r.HasOne<ProductTag>().WithMany()
+                        .HasForeignKey("ProductTagId")
+                        .HasConstraintName("product_tag_delivery_carrier_excluded_rel_product_tag_id_fkey"),
+                    l => l.HasOne<DeliveryCarrier>().WithMany()
+                        .HasForeignKey("DeliveryCarrierId")
+                        .HasConstraintName("product_tag_delivery_carrier_excluded__delivery_carrier_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("DeliveryCarrierId", "ProductTagId").HasName("product_tag_delivery_carrier_excluded_rel_pkey");
+                        j.ToTable("product_tag_delivery_carrier_excluded_rel");
+                        j.HasIndex(new[] { "ProductTagId", "DeliveryCarrierId" }, "product_tag_delivery_carrier__product_tag_id_delivery_carr_idx1");
+                        j.IndexerProperty<Guid>("DeliveryCarrierId").HasColumnName("delivery_carrier_id");
+                        j.IndexerProperty<Guid>("ProductTagId").HasColumnName("product_tag_id");
+                    });
+
+            entity.HasMany(d => d.ProductTagsNavigation).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductTagDeliveryCarrierMustHaveRel",
+                    r => r.HasOne<ProductTag>().WithMany()
+                        .HasForeignKey("ProductTagId")
+                        .HasConstraintName("product_tag_delivery_carrier_must_have_rel_product_tag_id_fkey"),
+                    l => l.HasOne<DeliveryCarrier>().WithMany()
+                        .HasForeignKey("DeliveryCarrierId")
+                        .HasConstraintName("product_tag_delivery_carrier_must_have_delivery_carrier_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("DeliveryCarrierId", "ProductTagId").HasName("product_tag_delivery_carrier_must_have_rel_pkey");
+                        j.ToTable("product_tag_delivery_carrier_must_have_rel");
+                        j.HasIndex(new[] { "ProductTagId", "DeliveryCarrierId" }, "product_tag_delivery_carrier__product_tag_id_delivery_carri_idx");
+                        j.IndexerProperty<Guid>("DeliveryCarrierId").HasColumnName("delivery_carrier_id");
+                        j.IndexerProperty<Guid>("ProductTagId").HasColumnName("product_tag_id");
+                    });
+
+            entity.HasMany(d => d.Routes).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockRouteShipping",
+                    r => r.HasOne<StockRoute>().WithMany()
+                        .HasForeignKey("RouteId")
+                        .HasConstraintName("stock_route_shipping_route_id_fkey"),
+                    l => l.HasOne<DeliveryCarrier>().WithMany()
+                        .HasForeignKey("ShippingId")
+                        .HasConstraintName("stock_route_shipping_shipping_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ShippingId", "RouteId").HasName("stock_route_shipping_pkey");
+                        j.ToTable("stock_route_shipping");
+                        j.HasIndex(new[] { "RouteId", "ShippingId" }, "stock_route_shipping_route_id_shipping_id_idx");
+                        j.IndexerProperty<Guid>("ShippingId").HasColumnName("shipping_id");
+                        j.IndexerProperty<Guid>("RouteId").HasColumnName("route_id");
+                    });
+
+            entity.HasMany(d => d.States).WithMany(p => p.Carriers)
+                .UsingEntity<Dictionary<string, object>>(
+                    "DeliveryCarrierStateRel",
+                    r => r.HasOne<ResCountryState>().WithMany()
+                        .HasForeignKey("StateId")
+                        .HasConstraintName("delivery_carrier_state_rel_state_id_fkey"),
+                    l => l.HasOne<DeliveryCarrier>().WithMany()
+                        .HasForeignKey("CarrierId")
+                        .HasConstraintName("delivery_carrier_state_rel_carrier_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CarrierId", "StateId").HasName("delivery_carrier_state_rel_pkey");
+                        j.ToTable("delivery_carrier_state_rel");
+                        j.HasIndex(new[] { "StateId", "CarrierId" }, "delivery_carrier_state_rel_state_id_carrier_id_idx");
+                        j.IndexerProperty<Guid>("CarrierId").HasColumnName("carrier_id");
+                        j.IndexerProperty<Guid>("StateId").HasColumnName("state_id");
+                    });
+
+            entity.HasMany(d => d.ZipPrefixes).WithMany(p => p.Carriers)
+                .UsingEntity<Dictionary<string, object>>(
+                    "DeliveryZipPrefixRel",
+                    r => r.HasOne<DeliveryZipPrefix>().WithMany()
+                        .HasForeignKey("ZipPrefixId")
+                        .HasConstraintName("delivery_zip_prefix_rel_zip_prefix_id_fkey"),
+                    l => l.HasOne<DeliveryCarrier>().WithMany()
+                        .HasForeignKey("CarrierId")
+                        .HasConstraintName("delivery_zip_prefix_rel_carrier_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CarrierId", "ZipPrefixId").HasName("delivery_zip_prefix_rel_pkey");
+                        j.ToTable("delivery_zip_prefix_rel");
+                        j.HasIndex(new[] { "ZipPrefixId", "CarrierId" }, "delivery_zip_prefix_rel_zip_prefix_id_carrier_id_idx");
+                        j.IndexerProperty<Guid>("CarrierId").HasColumnName("carrier_id");
+                        j.IndexerProperty<Guid>("ZipPrefixId").HasColumnName("zip_prefix_id");
+                    });
+        });
+
+        modelBuilder.Entity<DeliveryPriceRule>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("delivery_price_rule_pkey");
+
+            entity.ToTable("delivery_price_rule");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CarrierId).HasColumnName("carrier_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ListBasePrice).HasColumnName("list_base_price");
+            entity.Property(e => e.ListPrice).HasColumnName("list_price");
+            entity.Property(e => e.MaxValue).HasColumnName("max_value");
+            entity.Property(e => e.Operator).HasColumnName("operator");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.Variable).HasColumnName("variable");
+            entity.Property(e => e.VariableFactor).HasColumnName("variable_factor");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Carrier).WithMany(p => p.DeliveryPriceRules)
+                .HasForeignKey(d => d.CarrierId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("delivery_price_rule_carrier_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_price_rule_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_price_rule_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<DeliveryZipPrefix>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("delivery_zip_prefix_pkey");
+
+            entity.ToTable("delivery_zip_prefix");
+
+            entity.HasIndex(e => e.Name, "delivery_zip_prefix_name_uniq").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_zip_prefix_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("delivery_zip_prefix_write_uid_fkey");
         });
 
         modelBuilder.Entity<DigestDigest>(entity =>
@@ -10432,6 +11750,369 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<DiscussChannel>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("discuss_channel_pkey");
+
+            entity.ToTable("discuss_channel");
+
+            entity.HasIndex(e => e.LastInterestDt, "discuss_channel__last_interest_dt_index");
+
+            entity.HasIndex(e => e.LivechatChannelId, "discuss_channel__livechat_channel_id_index").HasFilter("(livechat_channel_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.LivechatOperatorId, "discuss_channel__livechat_operator_id_index").HasFilter("(livechat_operator_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.LivechatVisitorId, "discuss_channel__livechat_visitor_id_index").HasFilter("(livechat_visitor_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.ParentChannelId, "discuss_channel__parent_channel_id_index");
+
+            entity.HasIndex(e => e.FromMessageId, "discuss_channel_from_message_id_unique").IsUnique();
+
+            entity.HasIndex(e => e.Uuid, "discuss_channel_uuid_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.AllowPublicUpload).HasColumnName("allow_public_upload");
+            entity.Property(e => e.AnonymousName).HasColumnName("anonymous_name");
+            entity.Property(e => e.ChannelType).HasColumnName("channel_type");
+            entity.Property(e => e.ChatbotCurrentStepId).HasColumnName("chatbot_current_step_id");
+            entity.Property(e => e.CountryId).HasColumnName("country_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DefaultDisplayMode).HasColumnName("default_display_mode");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.FromMessageId).HasColumnName("from_message_id");
+            entity.Property(e => e.GroupPublicId).HasColumnName("group_public_id");
+            entity.Property(e => e.LastInterestDt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("last_interest_dt");
+            entity.Property(e => e.LivechatActive).HasColumnName("livechat_active");
+            entity.Property(e => e.LivechatChannelId).HasColumnName("livechat_channel_id");
+            entity.Property(e => e.LivechatOperatorId).HasColumnName("livechat_operator_id");
+            entity.Property(e => e.LivechatVisitorId).HasColumnName("livechat_visitor_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.ParentChannelId).HasColumnName("parent_channel_id");
+            entity.Property(e => e.RatingLastValue).HasColumnName("rating_last_value");
+            entity.Property(e => e.SfuChannelUuid).HasColumnName("sfu_channel_uuid");
+            entity.Property(e => e.SfuServerUrl).HasColumnName("sfu_server_url");
+            entity.Property(e => e.Uuid).HasColumnName("uuid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.ChatbotCurrentStep).WithMany(p => p.DiscussChannels)
+                .HasForeignKey(d => d.ChatbotCurrentStepId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_chatbot_current_step_id_fkey");
+
+            entity.HasOne<ResCountry>().WithMany()
+                .HasForeignKey(d => d.CountryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_country_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_create_uid_fkey");
+
+            entity.HasOne(d => d.FromMessage).WithOne()
+                .HasForeignKey<DiscussChannel>(d => d.FromMessageId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_from_message_id_fkey");
+
+            entity.HasOne(d => d.GroupPublic).WithMany()
+                .HasForeignKey(d => d.GroupPublicId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_group_public_id_fkey");
+
+            entity.HasOne(d => d.LivechatChannel).WithMany(p => p.DiscussChannels)
+                .HasForeignKey(d => d.LivechatChannelId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_livechat_channel_id_fkey");
+
+            entity.HasOne(d => d.LivechatOperator).WithMany()
+                .HasForeignKey(d => d.LivechatOperatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_livechat_operator_id_fkey");
+
+            entity.HasOne(d => d.LivechatVisitor).WithMany(p => p.DiscussChannels)
+                .HasForeignKey(d => d.LivechatVisitorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_livechat_visitor_id_fkey");
+
+            entity.HasOne(d => d.ParentChannel).WithMany(p => p.InverseParentChannel)
+                .HasForeignKey(d => d.ParentChannelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("discuss_channel_parent_channel_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_write_uid_fkey");
+
+            entity.HasMany(d => d.HrDepartments).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "DiscussChannelHrDepartmentRel",
+                    r => r.HasOne<HrDepartment>().WithMany()
+                        .HasForeignKey("HrDepartmentId")
+                        .HasConstraintName("discuss_channel_hr_department_rel_hr_department_id_fkey"),
+                    l => l.HasOne<DiscussChannel>().WithMany()
+                        .HasForeignKey("DiscussChannelId")
+                        .HasConstraintName("discuss_channel_hr_department_rel_discuss_channel_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("DiscussChannelId", "HrDepartmentId").HasName("discuss_channel_hr_department_rel_pkey");
+                        j.ToTable("discuss_channel_hr_department_rel");
+                        j.HasIndex(new[] { "HrDepartmentId", "DiscussChannelId" }, "discuss_channel_hr_department_hr_department_id_discuss_chan_idx");
+                        j.IndexerProperty<Guid>("DiscussChannelId").HasColumnName("discuss_channel_id");
+                        j.IndexerProperty<Guid>("HrDepartmentId").HasColumnName("hr_department_id");
+                    });
+
+            entity.HasMany(d => d.ResGroups).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "DiscussChannelResGroupsRel",
+                    r => r.HasOne<ResGroup>().WithMany()
+                        .HasForeignKey("ResGroupsId")
+                        .HasConstraintName("discuss_channel_res_groups_rel_res_groups_id_fkey"),
+                    l => l.HasOne<DiscussChannel>().WithMany()
+                        .HasForeignKey("DiscussChannelId")
+                        .HasConstraintName("discuss_channel_res_groups_rel_discuss_channel_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("DiscussChannelId", "ResGroupsId").HasName("discuss_channel_res_groups_rel_pkey");
+                        j.ToTable("discuss_channel_res_groups_rel");
+                        j.HasIndex(new[] { "ResGroupsId", "DiscussChannelId" }, "discuss_channel_res_groups_re_res_groups_id_discuss_channel_idx");
+                        j.IndexerProperty<Guid>("DiscussChannelId").HasColumnName("discuss_channel_id");
+                        j.IndexerProperty<Guid>("ResGroupsId").HasColumnName("res_groups_id");
+                    });
+        });
+
+        modelBuilder.Entity<DiscussChannelMember>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("discuss_channel_member_pkey");
+
+            entity.ToTable("discuss_channel_member");
+
+            entity.HasIndex(e => e.FetchedMessageId, "discuss_channel_member__fetched_message_id_index").HasFilter("(fetched_message_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.GuestId, "discuss_channel_member__guest_id_index");
+
+            entity.HasIndex(e => e.LastInterestDt, "discuss_channel_member__last_interest_dt_index");
+
+            entity.HasIndex(e => e.PartnerId, "discuss_channel_member__partner_id_index");
+
+            entity.HasIndex(e => e.SeenMessageId, "discuss_channel_member__seen_message_id_index").HasFilter("(seen_message_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.UnpinDt, "discuss_channel_member__unpin_dt_index");
+
+            entity.HasIndex(e => new { e.ChannelId, e.GuestId }, "discuss_channel_member_guest_unique")
+                .IsUnique()
+                .HasFilter("(guest_id IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.ChannelId, e.PartnerId }, "discuss_channel_member_partner_unique")
+                .IsUnique()
+                .HasFilter("(partner_id IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.ChannelId, e.PartnerId, e.SeenMessageId }, "discuss_channel_member_seen_message_id_idx");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ChannelId).HasColumnName("channel_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.CustomChannelName).HasColumnName("custom_channel_name");
+            entity.Property(e => e.CustomNotifications).HasColumnName("custom_notifications");
+            entity.Property(e => e.FetchedMessageId).HasColumnName("fetched_message_id");
+            entity.Property(e => e.FoldState).HasColumnName("fold_state");
+            entity.Property(e => e.GuestId).HasColumnName("guest_id");
+            entity.Property(e => e.LastInterestDt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("last_interest_dt");
+            entity.Property(e => e.LastSeenDt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("last_seen_dt");
+            entity.Property(e => e.MuteUntilDt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("mute_until_dt");
+            entity.Property(e => e.NewMessageSeparator).HasColumnName("new_message_separator");
+            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+            entity.Property(e => e.RtcInvitingSessionId).HasColumnName("rtc_inviting_session_id");
+            entity.Property(e => e.SeenMessageId).HasColumnName("seen_message_id");
+            entity.Property(e => e.UnpinDt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("unpin_dt");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Channel).WithMany(p => p.DiscussChannelMembers)
+                .HasForeignKey(d => d.ChannelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("discuss_channel_member_channel_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_member_create_uid_fkey");
+
+            entity.HasOne(d => d.FetchedMessage).WithMany()
+                .HasForeignKey(d => d.FetchedMessageId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_member_fetched_message_id_fkey");
+
+            entity.HasOne(d => d.Guest).WithMany()
+                .HasForeignKey(d => d.GuestId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("discuss_channel_member_guest_id_fkey");
+
+            entity.HasOne<ResPartner>().WithMany()
+                .HasForeignKey(d => d.PartnerId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("discuss_channel_member_partner_id_fkey");
+
+            entity.HasOne(d => d.RtcInvitingSession).WithMany(p => p.DiscussChannelMembers)
+                .HasForeignKey(d => d.RtcInvitingSessionId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_member_rtc_inviting_session_id_fkey");
+
+            entity.HasOne(d => d.SeenMessage).WithMany()
+                .HasForeignKey(d => d.SeenMessageId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_member_seen_message_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_member_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<DiscussChannelRtcSession>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("discuss_channel_rtc_session_pkey");
+
+            entity.ToTable("discuss_channel_rtc_session");
+
+            entity.HasIndex(e => e.LastModificationTime, "discuss_channel_rtc_session__write_date_index");
+
+            entity.HasIndex(e => e.ChannelMemberId, "discuss_channel_rtc_session_channel_member_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ChannelId).HasColumnName("channel_id");
+            entity.Property(e => e.ChannelMemberId).HasColumnName("channel_member_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.IsCameraOn).HasColumnName("is_camera_on");
+            entity.Property(e => e.IsDeaf).HasColumnName("is_deaf");
+            entity.Property(e => e.IsMuted).HasColumnName("is_muted");
+            entity.Property(e => e.IsScreenSharingOn).HasColumnName("is_screen_sharing_on");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Channel).WithMany(p => p.DiscussChannelRtcSessions)
+                .HasForeignKey(d => d.ChannelId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_rtc_session_channel_id_fkey");
+
+            entity.HasOne(d => d.ChannelMember).WithOne(p => p.DiscussChannelRtcSession)
+                .HasForeignKey<DiscussChannelRtcSession>(d => d.ChannelMemberId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("discuss_channel_rtc_session_channel_member_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_rtc_session_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_channel_rtc_session_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<DiscussGifFavorite>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("discuss_gif_favorite_pkey");
+
+            entity.ToTable("discuss_gif_favorite");
+
+            entity.HasIndex(e => new { e.CreatorId, e.TenorGifId }, "discuss_gif_favorite_user_gif_favorite").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.TenorGifId).HasColumnName("tenor_gif_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_gif_favorite_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_gif_favorite_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<DiscussVoiceMetadatum>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("discuss_voice_metadata_pkey");
+
+            entity.ToTable("discuss_voice_metadata");
+
+            entity.HasIndex(e => e.AttachmentId, "discuss_voice_metadata__attachment_id_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Attachment).WithMany(p => p.DiscussVoiceMetadata)
+                .HasForeignKey(d => d.AttachmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("discuss_voice_metadata_attachment_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_voice_metadata_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("discuss_voice_metadata_write_uid_fkey");
+        });
+
         modelBuilder.Entity<EventEvent>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("event_event_pkey");
@@ -10442,7 +12123,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.WebsiteId, "event_event_website_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -10668,7 +12352,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_event_configurator", tb => tb.HasComment("Event Configurator"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -10725,7 +12412,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_event_ticket", tb => tb.HasComment("Event Ticket"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -10806,7 +12496,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_lead_rule", tb => tb.HasComment("Event Lead Rules"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -10929,7 +12622,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_mail", tb => tb.HasComment("Event Automated Mailing"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -11001,7 +12697,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_mail_registration", tb => tb.HasComment("Registration Mail Scheduler"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -11049,6 +12748,93 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("event_mail_registration_write_uid_fkey");
         });
 
+        modelBuilder.Entity<EventQuestion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("event_question_pkey");
+
+            entity.ToTable("event_question");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.EventId).HasColumnName("event_id");
+            entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
+            entity.Property(e => e.IsMandatoryAnswer).HasColumnName("is_mandatory_answer");
+            entity.Property(e => e.OncePerOrder).HasColumnName("once_per_order");
+            entity.Property(e => e.QuestionType).HasColumnName("question_type");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.Title)
+                .HasColumnType("jsonb")
+                .HasColumnName("title");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_question_create_uid_fkey");
+
+            entity.HasOne(d => d.Event).WithMany(p => p.EventQuestions)
+                .HasForeignKey(d => d.EventId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("event_question_event_id_fkey");
+
+            entity.HasOne(d => d.EventType).WithMany(p => p.EventQuestions)
+                .HasForeignKey(d => d.EventTypeId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("event_question_event_type_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_question_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<EventQuestionAnswer>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("event_question_answer_pkey");
+
+            entity.ToTable("event_question_answer");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.QuestionId).HasColumnName("question_id");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_question_answer_create_uid_fkey");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.EventQuestionAnswers)
+                .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("event_question_answer_question_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_question_answer_write_uid_fkey");
+        });
+
         modelBuilder.Entity<EventRegistration>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("event_registration_pkey");
@@ -11065,7 +12851,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.UtmSourceId, "event_registration_utm_source_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -11228,6 +13017,54 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<EventRegistrationAnswer>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("event_registration_answer_pkey");
+
+            entity.ToTable("event_registration_answer");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.QuestionId).HasColumnName("question_id");
+            entity.Property(e => e.RegistrationId).HasColumnName("registration_id");
+            entity.Property(e => e.ValueAnswerId).HasColumnName("value_answer_id");
+            entity.Property(e => e.ValueTextBox).HasColumnName("value_text_box");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_registration_answer_create_uid_fkey");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.EventRegistrationAnswers)
+                .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("event_registration_answer_question_id_fkey");
+
+            entity.HasOne(d => d.Registration).WithMany(p => p.EventRegistrationAnswers)
+                .HasForeignKey(d => d.RegistrationId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("event_registration_answer_registration_id_fkey");
+
+            entity.HasOne(d => d.ValueAnswer).WithMany(p => p.EventRegistrationAnswers)
+                .HasForeignKey(d => d.ValueAnswerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_registration_answer_value_answer_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("event_registration_answer_write_uid_fkey");
+        });
+
         // TODO HasNoKey:
         /*
         modelBuilder.Entity<EventSaleReport>(entity =>
@@ -11258,7 +13095,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.EventTicketId).HasColumnName("event_ticket_id");
             entity.Property(e => e.EventTicketPrice).HasColumnName("event_ticket_price");
             entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.InvoicePartnerId).HasColumnName("invoice_partner_id");
             entity.Property(e => e.IsPaid).HasColumnName("is_paid");
             entity.Property(e => e.IsPublished).HasColumnName("is_published");
@@ -11284,7 +13124,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_stage", tb => tb.HasComment("Event Stage"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -11346,7 +13189,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_tag", tb => tb.HasComment("Event Tag"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CategoryId)
                 .HasComment("Category")
                 .HasColumnName("category_id");
@@ -11401,7 +13247,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.IsPublished, "event_tag_category_is_published_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -11444,7 +13293,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_type", tb => tb.HasComment("Event Template"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AutoConfirm)
                 .HasComment("Automatically Confirm Registrations")
                 .HasColumnName("auto_confirm");
@@ -11531,7 +13383,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_type_mail", tb => tb.HasComment("Mail Scheduling on Event Category"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -11590,7 +13445,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("event_type_ticket", tb => tb.HasComment("Event Template Ticket"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -12311,6 +14169,86 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("fleet_vehicle_odometer_write_uid_fkey");
         });
 
+        modelBuilder.Entity<FleetVehicleSendMail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("fleet_vehicle_send_mail_pkey");
+
+            entity.ToTable("fleet_vehicle_send_mail");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AuthorId).HasColumnName("author_id");
+            entity.Property(e => e.Body).HasColumnName("body");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Lang).HasColumnName("lang");
+            entity.Property(e => e.Subject).HasColumnName("subject");
+            entity.Property(e => e.TemplateId).HasColumnName("template_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Author).WithMany()
+                .HasForeignKey(d => d.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fleet_vehicle_send_mail_author_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fleet_vehicle_send_mail_create_uid_fkey");
+
+            entity.HasOne(d => d.Template).WithMany()
+                .HasForeignKey(d => d.TemplateId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fleet_vehicle_send_mail_template_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fleet_vehicle_send_mail_write_uid_fkey");
+
+            entity.HasMany(d => d.Attachments).WithMany(p => p.Wizards)
+                .UsingEntity<Dictionary<string, object>>(
+                    "FleetVehicleMailComposeMessageIrAttachmentsRel",
+                    r => r.HasOne<IrAttachment>().WithMany()
+                        .HasForeignKey("AttachmentId")
+                        .HasConstraintName("fleet_vehicle_mail_compose_message_ir_attach_attachment_id_fkey"),
+                    l => l.HasOne<FleetVehicleSendMail>().WithMany()
+                        .HasForeignKey("WizardId")
+                        .HasConstraintName("fleet_vehicle_mail_compose_message_ir_attachment_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("WizardId", "AttachmentId").HasName("fleet_vehicle_mail_compose_message_ir_attachments_rel_pkey");
+                        j.ToTable("fleet_vehicle_mail_compose_message_ir_attachments_rel");
+                        j.HasIndex(new[] { "AttachmentId", "WizardId" }, "fleet_vehicle_mail_compose_message__attachment_id_wizard_id_idx");
+                        j.IndexerProperty<Guid>("WizardId").HasColumnName("wizard_id");
+                        j.IndexerProperty<Guid>("AttachmentId").HasColumnName("attachment_id");
+                    });
+
+            entity.HasMany(d => d.FleetVehicles).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "FleetVehicleFleetVehicleSendMailRel",
+                    r => r.HasOne<FleetVehicle>().WithMany()
+                        .HasForeignKey("FleetVehicleId")
+                        .HasConstraintName("fleet_vehicle_fleet_vehicle_send_mail_rel_fleet_vehicle_id_fkey"),
+                    l => l.HasOne<FleetVehicleSendMail>().WithMany()
+                        .HasForeignKey("FleetVehicleSendMailId")
+                        .HasConstraintName("fleet_vehicle_fleet_vehicle_sen_fleet_vehicle_send_mail_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("FleetVehicleSendMailId", "FleetVehicleId").HasName("fleet_vehicle_fleet_vehicle_send_mail_rel_pkey");
+                        j.ToTable("fleet_vehicle_fleet_vehicle_send_mail_rel");
+                        j.HasIndex(new[] { "FleetVehicleId", "FleetVehicleSendMailId" }, "fleet_vehicle_fleet_vehicle_s_fleet_vehicle_id_fleet_vehicl_idx");
+                        j.IndexerProperty<Guid>("FleetVehicleSendMailId").HasColumnName("fleet_vehicle_send_mail_id");
+                        j.IndexerProperty<Guid>("FleetVehicleId").HasColumnName("fleet_vehicle_id");
+                    });
+        });
+
         modelBuilder.Entity<FleetVehicleState>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("fleet_vehicle_state_pkey");
@@ -12572,7 +14510,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.IsPublished, "gamification_badge_is_published_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -12727,7 +14668,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.UserId, "gamification_badge_user_user_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BadgeId)
                 .HasComment("Badge")
                 .HasColumnName("badge_id");
@@ -12805,7 +14749,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("gamification_badge_user_wizard", tb => tb.HasComment("Gamification User Badge Wizard"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BadgeId)
                 .HasComment("Badge")
                 .HasColumnName("badge_id");
@@ -12863,7 +14810,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("gamification_challenge", tb => tb.HasComment("Gamification Challenge"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChallengeCategory)
                 .HasComment("Appears in")
                 .HasColumnType("character varying")
@@ -13051,7 +15001,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("gamification_challenge_line", tb => tb.HasComment("Gamification generic goal for challenge"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChallengeId)
                 .HasComment("Challenge")
                 .HasColumnName("challenge_id");
@@ -13106,7 +15059,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.ChallengeId, "gamification_goal_challenge_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChallengeId)
                 .HasComment("Challenge")
                 .HasColumnName("challenge_id");
@@ -13197,7 +15153,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("gamification_goal_definition", tb => tb.HasComment("Gamification Goal Definition"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActionId)
                 .HasComment("Action")
                 .HasColumnName("action_id");
@@ -13314,7 +15273,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("gamification_goal_wizard", tb => tb.HasComment("Gamification Goal Wizard"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -13357,7 +15319,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("gamification_karma_rank", tb => tb.HasComment("Rank based on karma"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -13407,7 +15372,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.UserId, "gamification_karma_tracking_user_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Consolidated)
                 .HasComment("Consolidated")
                 .HasColumnName("consolidated");
@@ -13880,6 +15848,198 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_attendance_overtime_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<HrCandidate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_candidate_pkey");
+
+            entity.ToTable("hr_candidate");
+
+            entity.HasIndex(e => e.Active, "hr_candidate__active_index");
+
+            entity.HasIndex(e => e.EmailFrom, "hr_candidate__email_from_index")
+                .HasMethod("gin")
+                .HasOperators(new[] { "gin_trgm_ops" });
+
+            entity.HasIndex(e => e.EmailNormalized, "hr_candidate__email_normalized_index")
+                .HasMethod("gin")
+                .HasOperators(new[] { "gin_trgm_ops" });
+
+            entity.HasIndex(e => e.MessageMainAttachmentId, "hr_candidate__message_main_attachment_id_index").HasFilter("(message_main_attachment_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.PartnerId, "hr_candidate__partner_id_index").HasFilter("(partner_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.PartnerPhone, "hr_candidate__partner_phone_index").HasFilter("(partner_phone IS NOT NULL)");
+
+            entity.HasIndex(e => e.PartnerPhoneSanitized, "hr_candidate__partner_phone_sanitized_index").HasFilter("(partner_phone_sanitized IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.EmailNormalized, e.PartnerPhoneSanitized }, "hr_candidate_email_partner_phone_mobile");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.Availability).HasColumnName("availability");
+            entity.Property(e => e.CandidateProperties)
+                .HasColumnType("jsonb")
+                .HasColumnName("candidate_properties");
+            entity.Property(e => e.Color).HasColumnName("color");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.EmailCc).HasColumnName("email_cc");
+            entity.Property(e => e.EmailFrom).HasColumnName("email_from");
+            entity.Property(e => e.EmailNormalized).HasColumnName("email_normalized");
+            entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
+            entity.Property(e => e.LinkedinProfile).HasColumnName("linkedin_profile");
+            entity.Property(e => e.MessageBounce).HasColumnName("message_bounce");
+            entity.Property(e => e.MessageMainAttachmentId).HasColumnName("message_main_attachment_id");
+            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+            entity.Property(e => e.PartnerName).HasColumnName("partner_name");
+            entity.Property(e => e.PartnerPhone).HasColumnName("partner_phone");
+            entity.Property(e => e.PartnerPhoneSanitized).HasColumnName("partner_phone_sanitized");
+            entity.Property(e => e.PhoneSanitized).HasColumnName("phone_sanitized");
+            entity.Property(e => e.Priority).HasColumnName("priority");
+            entity.Property(e => e.TypeId).HasColumnName("type_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_create_uid_fkey");
+
+            entity.HasOne(d => d.Employee).WithMany()
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_employee_id_fkey");
+
+            entity.HasOne(d => d.MessageMainAttachment).WithMany(p => p.HrCandidates)
+                .HasForeignKey(d => d.MessageMainAttachmentId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_message_main_attachment_id_fkey");
+
+            entity.HasOne<ResPartner>().WithMany()
+                .HasForeignKey(d => d.PartnerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_partner_id_fkey");
+
+            entity.HasOne(d => d.Type).WithMany()
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_type_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_write_uid_fkey");
+
+            entity.HasMany(d => d.HrApplicantCategories).WithMany(p => p.HrCandidates)
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrApplicantCategoryHrCandidateRel",
+                    r => r.HasOne<HrApplicantCategory>().WithMany()
+                        .HasForeignKey("HrApplicantCategoryId")
+                        .HasConstraintName("hr_applicant_category_hr_candidat_hr_applicant_category_id_fkey"),
+                    l => l.HasOne<HrCandidate>().WithMany()
+                        .HasForeignKey("HrCandidateId")
+                        .HasConstraintName("hr_applicant_category_hr_candidate_rel_hr_candidate_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrCandidateId", "HrApplicantCategoryId").HasName("hr_applicant_category_hr_candidate_rel_pkey");
+                        j.ToTable("hr_applicant_category_hr_candidate_rel");
+                        j.HasIndex(new[] { "HrApplicantCategoryId", "HrCandidateId" }, "hr_applicant_category_hr_cand_hr_applicant_category_id_hr_c_idx");
+                        j.IndexerProperty<Guid>("HrCandidateId").HasColumnName("hr_candidate_id");
+                        j.IndexerProperty<Guid>("HrApplicantCategoryId").HasColumnName("hr_applicant_category_id");
+                    });
+
+            entity.HasMany(d => d.HrSkills).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrCandidateHrSkillRel",
+                    r => r.HasOne<HrSkill>().WithMany()
+                        .HasForeignKey("HrSkillId")
+                        .HasConstraintName("hr_candidate_hr_skill_rel_hr_skill_id_fkey"),
+                    l => l.HasOne<HrCandidate>().WithMany()
+                        .HasForeignKey("HrCandidateId")
+                        .HasConstraintName("hr_candidate_hr_skill_rel_hr_candidate_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrCandidateId", "HrSkillId").HasName("hr_candidate_hr_skill_rel_pkey");
+                        j.ToTable("hr_candidate_hr_skill_rel");
+                        j.HasIndex(new[] { "HrSkillId", "HrCandidateId" }, "hr_candidate_hr_skill_rel_hr_skill_id_hr_candidate_id_idx");
+                        j.IndexerProperty<Guid>("HrCandidateId").HasColumnName("hr_candidate_id");
+                        j.IndexerProperty<Guid>("HrSkillId").HasColumnName("hr_skill_id");
+                    });
+        });
+
+        modelBuilder.Entity<HrCandidateSkill>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_candidate_skill_pkey");
+
+            entity.ToTable("hr_candidate_skill");
+
+            entity.HasIndex(e => new { e.CandidateId, e.SkillId }, "hr_candidate_skill__unique_skill").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CandidateId).HasColumnName("candidate_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.SkillId).HasColumnName("skill_id");
+            entity.Property(e => e.SkillLevelId).HasColumnName("skill_level_id");
+            entity.Property(e => e.SkillTypeId).HasColumnName("skill_type_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Candidate).WithMany(p => p.HrCandidateSkills)
+                .HasForeignKey(d => d.CandidateId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("hr_candidate_skill_candidate_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_skill_create_uid_fkey");
+
+            entity.HasOne(d => d.Skill).WithMany()
+                .HasForeignKey(d => d.SkillId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("hr_candidate_skill_skill_id_fkey");
+
+            entity.HasOne(d => d.SkillLevel).WithMany()
+                .HasForeignKey(d => d.SkillLevelId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("hr_candidate_skill_skill_level_id_fkey");
+
+            entity.HasOne(d => d.SkillType).WithMany()
+                .HasForeignKey(d => d.SkillTypeId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("hr_candidate_skill_skill_type_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_candidate_skill_write_uid_fkey");
         });
 
         modelBuilder.Entity<HrContract>(entity =>
@@ -14393,13 +16553,16 @@ public static class CoreDbModelFluentCreatingExtensions
                         .HasForeignKey("CategoryId")
                         .HasConstraintName("employee_category_rel_category_id_fkey"),
                     l => l.HasOne<HrEmployee>().WithMany()
-                        .HasForeignKey("EmpId")
+                        .HasForeignKey("EmployeeId")
                         .HasConstraintName("employee_category_rel_emp_id_fkey"),
                     j =>
                     {
-                        j.HasKey("EmpId", "CategoryId").HasName("employee_category_rel_pkey");
+                        // v16-Compat data
+                        //j.HasKey("EmpId", "CategoryId").HasName("employee_category_rel_pkey");
+                        j.HasKey("EmployeeId", "CategoryId").HasName("employee_category_rel_pkey");
                         j.ToTable("employee_category_rel");
-                        j.HasIndex(new[] { "CategoryId", "EmpId" }, "employee_category_rel_category_id_emp_id_idx");
+                        j.HasIndex(new[] { "CategoryId", "EmployeeId" }, "employee_category_rel_category_id_emp_id_idx");
+
                     });
 
             //entity.HasMany(d => d.HrSkills).WithMany(p => p.HrEmployees)
@@ -14454,6 +16617,58 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_employee_category_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<HrEmployeeCvWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_employee_cv_wizard_pkey");
+
+            entity.ToTable("hr_employee_cv_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ColorPrimary).HasColumnName("color_primary");
+            entity.Property(e => e.ColorSecondary).HasColumnName("color_secondary");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ShowContact).HasColumnName("show_contact");
+            entity.Property(e => e.ShowOthers).HasColumnName("show_others");
+            entity.Property(e => e.ShowSkills).HasColumnName("show_skills");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_employee_cv_wizard_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_employee_cv_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.HrEmployees).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrEmployeeHrEmployeeCvWizardRel",
+                    r => r.HasOne<HrEmployee>().WithMany()
+                        .HasForeignKey("HrEmployeeId")
+                        .HasConstraintName("hr_employee_hr_employee_cv_wizard_rel_hr_employee_id_fkey"),
+                    l => l.HasOne<HrEmployeeCvWizard>().WithMany()
+                        .HasForeignKey("HrEmployeeCvWizardId")
+                        .HasConstraintName("hr_employee_hr_employee_cv_wizard_hr_employee_cv_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrEmployeeCvWizardId", "HrEmployeeId").HasName("hr_employee_hr_employee_cv_wizard_rel_pkey");
+                        j.ToTable("hr_employee_hr_employee_cv_wizard_rel");
+                        j.HasIndex(new[] { "HrEmployeeId", "HrEmployeeCvWizardId" }, "hr_employee_hr_employee_cv_wi_hr_employee_id_hr_employee_cv_idx");
+                        j.IndexerProperty<Guid>("HrEmployeeCvWizardId").HasColumnName("hr_employee_cv_wizard_id");
+                        j.IndexerProperty<Guid>("HrEmployeeId").HasColumnName("hr_employee_id");
+                    });
         });
 
         modelBuilder.Entity<HrEmployeeSkill>(entity =>
@@ -14803,7 +17018,9 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_expense_refuse_wizard_write_uid_fkey");
 
+            // v16-Compat
             //entity.HasMany(d => d.HrExpenses).WithMany(p => p.HrExpenseRefuseWizards)
+            /*
             entity.HasMany<HrExpense>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "HrExpenseHrExpenseRefuseWizardRel",
@@ -14818,6 +17035,25 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("HrExpenseRefuseWizardId", "HrExpenseId").HasName("hr_expense_hr_expense_refuse_wizard_rel_pkey");
                         j.ToTable("hr_expense_hr_expense_refuse_wizard_rel");
                         j.HasIndex(new[] { "HrExpenseId", "HrExpenseRefuseWizardId" }, "hr_expense_hr_expense_refuse__hr_expense_id_hr_expense_refu_idx");
+                    });
+            */
+            entity.HasMany(d => d.HrExpenseSheets).WithMany(p => p.HrExpenseRefuseWizards)
+            //entity.HasMany(d => d.HrExpenseSheets).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrExpenseRefuseWizardHrExpenseSheetRel",
+                    r => r.HasOne<HrExpenseSheet>().WithMany()
+                        .HasForeignKey("HrExpenseSheetId")
+                        .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sh_hr_expense_sheet_id_fkey"),
+                    l => l.HasOne<HrExpenseRefuseWizard>().WithMany()
+                        .HasForeignKey("HrExpenseRefuseWizardId")
+                        .HasConstraintName("hr_expense_refuse_wizard_hr_ex_hr_expense_refuse_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrExpenseRefuseWizardId", "HrExpenseSheetId").HasName("hr_expense_refuse_wizard_hr_expense_sheet_rel_pkey");
+                        j.ToTable("hr_expense_refuse_wizard_hr_expense_sheet_rel");
+                        j.HasIndex(new[] { "HrExpenseSheetId", "HrExpenseRefuseWizardId" }, "hr_expense_refuse_wizard_hr_e_hr_expense_sheet_id_hr_expens_idx");
+                        j.IndexerProperty<Guid>("HrExpenseRefuseWizardId").HasColumnName("hr_expense_refuse_wizard_id");
+                        j.IndexerProperty<Guid>("HrExpenseSheetId").HasColumnName("hr_expense_sheet_id");
                     });
         });
 
@@ -15272,6 +17508,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_job_write_uid_fkey");
 
+            entity.HasMany(d => d.HrSkills).WithMany(p => p.HrJobs)
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrJobHrSkillRel",
+                    r => r.HasOne<HrSkill>().WithMany()
+                        .HasForeignKey("HrSkillId")
+                        .HasConstraintName("hr_job_hr_skill_rel_hr_skill_id_fkey"),
+                    l => l.HasOne<HrJob>().WithMany()
+                        .HasForeignKey("HrJobId")
+                        .HasConstraintName("hr_job_hr_skill_rel_hr_job_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrJobId", "HrSkillId").HasName("hr_job_hr_skill_rel_pkey");
+                        j.ToTable("hr_job_hr_skill_rel");
+                        j.HasIndex(new[] { "HrSkillId", "HrJobId" }, "hr_job_hr_skill_rel_hr_skill_id_hr_job_id_idx");
+                        j.IndexerProperty<Guid>("HrJobId").HasColumnName("hr_job_id");
+                        j.IndexerProperty<Guid>("HrSkillId").HasColumnName("hr_skill_id");
+                    });
+
             //entity.HasMany(d => d.ResUsers).WithMany(p => p.HrJobs)
             entity.HasMany<ResUser>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -15325,6 +17579,40 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<HrJobPlatform>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_job_platform_pkey");
+
+            entity.ToTable("hr_job_platform");
+
+            entity.HasIndex(e => e.Email, "hr_job_platform_email_uniq").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Regex).HasColumnName("regex");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_job_platform_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_job_platform_write_uid_fkey");
+        });
+
         modelBuilder.Entity<HrLeave>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("hr_leave_pkey");
@@ -15344,6 +17632,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.CreationTime)
@@ -15567,6 +17856,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -15727,7 +18017,229 @@ public static class CoreDbModelFluentCreatingExtensions
                     {
                         j.HasKey("HrLeaveAllocationId", "HrEmployeeId").HasName("hr_employee_hr_leave_allocation_rel_pkey");
                         j.ToTable("hr_employee_hr_leave_allocation_rel");
-                        j.HasIndex(new[] { "HrEmployeeId", "HrLeaveAllocationId" }, "hr_employee_hr_leave_allocati_hr_employee_id_hr_leave_alloc_idx");
+                        j.HasIndex(new[] { "HrEmployeeId", "HrLeaveAllocationId" }, "hr_employee_hr_leave_allocat_hr_employee_id_hr_leave_alloc16_idx");
+                    });
+        });
+
+        modelBuilder.Entity<HrLeaveAllocationGenerateMultiWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_leave_allocation_generate_multi_wizard_pkey");
+
+            entity.ToTable("hr_leave_allocation_generate_multi_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccrualPlanId).HasColumnName("accrual_plan_id");
+            entity.Property(e => e.AllocationMode).HasColumnName("allocation_mode");
+            entity.Property(e => e.AllocationType).HasColumnName("allocation_type");
+            entity.Property(e => e.CategoryId).HasColumnName("category_id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DateFrom).HasColumnName("date_from");
+            entity.Property(e => e.DateTo).HasColumnName("date_to");
+            entity.Property(e => e.DepartmentId).HasColumnName("department_id");
+            entity.Property(e => e.Duration).HasColumnName("duration");
+            entity.Property(e => e.HolidayStatusId).HasColumnName("holiday_status_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.AccrualPlan).WithMany()
+                .HasForeignKey(d => d.AccrualPlanId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizard_accrual_plan_id_fkey");
+
+            entity.HasOne(d => d.Category).WithMany()
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizard_category_id_fkey");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizard_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizard_create_uid_fkey");
+
+            entity.HasOne(d => d.Department).WithMany()
+                .HasForeignKey(d => d.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizard_department_id_fkey");
+
+            entity.HasOne(d => d.HolidayStatus).WithMany()
+                .HasForeignKey(d => d.HolidayStatusId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizar_holiday_status_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_allocation_generate_multi_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.HrEmployees).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrEmployeeHrLeaveAllocationGenerateMultiWizardRel",
+                    r => r.HasOne<HrEmployee>().WithMany()
+                        .HasForeignKey("HrEmployeeId")
+                        .HasConstraintName("hr_employee_hr_leave_allocation_generate_mu_hr_employee_id_fkey"),
+                    l => l.HasOne<HrLeaveAllocationGenerateMultiWizard>().WithMany()
+                        .HasForeignKey("HrLeaveAllocationGenerateMultiWizardId")
+                        .HasConstraintName("hr_employee_hr_leave_allocati_hr_leave_allocation_generate_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrLeaveAllocationGenerateMultiWizardId", "HrEmployeeId").HasName("hr_employee_hr_leave_allocation_generate_multi_wizard_rel_pkey");
+                        j.ToTable("hr_employee_hr_leave_allocation_generate_multi_wizard_rel");
+                        j.HasIndex(new[] { "HrEmployeeId", "HrLeaveAllocationGenerateMultiWizardId" }, "hr_employee_hr_leave_allocati_hr_employee_id_hr_leave_alloc_idx");
+                        j.IndexerProperty<Guid>("HrLeaveAllocationGenerateMultiWizardId").HasColumnName("hr_leave_allocation_generate_multi_wizard_id");
+                        j.IndexerProperty<Guid>("HrEmployeeId").HasColumnName("hr_employee_id");
+                    });
+        });
+
+        modelBuilder.Entity<HrLeaveGenerateMultiWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_leave_generate_multi_wizard_pkey");
+
+            entity.ToTable("hr_leave_generate_multi_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AllocationMode).HasColumnName("allocation_mode");
+            entity.Property(e => e.CategoryId).HasColumnName("category_id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DateFrom).HasColumnName("date_from");
+            entity.Property(e => e.DateTo).HasColumnName("date_to");
+            entity.Property(e => e.DepartmentId).HasColumnName("department_id");
+            entity.Property(e => e.HolidayStatusId).HasColumnName("holiday_status_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.HrLeaveGenerateMultiWizards)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_generate_multi_wizard_category_id_fkey");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("hr_leave_generate_multi_wizard_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_generate_multi_wizard_create_uid_fkey");
+
+            entity.HasOne(d => d.Department).WithMany()
+                .HasForeignKey(d => d.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_generate_multi_wizard_department_id_fkey");
+
+            entity.HasOne(d => d.HolidayStatus).WithMany()
+                .HasForeignKey(d => d.HolidayStatusId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("hr_leave_generate_multi_wizard_holiday_status_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_generate_multi_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.HrEmployees).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrEmployeeHrLeaveGenerateMultiWizardRel",
+                    r => r.HasOne<HrEmployee>().WithMany()
+                        .HasForeignKey("HrEmployeeId")
+                        .HasConstraintName("hr_employee_hr_leave_generate_multi_wizard__hr_employee_id_fkey"),
+                    l => l.HasOne<HrLeaveGenerateMultiWizard>().WithMany()
+                        .HasForeignKey("HrLeaveGenerateMultiWizardId")
+                        .HasConstraintName("hr_employee_hr_leave_generate_hr_leave_generate_multi_wiza_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrLeaveGenerateMultiWizardId", "HrEmployeeId").HasName("hr_employee_hr_leave_generate_multi_wizard_rel_pkey");
+                        j.ToTable("hr_employee_hr_leave_generate_multi_wizard_rel");
+                        j.HasIndex(new[] { "HrEmployeeId", "HrLeaveGenerateMultiWizardId" }, "hr_employee_hr_leave_generate_hr_employee_id_hr_leave_gener_idx");
+                        j.IndexerProperty<Guid>("HrLeaveGenerateMultiWizardId").HasColumnName("hr_leave_generate_multi_wizard_id");
+                        j.IndexerProperty<Guid>("HrEmployeeId").HasColumnName("hr_employee_id");
+                    });
+        });
+
+        modelBuilder.Entity<HrLeaveMandatoryDay>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("hr_leave_mandatory_day_pkey");
+
+            entity.ToTable("hr_leave_mandatory_day");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Color).HasColumnName("color");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.EndDate).HasColumnName("end_date");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.ResourceCalendarId).HasColumnName("resource_calendar_id");
+            entity.Property(e => e.StartDate).HasColumnName("start_date");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("hr_leave_mandatory_day_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_mandatory_day_create_uid_fkey");
+
+            entity.HasOne(d => d.ResourceCalendar).WithMany()
+                .HasForeignKey(d => d.ResourceCalendarId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_mandatory_day_resource_calendar_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_leave_mandatory_day_write_uid_fkey");
+
+            entity.HasMany(d => d.HrDepartments).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrDepartmentHrLeaveMandatoryDayRel",
+                    r => r.HasOne<HrDepartment>().WithMany()
+                        .HasForeignKey("HrDepartmentId")
+                        .HasConstraintName("hr_department_hr_leave_mandatory_day_rel_hr_department_id_fkey"),
+                    l => l.HasOne<HrLeaveMandatoryDay>().WithMany()
+                        .HasForeignKey("HrLeaveMandatoryDayId")
+                        .HasConstraintName("hr_department_hr_leave_mandatory_hr_leave_mandatory_day_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrLeaveMandatoryDayId", "HrDepartmentId").HasName("hr_department_hr_leave_mandatory_day_rel_pkey");
+                        j.ToTable("hr_department_hr_leave_mandatory_day_rel");
+                        j.HasIndex(new[] { "HrDepartmentId", "HrLeaveMandatoryDayId" }, "hr_department_hr_leave_mandat_hr_department_id_hr_leave_man_idx");
+                        j.IndexerProperty<Guid>("HrLeaveMandatoryDayId").HasColumnName("hr_leave_mandatory_day_id");
+                        j.IndexerProperty<Guid>("HrDepartmentId").HasColumnName("hr_department_id");
                     });
         });
 
@@ -15869,6 +18381,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_leave_type_write_uid_fkey");
+
+            entity.HasMany(d => d.ResUsers).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrLeaveTypeResUsersRel",
+                    r => r.HasOne<ResUser>().WithMany()
+                        .HasForeignKey("ResUsersId")
+                        .HasConstraintName("hr_leave_type_res_users_rel_res_users_id_fkey"),
+                    l => l.HasOne<HrLeaveType>().WithMany()
+                        .HasForeignKey("HrLeaveTypeId")
+                        .HasConstraintName("hr_leave_type_res_users_rel_hr_leave_type_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrLeaveTypeId", "ResUsersId").HasName("hr_leave_type_res_users_rel_pkey");
+                        j.ToTable("hr_leave_type_res_users_rel");
+                        j.HasIndex(new[] { "ResUsersId", "HrLeaveTypeId" }, "hr_leave_type_res_users_rel_res_users_id_hr_leave_type_id_idx");
+                        j.IndexerProperty<Guid>("HrLeaveTypeId").HasColumnName("hr_leave_type_id");
+                        j.IndexerProperty<Guid>("ResUsersId").HasColumnName("res_users_id");
+                    });
         });
 
         modelBuilder.Entity<HrPayrollStructureType>(entity =>
@@ -16522,6 +19052,64 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("iap_account_res_company_rel");
                         j.HasIndex(new[] { "ResCompanyId", "IapAccountId" }, "iap_account_res_company_rel_res_company_id_iap_account_id_idx");
                     });
+
+            entity.HasMany(d => d.ResUsers).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "IapAccountResUsersRel",
+                    r => r.HasOne<ResUser>().WithMany()
+                        .HasForeignKey("ResUsersId")
+                        .HasConstraintName("iap_account_res_users_rel_res_users_id_fkey"),
+                    l => l.HasOne<IapAccount>().WithMany()
+                        .HasForeignKey("IapAccountId")
+                        .HasConstraintName("iap_account_res_users_rel_iap_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("IapAccountId", "ResUsersId").HasName("iap_account_res_users_rel_pkey");
+                        j.ToTable("iap_account_res_users_rel");
+                        j.HasIndex(new[] { "ResUsersId", "IapAccountId" }, "iap_account_res_users_rel_res_users_id_iap_account_id_idx");
+                        j.IndexerProperty<Guid>("IapAccountId").HasColumnName("iap_account_id");
+                        j.IndexerProperty<Guid>("ResUsersId").HasColumnName("res_users_id");
+                    });
+        });
+
+        modelBuilder.Entity<IapService>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("iap_service_pkey");
+
+            entity.ToTable("iap_service");
+
+            entity.HasIndex(e => e.TechnicalName, "iap_service_unique_technical_name").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Description)
+                .HasColumnType("jsonb")
+                .HasColumnName("description");
+            entity.Property(e => e.IntegerBalance).HasColumnName("integer_balance");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.TechnicalName).HasColumnName("technical_name");
+            entity.Property(e => e.UnitName)
+                .HasColumnType("jsonb")
+                .HasColumnName("unit_name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("iap_service_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("iap_service_write_uid_fkey");
         });
 
         modelBuilder.Entity<ImLivechatChannel>(entity =>
@@ -16532,7 +19120,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.IsPublished, "im_livechat_channel_is_published_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ButtonBackgroundColor)
                 .HasComment("Button Background Color")
                 .HasColumnType("character varying")
@@ -16622,7 +19213,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("im_livechat_channel_rule", tb => tb.HasComment("Livechat Channel Rules"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Action)
                 .HasComment("Live Chat Button")
                 .HasColumnType("character varying")
@@ -16716,7 +19310,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.DayNumber).HasColumnName("day_number");
             entity.Property(e => e.DaysOfActivity).HasColumnName("days_of_activity");
             entity.Property(e => e.Duration).HasColumnName("duration");
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.IsAnonymous).HasColumnName("is_anonymous");
             entity.Property(e => e.IsHappy).HasColumnName("is_happy");
             entity.Property(e => e.IsUnrated).HasColumnName("is_unrated");
@@ -16749,7 +19346,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.Property(e => e.ChannelId).HasColumnName("channel_id");
             entity.Property(e => e.Duration).HasColumnName("duration");
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.LivechatChannelId).HasColumnName("livechat_channel_id");
             entity.Property(e => e.NbrChannel).HasColumnName("nbr_channel");
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
@@ -17003,6 +19603,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ServerId", "ActionId").HasName("rel_server_actions_pkey");
                         j.ToTable("rel_server_actions");
                         j.HasIndex(new[] { "ActionId", "ServerId" }, "rel_server_actions_action_id_server_id_idx");
+                    });
+
+            entity.HasMany(d => d.Fields).WithMany(p => p.Servers)
+                .UsingEntity<Dictionary<string, object>>(
+                    "IrActServerWebhookFieldRel",
+                    r => r.HasOne<IrModelField>().WithMany()
+                        .HasForeignKey("FieldId")
+                        .HasConstraintName("ir_act_server_webhook_field_rel_field_id_fkey"),
+                    l => l.HasOne<IrActServer>().WithMany()
+                        .HasForeignKey("ServerId")
+                        .HasConstraintName("ir_act_server_webhook_field_rel_server_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ServerId", "FieldId").HasName("ir_act_server_webhook_field_rel_pkey");
+                        j.ToTable("ir_act_server_webhook_field_rel");
+                        j.HasIndex(new[] { "FieldId", "ServerId" }, "ir_act_server_webhook_field_rel_field_id_server_id_idx");
+                        j.IndexerProperty<Guid>("ServerId").HasColumnName("server_id");
+                        j.IndexerProperty<Guid>("FieldId").HasColumnName("field_id");
                     });
 
             //entity.HasMany(d => d.Gids).WithMany(p => p.Acts)
@@ -17529,6 +20147,47 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("ir_cron_write_uid_fkey");
         });
 
+        modelBuilder.Entity<IrCronProgress>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ir_cron_progress_pkey");
+
+            entity.ToTable("ir_cron_progress");
+
+            entity.HasIndex(e => e.CronId, "ir_cron_progress__cron_id_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.CronId).HasColumnName("cron_id");
+            entity.Property(e => e.Deactivate).HasColumnName("deactivate");
+            entity.Property(e => e.Done).HasColumnName("done");
+            entity.Property(e => e.Remaining).HasColumnName("remaining");
+            entity.Property(e => e.TimedOutCounter).HasColumnName("timed_out_counter");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ir_cron_progress_create_uid_fkey");
+
+            entity.HasOne(d => d.Cron).WithMany(p => p.IrCronProgresses)
+                .HasForeignKey(d => d.CronId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_cron_progress_cron_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ir_cron_progress_write_uid_fkey");
+        });
+
         modelBuilder.Entity<IrCronTrigger>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("ir_cron_trigger_pkey");
@@ -17722,6 +20381,76 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ir_demo_failure_wizard_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<IrEmbeddedAction>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ir_embedded_actions_pkey");
+
+            entity.ToTable("ir_embedded_actions");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ActionId).HasColumnName("action_id");
+            entity.Property(e => e.Context).HasColumnName("context");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DefaultViewMode).HasColumnName("default_view_mode");
+            entity.Property(e => e.Domain).HasColumnName("domain");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.ParentActionId).HasColumnName("parent_action_id");
+            entity.Property(e => e.ParentResId).HasColumnName("parent_res_id");
+            entity.Property(e => e.ParentResModel).HasColumnName("parent_res_model");
+            entity.Property(e => e.PythonMethod).HasColumnName("python_method");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ir_embedded_actions_create_uid_fkey");
+
+            entity.HasOne(d => d.ParentAction).WithMany(p => p.IrEmbeddedActions)
+                .HasForeignKey(d => d.ParentActionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_embedded_actions_parent_action_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_embedded_actions_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ir_embedded_actions_write_uid_fkey");
+
+            entity.HasMany(d => d.ResGroups).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "IrEmbeddedActionsResGroupsRel",
+                    r => r.HasOne<ResGroup>().WithMany()
+                        .HasForeignKey("ResGroupsId")
+                        .HasConstraintName("ir_embedded_actions_res_groups_rel_res_groups_id_fkey"),
+                    l => l.HasOne<IrEmbeddedAction>().WithMany()
+                        .HasForeignKey("IrEmbeddedActionsId")
+                        .HasConstraintName("ir_embedded_actions_res_groups_rel_ir_embedded_actions_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("IrEmbeddedActionsId", "ResGroupsId").HasName("ir_embedded_actions_res_groups_rel_pkey");
+                        j.ToTable("ir_embedded_actions_res_groups_rel");
+                        j.HasIndex(new[] { "ResGroupsId", "IrEmbeddedActionsId" }, "ir_embedded_actions_res_group_res_groups_id_ir_embedded_act_idx");
+                        j.IndexerProperty<Guid>("IrEmbeddedActionsId").HasColumnName("ir_embedded_actions_id");
+                        j.IndexerProperty<Guid>("ResGroupsId").HasColumnName("res_groups_id");
+                    });
         });
 
         modelBuilder.Entity<IrExport>(entity =>
@@ -19022,7 +21751,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("link_tracker", tb => tb.HasComment("Link Tracker"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CampaignId)
                 .HasComment("Campaign")
                 .HasColumnName("campaign_id");
@@ -19104,7 +21836,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.LinkId, "link_tracker_click_link_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CampaignId)
                 .HasComment("UTM Campaign")
                 .HasColumnName("campaign_id");
@@ -19182,7 +21917,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Code, "link_tracker_code_code").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Code)
                 .HasComment("Short URL Code")
                 .HasColumnType("character varying")
@@ -19231,6 +21969,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -19267,6 +22006,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("LotLabelLayoutId", "StockPickingId").HasName("lot_label_layout_stock_picking_rel_pkey");
                         j.ToTable("lot_label_layout_stock_picking_rel");
                         j.HasIndex(new[] { "StockPickingId", "LotLabelLayoutId" }, "lot_label_layout_stock_pickin_stock_picking_id_lot_label_la_idx");
+                    });
+
+            entity.HasMany(d => d.StockMoveLines).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "LotLabelLayoutStockMoveLineRel",
+                    r => r.HasOne<StockMoveLine>().WithMany()
+                        .HasForeignKey("StockMoveLineId")
+                        .HasConstraintName("lot_label_layout_stock_move_line_rel_stock_move_line_id_fkey"),
+                    l => l.HasOne<LotLabelLayout>().WithMany()
+                        .HasForeignKey("LotLabelLayoutId")
+                        .HasConstraintName("lot_label_layout_stock_move_line_rel_lot_label_layout_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("LotLabelLayoutId", "StockMoveLineId").HasName("lot_label_layout_stock_move_line_rel_pkey");
+                        j.ToTable("lot_label_layout_stock_move_line_rel");
+                        j.HasIndex(new[] { "StockMoveLineId", "LotLabelLayoutId" }, "lot_label_layout_stock_move_l_stock_move_line_id_lot_label__idx");
+                        j.IndexerProperty<Guid>("LotLabelLayoutId").HasColumnName("lot_label_layout_id");
+                        j.IndexerProperty<Guid>("StockMoveLineId").HasColumnName("stock_move_line_id");
                     });
         });
 
@@ -19876,6 +22633,251 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_activity_write_uid_fkey");
+
+            entity.HasMany(d => d.Attachments).WithMany(p => p.Activities)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ActivityAttachmentRel",
+                    r => r.HasOne<IrAttachment>().WithMany()
+                        .HasForeignKey("AttachmentId")
+                        .HasConstraintName("activity_attachment_rel_attachment_id_fkey"),
+                    l => l.HasOne<MailActivity>().WithMany()
+                        .HasForeignKey("ActivityId")
+                        .HasConstraintName("activity_attachment_rel_activity_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ActivityId", "AttachmentId").HasName("activity_attachment_rel_pkey");
+                        j.ToTable("activity_attachment_rel");
+                        j.HasIndex(new[] { "AttachmentId", "ActivityId" }, "activity_attachment_rel_attachment_id_activity_id_idx");
+                        j.IndexerProperty<Guid>("ActivityId").HasColumnName("activity_id");
+                        j.IndexerProperty<Guid>("AttachmentId").HasColumnName("attachment_id");
+                    });
+        });
+
+        modelBuilder.Entity<MailActivityPlan>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_activity_plan_pkey");
+
+            entity.ToTable("mail_activity_plan");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DepartmentId).HasColumnName("department_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.ResModel).HasColumnName("res_model");
+            entity.Property(e => e.ResModelId).HasColumnName("res_model_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_plan_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_plan_create_uid_fkey");
+
+            entity.HasOne(d => d.Department).WithMany()
+                .HasForeignKey(d => d.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_activity_plan_department_id_fkey");
+
+            entity.HasOne(d => d.ResModelNavigation).WithMany(p => p.MailActivityPlans)
+                .HasForeignKey(d => d.ResModelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_activity_plan_res_model_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_plan_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<MailActivityPlanTemplate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_activity_plan_template_pkey");
+
+            entity.ToTable("mail_activity_plan_template");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ActivityTypeId).HasColumnName("activity_type_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DelayCount).HasColumnName("delay_count");
+            entity.Property(e => e.DelayFrom).HasColumnName("delay_from");
+            entity.Property(e => e.DelayUnit).HasColumnName("delay_unit");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.PlanId).HasColumnName("plan_id");
+            entity.Property(e => e.ResponsibleId).HasColumnName("responsible_id");
+            entity.Property(e => e.ResponsibleType).HasColumnName("responsible_type");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.Summary).HasColumnName("summary");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.ActivityType).WithMany()
+                .HasForeignKey(d => d.ActivityTypeId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("mail_activity_plan_template_activity_type_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_plan_template_create_uid_fkey");
+
+            entity.HasOne(d => d.Plan).WithMany(p => p.MailActivityPlanTemplates)
+                .HasForeignKey(d => d.PlanId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_activity_plan_template_plan_id_fkey");
+
+            entity.HasOne(d => d.Responsible).WithMany()
+                .HasForeignKey(d => d.ResponsibleId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_plan_template_responsible_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_plan_template_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<MailActivitySchedule>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_activity_schedule_pkey");
+
+            entity.ToTable("mail_activity_schedule");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ActivityTypeId).HasColumnName("activity_type_id");
+            entity.Property(e => e.ActivityUserId).HasColumnName("activity_user_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DateDeadline).HasColumnName("date_deadline");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.PlanDate).HasColumnName("plan_date");
+            entity.Property(e => e.PlanId).HasColumnName("plan_id");
+            entity.Property(e => e.PlanOnDemandUserId).HasColumnName("plan_on_demand_user_id");
+            entity.Property(e => e.ResIds).HasColumnName("res_ids");
+            entity.Property(e => e.ResModel).HasColumnName("res_model");
+            entity.Property(e => e.ResModelId).HasColumnName("res_model_id");
+            entity.Property(e => e.Summary).HasColumnName("summary");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.ActivityType).WithMany()
+                .HasForeignKey(d => d.ActivityTypeId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_schedule_activity_type_id_fkey");
+
+            entity.HasOne(d => d.ActivityUser).WithMany()
+                .HasForeignKey(d => d.ActivityUserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_schedule_activity_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_schedule_create_uid_fkey");
+
+            entity.HasOne(d => d.Plan).WithMany(p => p.MailActivitySchedulesNavigation)
+                .HasForeignKey(d => d.PlanId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_schedule_plan_id_fkey");
+
+            entity.HasOne(d => d.PlanOnDemandUser).WithMany()
+                .HasForeignKey(d => d.PlanOnDemandUserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_schedule_plan_on_demand_user_id_fkey");
+
+            entity.HasOne(d => d.ResModelNavigation).WithMany(p => p.MailActivitySchedules)
+                .HasForeignKey(d => d.ResModelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_activity_schedule_res_model_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_schedule_write_uid_fkey");
+
+            entity.HasMany(d => d.MailActivityPlans).WithMany(p => p.MailActivitySchedules)
+                .UsingEntity<Dictionary<string, object>>(
+                    "MailActivityPlanMailActivityScheduleRel",
+                    r => r.HasOne<MailActivityPlan>().WithMany()
+                        .HasForeignKey("MailActivityPlanId")
+                        .HasConstraintName("mail_activity_plan_mail_activity_sch_mail_activity_plan_id_fkey"),
+                    l => l.HasOne<MailActivitySchedule>().WithMany()
+                        .HasForeignKey("MailActivityScheduleId")
+                        .HasConstraintName("mail_activity_plan_mail_activity_mail_activity_schedule_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MailActivityScheduleId", "MailActivityPlanId").HasName("mail_activity_plan_mail_activity_schedule_rel_pkey");
+                        j.ToTable("mail_activity_plan_mail_activity_schedule_rel");
+                        j.HasIndex(new[] { "MailActivityPlanId", "MailActivityScheduleId" }, "mail_activity_plan_mail_activ_mail_activity_plan_id_mail_ac_idx");
+                        j.IndexerProperty<Guid>("MailActivityScheduleId").HasColumnName("mail_activity_schedule_id");
+                        j.IndexerProperty<Guid>("MailActivityPlanId").HasColumnName("mail_activity_plan_id");
+                    });
+        });
+
+        modelBuilder.Entity<MailActivityTodoCreate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_activity_todo_create_pkey");
+
+            entity.ToTable("mail_activity_todo_create");
+
+            entity.HasIndex(e => e.DateDeadline, "mail_activity_todo_create__date_deadline_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DateDeadline).HasColumnName("date_deadline");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.Summary).HasColumnName("summary");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_todo_create_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_activity_todo_create_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_activity_todo_create_write_uid_fkey");
         });
 
         modelBuilder.Entity<MailActivityType>(entity =>
@@ -20051,6 +23053,44 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("mail_alias_write_uid_fkey");
         });
 
+        modelBuilder.Entity<MailAliasDomain>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_alias_domain_pkey");
+
+            entity.ToTable("mail_alias_domain");
+
+            entity.HasIndex(e => new { e.BounceAlias, e.Name }, "mail_alias_domain_bounce_email_uniques").IsUnique();
+
+            entity.HasIndex(e => new { e.CatchallAlias, e.Name }, "mail_alias_domain_catchall_email_uniques").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.BounceAlias).HasColumnName("bounce_alias");
+            entity.Property(e => e.CatchallAlias).HasColumnName("catchall_alias");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DefaultFrom).HasColumnName("default_from");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_alias_domain_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_alias_domain_write_uid_fkey");
+        });
+
         modelBuilder.Entity<MailBlacklist>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("mail_blacklist_pkey");
@@ -20123,6 +23163,64 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_blacklist_remove_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<MailCannedResponse>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_canned_response_pkey");
+
+            entity.ToTable("mail_canned_response");
+
+            entity.HasIndex(e => e.Source, "mail_canned_response__source_index")
+                .HasMethod("gin")
+                .HasOperators(new[] { "gin_trgm_ops" });
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.IsShared).HasColumnName("is_shared");
+            entity.Property(e => e.LastUsed)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("last_used");
+            entity.Property(e => e.Source).HasColumnName("source");
+            entity.Property(e => e.Substitution).HasColumnName("substitution");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_canned_response_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_canned_response_write_uid_fkey");
+
+            entity.HasMany(d => d.ResGroups).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MailCannedResponseResGroupsRel",
+                    r => r.HasOne<ResGroup>().WithMany()
+                        .HasForeignKey("ResGroupsId")
+                        .HasConstraintName("mail_canned_response_res_groups_rel_res_groups_id_fkey"),
+                    l => l.HasOne<MailCannedResponse>().WithMany()
+                        .HasForeignKey("MailCannedResponseId")
+                        .HasConstraintName("mail_canned_response_res_groups_re_mail_canned_response_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MailCannedResponseId", "ResGroupsId").HasName("mail_canned_response_res_groups_rel_pkey");
+                        j.ToTable("mail_canned_response_res_groups_rel");
+                        j.HasIndex(new[] { "ResGroupsId", "MailCannedResponseId" }, "mail_canned_response_res_grou_res_groups_id_mail_canned_res_idx");
+                        j.IndexerProperty<Guid>("MailCannedResponseId").HasColumnName("mail_canned_response_id");
+                        j.IndexerProperty<Guid>("ResGroupsId").HasColumnName("res_groups_id");
+                    });
         });
 
         modelBuilder.Entity<MailChannel>(entity =>
@@ -20355,6 +23453,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActiveDomain).HasColumnName("active_domain");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.AutoDelete).HasColumnName("auto_delete");
@@ -20446,6 +23545,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "AttachmentId", "WizardId" }, "mail_compose_message_ir_attachments_attachment_id_wizard_id_idx");
                     });
 
+            entity.HasMany(d => d.MailingLists).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MailComposeMessageMailingListRel",
+                    r => r.HasOne<MailingList>().WithMany()
+                        .HasForeignKey("MailingListId")
+                        .HasConstraintName("mail_compose_message_mailing_list_rel_mailing_list_id_fkey"),
+                    l => l.HasOne<MailComposeMessage>().WithMany()
+                        .HasForeignKey("MailComposeMessageId")
+                        .HasConstraintName("mail_compose_message_mailing_list__mail_compose_message_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MailComposeMessageId", "MailingListId").HasName("mail_compose_message_mailing_list_rel_pkey");
+                        j.ToTable("mail_compose_message_mailing_list_rel");
+                        j.HasIndex(new[] { "MailingListId", "MailComposeMessageId" }, "mail_compose_message_mailing__mailing_list_id_mail_compose__idx");
+                        j.IndexerProperty<Guid>("MailComposeMessageId").HasColumnName("mail_compose_message_id");
+                        j.IndexerProperty<Guid>("MailingListId").HasColumnName("mailing_list_id");
+                    });
+
             //entity.HasMany(d => d.Partners).WithMany(p => p.Wizards)
             entity.HasMany<ResPartner>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -20481,9 +23598,18 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.ResId).HasColumnName("res_id");
             entity.Property(e => e.ResModel).HasColumnName("res_model");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
             entity.HasOne<ResPartner>().WithMany()
                 .HasForeignKey(d => d.PartnerId)
@@ -21011,6 +24137,48 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("mail_message_subtype_write_uid_fkey");
         });
 
+        modelBuilder.Entity<MailMessageTranslation>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_message_translation_pkey");
+
+            entity.ToTable("mail_message_translation");
+
+            entity.HasIndex(e => e.CreationTime, "mail_message_translation__create_date_index");
+
+            entity.HasIndex(e => new { e.MessageId, e.TargetLang }, "mail_message_translation_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Body).HasColumnName("body");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.MessageId).HasColumnName("message_id");
+            entity.Property(e => e.SourceLang).HasColumnName("source_lang");
+            entity.Property(e => e.TargetLang).HasColumnName("target_lang");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_message_translation_create_uid_fkey");
+
+            entity.HasOne(d => d.Message).WithMany()
+                .HasForeignKey(d => d.MessageId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_message_translation_message_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_message_translation_write_uid_fkey");
+        });
+
         modelBuilder.Entity<MailNotification>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("mail_notification_pkey");
@@ -21089,6 +24257,86 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.SmsId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_notification_sms_id_fkey");
+        });
+
+        modelBuilder.Entity<MailPush>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_push_pkey");
+
+            entity.ToTable("mail_push");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.MailPushDeviceId).HasColumnName("mail_push_device_id");
+            entity.Property(e => e.Payload).HasColumnName("payload");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_push_create_uid_fkey");
+
+            entity.HasOne(d => d.MailPushDevice).WithMany(p => p.MailPushes)
+                .HasForeignKey(d => d.MailPushDeviceId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mail_push_mail_push_device_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_push_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<MailPushDevice>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_push_device_pkey");
+
+            entity.ToTable("mail_push_device");
+
+            entity.HasIndex(e => e.PartnerId, "mail_push_device__partner_id_index");
+
+            entity.HasIndex(e => e.Endpoint, "mail_push_device_endpoint_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Endpoint).HasColumnName("endpoint");
+            entity.Property(e => e.ExpirationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("expiration_time");
+            entity.Property(e => e.Keys).HasColumnName("keys");
+            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_push_device_create_uid_fkey");
+
+            entity.HasOne<ResPartner>().WithMany()
+                .HasForeignKey(d => d.PartnerId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("mail_push_device_partner_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_push_device_write_uid_fkey");
         });
 
         modelBuilder.Entity<MailResendMessage>(entity =>
@@ -21222,6 +24470,86 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("mail_shortcode_write_uid_fkey");
         });
 
+        modelBuilder.Entity<MailScheduledMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mail_scheduled_message_pkey");
+
+            entity.ToTable("mail_scheduled_message");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AuthorId).HasColumnName("author_id");
+            entity.Property(e => e.Body).HasColumnName("body");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.IsNote).HasColumnName("is_note");
+            entity.Property(e => e.Model).HasColumnName("model");
+            entity.Property(e => e.NotificationParameters).HasColumnName("notification_parameters");
+            entity.Property(e => e.ResId).HasColumnName("res_id");
+            entity.Property(e => e.ScheduledDate)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("scheduled_date");
+            entity.Property(e => e.Subject).HasColumnName("subject");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Author).WithMany()
+                .HasForeignKey(d => d.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("mail_scheduled_message_author_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_scheduled_message_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mail_scheduled_message_write_uid_fkey");
+
+            entity.HasMany(d => d.Attachments).WithMany(p => p.ScheduledMessages)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ScheduledMessageAttachmentRel",
+                    r => r.HasOne<IrAttachment>().WithMany()
+                        .HasForeignKey("AttachmentId")
+                        .HasConstraintName("scheduled_message_attachment_rel_attachment_id_fkey"),
+                    l => l.HasOne<MailScheduledMessage>().WithMany()
+                        .HasForeignKey("ScheduledMessageId")
+                        .HasConstraintName("scheduled_message_attachment_rel_scheduled_message_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ScheduledMessageId", "AttachmentId").HasName("scheduled_message_attachment_rel_pkey");
+                        j.ToTable("scheduled_message_attachment_rel");
+                        j.HasIndex(new[] { "AttachmentId", "ScheduledMessageId" }, "scheduled_message_attachment__attachment_id_scheduled_messa_idx");
+                        j.IndexerProperty<Guid>("ScheduledMessageId").HasColumnName("scheduled_message_id");
+                        j.IndexerProperty<Guid>("AttachmentId").HasColumnName("attachment_id");
+                    });
+
+            entity.HasMany(d => d.ResPartners).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MailScheduledMessageResPartnerRel",
+                    r => r.HasOne<ResPartner>().WithMany()
+                        .HasForeignKey("ResPartnerId")
+                        .HasConstraintName("mail_scheduled_message_res_partner_rel_res_partner_id_fkey"),
+                    l => l.HasOne<MailScheduledMessage>().WithMany()
+                        .HasForeignKey("MailScheduledMessageId")
+                        .HasConstraintName("mail_scheduled_message_res_partn_mail_scheduled_message_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MailScheduledMessageId", "ResPartnerId").HasName("mail_scheduled_message_res_partner_rel_pkey");
+                        j.ToTable("mail_scheduled_message_res_partner_rel");
+                        j.HasIndex(new[] { "ResPartnerId", "MailScheduledMessageId" }, "mail_scheduled_message_res_pa_res_partner_id_mail_scheduled_idx");
+                        j.IndexerProperty<Guid>("MailScheduledMessageId").HasColumnName("mail_scheduled_message_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
+                    });
+        });
+
         modelBuilder.Entity<MailTemplate>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("mail_template_pkey");
@@ -21318,6 +24646,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("EmailTemplateId", "AttachmentId").HasName("email_template_attachment_rel_pkey");
                         j.ToTable("email_template_attachment_rel");
                         j.HasIndex(new[] { "AttachmentId", "EmailTemplateId" }, "email_template_attachment_rel_attachment_id_email_template__idx");
+                    });
+
+            entity.HasMany(d => d.IrActionsReports).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MailTemplateIrActionsReportRel",
+                    r => r.HasOne<IrActReportXml>().WithMany()
+                        .HasForeignKey("IrActionsReportId")
+                        .HasConstraintName("mail_template_ir_actions_report_rel_ir_actions_report_id_fkey"),
+                    l => l.HasOne<MailTemplate>().WithMany()
+                        .HasForeignKey("MailTemplateId")
+                        .HasConstraintName("mail_template_ir_actions_report_rel_mail_template_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MailTemplateId", "IrActionsReportId").HasName("mail_template_ir_actions_report_rel_pkey");
+                        j.ToTable("mail_template_ir_actions_report_rel");
+                        j.HasIndex(new[] { "IrActionsReportId", "MailTemplateId" }, "mail_template_ir_actions_repo_ir_actions_report_id_mail_tem_idx");
+                        j.IndexerProperty<Guid>("MailTemplateId").HasColumnName("mail_template_id");
+                        j.IndexerProperty<Guid>("IrActionsReportId").HasColumnName("ir_actions_report_id");
                     });
         });
 
@@ -21531,7 +24877,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_contact", tb => tb.HasComment("Mailing Contact"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CompanyName)
                 .HasComment("Company Name")
                 .HasColumnType("character varying")
@@ -21633,7 +24982,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_contact_import", tb => tb.HasComment("Mailing Contact Import"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ContactList)
                 .HasComment("Contact List")
                 .HasColumnName("contact_list");
@@ -21689,7 +25041,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => new { e.ContactId, e.ListId }, "mailing_contact_list_rel_unique_contact_list").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ContactId)
                 .HasComment("Contact")
                 .HasColumnName("contact_id");
@@ -21743,7 +25098,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_contact_to_list", tb => tb.HasComment("Add Contacts to Mailing List"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -21803,7 +25161,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.CreatorId, "mailing_filter_create_uid_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -21851,7 +25212,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_list", tb => tb.HasComment("Mailing List"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -21912,7 +25276,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_list_merge", tb => tb.HasComment("Merge Mass Mailing List"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ArchiveSrcLists)
                 .HasComment("Archive source mailing lists")
                 .HasColumnName("archive_src_lists");
@@ -21984,7 +25351,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.CampaignId, "mailing_mailing_campaign_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AbTestingCompleted)
                 .HasComment("A/B Testing Campaign Finished")
                 .HasColumnName("ab_testing_completed");
@@ -22201,7 +25571,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_mailing_schedule_date", tb => tb.HasComment("schedule a mailing"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -22245,7 +25618,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_mailing_test", tb => tb.HasComment("Sample Mail Wizard"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -22288,7 +25664,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("mailing_sms_test", tb => tb.HasComment("Test SMS Mailing"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -22325,6 +25704,93 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("mailing_sms_test_write_uid_fkey");
         });
 
+        modelBuilder.Entity<MailingSubscription>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mailing_subscription_pkey");
+
+            entity.ToTable("mailing_subscription");
+
+            entity.HasIndex(e => new { e.ContactId, e.ListId }, "mailing_subscription_unique_contact_list").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ContactId).HasColumnName("contact_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ListId).HasColumnName("list_id");
+            entity.Property(e => e.OptOut).HasColumnName("opt_out");
+            entity.Property(e => e.OptOutDatetime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("opt_out_datetime");
+            entity.Property(e => e.OptOutReasonId).HasColumnName("opt_out_reason_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Contact).WithMany(p => p.MailingSubscriptions)
+                .HasForeignKey(d => d.ContactId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mailing_subscription_contact_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mailing_subscription_create_uid_fkey");
+
+            entity.HasOne(d => d.List).WithMany(p => p.MailingSubscriptions)
+                .HasForeignKey(d => d.ListId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mailing_subscription_list_id_fkey");
+
+            entity.HasOne(d => d.OptOutReason).WithMany(p => p.MailingSubscriptions)
+                .HasForeignKey(d => d.OptOutReasonId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("mailing_subscription_opt_out_reason_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mailing_subscription_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<MailingSubscriptionOptout>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mailing_subscription_optout_pkey");
+
+            entity.ToTable("mailing_subscription_optout");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.IsFeedback).HasColumnName("is_feedback");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mailing_subscription_optout_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mailing_subscription_optout_write_uid_fkey");
+        });
+
         modelBuilder.Entity<MailingTrace>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("mailing_trace_pkey");
@@ -22341,9 +25807,12 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.SmsSmsId, "mailing_trace_sms_sms_id_index").HasFilter("(sms_sms_id IS NOT NULL)");
 
-            entity.HasIndex(e => e.SmsSmsIdInt, "mailing_trace_sms_sms_id_int_index").HasFilter("(sms_sms_id_int IS NOT NULL)");
+            entity.HasIndex(e => e.SmsSmsIdInt, "mailing_trace_sms_id_int_index").HasFilter("(sms_id_int IS NOT NULL)");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CampaignId)
                 .HasComment("Campaign")
                 .HasColumnName("campaign_id");
@@ -22411,7 +25880,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("sms_sms_id");
             entity.Property(e => e.SmsSmsIdInt)
                 .HasComment("SMS ID (tech)")
-                .HasColumnName("sms_sms_id_int");
+                .HasColumnName("sms_id_int");
             entity.Property(e => e.TraceStatus)
                 .HasComment("Status")
                 .HasColumnType("character varying")
@@ -22478,7 +25947,10 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("character varying")
                 .HasColumnName("email_from");
             entity.Property(e => e.Error).HasColumnName("error");
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.MailingType)
                 .HasColumnType("character varying")
                 .HasColumnName("mailing_type");
@@ -22861,6 +26333,153 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("maintenance_team_users_rel");
                         j.HasIndex(new[] { "ResUsersId", "MaintenanceTeamId" }, "maintenance_team_users_rel_res_users_id_maintenance_team_id_idx");
                     });
+        });
+
+        modelBuilder.Entity<MrpAccountWipAccounting>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mrp_account_wip_accounting_pkey");
+
+            entity.ToTable("mrp_account_wip_accounting");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.JournalId).HasColumnName("journal_id");
+            entity.Property(e => e.Reference).HasColumnName("reference");
+            entity.Property(e => e.ReversalDate).HasColumnName("reversal_date");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_create_uid_fkey");
+
+            entity.HasOne(d => d.Journal).WithMany()
+                .HasForeignKey(d => d.JournalId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("mrp_account_wip_accounting_journal_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_write_uid_fkey");
+
+            entity.HasMany(d => d.MrpProductions).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MrpAccountWipAccountingMrpProductionRel",
+                    r => r.HasOne<MrpProduction>().WithMany()
+                        .HasForeignKey("MrpProductionId")
+                        .HasConstraintName("mrp_account_wip_accounting_mrp_productio_mrp_production_id_fkey"),
+                    l => l.HasOne<MrpAccountWipAccounting>().WithMany()
+                        .HasForeignKey("MrpAccountWipAccountingId")
+                        .HasConstraintName("mrp_account_wip_accounting_mr_mrp_account_wip_accounting_i_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MrpAccountWipAccountingId", "MrpProductionId").HasName("mrp_account_wip_accounting_mrp_production_rel_pkey");
+                        j.ToTable("mrp_account_wip_accounting_mrp_production_rel");
+                        j.HasIndex(new[] { "MrpProductionId", "MrpAccountWipAccountingId" }, "mrp_account_wip_accounting_mr_mrp_production_id_mrp_account_idx");
+                        j.IndexerProperty<Guid>("MrpAccountWipAccountingId").HasColumnName("mrp_account_wip_accounting_id");
+                        j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
+                    });
+        });
+
+        modelBuilder.Entity<MrpAccountWipAccountingLine>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mrp_account_wip_accounting_line_pkey");
+
+            entity.ToTable("mrp_account_wip_accounting_line");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Credit).HasColumnName("credit");
+            entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.Debit).HasColumnName("debit");
+            entity.Property(e => e.Label).HasColumnName("label");
+            entity.Property(e => e.WipAccountingId).HasColumnName("wip_accounting_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.MrpAccountWipAccountingLines)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_line_account_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_line_create_uid_fkey");
+
+            entity.HasOne<ResCurrency>().WithMany()
+                .HasForeignKey(d => d.CurrencyId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_line_currency_id_fkey");
+
+            entity.HasOne(d => d.WipAccounting).WithMany(p => p.MrpAccountWipAccountingLines)
+                .HasForeignKey(d => d.WipAccountingId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_line_wip_accounting_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_account_wip_accounting_line_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<MrpBatchProduce>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("mrp_batch_produce_pkey");
+
+            entity.ToTable("mrp_batch_produce");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ComponentSeparator).HasColumnName("component_separator");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LotName).HasColumnName("lot_name");
+            entity.Property(e => e.LotQty).HasColumnName("lot_qty");
+            entity.Property(e => e.LotsQuantitySeparator).HasColumnName("lots_quantity_separator");
+            entity.Property(e => e.LotsSeparator).HasColumnName("lots_separator");
+            entity.Property(e => e.ProductionId).HasColumnName("production_id");
+            entity.Property(e => e.ProductionText).HasColumnName("production_text");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_batch_produce_create_uid_fkey");
+
+            entity.HasOne(d => d.Production).WithMany()
+                .HasForeignKey(d => d.ProductionId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_batch_produce_production_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("mrp_batch_produce_write_uid_fkey");
         });
 
         modelBuilder.Entity<MrpBom>(entity =>
@@ -24388,6 +28007,42 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mrp_workorder_write_uid_fkey");
 
+            entity.HasMany(d => d.AccountAnalyticLines).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MrpWorkorderMoAnalyticRel",
+                    r => r.HasOne<AccountAnalyticLine>().WithMany()
+                        .HasForeignKey("AccountAnalyticLineId")
+                        .HasConstraintName("mrp_workorder_mo_analytic_rel_account_analytic_line_id_fkey"),
+                    l => l.HasOne<MrpWorkorder>().WithMany()
+                        .HasForeignKey("MrpWorkorderId")
+                        .HasConstraintName("mrp_workorder_mo_analytic_rel_mrp_workorder_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MrpWorkorderId", "AccountAnalyticLineId").HasName("mrp_workorder_mo_analytic_rel_pkey");
+                        j.ToTable("mrp_workorder_mo_analytic_rel");
+                        j.HasIndex(new[] { "AccountAnalyticLineId", "MrpWorkorderId" }, "mrp_workorder_mo_analytic_rel_account_analytic_line_id_mrp__idx");
+                        j.IndexerProperty<Guid>("MrpWorkorderId").HasColumnName("mrp_workorder_id");
+                        j.IndexerProperty<Guid>("AccountAnalyticLineId").HasColumnName("account_analytic_line_id");
+                    });
+
+            entity.HasMany(d => d.AccountAnalyticLinesNavigation).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MrpWorkorderWcAnalyticRel",
+                    r => r.HasOne<AccountAnalyticLine>().WithMany()
+                        .HasForeignKey("AccountAnalyticLineId")
+                        .HasConstraintName("mrp_workorder_wc_analytic_rel_account_analytic_line_id_fkey"),
+                    l => l.HasOne<MrpWorkorder>().WithMany()
+                        .HasForeignKey("MrpWorkorderId")
+                        .HasConstraintName("mrp_workorder_wc_analytic_rel_mrp_workorder_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MrpWorkorderId", "AccountAnalyticLineId").HasName("mrp_workorder_wc_analytic_rel_pkey");
+                        j.ToTable("mrp_workorder_wc_analytic_rel");
+                        j.HasIndex(new[] { "AccountAnalyticLineId", "MrpWorkorderId" }, "mrp_workorder_wc_analytic_rel_account_analytic_line_id_mrp__idx");
+                        j.IndexerProperty<Guid>("MrpWorkorderId").HasColumnName("mrp_workorder_id");
+                        j.IndexerProperty<Guid>("AccountAnalyticLineId").HasColumnName("account_analytic_line_id");
+                    });
+
             //entity.HasMany(d => d.BlockedBies).WithMany(p => p.Workorders)
             entity.HasMany<MrpWorkorder>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -24421,6 +28076,214 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("mrp_workorder_dependencies_rel");
                         j.HasIndex(new[] { "BlockedById", "WorkorderId" }, "mrp_workorder_dependencies_rel_blocked_by_id_workorder_id_idx");
                     });
+        });
+
+        modelBuilder.Entity<OnboardingOnboarding>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("onboarding_onboarding_pkey");
+
+            entity.ToTable("onboarding_onboarding");
+
+            entity.HasIndex(e => e.RouteName, "onboarding_onboarding_route_name_uniq").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.PanelCloseActionName).HasColumnName("panel_close_action_name");
+            entity.Property(e => e.RouteName).HasColumnName("route_name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.TextCompleted).HasColumnName("text_completed");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_onboarding_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_onboarding_write_uid_fkey");
+
+            entity.HasMany(d => d.OnboardingOnboardingSteps).WithMany(p => p.OnboardingOnboardings)
+                .UsingEntity<Dictionary<string, object>>(
+                    "OnboardingOnboardingOnboardingOnboardingStepRel",
+                    r => r.HasOne<OnboardingOnboardingStep>().WithMany()
+                        .HasForeignKey("OnboardingOnboardingStepId")
+                        .HasConstraintName("onboarding_onboarding_onboard_onboarding_onboarding_step_i_fkey"),
+                    l => l.HasOne<OnboardingOnboarding>().WithMany()
+                        .HasForeignKey("OnboardingOnboardingId")
+                        .HasConstraintName("onboarding_onboarding_onboarding__onboarding_onboarding_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("OnboardingOnboardingId", "OnboardingOnboardingStepId").HasName("onboarding_onboarding_onboarding_onboarding_step_rel_pkey");
+                        j.ToTable("onboarding_onboarding_onboarding_onboarding_step_rel");
+                        j.HasIndex(new[] { "OnboardingOnboardingStepId", "OnboardingOnboardingId" }, "onboarding_onboarding_onboard_onboarding_onboarding_step_id_idx");
+                        j.IndexerProperty<Guid>("OnboardingOnboardingId").HasColumnName("onboarding_onboarding_id");
+                        j.IndexerProperty<Guid>("OnboardingOnboardingStepId").HasColumnName("onboarding_onboarding_step_id");
+                    });
+        });
+
+        modelBuilder.Entity<OnboardingOnboardingStep>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("onboarding_onboarding_step_pkey");
+
+            entity.ToTable("onboarding_onboarding_step");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ButtonText)
+                .HasColumnType("jsonb")
+                .HasColumnName("button_text");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Description)
+                .HasColumnType("jsonb")
+                .HasColumnName("description");
+            entity.Property(e => e.DoneIcon).HasColumnName("done_icon");
+            entity.Property(e => e.DoneText)
+                .HasColumnType("jsonb")
+                .HasColumnName("done_text");
+            entity.Property(e => e.IsPerCompany).HasColumnName("is_per_company");
+            entity.Property(e => e.PanelStepOpenActionName).HasColumnName("panel_step_open_action_name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.StepImageAlt)
+                .HasColumnType("jsonb")
+                .HasColumnName("step_image_alt");
+            entity.Property(e => e.StepImageFilename).HasColumnName("step_image_filename");
+            entity.Property(e => e.Title)
+                .HasColumnType("jsonb")
+                .HasColumnName("title");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_onboarding_step_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_onboarding_step_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<OnboardingProgress>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("onboarding_progress_pkey");
+
+            entity.ToTable("onboarding_progress");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.IsOnboardingClosed).HasColumnName("is_onboarding_closed");
+            entity.Property(e => e.OnboardingId).HasColumnName("onboarding_id");
+            entity.Property(e => e.OnboardingState).HasColumnName("onboarding_state");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("onboarding_progress_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_progress_create_uid_fkey");
+
+            entity.HasOne(d => d.Onboarding).WithMany(p => p.OnboardingProgresses)
+                .HasForeignKey(d => d.OnboardingId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("onboarding_progress_onboarding_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_progress_write_uid_fkey");
+
+            entity.HasMany(d => d.OnboardingProgressSteps).WithMany(p => p.OnboardingProgresses)
+                .UsingEntity<Dictionary<string, object>>(
+                    "OnboardingProgressOnboardingProgressStepRel",
+                    r => r.HasOne<OnboardingProgressStep>().WithMany()
+                        .HasForeignKey("OnboardingProgressStepId")
+                        .HasConstraintName("onboarding_progress_onboarding_onboarding_progress_step_id_fkey"),
+                    l => l.HasOne<OnboardingProgress>().WithMany()
+                        .HasForeignKey("OnboardingProgressId")
+                        .HasConstraintName("onboarding_progress_onboarding_prog_onboarding_progress_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("OnboardingProgressId", "OnboardingProgressStepId").HasName("onboarding_progress_onboarding_progress_step_rel_pkey");
+                        j.ToTable("onboarding_progress_onboarding_progress_step_rel");
+                        j.HasIndex(new[] { "OnboardingProgressStepId", "OnboardingProgressId" }, "onboarding_progress_onboardin_onboarding_progress_step_id_o_idx");
+                        j.IndexerProperty<Guid>("OnboardingProgressId").HasColumnName("onboarding_progress_id");
+                        j.IndexerProperty<Guid>("OnboardingProgressStepId").HasColumnName("onboarding_progress_step_id");
+                    });
+        });
+
+        modelBuilder.Entity<OnboardingProgressStep>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("onboarding_progress_step_pkey");
+
+            entity.ToTable("onboarding_progress_step");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.StepId).HasColumnName("step_id");
+            entity.Property(e => e.StepState).HasColumnName("step_state");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("onboarding_progress_step_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_progress_step_create_uid_fkey");
+
+            entity.HasOne(d => d.Step).WithMany(p => p.OnboardingProgressSteps)
+                .HasForeignKey(d => d.StepId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("onboarding_progress_step_step_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("onboarding_progress_step_write_uid_fkey");
         });
 
         modelBuilder.Entity<NoteNote>(entity =>
@@ -24612,6 +28475,55 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("partner_stat_rel_osv_memory_id_fkey");
         });
 
+        modelBuilder.Entity<PaymentCaptureWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("payment_capture_wizard_pkey");
+
+            entity.ToTable("payment_capture_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AmountToCapture).HasColumnName("amount_to_capture");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.VoidRemainingAmount).HasColumnName("void_remaining_amount");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("payment_capture_wizard_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("payment_capture_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.PaymentTransactions).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PaymentCaptureWizardPaymentTransactionRel",
+                    r => r.HasOne<PaymentTransaction>().WithMany()
+                        .HasForeignKey("PaymentTransactionId")
+                        .HasConstraintName("payment_capture_wizard_payment_tran_payment_transaction_id_fkey"),
+                    l => l.HasOne<PaymentCaptureWizard>().WithMany()
+                        .HasForeignKey("PaymentCaptureWizardId")
+                        .HasConstraintName("payment_capture_wizard_payment_t_payment_capture_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PaymentCaptureWizardId", "PaymentTransactionId").HasName("payment_capture_wizard_payment_transaction_rel_pkey");
+                        j.ToTable("payment_capture_wizard_payment_transaction_rel");
+                        j.HasIndex(new[] { "PaymentTransactionId", "PaymentCaptureWizardId" }, "payment_capture_wizard_paymen_payment_transaction_id_paymen_idx");
+                        j.IndexerProperty<Guid>("PaymentCaptureWizardId").HasColumnName("payment_capture_wizard_id");
+                        j.IndexerProperty<Guid>("PaymentTransactionId").HasColumnName("payment_transaction_id");
+                    });
+        });
+
         modelBuilder.Entity<PaymentIcon>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("payment_icon_pkey");
@@ -24694,6 +28606,104 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("payment_link_wizard_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<PaymentMethod>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("payment_method_pkey");
+
+            entity.ToTable("payment_method");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.Code).HasColumnName("code");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.PrimaryPaymentMethodId).HasColumnName("primary_payment_method_id");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.SupportExpressCheckout).HasColumnName("support_express_checkout");
+            entity.Property(e => e.SupportRefund).HasColumnName("support_refund");
+            entity.Property(e => e.SupportTokenization).HasColumnName("support_tokenization");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("payment_method_create_uid_fkey");
+
+            entity.HasOne(d => d.PrimaryPaymentMethod).WithMany(p => p.InversePrimaryPaymentMethod)
+                .HasForeignKey(d => d.PrimaryPaymentMethodId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("payment_method_primary_payment_method_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("payment_method_write_uid_fkey");
+
+            entity.HasMany(d => d.PaymentProviders).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PaymentMethodPaymentProviderRel",
+                    r => r.HasOne<PaymentProvider>().WithMany()
+                        .HasForeignKey("PaymentProviderId")
+                        .HasConstraintName("payment_method_payment_provider_rel_payment_provider_id_fkey"),
+                    l => l.HasOne<PaymentMethod>().WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .HasConstraintName("payment_method_payment_provider_rel_payment_method_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PaymentMethodId", "PaymentProviderId").HasName("payment_method_payment_provider_rel_pkey");
+                        j.ToTable("payment_method_payment_provider_rel");
+                        j.HasIndex(new[] { "PaymentProviderId", "PaymentMethodId" }, "payment_method_payment_provid_payment_provider_id_payment_m_idx");
+                        j.IndexerProperty<Guid>("PaymentMethodId").HasColumnName("payment_method_id");
+                        j.IndexerProperty<Guid>("PaymentProviderId").HasColumnName("payment_provider_id");
+                    });
+
+            entity.HasMany(d => d.ResCountries).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PaymentMethodResCountryRel",
+                    r => r.HasOne<ResCountry>().WithMany()
+                        .HasForeignKey("ResCountryId")
+                        .HasConstraintName("payment_method_res_country_rel_res_country_id_fkey"),
+                    l => l.HasOne<PaymentMethod>().WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .HasConstraintName("payment_method_res_country_rel_payment_method_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PaymentMethodId", "ResCountryId").HasName("payment_method_res_country_rel_pkey");
+                        j.ToTable("payment_method_res_country_rel");
+                        j.HasIndex(new[] { "ResCountryId", "PaymentMethodId" }, "payment_method_res_country_re_res_country_id_payment_method_idx");
+                        j.IndexerProperty<Guid>("PaymentMethodId").HasColumnName("payment_method_id");
+                        j.IndexerProperty<Guid>("ResCountryId").HasColumnName("res_country_id");
+                    });
+
+            entity.HasMany(d => d.ResCurrencies).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PaymentMethodResCurrencyRel",
+                    r => r.HasOne<ResCurrency>().WithMany()
+                        .HasForeignKey("ResCurrencyId")
+                        .HasConstraintName("payment_method_res_currency_rel_res_currency_id_fkey"),
+                    l => l.HasOne<PaymentMethod>().WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .HasConstraintName("payment_method_res_currency_rel_payment_method_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PaymentMethodId", "ResCurrencyId").HasName("payment_method_res_currency_rel_pkey");
+                        j.ToTable("payment_method_res_currency_rel");
+                        j.HasIndex(new[] { "ResCurrencyId", "PaymentMethodId" }, "payment_method_res_currency_r_res_currency_id_payment_metho_idx");
+                        j.IndexerProperty<Guid>("PaymentMethodId").HasColumnName("payment_method_id");
+                        j.IndexerProperty<Guid>("ResCurrencyId").HasColumnName("res_currency_id");
+                    });
         });
 
         modelBuilder.Entity<PaymentProvider>(entity =>
@@ -25702,6 +29712,60 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "HrEmployeeId", "PosConfigId" }, "hr_employee_pos_config_rel_hr_employee_id_pos_config_id_idx");
                     });
 
+            entity.HasMany(d => d.IrAttachments).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "IrAttachmentPosConfigRel",
+                    r => r.HasOne<IrAttachment>().WithMany()
+                        .HasForeignKey("IrAttachmentId")
+                        .HasConstraintName("ir_attachment_pos_config_rel_ir_attachment_id_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("PosConfigId")
+                        .HasConstraintName("ir_attachment_pos_config_rel_pos_config_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosConfigId", "IrAttachmentId").HasName("ir_attachment_pos_config_rel_pkey");
+                        j.ToTable("ir_attachment_pos_config_rel");
+                        j.HasIndex(new[] { "IrAttachmentId", "PosConfigId" }, "ir_attachment_pos_config_rel_ir_attachment_id_pos_config_id_idx");
+                        j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                        j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
+                    });
+
+            entity.HasMany(d => d.IsTrusteds).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigTrustRelation",
+                    r => r.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("IsTrusted")
+                        .HasConstraintName("pos_config_trust_relation_is_trusted_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("IsTrusting")
+                        .HasConstraintName("pos_config_trust_relation_is_trusting_fkey"),
+                    j =>
+                    {
+                        j.HasKey("IsTrusting", "IsTrusted").HasName("pos_config_trust_relation_pkey");
+                        j.ToTable("pos_config_trust_relation");
+                        j.HasIndex(new[] { "IsTrusted", "IsTrusting" }, "pos_config_trust_relation_is_trusted_is_trusting_idx");
+                        j.IndexerProperty<Guid>("IsTrusting").HasColumnName("is_trusting");
+                        j.IndexerProperty<Guid>("IsTrusted").HasColumnName("is_trusted");
+                    });
+
+            entity.HasMany(d => d.IsTrustings).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigTrustRelation",
+                    r => r.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("IsTrusting")
+                        .HasConstraintName("pos_config_trust_relation_is_trusting_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("IsTrusted")
+                        .HasConstraintName("pos_config_trust_relation_is_trusted_fkey"),
+                    j =>
+                    {
+                        j.HasKey("IsTrusting", "IsTrusted").HasName("pos_config_trust_relation_pkey");
+                        j.ToTable("pos_config_trust_relation");
+                        j.HasIndex(new[] { "IsTrusted", "IsTrusting" }, "pos_config_trust_relation_is_trusted_is_trusting_idx");
+                        j.IndexerProperty<Guid>("IsTrusting").HasColumnName("is_trusting");
+                        j.IndexerProperty<Guid>("IsTrusted").HasColumnName("is_trusted");
+                    });
+
             //entity.HasMany(d => d.PosBills).WithMany(p => p.PosConfigs)
             entity.HasMany<PosBill>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -25769,6 +29833,42 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("pos_config_product_pricelist_rel");
                         j.HasIndex(new[] { "ProductPricelistId", "PosConfigId" }, "pos_config_product_pricelist__product_pricelist_id_pos_conf_idx");
                     });
+        });
+
+        modelBuilder.Entity<PosDailySalesReportsWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("pos_daily_sales_reports_wizard_pkey");
+
+            entity.ToTable("pos_daily_sales_reports_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AddReportPerEmployee).HasColumnName("add_report_per_employee");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.PosSessionId).HasColumnName("pos_session_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_daily_sales_reports_wizard_create_uid_fkey");
+
+            entity.HasOne(d => d.PosSession).WithMany()
+                .HasForeignKey(d => d.PosSessionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("pos_daily_sales_reports_wizard_pos_session_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_daily_sales_reports_wizard_write_uid_fkey");
         });
 
         modelBuilder.Entity<PosDetailsWizard>(entity =>
@@ -25871,6 +29971,39 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("pos_make_payment_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<PosNote>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("pos_note_pkey");
+
+            entity.ToTable("pos_note");
+
+            entity.HasIndex(e => e.Name, "pos_note_name_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_note_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_note_write_uid_fkey");
         });
 
         modelBuilder.Entity<PosOrder>(entity =>
@@ -26263,6 +30396,117 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("pos_payment_method_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<PosPrinter>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("pos_printer_pkey");
+
+            entity.ToTable("pos_printer");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.EpsonPrinterIp).HasColumnName("epson_printer_ip");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.PrinterType).HasColumnName("printer_type");
+            entity.Property(e => e.ProxyIp).HasColumnName("proxy_ip");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("pos_printer_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_printer_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_printer_write_uid_fkey");
+
+            entity.HasMany(d => d.Categories).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PrinterCategoryRel",
+                    r => r.HasOne<PosCategory>().WithMany()
+                        .HasForeignKey("CategoryId")
+                        .HasConstraintName("printer_category_rel_category_id_fkey"),
+                    l => l.HasOne<PosPrinter>().WithMany()
+                        .HasForeignKey("PrinterId")
+                        .HasConstraintName("printer_category_rel_printer_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PrinterId", "CategoryId").HasName("printer_category_rel_pkey");
+                        j.ToTable("printer_category_rel");
+                        j.HasIndex(new[] { "CategoryId", "PrinterId" }, "printer_category_rel_category_id_printer_id_idx");
+                        j.IndexerProperty<Guid>("PrinterId").HasColumnName("printer_id");
+                        j.IndexerProperty<Guid>("CategoryId").HasColumnName("category_id");
+                    });
+        });
+
+        modelBuilder.Entity<PosSelfOrderCustomLink>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("pos_self_order_custom_link_pkey");
+
+            entity.ToTable("pos_self_order_custom_link");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LinkHtml).HasColumnName("link_html");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.Style).HasColumnName("style");
+            entity.Property(e => e.Url).HasColumnName("url");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_self_order_custom_link_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("pos_self_order_custom_link_write_uid_fkey");
+
+            entity.HasMany(d => d.PosConfigs).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigPosSelfOrderCustomLinkRel",
+                    r => r.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("PosConfigId")
+                        .HasConstraintName("pos_config_pos_self_order_custom_link_rel_pos_config_id_fkey"),
+                    l => l.HasOne<PosSelfOrderCustomLink>().WithMany()
+                        .HasForeignKey("PosSelfOrderCustomLinkId")
+                        .HasConstraintName("pos_config_pos_self_order_cus_pos_self_order_custom_link_i_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosSelfOrderCustomLinkId", "PosConfigId").HasName("pos_config_pos_self_order_custom_link_rel_pkey");
+                        j.ToTable("pos_config_pos_self_order_custom_link_rel");
+                        j.HasIndex(new[] { "PosConfigId", "PosSelfOrderCustomLinkId" }, "pos_config_pos_self_order_cus_pos_config_id_pos_self_order__idx");
+                        j.IndexerProperty<Guid>("PosSelfOrderCustomLinkId").HasColumnName("pos_self_order_custom_link_id");
+                        j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                    });
         });
 
         modelBuilder.Entity<PosSession>(entity =>
@@ -26793,6 +31037,151 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("product_category_write_uid_fkey");
         });
 
+        modelBuilder.Entity<ProductCombo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("product_combo_pkey");
+
+            entity.ToTable("product_combo");
+
+            entity.HasIndex(e => e.TenantId, "product_combo__company_id_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_combo_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_combo_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_combo_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<ProductComboItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("product_combo_item_pkey");
+
+            entity.ToTable("product_combo_item");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.ComboId).HasColumnName("combo_id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ExtraPrice).HasColumnName("extra_price");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Combo).WithMany(p => p.ProductComboItems)
+                .HasForeignKey(d => d.ComboId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("product_combo_item_combo_id_fkey");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_combo_item_company_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_combo_item_create_uid_fkey");
+
+            entity.HasOne(d => d.Product).WithMany()
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("product_combo_item_product_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_combo_item_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<ProductDocument>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("product_document_pkey");
+
+            entity.ToTable("product_document");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.AttachedOnMrp).HasColumnName("attached_on_mrp");
+            entity.Property(e => e.AttachedOnSale).HasColumnName("attached_on_sale");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.IrAttachmentId).HasColumnName("ir_attachment_id");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.ShownOnProductPage).HasColumnName("shown_on_product_page");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_document_create_uid_fkey");
+
+            entity.HasOne(d => d.IrAttachment).WithMany(p => p.ProductDocuments)
+                .HasForeignKey(d => d.IrAttachmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("product_document_ir_attachment_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_document_write_uid_fkey");
+
+            entity.HasMany(d => d.SalePdfFormFields).WithMany(p => p.ProductDocuments)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductDocumentSalePdfFormFieldRel",
+                    r => r.HasOne<SalePdfFormField>().WithMany()
+                        .HasForeignKey("SalePdfFormFieldId")
+                        .HasConstraintName("product_document_sale_pdf_form_fiel_sale_pdf_form_field_id_fkey"),
+                    l => l.HasOne<ProductDocument>().WithMany()
+                        .HasForeignKey("ProductDocumentId")
+                        .HasConstraintName("product_document_sale_pdf_form_field_r_product_document_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ProductDocumentId", "SalePdfFormFieldId").HasName("product_document_sale_pdf_form_field_rel_pkey");
+                        j.ToTable("product_document_sale_pdf_form_field_rel");
+                        j.HasIndex(new[] { "SalePdfFormFieldId", "ProductDocumentId" }, "product_document_sale_pdf_for_sale_pdf_form_field_id_produc_idx");
+                        j.IndexerProperty<Guid>("ProductDocumentId").HasColumnName("product_document_id");
+                        j.IndexerProperty<Guid>("SalePdfFormFieldId").HasColumnName("sale_pdf_form_field_id");
+                    });
+        });
+
         modelBuilder.Entity<ProductImage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("product_image_pkey");
@@ -26930,6 +31319,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("product_label_layout_stock_move_line_rel");
                         j.HasIndex(new[] { "StockMoveLineId", "ProductLabelLayoutId" }, "product_label_layout_stock_mo_stock_move_line_id_product_la_idx");
                     });
+
         });
 
         modelBuilder.Entity<ProductPackaging>(entity =>
@@ -28466,6 +32856,96 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("project_project_stage_write_uid_fkey");
         });
 
+        modelBuilder.Entity<ProjectProjectStageDeleteWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("project_project_stage_delete_wizard_pkey");
+
+            entity.ToTable("project_project_stage_delete_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("project_project_stage_delete_wizard_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("project_project_stage_delete_wizard_write_uid_fkey");
+
+            entity.HasMany(d => d.ProjectProjectStages).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProjectProjectStageProjectProjectStageDeleteWizardRel",
+                    r => r.HasOne<ProjectProjectStage>().WithMany()
+                        .HasForeignKey("ProjectProjectStageId")
+                        .HasConstraintName("project_project_stage_project_pro_project_project_stage_id_fkey"),
+                    l => l.HasOne<ProjectProjectStageDeleteWizard>().WithMany()
+                        .HasForeignKey("ProjectProjectStageDeleteWizardId")
+                        .HasConstraintName("project_project_stage_project_project_project_stage_delete_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ProjectProjectStageDeleteWizardId", "ProjectProjectStageId").HasName("project_project_stage_project_project_stage_delete_wizard__pkey");
+                        j.ToTable("project_project_stage_project_project_stage_delete_wizard_rel");
+                        j.HasIndex(new[] { "ProjectProjectStageId", "ProjectProjectStageDeleteWizardId" }, "project_project_stage_project_project_project_stage_id_proj_idx");
+                        j.IndexerProperty<Guid>("ProjectProjectStageDeleteWizardId").HasColumnName("project_project_stage_delete_wizard_id");
+                        j.IndexerProperty<Guid>("ProjectProjectStageId").HasColumnName("project_project_stage_id");
+                    });
+        });
+
+        modelBuilder.Entity<ProjectShareCollaboratorWizard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("project_share_collaborator_wizard_pkey");
+
+            entity.ToTable("project_share_collaborator_wizard");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccessMode).HasColumnName("access_mode");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ParentWizardId).HasColumnName("parent_wizard_id");
+            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+            entity.Property(e => e.SendInvitation).HasColumnName("send_invitation");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("project_share_collaborator_wizard_create_uid_fkey");
+
+            entity.HasOne(d => d.ParentWizard).WithMany()
+                .HasForeignKey(d => d.ParentWizardId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("project_share_collaborator_wizard_parent_wizard_id_fkey");
+
+            entity.HasOne<ResPartner>().WithMany()
+                .HasForeignKey(d => d.PartnerId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("project_share_collaborator_wizard_partner_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("project_share_collaborator_wizard_write_uid_fkey");
+        });
+
         modelBuilder.Entity<ProjectShareWizard>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("project_share_wizard_pkey");
@@ -29431,6 +33911,80 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<QuotationDocument>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("quotation_document_pkey");
+
+            entity.ToTable("quotation_document");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DocumentType).HasColumnName("document_type");
+            entity.Property(e => e.IrAttachmentId).HasColumnName("ir_attachment_id");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("quotation_document_create_uid_fkey");
+
+            entity.HasOne(d => d.IrAttachment).WithMany(p => p.QuotationDocuments)
+                .HasForeignKey(d => d.IrAttachmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("quotation_document_ir_attachment_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("quotation_document_write_uid_fkey");
+
+            entity.HasMany(d => d.SaleOrderTemplates).WithMany(p => p.QuotationDocuments)
+                .UsingEntity<Dictionary<string, object>>(
+                    "HeaderFooterQuotationTemplateRel",
+                    r => r.HasOne<SaleOrderTemplate>().WithMany()
+                        .HasForeignKey("SaleOrderTemplateId")
+                        .HasConstraintName("header_footer_quotation_template_re_sale_order_template_id_fkey"),
+                    l => l.HasOne<QuotationDocument>().WithMany()
+                        .HasForeignKey("QuotationDocumentId")
+                        .HasConstraintName("header_footer_quotation_template_rel_quotation_document_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("QuotationDocumentId", "SaleOrderTemplateId").HasName("header_footer_quotation_template_rel_pkey");
+                        j.ToTable("header_footer_quotation_template_rel");
+                        j.HasIndex(new[] { "SaleOrderTemplateId", "QuotationDocumentId" }, "header_footer_quotation_templ_sale_order_template_id_quotat_idx");
+                        j.IndexerProperty<Guid>("QuotationDocumentId").HasColumnName("quotation_document_id");
+                        j.IndexerProperty<Guid>("SaleOrderTemplateId").HasColumnName("sale_order_template_id");
+                    });
+
+            entity.HasMany(d => d.SalePdfFormFields).WithMany(p => p.QuotationDocuments)
+                .UsingEntity<Dictionary<string, object>>(
+                    "QuotationDocumentSalePdfFormFieldRel",
+                    r => r.HasOne<SalePdfFormField>().WithMany()
+                        .HasForeignKey("SalePdfFormFieldId")
+                        .HasConstraintName("quotation_document_sale_pdf_form_fi_sale_pdf_form_field_id_fkey"),
+                    l => l.HasOne<QuotationDocument>().WithMany()
+                        .HasForeignKey("QuotationDocumentId")
+                        .HasConstraintName("quotation_document_sale_pdf_form_fie_quotation_document_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("QuotationDocumentId", "SalePdfFormFieldId").HasName("quotation_document_sale_pdf_form_field_rel_pkey");
+                        j.ToTable("quotation_document_sale_pdf_form_field_rel");
+                        j.HasIndex(new[] { "SalePdfFormFieldId", "QuotationDocumentId" }, "quotation_document_sale_pdf_f_sale_pdf_form_field_id_quotat_idx");
+                        j.IndexerProperty<Guid>("QuotationDocumentId").HasColumnName("quotation_document_id");
+                        j.IndexerProperty<Guid>("SalePdfFormFieldId").HasColumnName("sale_pdf_form_field_id");
+                    });
+        });
+
         modelBuilder.Entity<RatingRating>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("rating_rating_pkey");
@@ -29648,7 +34202,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("registration_editor", tb => tb.HasComment("Edit Attendee Details on Sales Confirmation"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -29688,7 +34245,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("registration_editor_line", tb => tb.HasComment("Edit Attendee Line on Sales Confirmation"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -30731,6 +35291,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("res_company_write_uid_fkey");
 
+            entity.HasMany(d => d.AccountPaymentMethodLines).WithMany(p => p.ResCompanies)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountPaymentMethodLineResCompanyRel",
+                    r => r.HasOne<AccountPaymentMethodLine>().WithMany()
+                        .HasForeignKey("AccountPaymentMethodLineId")
+                        .HasConstraintName("account_payment_method_line_r_account_payment_method_line__fkey"),
+                    l => l.HasOne<ResCompany>().WithMany()
+                        .HasForeignKey("TenantId")
+                        .HasConstraintName("account_payment_method_line_res_company_rel_res_company_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ResCompanyId", "AccountPaymentMethodLineId").HasName("account_payment_method_line_res_company_rel_pkey");
+                        j.ToTable("account_payment_method_line_res_company_rel");
+                        j.HasIndex(new[] { "AccountPaymentMethodLineId", "ResCompanyId" }, "account_payment_method_line_r_account_payment_method_line_i_idx");
+                        j.IndexerProperty<Guid>("ResCompanyId").HasColumnName("res_company_id");
+                        j.IndexerProperty<Guid>("AccountPaymentMethodLineId").HasColumnName("account_payment_method_line_id");
+                    });
+
             /// TODO: SharedTypeEntity    
             //entity.HasMany(d => d.Users).WithMany(p => p.Cids)
             entity.HasMany<ResUser>().WithMany()
@@ -31419,6 +35997,63 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("res_currency_rate_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<ResDeviceLog>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("res_device_log_pkey");
+
+            entity.ToTable("res_device_log");
+
+            entity.HasIndex(e => new { e.UserId, e.SessionIdentifier, e.Platform, e.Browser, e.LastActivity, e.Id }, "res_device_log__composite_idx").HasFilter("(revoked = false)");
+
+            entity.HasIndex(e => e.LastActivity, "res_device_log__last_activity_index");
+
+            entity.HasIndex(e => e.SessionIdentifier, "res_device_log__session_identifier_index");
+
+            entity.HasIndex(e => e.UserId, "res_device_log__user_id_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Browser).HasColumnName("browser");
+            entity.Property(e => e.City).HasColumnName("city");
+            entity.Property(e => e.Country).HasColumnName("country");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DeviceType).HasColumnName("device_type");
+            entity.Property(e => e.FirstActivity)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("first_activity");
+            entity.Property(e => e.IpAddress).HasColumnName("ip_address");
+            entity.Property(e => e.LastActivity)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("last_activity");
+            entity.Property(e => e.Platform).HasColumnName("platform");
+            entity.Property(e => e.Revoked).HasColumnName("revoked");
+            entity.Property(e => e.SessionIdentifier).HasColumnName("session_identifier");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("res_device_log_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("res_device_log_user_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("res_device_log_write_uid_fkey");
         });
 
         modelBuilder.Entity<ResGroup>(entity =>
@@ -32638,6 +37273,90 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("resource_resource_write_uid_fkey");
         });
 
+        modelBuilder.Entity<RestaurantFloor>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("restaurant_floor_pkey");
+
+            entity.ToTable("restaurant_floor");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.BackgroundColor).HasColumnName("background_color");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("restaurant_floor_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("restaurant_floor_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<RestaurantTable>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("restaurant_table_pkey");
+
+            entity.ToTable("restaurant_table");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.Color).HasColumnName("color");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.FloorId).HasColumnName("floor_id");
+            entity.Property(e => e.Height).HasColumnName("height");
+            entity.Property(e => e.Identifier).HasColumnName("identifier");
+            entity.Property(e => e.ParentId).HasColumnName("parent_id");
+            entity.Property(e => e.PositionH).HasColumnName("position_h");
+            entity.Property(e => e.PositionV).HasColumnName("position_v");
+            entity.Property(e => e.Seats).HasColumnName("seats");
+            entity.Property(e => e.Shape).HasColumnName("shape");
+            entity.Property(e => e.TableNumber).HasColumnName("table_number");
+            entity.Property(e => e.Width).HasColumnName("width");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("restaurant_table_create_uid_fkey");
+
+            entity.HasOne(d => d.Floor).WithMany(p => p.RestaurantTables)
+                .HasForeignKey(d => d.FloorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("restaurant_table_floor_id_fkey");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
+                .HasForeignKey(d => d.ParentId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("restaurant_table_parent_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("restaurant_table_write_uid_fkey");
+        });
+
         modelBuilder.Entity<SaleAdvancePaymentInv>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("sale_advance_payment_inv_pkey");
@@ -32726,6 +37445,53 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("SaleAdvancePaymentInvId", "SaleOrderId").HasName("sale_advance_payment_inv_sale_order_rel_pkey");
                         j.ToTable("sale_advance_payment_inv_sale_order_rel");
                         j.HasIndex(new[] { "SaleOrderId", "SaleAdvancePaymentInvId" }, "sale_advance_payment_inv_sale_sale_order_id_sale_advance_pa_idx");
+                    });
+        });
+
+        modelBuilder.Entity<SaleMassCancelOrder>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sale_mass_cancel_orders_pkey");
+
+            entity.ToTable("sale_mass_cancel_orders");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sale_mass_cancel_orders_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sale_mass_cancel_orders_write_uid_fkey");
+
+            entity.HasMany(d => d.SaleOrders).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "SaleOrderMassCancelWizardRel",
+                    r => r.HasOne<SaleOrder>().WithMany()
+                        .HasForeignKey("SaleOrderId")
+                        .HasConstraintName("sale_order_mass_cancel_wizard_rel_sale_order_id_fkey"),
+                    l => l.HasOne<SaleMassCancelOrder>().WithMany()
+                        .HasForeignKey("SaleMassCancelOrdersId")
+                        .HasConstraintName("sale_order_mass_cancel_wizard_r_sale_mass_cancel_orders_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SaleMassCancelOrdersId", "SaleOrderId").HasName("sale_order_mass_cancel_wizard_rel_pkey");
+                        j.ToTable("sale_order_mass_cancel_wizard_rel");
+                        j.HasIndex(new[] { "SaleOrderId", "SaleMassCancelOrdersId" }, "sale_order_mass_cancel_wizard_sale_order_id_sale_mass_cance_idx");
+                        j.IndexerProperty<Guid>("SaleMassCancelOrdersId").HasColumnName("sale_mass_cancel_orders_id");
+                        j.IndexerProperty<Guid>("SaleOrderId").HasColumnName("sale_order_id");
                     });
         });
 
@@ -33010,6 +37776,62 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("sale_order_cancel_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<SaleOrderDiscount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sale_order_discount_pkey");
+
+            entity.ToTable("sale_order_discount");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DiscountAmount).HasColumnName("discount_amount");
+            entity.Property(e => e.DiscountPercentage).HasColumnName("discount_percentage");
+            entity.Property(e => e.DiscountType).HasColumnName("discount_type");
+            entity.Property(e => e.SaleOrderId).HasColumnName("sale_order_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sale_order_discount_create_uid_fkey");
+
+            entity.HasOne(d => d.SaleOrder).WithMany(p => p.SaleOrderDiscounts)
+                .HasForeignKey(d => d.SaleOrderId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("sale_order_discount_sale_order_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sale_order_discount_write_uid_fkey");
+
+            entity.HasMany(d => d.AccountTaxes).WithMany(p => p.SaleOrderDiscounts)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountTaxSaleOrderDiscountRel",
+                    r => r.HasOne<AccountTax>().WithMany()
+                        .HasForeignKey("AccountTaxId")
+                        .HasConstraintName("account_tax_sale_order_discount_rel_account_tax_id_fkey"),
+                    l => l.HasOne<SaleOrderDiscount>().WithMany()
+                        .HasForeignKey("SaleOrderDiscountId")
+                        .HasConstraintName("account_tax_sale_order_discount_rel_sale_order_discount_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SaleOrderDiscountId", "AccountTaxId").HasName("account_tax_sale_order_discount_rel_pkey");
+                        j.ToTable("account_tax_sale_order_discount_rel");
+                        j.HasIndex(new[] { "AccountTaxId", "SaleOrderDiscountId" }, "account_tax_sale_order_discou_account_tax_id_sale_order_dis_idx");
+                        j.IndexerProperty<Guid>("SaleOrderDiscountId").HasColumnName("sale_order_discount_id");
+                        j.IndexerProperty<Guid>("AccountTaxId").HasColumnName("account_tax_id");
+                    });
         });
 
         modelBuilder.Entity<SaleOrderLine>(entity =>
@@ -33474,13 +38296,50 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("sale_payment_provider_onboarding_wizard_write_uid_fkey");
         });
 
+        modelBuilder.Entity<SalePdfFormField>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sale_pdf_form_field_pkey");
+
+            entity.ToTable("sale_pdf_form_field");
+
+            entity.HasIndex(e => new { e.Name, e.DocumentType }, "sale_pdf_form_field_unique_name_per_doc_type").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DocumentType).HasColumnName("document_type");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Path).HasColumnName("path");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sale_pdf_form_field_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sale_pdf_form_field_write_uid_fkey");
+        });
+
         modelBuilder.Entity<SlideAnswer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("slide_answer_pkey");
 
             entity.ToTable("slide_answer", tb => tb.HasComment("Slide Question's Answer"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Comment)
                 .HasComment("Comment")
                 .HasColumnType("jsonb")
@@ -33538,7 +38397,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.WebsiteId, "slide_channel_website_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken)
                 .HasComment("Security Token")
                 .HasColumnType("character varying")
@@ -33821,7 +38683,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("slide_channel_invite", tb => tb.HasComment("Channel Invitation Wizard"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Body)
                 .HasComment("Contents")
                 .HasColumnName("body");
@@ -33922,7 +38787,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.PartnerId, "slide_channel_partner_partner_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChannelId)
                 .HasComment("Channel")
                 .HasColumnName("channel_id");
@@ -33982,7 +38850,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Sequence, "slide_channel_tag_sequence_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color)
                 .HasComment("Color Index")
                 .HasColumnName("color");
@@ -34039,7 +38910,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Sequence, "slide_channel_tag_group_sequence_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -34084,7 +38958,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.SlideId, "slide_embed_slide_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CountViews)
                 .HasComment("# Views")
                 .HasColumnName("count_views");
@@ -34131,7 +39008,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("slide_question", tb => tb.HasComment("Content Quiz Question"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -34180,7 +39060,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.IsPublished, "slide_slide_is_published_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active)
                 .HasComment("Active")
                 .HasColumnName("active");
@@ -34399,7 +39282,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => new { e.SlideId, e.PartnerId }, "slide_slide_partner_slide_partner_uniq").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChannelId)
                 .HasComment("Channel")
                 .HasColumnName("channel_id");
@@ -34466,7 +39352,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("slide_slide_resource", tb => tb.HasComment("Additional resource for a particular slide"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -34524,7 +39413,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.Name, "slide_tag_slide_tag_unique").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -34553,6 +39445,114 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("slide_tag_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<SmsAccountCode>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sms_account_code_pkey");
+
+            entity.ToTable("sms_account_code");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.VerificationCode).HasColumnName("verification_code");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.SmsAccountCodes)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("sms_account_code_account_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_account_code_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_account_code_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<SmsAccountPhone>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sms_account_phone_pkey");
+
+            entity.ToTable("sms_account_phone");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.SmsAccountPhones)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("sms_account_phone_account_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_account_phone_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_account_phone_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<SmsAccountSender>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sms_account_sender_pkey");
+
+            entity.ToTable("sms_account_sender");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.SenderName).HasColumnName("sender_name");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.SmsAccountSenders)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("sms_account_sender_account_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_account_sender_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_account_sender_write_uid_fkey");
         });
 
         modelBuilder.Entity<SmsComposer>(entity =>
@@ -34876,6 +39876,50 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
         });
 
+        modelBuilder.Entity<SmsTracker>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sms_tracker_pkey");
+
+            entity.ToTable("sms_tracker");
+
+            entity.HasIndex(e => e.SmsUuid, "sms_tracker_sms_uuid_unique").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.MailNotificationId).HasColumnName("mail_notification_id");
+            entity.Property(e => e.MailingTraceId).HasColumnName("mailing_trace_id");
+            entity.Property(e => e.SmsUuid).HasColumnName("sms_uuid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_tracker_create_uid_fkey");
+
+            entity.HasOne(d => d.MailNotification).WithMany()
+                .HasForeignKey(d => d.MailNotificationId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("sms_tracker_mail_notification_id_fkey");
+
+            entity.HasOne(d => d.MailingTrace).WithMany(p => p.SmsTrackers)
+                .HasForeignKey(d => d.MailingTraceId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("sms_tracker_mailing_trace_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("sms_tracker_write_uid_fkey");
+        });
+
         modelBuilder.Entity<SnailmailConfirmInvoice>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("snailmail_confirm_invoice_pkey");
@@ -35132,6 +40176,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("spreadsheet_dashboard_write_uid_fkey");
 
+            entity.HasMany(d => d.IrModels).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "IrModelSpreadsheetDashboardRel",
+                    r => r.HasOne<IrModel>().WithMany()
+                        .HasForeignKey("IrModelId")
+                        .HasConstraintName("ir_model_spreadsheet_dashboard_rel_ir_model_id_fkey"),
+                    l => l.HasOne<SpreadsheetDashboard>().WithMany()
+                        .HasForeignKey("SpreadsheetDashboardId")
+                        .HasConstraintName("ir_model_spreadsheet_dashboard_re_spreadsheet_dashboard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SpreadsheetDashboardId", "IrModelId").HasName("ir_model_spreadsheet_dashboard_rel_pkey");
+                        j.ToTable("ir_model_spreadsheet_dashboard_rel");
+                        j.HasIndex(new[] { "IrModelId", "SpreadsheetDashboardId" }, "ir_model_spreadsheet_dashboar_ir_model_id_spreadsheet_dashb_idx");
+                        j.IndexerProperty<Guid>("SpreadsheetDashboardId").HasColumnName("spreadsheet_dashboard_id");
+                        j.IndexerProperty<Guid>("IrModelId").HasColumnName("ir_model_id");
+                    });
+
             //entity.HasMany(d => d.ResGroups).WithMany(p => p.SpreadsheetDashboards)
             entity.HasMany<ResGroup>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -35184,6 +40246,42 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("spreadsheet_dashboard_group_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<SpreadsheetDashboardShare>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("spreadsheet_dashboard_share_pkey");
+
+            entity.ToTable("spreadsheet_dashboard_share");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AccessToken).HasColumnName("access_token");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DashboardId).HasColumnName("dashboard_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("spreadsheet_dashboard_share_create_uid_fkey");
+
+            entity.HasOne(d => d.Dashboard).WithMany(p => p.SpreadsheetDashboardShares)
+                .HasForeignKey(d => d.DashboardId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("spreadsheet_dashboard_share_dashboard_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("spreadsheet_dashboard_share_write_uid_fkey");
         });
 
         modelBuilder.Entity<StockAssignSerial>(entity =>
@@ -36071,7 +41169,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("stock_move_write_uid_fkey");
-
+            /*
             //entity.HasMany(d => d.MoveDests).WithMany(p => p.MoveOrigs)
             entity.HasMany<StockMove>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -36121,6 +41219,97 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("MoveId", "RouteId").HasName("stock_route_move_pkey");
                         j.ToTable("stock_route_move");
                         j.HasIndex(new[] { "RouteId", "MoveId" }, "stock_route_move_route_id_move_id_idx");
+                    });
+            */
+            
+            entity.HasMany(d => d.AccountAnalyticLines).WithMany(p => p.StockMoves)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAnalyticLineStockMoveRel",
+                    r => r.HasOne<AccountAnalyticLine>().WithMany()
+                        .HasForeignKey("AccountAnalyticLineId")
+                        .HasConstraintName("account_analytic_line_stock_move__account_analytic_line_id_fkey"),
+                    l => l.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("StockMoveId")
+                        .HasConstraintName("account_analytic_line_stock_move_rel_stock_move_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("StockMoveId", "AccountAnalyticLineId").HasName("account_analytic_line_stock_move_rel_pkey");
+                        j.ToTable("account_analytic_line_stock_move_rel");
+                        j.HasIndex(new[] { "AccountAnalyticLineId", "StockMoveId" }, "account_analytic_line_stock_m_account_analytic_line_id_stoc_idx");
+                        j.IndexerProperty<Guid>("StockMoveId").HasColumnName("stock_move_id");
+                        j.IndexerProperty<Guid>("AccountAnalyticLineId").HasColumnName("account_analytic_line_id");
+                    });
+
+            entity.HasMany(d => d.MoveDests).WithMany(p => p.MoveOrigs)
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockMoveMoveRel",
+                    r => r.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveDestId")
+                        .HasConstraintName("stock_move_move_rel_move_dest_id_fkey"),
+                    l => l.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveOrigId")
+                        .HasConstraintName("stock_move_move_rel_move_orig_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MoveOrigId", "MoveDestId").HasName("stock_move_move_rel_pkey");
+                        j.ToTable("stock_move_move_rel");
+                        j.HasIndex(new[] { "MoveDestId", "MoveOrigId" }, "stock_move_move_rel_move_dest_id_move_orig_id_idx");
+                        j.IndexerProperty<Guid>("MoveOrigId").HasColumnName("move_orig_id");
+                        j.IndexerProperty<Guid>("MoveDestId").HasColumnName("move_dest_id");
+                    });
+
+            entity.HasMany(d => d.MoveOrigs).WithMany(p => p.MoveDests)
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockMoveMoveRel",
+                    r => r.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveOrigId")
+                        .HasConstraintName("stock_move_move_rel_move_orig_id_fkey"),
+                    l => l.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveDestId")
+                        .HasConstraintName("stock_move_move_rel_move_dest_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MoveOrigId", "MoveDestId").HasName("stock_move_move_rel_pkey");
+                        j.ToTable("stock_move_move_rel");
+                        j.HasIndex(new[] { "MoveDestId", "MoveOrigId" }, "stock_move_move_rel_move_dest_id_move_orig_id_idx");
+                        j.IndexerProperty<Guid>("MoveOrigId").HasColumnName("move_orig_id");
+                        j.IndexerProperty<Guid>("MoveDestId").HasColumnName("move_dest_id");
+                    });
+
+            entity.HasMany(d => d.Routes).WithMany(p => p.Moves)
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockRouteMove",
+                    r => r.HasOne<StockRoute>().WithMany()
+                        .HasForeignKey("RouteId")
+                        .HasConstraintName("stock_route_move_route_id_fkey"),
+                    l => l.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveId")
+                        .HasConstraintName("stock_route_move_move_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MoveId", "RouteId").HasName("stock_route_move_pkey");
+                        j.ToTable("stock_route_move");
+                        j.HasIndex(new[] { "RouteId", "MoveId" }, "stock_route_move_route_id_move_id_idx");
+                        j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                        j.IndexerProperty<Guid>("RouteId").HasColumnName("route_id");
+                    });
+
+            entity.HasMany(d => d.TemplateAttributeValues).WithMany(p => p.Moves)
+                .UsingEntity<Dictionary<string, object>>(
+                    "TemplateAttributeValueStockMoveRel",
+                    r => r.HasOne<ProductTemplateAttributeValue>().WithMany()
+                        .HasForeignKey("TemplateAttributeValueId")
+                        .HasConstraintName("template_attribute_value_stock_template_attribute_value_id_fkey"),
+                    l => l.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveId")
+                        .HasConstraintName("template_attribute_value_stock_move_rel_move_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("MoveId", "TemplateAttributeValueId").HasName("template_attribute_value_stock_move_rel_pkey");
+                        j.ToTable("template_attribute_value_stock_move_rel");
+                        j.HasIndex(new[] { "TemplateAttributeValueId", "MoveId" }, "template_attribute_value_stoc_template_attribute_value_id_m_idx");
+                        j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                        j.IndexerProperty<Guid>("TemplateAttributeValueId").HasColumnName("template_attribute_value_id");
                     });
         });
 
@@ -36983,6 +42172,66 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("stock_quant_package_write_uid_fkey");
         });
 
+        modelBuilder.Entity<StockQuantRelocate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("stock_quant_relocate_pkey");
+
+            entity.ToTable("stock_quant_relocate");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DestLocationId).HasColumnName("dest_location_id");
+            entity.Property(e => e.DestPackageId).HasColumnName("dest_package_id");
+            entity.Property(e => e.Message).HasColumnName("message");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("stock_quant_relocate_create_uid_fkey");
+
+            entity.HasOne(d => d.DestLocation).WithMany()
+                .HasForeignKey(d => d.DestLocationId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("stock_quant_relocate_dest_location_id_fkey");
+
+            entity.HasOne(d => d.DestPackage).WithMany(p => p.StockQuantRelocates)
+                .HasForeignKey(d => d.DestPackageId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("stock_quant_relocate_dest_package_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("stock_quant_relocate_write_uid_fkey");
+
+            entity.HasMany(d => d.StockQuants).WithMany(p => p.StockQuantRelocates)
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockQuantStockQuantRelocateRel",
+                    r => r.HasOne<StockQuant>().WithMany()
+                        .HasForeignKey("StockQuantId")
+                        .HasConstraintName("stock_quant_stock_quant_relocate_rel_stock_quant_id_fkey"),
+                    l => l.HasOne<StockQuantRelocate>().WithMany()
+                        .HasForeignKey("StockQuantRelocateId")
+                        .HasConstraintName("stock_quant_stock_quant_relocate_r_stock_quant_relocate_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("StockQuantRelocateId", "StockQuantId").HasName("stock_quant_stock_quant_relocate_rel_pkey");
+                        j.ToTable("stock_quant_stock_quant_relocate_rel");
+                        j.HasIndex(new[] { "StockQuantId", "StockQuantRelocateId" }, "stock_quant_stock_quant_reloc_stock_quant_id_stock_quant_re_idx");
+                        j.IndexerProperty<Guid>("StockQuantRelocateId").HasColumnName("stock_quant_relocate_id");
+                        j.IndexerProperty<Guid>("StockQuantId").HasColumnName("stock_quant_id");
+                    });
+        });
+
         modelBuilder.Entity<StockQuantityHistory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("stock_quantity_history_pkey");
@@ -37730,6 +42979,42 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("stock_scrap_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<StockScrapReasonTag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("stock_scrap_reason_tag_pkey");
+
+            entity.ToTable("stock_scrap_reason_tag");
+
+            entity.HasIndex(e => e.Name, "stock_scrap_reason_tag_name_uniq").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Color).HasColumnName("color");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("stock_scrap_reason_tag_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("stock_scrap_reason_tag_write_uid_fkey");
         });
 
         modelBuilder.Entity<StockStorageCategory>(entity =>
@@ -38623,7 +43908,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.AuthorId, "survey_invite_author_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorId)
                 .HasComment("Author")
                 .HasColumnName("author_id");
@@ -38749,7 +44037,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("survey_question", tb => tb.HasComment("Survey Question"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AnswerDate)
                 .HasComment("Correct date answer")
                 .HasColumnName("answer_date");
@@ -38927,7 +44218,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("survey_question_answer", tb => tb.HasComment("Survey Label"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AnswerScore)
                 .HasComment("Score")
                 .HasColumnName("answer_score");
@@ -38999,7 +44293,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.SessionCode, "survey_survey_session_code_unique").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessMode)
                 .HasComment("Access Mode")
                 .HasColumnType("character varying")
@@ -39168,7 +44465,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.AccessToken, "survey_user_input_unique_token").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken)
                 .HasComment("Identification token")
                 .HasColumnType("character varying")
@@ -39315,7 +44615,10 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.UserInputId, "survey_user_input_line_user_input_id_index");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AnswerIsCorrect)
                 .HasComment("Correct")
                 .HasColumnName("answer_is_correct");
@@ -39702,6 +45005,42 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("uom_uom_write_uid_fkey");
         });
 
+        modelBuilder.Entity<UpdateProductAttributeValue>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("update_product_attribute_value_pkey");
+
+            entity.ToTable("update_product_attribute_value");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.AttributeValueId).HasColumnName("attribute_value_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Mode).HasColumnName("mode");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.AttributeValue).WithMany()
+                .HasForeignKey(d => d.AttributeValueId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("update_product_attribute_value_attribute_value_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("update_product_attribute_value_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("update_product_attribute_value_write_uid_fkey");
+        });
+
         modelBuilder.Entity<UtmCampaign>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("utm_campaign_pkey");
@@ -39943,6 +45282,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("validate_account_move_write_uid_fkey");
+
+            entity.HasMany(d => d.AccountMoves).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountMoveValidateAccountMoveRel",
+                    r => r.HasOne<AccountMove>().WithMany()
+                        .HasForeignKey("AccountMoveId")
+                        .HasConstraintName("account_move_validate_account_move_rel_account_move_id_fkey"),
+                    l => l.HasOne<ValidateAccountMove>().WithMany()
+                        .HasForeignKey("ValidateAccountMoveId")
+                        .HasConstraintName("account_move_validate_account_mov_validate_account_move_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ValidateAccountMoveId", "AccountMoveId").HasName("account_move_validate_account_move_rel_pkey");
+                        j.ToTable("account_move_validate_account_move_rel");
+                        j.HasIndex(new[] { "AccountMoveId", "ValidateAccountMoveId" }, "account_move_validate_account_account_move_id_validate_acco_idx");
+                        j.IndexerProperty<Guid>("ValidateAccountMoveId").HasColumnName("validate_account_move_id");
+                        j.IndexerProperty<Guid>("AccountMoveId").HasColumnName("account_move_id");
+                    });
         });
 
         modelBuilder.Entity<WebEditorConverterTest>(entity =>
@@ -40028,16 +45385,95 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("web_tour_tour");
 
+            entity.HasIndex(e => e.Name, "web_tour_tour_uniq_name").IsUnique();
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Custom).HasColumnName("custom");
             entity.Property(e => e.Name).HasColumnName("name");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.RainbowManMessage)
+                .HasColumnType("jsonb")
+                .HasColumnName("rainbow_man_message");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.Url).HasColumnName("url");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
             entity.HasOne<ResUser>().WithMany()
-                .HasForeignKey(d => d.UserId)
+                .HasForeignKey(d => d.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("web_tour_tour_user_id_fkey");
+                .HasConstraintName("web_tour_tour_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("web_tour_tour_write_uid_fkey");
+
+            entity.HasMany(d => d.ResUsers).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ResUsersWebTourTourRel",
+                    r => r.HasOne<ResUser>().WithMany()
+                        .HasForeignKey("ResUsersId")
+                        .HasConstraintName("res_users_web_tour_tour_rel_res_users_id_fkey"),
+                    l => l.HasOne<WebTourTour>().WithMany()
+                        .HasForeignKey("WebTourTourId")
+                        .HasConstraintName("res_users_web_tour_tour_rel_web_tour_tour_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("WebTourTourId", "ResUsersId").HasName("res_users_web_tour_tour_rel_pkey");
+                        j.ToTable("res_users_web_tour_tour_rel");
+                        j.HasIndex(new[] { "ResUsersId", "WebTourTourId" }, "res_users_web_tour_tour_rel_res_users_id_web_tour_tour_id_idx");
+                        j.IndexerProperty<Guid>("WebTourTourId").HasColumnName("web_tour_tour_id");
+                        j.IndexerProperty<Guid>("ResUsersId").HasColumnName("res_users_id");
+                    });
+        });
+
+        modelBuilder.Entity<WebTourTourStep>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("web_tour_tour_step_pkey");
+
+            entity.ToTable("web_tour_tour_step");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Run).HasColumnName("run");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.TourId).HasColumnName("tour_id");
+            entity.Property(e => e.Trigger).HasColumnName("trigger");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("web_tour_tour_step_create_uid_fkey");
+
+            entity.HasOne(d => d.Tour).WithMany(p => p.WebTourTourSteps)
+                .HasForeignKey(d => d.TourId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("web_tour_tour_step_tour_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("web_tour_tour_step_write_uid_fkey");
         });
 
         modelBuilder.Entity<Website>(entity =>
@@ -40284,13 +45720,104 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("website_configurator_feature_write_uid_fkey");
         });
 
+        modelBuilder.Entity<WebsiteControllerPage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("website_controller_page_pkey");
+
+            entity.ToTable("website_controller_page");
+
+            entity.HasIndex(e => e.IsPublished, "website_controller_page__is_published_index");
+
+            entity.HasIndex(e => e.WebsiteId, "website_controller_page__website_id_index");
+
+            entity.HasIndex(e => e.NameSlugified, "website_controller_page_unique_name_slugified").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DefaultLayout).HasColumnName("default_layout");
+            entity.Property(e => e.IsPublished).HasColumnName("is_published");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.NameSlugified).HasColumnName("name_slugified");
+            entity.Property(e => e.RecordDomain).HasColumnName("record_domain");
+            entity.Property(e => e.RecordViewId).HasColumnName("record_view_id");
+            entity.Property(e => e.ViewId).HasColumnName("view_id");
+            entity.Property(e => e.WebsiteId).HasColumnName("website_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_controller_page_create_uid_fkey");
+
+            entity.HasOne(d => d.RecordView).WithMany(p => p.WebsiteControllerPageRecordViews)
+                .HasForeignKey(d => d.RecordViewId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("website_controller_page_record_view_id_fkey");
+
+            entity.HasOne(d => d.View).WithMany(p => p.WebsiteControllerPageViews)
+                .HasForeignKey(d => d.ViewId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("website_controller_page_view_id_fkey");
+
+            entity.HasOne(d => d.Website).WithMany(p => p.WebsiteControllerPages)
+                .HasForeignKey(d => d.WebsiteId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("website_controller_page_website_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_controller_page_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<WebsiteCustomBlockedThirdPartyDomain>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("website_custom_blocked_third_party_domains_pkey");
+
+            entity.ToTable("website_custom_blocked_third_party_domains");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_custom_blocked_third_party_domains_create_uid_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_custom_blocked_third_party_domains_write_uid_fkey");
+        });
+
         modelBuilder.Entity<WebsiteEventMenu>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("website_event_menu_pkey");
 
             entity.ToTable("website_event_menu", tb => tb.HasComment("Website Event Menu"));
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasComment("Created on")
                 .HasColumnType("timestamp without time zone")
@@ -40474,6 +46001,85 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("website_page_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<WebsitePagePropertiesBase>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("website_page_properties_base_pkey");
+
+            entity.ToTable("website_page_properties_base");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.TargetModelId).HasColumnName("target_model_id");
+            entity.Property(e => e.Url).HasColumnName("url");
+            entity.Property(e => e.WebsiteId).HasColumnName("website_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_page_properties_base_create_uid_fkey");
+
+            entity.HasOne(d => d.Website).WithMany(p => p.WebsitePagePropertiesBases)
+                .HasForeignKey(d => d.WebsiteId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("website_page_properties_base_website_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_page_properties_base_write_uid_fkey");
+        });
+
+        modelBuilder.Entity<WebsitePageProperty>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("website_page_properties_pkey");
+
+            entity.ToTable("website_page_properties");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.OldUrl).HasColumnName("old_url");
+            entity.Property(e => e.TargetModelId).HasColumnName("target_model_id");
+            entity.Property(e => e.WebsiteId).HasColumnName("website_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_page_properties_create_uid_fkey");
+
+            entity.HasOne(d => d.TargetModel).WithMany(p => p.WebsitePageProperties)
+                .HasForeignKey(d => d.TargetModelId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_page_properties_target_model_id_fkey");
+
+            entity.HasOne(d => d.Website).WithMany(p => p.WebsitePageProperties)
+                .HasForeignKey(d => d.WebsiteId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("website_page_properties_website_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("website_page_properties_write_uid_fkey");
         });
 
         modelBuilder.Entity<WebsiteRewrite>(entity =>

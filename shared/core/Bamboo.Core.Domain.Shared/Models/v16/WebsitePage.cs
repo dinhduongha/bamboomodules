@@ -102,6 +102,10 @@ public partial class WebsitePage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } = new List<WebsiteMenu>();
 
+    //[InverseProperty("TargetModel")]
+    [NotMapped]
+    public virtual ICollection<WebsitePageProperty> WebsitePageProperties { get; set; } = new List<WebsitePageProperty>();
+
     //[InverseProperty("Page")]
     [NotMapped]
     public virtual ICollection<WebsiteTrack> WebsiteTracks { get; set; } = new List<WebsiteTrack>();

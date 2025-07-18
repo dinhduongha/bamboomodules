@@ -35,6 +35,7 @@ public partial class SpreadsheetDashboard: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("sample_dashboard_file_path")]
     public string? SampleDashboardFilePath { get; set; }
 
+    // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }

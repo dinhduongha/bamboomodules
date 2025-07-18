@@ -80,6 +80,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("layout_background")]
     public string? LayoutBackground { get; set; }
 
+    // v16-Compat json
     [Column("report_header", TypeName = "jsonb")]
     public string? ReportHeader { get; set; }
 
@@ -581,7 +582,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
 
     [Column("lunch_minimum_threshold")]
     public double? LunchMinimumThreshold { get; set; }
-    
+
     // v16-Compat
     [Column("overtime_start_date")]
     public DateTime? OvertimeStartDate { get; set; }
@@ -844,6 +845,11 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     //[InverseProperty("ResCompanyWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("ResCompanyId")]
+    //[InverseProperty("ResCompanies")]
+    [NotMapped]
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } = new List<AccountPaymentMethodLine>();
 
     /// TODO: DISABLE INVERSE
     //[InverseProperty("Company")]

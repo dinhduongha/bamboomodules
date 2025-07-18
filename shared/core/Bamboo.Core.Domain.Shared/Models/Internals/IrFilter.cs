@@ -43,6 +43,7 @@ public partial class IrFilter: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("name")]
     public string? Name { get; set; }
 
+    // v16-Compat data: text => character varying
     [Column("sort")]
     public string? Sort { get; set; }
 

@@ -91,18 +91,17 @@ public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } = new List<AccountBalanceReport>();
-
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
-
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAccounts { get; set; } = new List<AccountAnalyticLine>();
+
+    //[InverseProperty("XPlan2")]
+    [NotMapped]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2s { get; set; } = new List<AccountAnalyticLine>();
+
+    //[InverseProperty("XPlan3")]
+    [NotMapped]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3s { get; set; } = new List<AccountAnalyticLine>();
 
     //[InverseProperty("AccountAnalytic")]
     [NotMapped]
@@ -112,26 +111,22 @@ public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto
     [NotMapped]
     public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } = new List<AccountAssetCategory>();
 
-    //[InverseProperty("AnalyticAccount")]
+    //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } = new List<CrossoveredBudgetLine>();
-    
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
 
-    //[InverseProperty("CostsHourAccount")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } = new List<MrpWorkcenter>();
+    //[InverseProperty("AccountAnalytic")]
+    //[NotMapped]
+    //public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
 
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    //[InverseProperty("AccountAnalytic")]
+    //[NotMapped]
+    //public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } = new List<AccountAssetCategory>();
 
-    //[InverseProperty("AnalyticAccount")]
+    [ForeignKey("AccountAnalyticAccountId")]
+    //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
-
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } = new List<AccountBalanceReport>();
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
@@ -142,4 +137,51 @@ public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto
     //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
     public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } = new List<AccountReportGeneralLedger>();
+
+    //[InverseProperty("AnalyticAccount")]
+    [NotMapped]
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } = new List<CrossoveredBudgetLine>();
+
+
+    //[InverseProperty("AnalyticAccount")]
+    [NotMapped]
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+
+    //[InverseProperty("Account")]
+    [NotMapped]
+    public virtual ICollection<ProjectProject> ProjectProjectAccounts { get; set; } = new List<ProjectProject>();
+
+    //[InverseProperty("XPlan2")]
+    [NotMapped]
+    public virtual ICollection<ProjectProject> ProjectProjectXPlan2s { get; set; } = new List<ProjectProject>();
+
+    //[InverseProperty("XPlan3")]
+    [NotMapped]
+    public virtual ICollection<ProjectProject> ProjectProjectXPlan3s { get; set; } = new List<ProjectProject>();
+
+
+    //[InverseProperty("AnalyticAccount")]
+    [NotMapped]
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+
+    [ForeignKey("AccountAnalyticAccountId")]
+    //[InverseProperty("AccountAnalyticAccounts")]
+    [NotMapped]
+    public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
+
+    //[InverseProperty("AnalyticAccount")]
+    [NotMapped]
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+
+    [ForeignKey("AccountAnalyticAccountId")]
+    //[InverseProperty("AccountAnalyticAccounts")]
+    //[InverseProperty("AnalyticAccount")]
+    [NotMapped]
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+
+    [ForeignKey("AccountAnalyticAccountId")]
+    //[InverseProperty("AccountAnalyticAccounts")]
+    //[InverseProperty("CostsHourAccount")]
+    [NotMapped]
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } = new List<MrpWorkcenter>();
 }

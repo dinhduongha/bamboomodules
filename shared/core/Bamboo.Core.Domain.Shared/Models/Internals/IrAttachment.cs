@@ -92,14 +92,6 @@ public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("key")]
     public string? Key { get; set; }
 
-    //[InverseProperty("MessageMainAttachment")]
-    // [NotMapped]
-    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
-
-    //[InverseProperty("MessageMainAttachment")]
-    // [NotMapped]
-    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
-
     [ForeignKey("TenantId")]
     //[InverseProperty("IrAttachments")]
     [NotMapped]
@@ -110,9 +102,38 @@ public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    //[InverseProperty("Attachment")]
+    [ForeignKey("OriginalId")]
+    //[InverseProperty("InverseOriginal")]
     [NotMapped]
-    public virtual ICollection<DiscussVoiceMetadatum> DiscussVoiceMetadata { get; set; } = new List<DiscussVoiceMetadatum>();
+    public virtual IrAttachment? Original { get; set; }
+
+    [ForeignKey("ThemeTemplateId")]
+    //[InverseProperty("IrAttachments")]
+    [NotMapped]
+    public virtual ThemeIrAttachment? ThemeTemplate { get; set; }
+
+    [ForeignKey("WebsiteId")]
+    //[InverseProperty("IrAttachments")]
+    [NotMapped]
+    public virtual Website? Website { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrAttachmentWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
+
+    //[InverseProperty("MessageMainAttachment")]
+    // [NotMapped]
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+
+    //[InverseProperty("MessageMainAttachment")]
+    // [NotMapped]
+    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+
+    //[InverseProperty("Attachment")]
+    //[NotMapped]
+    //public virtual ICollection<DiscussVoiceMetadatum> DiscussVoiceMetadata { get; set; } = new List<DiscussVoiceMetadatum>();
 
     //[InverseProperty("MessageMainAttachment")]
     [NotMapped]
@@ -149,6 +170,10 @@ public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("MessageMainAttachment")]
     [NotMapped]
     public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+
+    //[InverseProperty("Attachment")]
+    [NotMapped]
+    public virtual ICollection<DiscussVoiceMetadatum> DiscussVoiceMetadata { get; set; } = new List<DiscussVoiceMetadatum>();
 
     //[InverseProperty("MessageMainAttachment")]
     [NotMapped]
@@ -234,29 +259,9 @@ public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ICollection<IrAttachment> InverseOriginal { get; set; } = new List<IrAttachment>();
 
-    [ForeignKey("OriginalId")]
-    //[InverseProperty("InverseOriginal")]
-    [NotMapped]
-    public virtual IrAttachment? Original { get; set; }
-
     //[InverseProperty("Attachment")]
     [NotMapped]
     public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
-
-    [ForeignKey("ThemeTemplateId")]
-    //[InverseProperty("IrAttachments")]
-    [NotMapped]
-    public virtual ThemeIrAttachment? ThemeTemplate { get; set; }
-
-    [ForeignKey("WebsiteId")]
-    //[InverseProperty("IrAttachments")]
-    [NotMapped]
-    public virtual Website? Website { get; set; }
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrAttachmentWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 
     [ForeignKey("IrAttachmentId")]
     //[InverseProperty("IrAttachments")]
@@ -272,7 +277,6 @@ public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("Attachments")]
     [NotMapped]
     public virtual ICollection<MailMessage> Messages { get; set; } = new List<MailMessage>();
-
 
     //[InverseProperty("MessageMainAttachment")]
     [NotMapped]

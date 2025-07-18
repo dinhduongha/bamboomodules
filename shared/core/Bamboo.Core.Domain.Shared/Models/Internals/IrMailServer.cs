@@ -92,6 +92,11 @@ public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrMailServerWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     //[InverseProperty("MailServer")]
     [NotMapped]
     public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
@@ -116,8 +121,4 @@ public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ICollection<SurveyInvite> SurveyInvites { get; set; } = new List<SurveyInvite>();
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrMailServerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 }

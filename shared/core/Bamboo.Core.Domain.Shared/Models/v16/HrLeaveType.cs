@@ -153,4 +153,9 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [NotMapped]
     public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
 
+    [ForeignKey("HrLeaveTypeId")]
+    //[InverseProperty("HrLeaveTypes")]
+    [NotMapped]
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+
 }

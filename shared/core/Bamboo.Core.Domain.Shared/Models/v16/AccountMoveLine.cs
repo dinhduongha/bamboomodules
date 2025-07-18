@@ -117,6 +117,9 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("date")]
     public DateTime? Date { get; set; }
 
+    [Column("invoice_date")]
+    public DateTime? InvoiceDate { get; set; }
+
     [Column("date_maturity")]
     public DateTime? DateMaturity { get; set; }
 

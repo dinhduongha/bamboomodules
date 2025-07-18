@@ -153,12 +153,12 @@ public partial class DeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [NotMapped]
     public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
 
-    [ForeignKey("DeliveryCarrierId")]
+    //[ForeignKey("DeliveryCarrierId")]
     //[InverseProperty("DeliveryCarriers")]
     [NotMapped]
     public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
 
-    [ForeignKey("DeliveryCarrierId")]
+    //[ForeignKey("DeliveryCarrierId")]
     //[InverseProperty("DeliveryCarriersNavigation")]
     [NotMapped]
     public virtual ICollection<ProductTag> ProductTagsNavigation { get; set; } = new List<ProductTag>();

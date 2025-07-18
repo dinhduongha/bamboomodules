@@ -118,6 +118,21 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual IrUiView? Inherit { get; set; }
 
+    [ForeignKey("ThemeTemplateId")]
+    //[InverseProperty("IrUiViews")]
+    [NotMapped]
+    public virtual ThemeIrUiView? ThemeTemplate { get; set; }
+
+    [ForeignKey("WebsiteId")]
+    //[InverseProperty("IrUiViews")]
+    [NotMapped]
+    public virtual Website? Website { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrUiViewWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     //[InverseProperty("Inherit")]
     [NotMapped]
     public virtual ICollection<IrUiView> InverseInherit { get; set; } = new List<IrUiView>();
@@ -174,16 +189,6 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardViews { get; set; } = new List<ResetViewArchWizard>();
 
-    [ForeignKey("ThemeTemplateId")]
-    //[InverseProperty("IrUiViews")]
-    [NotMapped]
-    public virtual ThemeIrUiView? ThemeTemplate { get; set; }
-
-    [ForeignKey("WebsiteId")]
-    //[InverseProperty("IrUiViews")]
-    [NotMapped]
-    public virtual Website? Website { get; set; }
-
     //[InverseProperty("PageView")]
     [NotMapped]
     public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; set; } = new List<WebsiteConfiguratorFeature>();
@@ -203,11 +208,6 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("View")]
     [NotMapped]
     public virtual ICollection<WebsitePage> WebsitePages { get; set; } = new List<WebsitePage>();
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrUiViewWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 
     [ForeignKey("ViewId")]
     //[InverseProperty("Views")]

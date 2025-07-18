@@ -42,10 +42,12 @@ public partial class HrResumeLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("date_end")]
     public DateTime? DateEnd { get; set; }
 
+    // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    // v16-Compat json
     //[Column("description")]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }

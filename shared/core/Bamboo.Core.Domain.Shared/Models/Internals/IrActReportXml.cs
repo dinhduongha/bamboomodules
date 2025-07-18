@@ -87,10 +87,6 @@ public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("is_invoice_report")]
     public bool? IsInvoiceReport { get; set; }
 
-    //[InverseProperty("PdfReport")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizards { get; set; } = new List<AccountMoveSendWizard>();
-
     [ForeignKey("BindingModelId")]
     //[InverseProperty("IrActReportXmls")]
     [NotMapped]
@@ -101,15 +97,19 @@ public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    // TODO: v16-Compat
-    //[InverseProperty("ReportTemplateNavigation")]
-    [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
-
     [ForeignKey("PaperformatId")]
     //[InverseProperty("IrActReportXmls")]
     [NotMapped]
     public virtual ReportPaperformat? Paperformat { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrActReportXmlWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
+    //[InverseProperty("PdfReport")]
+    [NotMapped]
+    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizards { get; set; } = new List<AccountMoveSendWizard>();
 
     //[InverseProperty("InvoiceTemplatePdfReport")]
     [NotMapped]
@@ -119,18 +119,18 @@ public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrActReportXmlWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
     [ForeignKey("Uid")]
     //[InverseProperty("Uids")]
     [NotMapped]
     public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
 
-    // [ForeignKey("IrActionsReportId")]
-    // //[InverseProperty("IrActionsReports")]
-    // [NotMapped]
-    // public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    // TODO: v16-Compat
+    //[InverseProperty("ReportTemplateNavigation")]
+    //[NotMapped]
+    //public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
+
+    [ForeignKey("IrActionsReportId")]
+    //[InverseProperty("IrActionsReports")]
+    [NotMapped]
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
 }

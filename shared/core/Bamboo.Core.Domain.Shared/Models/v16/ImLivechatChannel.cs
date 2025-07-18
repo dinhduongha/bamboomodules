@@ -42,12 +42,15 @@ public partial class ImLivechatChannel: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("button_text_color")]
     public string? ButtonTextColor { get; set; }
 
+    // v16-Compat json
     [Column("button_text", TypeName = "jsonb")]
     public string? ButtonText { get; set; }
 
+    // v16-Compat json
     [Column("default_message", TypeName = "jsonb")]
     public string? DefaultMessage { get; set; }
 
+    // v16-Compat json
     [Column("input_placeholder", TypeName = "jsonb")]
     public string? InputPlaceholder { get; set; }
 

@@ -135,6 +135,11 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrModuleModuleWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     //[InverseProperty("Module")]
     [NotMapped]
     public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } = new List<IrDemoFailure>();
@@ -166,11 +171,6 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("Theme")]
     [NotMapped]
     public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModuleModuleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 
     [ForeignKey("ModuleId")]
     //[InverseProperty("Modules")]

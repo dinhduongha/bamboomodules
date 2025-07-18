@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_template")]
 //[Index("Model", Name = "mail_template_model_index")]
-public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -220,4 +220,10 @@ public partial class MailTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     //[InverseProperty("MailTemplates")]
     [NotMapped]
     public virtual ICollection<MailTemplateReset> MailTemplateResets { get; set; } = new List<MailTemplateReset>();
+
+    [ForeignKey("MailTemplateId")]
+    //[InverseProperty("MailTemplates")]
+    [NotMapped]
+    public virtual ICollection<IrActReportXml> IrActionsReports { get; set; } = new List<IrActReportXml>();
+
 }

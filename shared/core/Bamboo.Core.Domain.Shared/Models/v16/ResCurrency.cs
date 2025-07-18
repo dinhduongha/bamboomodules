@@ -45,12 +45,12 @@ public partial class ResCurrency: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMo
     [Column("position")]
     public string? Position { get; set; }
 
-    // v16-Compat
+    // v16-Compat json
     //[Column("currency_unit_label")]
     [Column("currency_unit_label", TypeName = "jsonb")]
     public string? CurrencyUnitLabel { get; set; }
 
-    // v16-Compat
+    // v16-Compat json
     //[Column("currency_subunit_label")]
     [Column("currency_subunit_label", TypeName = "jsonb")]
     public string? CurrencySubunitLabel { get; set; }

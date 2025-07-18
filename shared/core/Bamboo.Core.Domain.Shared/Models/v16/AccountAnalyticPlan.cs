@@ -42,11 +42,13 @@ public partial class AccountAnalyticPlan: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("complete_name")]
     public string? CompleteName { get; set; }
 
-    // v16-Compat [Column("name")]
+    // v16-Compat json
+    //[Column("name")]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat [Column("default_applicability")]
+    // v16-Compat json
+    //[Column("default_applicability")]
     [Column("default_applicability", TypeName = "jsonb")]
     public string? DefaultApplicability { get; set; }
 
@@ -65,6 +67,20 @@ public partial class AccountAnalyticPlan: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
 
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("AccountAnalyticPlanCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("ParentId")]
+    //[InverseProperty("InverseParent")]
+    [NotMapped]
+    public virtual AccountAnalyticPlan? Parent { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("AccountAnalyticPlanWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
     //[InverseProperty("Plan")]
     [NotMapped]
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountPlans { get; set; } = new List<AccountAnalyticAccount>();
@@ -82,22 +98,8 @@ public partial class AccountAnalyticPlan: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
   
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAnalyticPlanCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
-
     //[InverseProperty("Parent")]
     [NotMapped]
     public virtual ICollection<AccountAnalyticPlan> InverseParent { get; set; } = new List<AccountAnalyticPlan>();
 
-    [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
-    public virtual AccountAnalyticPlan? Parent { get; set; }
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAnalyticPlanWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 }

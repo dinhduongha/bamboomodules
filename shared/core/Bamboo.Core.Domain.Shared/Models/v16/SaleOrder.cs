@@ -385,6 +385,10 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; set; } = new List<SaleOrderCancel>();
 
+    //[InverseProperty("SaleOrder")]
+    [NotMapped]
+    public virtual ICollection<SaleOrderDiscount> SaleOrderDiscounts { get; set; } = new List<SaleOrderDiscount>();
+
     //[InverseProperty("Order")]
     [NotMapped]
     public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();

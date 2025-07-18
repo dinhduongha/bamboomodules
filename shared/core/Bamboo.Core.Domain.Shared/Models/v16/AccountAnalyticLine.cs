@@ -137,6 +137,7 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResPartner? Partner { get; set; }
 
+    // v16-Compat
     [ForeignKey("PlanId")]
     //[InverseProperty("AccountAnalyticLines")]
     [NotMapped]
@@ -167,16 +168,38 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    [ForeignKey("XPlan2Id")]
+    //[InverseProperty("AccountAnalyticLineXPlan2s")]
+    [NotMapped]
+    public virtual AccountAnalyticAccount? XPlan2 { get; set; }
+
+    [ForeignKey("XPlan3Id")]
+    //[InverseProperty("AccountAnalyticLineXPlan3s")]
+    [NotMapped]
+    public virtual AccountAnalyticAccount? XPlan3 { get; set; }
+
+    // v16-Compat
     //[InverseProperty("MoAnalyticAccountLine")]
     [NotMapped]
     public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLines { get; set; } = new List<MrpWorkorder>();
 
+    // v16-Compat
     //[InverseProperty("WcAnalyticAccountLine")]
     [NotMapped]
     public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLines { get; set; } = new List<MrpWorkorder>();
 
+    [ForeignKey("AccountAnalyticLineId")]
+    //[InverseProperty("AccountAnalyticLines")]
+    [NotMapped]
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
+
+    [ForeignKey("AccountAnalyticLineId")]
+    //[InverseProperty("AccountAnalyticLinesNavigation")]
+    [NotMapped]
+    public virtual ICollection<MrpWorkorder> MrpWorkordersNavigation { get; set; } = new List<MrpWorkorder>();
+
+    [ForeignKey("AccountAnalyticLineId")]
     //[InverseProperty("AnalyticAccountLine")]
     [NotMapped]
     public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
-
 }

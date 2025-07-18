@@ -21,7 +21,7 @@ namespace Bamboo.Core.Models;
 //[Index("ProductId", Name = "stock_move_product_id_index")]
 //[Index("ProductId", "LocationId", "LocationDestId", "TenantId", "State", Name = "stock_move_product_location_index")]
 //[Index("State", Name = "stock_move_state_index")]
-public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -131,7 +131,7 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("picked")]
     public bool? Picked { get; set; }
-    
+
     // v16-Compat
     [Column("quantity_done")]
     public decimal? QuantityDone { get; set; }
@@ -456,4 +456,16 @@ public partial class StockMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     //[InverseProperty("Moves")]
     [NotMapped]
     public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+
+    [ForeignKey("StockMoveId")]
+    //[InverseProperty("StockMoves")]
+    [NotMapped]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+
+
+    [ForeignKey("MoveId")]
+    //[InverseProperty("Moves")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+
 }

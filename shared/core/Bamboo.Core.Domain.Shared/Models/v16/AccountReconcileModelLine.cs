@@ -38,6 +38,7 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat json
     //[Column("label")]
     [Column("label", TypeName = "jsonb")]
     public string? Label { get; set; }

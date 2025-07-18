@@ -364,7 +364,19 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Website")]
     [NotMapped]
+    public virtual ICollection<WebsiteControllerPage> WebsiteControllerPages { get; set; } = new List<WebsiteControllerPage>();
+
+    //[InverseProperty("Website")]
+    [NotMapped]
     public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } = new List<WebsiteMenu>();
+
+    //[InverseProperty("Website")]
+    [NotMapped]
+    public virtual ICollection<WebsitePageProperty> WebsitePageProperties { get; set; } = new List<WebsitePageProperty>();
+
+    //[InverseProperty("Website")]
+    [NotMapped]
+    public virtual ICollection<WebsitePagePropertiesBase> WebsitePagePropertiesBases { get; set; } = new List<WebsitePagePropertiesBase>();
 
     //[InverseProperty("Website")]
     [NotMapped]

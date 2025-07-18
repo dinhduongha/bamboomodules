@@ -72,6 +72,11 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrSequenceWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     //[InverseProperty("Sequence")]
     [NotMapped]
     public virtual ICollection<IrSequenceDateRange> IrSequenceDateRanges { get; set; } = new List<IrSequenceDateRange>();
@@ -98,8 +103,4 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [NotMapped]
     public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } = new List<StockPickingType>();
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrSequenceWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 }

@@ -11,6 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_account")]
+//[Index("AccountType", Name = "account_account__account_type_index")]
 //[Index("Code", "TenantId", Name = "account_account_code_company_uniq", IsUnique = true)]
 public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -48,8 +49,9 @@ public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    [Column("code")]
+    // v16-Compat json
+    //[Column("code")]
+    [Column("code_store", TypeName = "jsonb")]
     public string? Code { get; set; }
 
     [Column("code_store", TypeName = "jsonb")]
@@ -91,13 +93,11 @@ public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
 
-    // v16-Compat
     [ForeignKey("CreatorId")]
     //[InverseProperty("AccountAccountCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    // v16-Compat
     [ForeignKey("CurrencyId")]
     //[InverseProperty("AccountAccounts")]
     [NotMapped]
@@ -115,16 +115,11 @@ public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    // v16-Compat
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountAccountWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("Account")]
-    [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
 
     //[InverseProperty("Account")]
     [NotMapped]
@@ -226,19 +221,9 @@ public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
 
-    // [ForeignKey("CreatorId")]
-    // //[InverseProperty("AccountAccountCreateUs")]
-    // [NotMapped]
-    // public virtual ResUser? CreateU { get; set; }
-
-    // [ForeignKey("CurrencyId")]
-    // //[InverseProperty("AccountAccounts")]
-    // [NotMapped]
-    // public virtual ResCurrency? Currency { get; set; }
-
-    // //[InverseProperty("Account")]
-    // [NotMapped]
-    // public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
+    //[InverseProperty("Account")]
+    [NotMapped]
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
 
     //[InverseProperty("Account")]
     [NotMapped]
@@ -370,7 +355,6 @@ public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     //[InverseProperty("Account")]
     [NotMapped]
     public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluations { get; set; } = new List<StockValuationLayerRevaluation>();
-
 
     [ForeignKey("AccountAccountId")]
     //[InverseProperty("AccountAccounts")]

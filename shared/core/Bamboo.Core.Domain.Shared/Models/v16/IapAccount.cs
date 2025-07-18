@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("iap_account")]
-public partial class IapAccount: Entity<Guid>, IEntityDto<Guid>
+public partial class IapAccount : Entity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -91,4 +91,9 @@ public partial class IapAccount: Entity<Guid>, IEntityDto<Guid>
     //[InverseProperty("IapAccounts")]
     [NotMapped]
     public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    
+    [ForeignKey("IapAccountId")]
+    //[InverseProperty("IapAccounts")]
+    [NotMapped]
+    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
 }

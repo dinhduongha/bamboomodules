@@ -175,4 +175,14 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual ICollection<AccountReport> InverseRootReport { get; set; } = new List<AccountReport>();
 
+    [ForeignKey("SubReportId")]
+    //[InverseProperty("SubReports")]
+    [NotMapped]
+    public virtual ICollection<AccountReport> MainReports { get; set; } = new List<AccountReport>();
+
+    [ForeignKey("MainReportId")]
+    //[InverseProperty("MainReports")]
+    [NotMapped]
+    public virtual ICollection<AccountReport> SubReports { get; set; } = new List<AccountReport>();
+
 }

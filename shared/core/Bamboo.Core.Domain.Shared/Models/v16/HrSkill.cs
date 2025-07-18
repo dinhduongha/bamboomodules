@@ -32,6 +32,7 @@ public partial class HrSkill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -82,4 +83,9 @@ public partial class HrSkill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     //[InverseProperty("HrSkills")]
     [NotMapped]
     public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+
+    [ForeignKey("HrSkillId")]
+    //[InverseProperty("HrSkills")]
+    [NotMapped]
+    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
 }

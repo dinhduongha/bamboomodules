@@ -64,6 +64,12 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("address_home_id")]
     public Guid? AddressHomeId { get; set; }
 
+    [Column("private_state_id")]
+    public Guid? PrivateStateId { get; set; }
+
+    [Column("private_country_id")]
+    public Guid? PrivateCountryId { get; set; } 
+
     [Column("country_id")]
     public Guid? CountryId { get; set; }
 
@@ -270,10 +276,15 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("mobility_card")]
     public string? MobilityCard { get; set; }
-
-    //[InverseProperty("Employee")]
+    [ForeignKey("PrivateCountryId")]
+    //[InverseProperty("HrEmployeePrivateCountries")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ResCountry? PrivateCountry { get; set; }
+
+    [ForeignKey("PrivateStateId")]
+    //[InverseProperty("HrEmployees")]
+    [NotMapped]
+    public virtual ResCountryState? PrivateState { get; set; }
 
     [ForeignKey("AddressId")]
     //[InverseProperty("HrEmployeeAddresses")]
@@ -389,6 +400,10 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     //[InverseProperty("HrEmployeeWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    //[InverseProperty("Employee")]
+    [NotMapped]
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
 
     //[InverseProperty("DriverEmployee")]
     [NotMapped]

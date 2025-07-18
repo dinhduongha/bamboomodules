@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_compose_message")]
-public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -210,4 +210,10 @@ public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Gui
     //[InverseProperty("Wizards")]
     [NotMapped]
     public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
+    
+    [ForeignKey("MailComposeMessageId")]
+    //[InverseProperty("MailComposeMessages")]
+    [NotMapped]
+    public virtual ICollection<MailingList> MailingLists { get; set; } = new List<MailingList>();
+
 }

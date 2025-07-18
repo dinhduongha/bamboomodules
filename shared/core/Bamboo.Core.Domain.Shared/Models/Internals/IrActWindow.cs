@@ -90,10 +90,6 @@ public partial class IrActWindow: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("filter")]
     public bool? Filter { get; set; }
 
-    //[InverseProperty("CustomAuditAction")]
-    // [NotMapped]
-    // public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } = new List<AccountReportColumn>();
-
     [ForeignKey("BindingModelId")]
     //[InverseProperty("IrActWindows")]
     [NotMapped]
@@ -104,30 +100,38 @@ public partial class IrActWindow: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    // v16-Compat
+    //[InverseProperty("CustomAuditAction")]
+    [NotMapped]
+    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } = new List<AccountReportColumn>();
+
     //[InverseProperty("Action")]
     [NotMapped]
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } = new List<GamificationGoalDefinition>();
 
+    // v16-Compat
     //[InverseProperty("ActWindow")]
-    // [NotMapped]
-    // public virtual ICollection<IrActWindowView> IrActWindowViews { get; set; } = new List<IrActWindowView>();
+    [NotMapped]
+    public virtual ICollection<IrActWindowView> IrActWindowViews { get; set; } = new List<IrActWindowView>();
 
     //[InverseProperty("ParentAction")]
     [NotMapped]
     public virtual ICollection<IrEmbeddedAction> IrEmbeddedActions { get; set; } = new List<IrEmbeddedAction>();
 
+    // v16-Compat
     //[InverseProperty("RefIrActWindowNavigation")]
-    // [NotMapped]
-    // public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    [NotMapped]
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
 
     [ForeignKey("SearchViewId")]
     //[InverseProperty("IrActWindowSearchViews")]
     [NotMapped]
     public virtual IrUiView? SearchView { get; set; }
 
+    // v16-Compat
     //[InverseProperty("SidebarAction")]
-    // [NotMapped]
-    // public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
+    [NotMapped]
+    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
 
     [ForeignKey("ViewId")]
     //[InverseProperty("IrActWindowViews")]
@@ -138,26 +142,6 @@ public partial class IrActWindow: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("IrActWindowWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    // v16-Compat
-    //[InverseProperty("CustomAuditAction")]
-    [NotMapped]
-    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; } = new List<AccountReportColumn>();
-
-    // v16-Compat
-    //[InverseProperty("ActWindow")]
-    [NotMapped]
-    public virtual ICollection<IrActWindowView> IrActWindowViews { get; } = new List<IrActWindowView>();
-
-    // v16-Compat
-    //[InverseProperty("RefIrActWindowNavigation")]
-    [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
-
-    // v16-Compat
-    //[InverseProperty("SidebarAction")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplates { get; } = new List<SmsTemplate>();
 
     [ForeignKey("ActId")]
     //[InverseProperty("ActsNavigation")]

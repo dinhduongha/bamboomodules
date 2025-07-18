@@ -167,6 +167,26 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("ModelId")]
+    //[InverseProperty("IrModelFields")]
+    [NotMapped]
+    public virtual IrModel? ModelNavigation { get; set; }
+
+    [ForeignKey("RelatedFieldId")]
+    //[InverseProperty("InverseRelatedField")]
+    [NotMapped]
+    public virtual IrModelField? RelatedField { get; set; }
+
+    [ForeignKey("RelationFieldId")]
+    //[InverseProperty("InverseRelationFieldNavigation")]
+    [NotMapped]
+    public virtual IrModelField? RelationFieldNavigation { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrModelFieldWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     //[InverseProperty("Field")]
     [NotMapped]
     public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFields { get; set; } = new List<CrmLeadScoringFrequencyField>();
@@ -198,6 +218,7 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("LinkField")]
     [NotMapped]
     public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerLinkFields { get; set; } = new List<IrActServer>();
 
     //[InverseProperty("UpdateField")]
     [NotMapped]
@@ -219,41 +240,28 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ICollection<IrModel> IrModels { get; set; } = new List<IrModel>();
 
+    // v16-Compat
     //[InverseProperty("Fields")]
     [NotMapped]
     public virtual ICollection<IrProperty> IrProperties { get; set; } = new List<IrProperty>();
 
+    // v16-Compat
     //[InverseProperty("Col1Navigation")]
     [NotMapped]
     public virtual ICollection<IrServerObjectLine> IrServerObjectLines { get; set; } = new List<IrServerObjectLine>();
 
-    //[InverseProperty("FieldNavigation")]
+    //[InverseProperty("Field")]
     [NotMapped]
     public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } = new List<MailTrackingValue>();
 
-    [ForeignKey("ModelId")]
-    //[InverseProperty("IrModelFields")]
-    [NotMapped]
-    public virtual IrModel? ModelNavigation { get; set; }
-
-    [ForeignKey("RelatedFieldId")]
-    //[InverseProperty("InverseRelatedField")]
-    [NotMapped]
-    public virtual IrModelField? RelatedField { get; set; }
-
-    [ForeignKey("RelationFieldId")]
-    //[InverseProperty("InverseRelationFieldNavigation")]
-    [NotMapped]
-    public virtual IrModelField? RelationFieldNavigation { get; set; }
+    // v16-Compat
+    //[InverseProperty("FieldNavigation")]
+    //[NotMapped]
+    //public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } = new List<MailTrackingValue>();
 
     //[InverseProperty("Field")]
     [NotMapped]
     public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFields { get; set; } = new List<WebsiteSaleExtraField>();
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModelFieldWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 
     [ForeignKey("FieldId")]
     //[InverseProperty("Fields")]

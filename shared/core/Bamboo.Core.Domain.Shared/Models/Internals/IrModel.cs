@@ -72,6 +72,22 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("website_form_access")]
     public bool? WebsiteFormAccess { get; set; }
 
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("IrModelCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
+
+    [ForeignKey("WebsiteFormDefaultFieldId")]
+    //[InverseProperty("IrModels")]
+    [NotMapped]
+    public virtual IrModelField? WebsiteFormDefaultField { get; set; }
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrModelWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     //[InverseProperty("Model")]
     [NotMapped]
     public virtual ICollection<BaseLanguageExport> BaseLanguageExports { get; set; } = new List<BaseLanguageExport>();
@@ -79,11 +95,6 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
     public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
-
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
 
     //[InverseProperty("ResModel")]
     [NotMapped]
@@ -218,15 +229,6 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
 
-    [ForeignKey("WebsiteFormDefaultFieldId")]
-    //[InverseProperty("IrModels")]
-    [NotMapped]
-    public virtual IrModelField? WebsiteFormDefaultField { get; set; }
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 
     [ForeignKey("IrModelId")]
     //[InverseProperty("IrModels")]

@@ -91,11 +91,13 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("holiday_type")]
     public string? HolidayType { get; set; }
 
+    // v16-Compat data: character varying => double precision
     [Column("request_hour_from")]
-    public string? RequestHourFrom { get; set; }
+    public double? RequestHourFrom { get; set; }
 
+    // v16-Compat data: character varying => double precision
     [Column("request_hour_to")]
-    public string? RequestHourTo { get; set; }
+    public double? RequestHourTo { get; set; }
 
     [Column("request_date_from_period")]
     public string? RequestDateFromPeriod { get; set; }

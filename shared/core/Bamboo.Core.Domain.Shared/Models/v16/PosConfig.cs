@@ -42,7 +42,7 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
 
-    [Column("group_pos_manager_id")]
+    [Column("group_pos_manager_id")] 
     public Guid? GroupPosManagerId { get; set; }
 
     [Column("group_pos_user_id")]
@@ -413,6 +413,22 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     //[InverseProperty("PosConfig")]
     [NotMapped]
     public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+
+    [ForeignKey("PosConfigId")]
+    //[InverseProperty("PosConfigs")]
+    [NotMapped]
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+
+    [ForeignKey("IsTrusting")]
+    //[InverseProperty("IsTrustings")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> IsTrusteds { get; set; } = new List<PosConfig>();
+
+    [ForeignKey("IsTrusted")]
+    //[InverseProperty("IsTrusteds")]
+    [NotMapped]
+    public virtual ICollection<PosConfig> IsTrustings { get; set; } = new List<PosConfig>();
+
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]

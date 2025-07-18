@@ -179,10 +179,6 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual IrModel? CrudModel { get; set; }
 
-    // //[InverseProperty("IrActionsServer")]
-    // [NotMapped]
-    // public virtual ICollection<IrCron> IrCrons { get; set; } = new List<IrCron>();
-
     [ForeignKey("LinkFieldId")]
     // v16-Compat
     //[InverseProperty("IrActServers")]
@@ -219,7 +215,12 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("IrActServerUpdateRelatedModels")]
     [NotMapped]
     public virtual IrModel? UpdateRelatedModel { get; set; }
-    
+
+    [ForeignKey("LastModifierId")]
+    //[InverseProperty("IrActServerWriteUs")]
+    [NotMapped]
+    public virtual ResUser? WriteU { get; set; }
+
     // v16-Compat
     //[InverseProperty("IrActionsServer")]
     [NotMapped]
@@ -233,11 +234,6 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("ActionServer")]
     [NotMapped]
     public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } = new List<WebsiteSnippetFilter>();
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrActServerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
 
     [ForeignKey("ServerId")]
     //[InverseProperty("Servers")]

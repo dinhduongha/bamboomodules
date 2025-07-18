@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("accounting_report")]
-public partial class AccountingReport: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountingReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -86,4 +86,10 @@ public partial class AccountingReport: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("AccountingReports")]
     [NotMapped]
     public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+
+    [ForeignKey("SubReportId")]
+    //[InverseProperty("SubReports")]
+    [NotMapped]
+    public virtual ICollection<AccountReport> MainReports { get; set; } = new List<AccountReport>();
+
 }
