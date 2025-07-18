@@ -158,6 +158,14 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [NotMapped]
     public virtual SaleOrderLine? SoLineNavigation { get; set; }
 
+    //[InverseProperty("AnalyticAccountLine")]
+    //public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+
+    // [ForeignKey("AccountAnalyticLineId")]
+    // //[InverseProperty("AnalyticAccountLine")]
+    // [NotMapped]
+    // public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+
     [ForeignKey("UserId")]
     //[InverseProperty("AccountAnalyticLineUsers")]
     [NotMapped]
@@ -197,9 +205,4 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     //[InverseProperty("AccountAnalyticLinesNavigation")]
     [NotMapped]
     public virtual ICollection<MrpWorkorder> MrpWorkordersNavigation { get; set; } = new List<MrpWorkorder>();
-
-    [ForeignKey("AccountAnalyticLineId")]
-    //[InverseProperty("AnalyticAccountLine")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
 }

@@ -368,6 +368,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
@@ -549,7 +550,8 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_analytic_account_write_uid_fkey");
 
-            entity.HasMany(d => d.MrpBoms).WithMany()
+            //entity.HasMany(d => d.MrpBoms).WithMany()
+            entity.HasMany<MrpBom>(d => d.MrpBoms).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountAnalyticAccountMrpBomRel",
                     r => r.HasOne<MrpBom>().WithMany()
@@ -567,7 +569,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("MrpBomId").HasColumnName("mrp_bom_id");
                     });
 
-            entity.HasMany(d => d.MrpProductions).WithMany()
+            //entity.HasMany(d => d.MrpProductions).WithMany(p => p.AccountAnalyticAccounts)
+            entity.HasMany<MrpProduction>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountAnalyticAccountMrpProductionRel",
                     r => r.HasOne<MrpProduction>().WithMany()
@@ -585,7 +588,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
                     });
 
-            entity.HasMany(d => d.MrpWorkcenters).WithMany()
+            //entity.HasMany(d => d.MrpWorkcenters).WithMany()
+            entity.HasMany<MrpWorkcenter>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountAnalyticAccountMrpWorkcenterRel",
                     r => r.HasOne<MrpWorkcenter>().WithMany()
@@ -738,6 +742,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.Category).HasColumnName("category");
@@ -848,8 +853,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CompleteName).HasColumnName("complete_name");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -897,6 +902,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountAnalyticId).HasColumnName("account_analytic_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AnalyticDistribution)
@@ -904,7 +910,6 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("analytic_distribution");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Code).HasColumnName("code");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -1835,6 +1840,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountJournalEarlyPayDiscountGainAccountId).HasColumnName("account_journal_early_pay_discount_gain_account_id");
             entity.Property(e => e.AccountJournalEarlyPayDiscountLossAccountId).HasColumnName("account_journal_early_pay_discount_loss_account_id");
             entity.Property(e => e.AccountJournalPaymentCreditAccountId).HasColumnName("account_journal_payment_credit_account_id");
@@ -2324,6 +2330,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -2394,6 +2401,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
             entity.Property(e => e.BlockingLevel).HasColumnName("blocking_level");
             entity.Property(e => e.CreationTime)
@@ -2449,6 +2457,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -2482,6 +2491,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountReportId).HasColumnName("account_report_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -2740,6 +2750,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountDestId).HasColumnName("account_dest_id");
             entity.Property(e => e.AccountSrcId).HasColumnName("account_src_id");
             entity.Property(e => e.CreationTime)
@@ -2846,6 +2857,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -2895,6 +2907,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AutoApply).HasColumnName("auto_apply");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
             entity.Property(e => e.CountryGroupId).HasColumnName("country_group_id");
@@ -3012,6 +3025,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -3101,6 +3115,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
             entity.Property(e => e.CodePrefixEnd).HasColumnName("code_prefix_end");
             entity.Property(e => e.CodePrefixStart).HasColumnName("code_prefix_start");
@@ -3149,6 +3164,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime)
@@ -3185,6 +3201,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ComposerId).HasColumnName("composer_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -3517,6 +3534,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -3565,6 +3583,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -4345,6 +4364,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -4392,6 +4412,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -4693,6 +4714,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -4729,6 +4751,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -4948,6 +4971,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -5259,6 +5283,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.AmountString).HasColumnName("amount_string");
             entity.Property(e => e.AmountType).HasColumnName("amount_type");
@@ -5327,6 +5352,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -5372,6 +5398,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AllowPaymentTolerance).HasColumnName("allow_payment_tolerance");
             entity.Property(e => e.AutoReconcile).HasColumnName("auto_reconcile");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
@@ -5642,6 +5669,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BlankIfZero).HasColumnName("blank_if_zero");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -5693,6 +5721,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Auditable).HasColumnName("auditable");
             entity.Property(e => e.BlankIfZero).HasColumnName("blank_if_zero");
             entity.Property(e => e.CarryoverTarget).HasColumnName("carryover_target");
@@ -5908,6 +5937,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActionId).HasColumnName("action_id");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime)
@@ -6037,6 +6067,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -6125,6 +6156,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -6396,6 +6428,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -6558,6 +6591,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AmountType).HasColumnName("amount_type");
@@ -6660,6 +6694,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -6741,6 +6776,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -6839,6 +6875,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -6900,6 +6937,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
@@ -6981,6 +7019,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -7013,6 +7052,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -7149,6 +7189,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Alias).HasColumnName("alias");
             entity.Property(e => e.AssociatedUomId).HasColumnName("associated_uom_id");
             entity.Property(e => e.BarcodeNomenclatureId).HasColumnName("barcode_nomenclature_id");
@@ -7828,6 +7869,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -8187,6 +8229,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -8255,6 +8298,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AggrIds).HasColumnName("aggr_ids");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8292,6 +8336,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -8333,6 +8378,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Channel).HasColumnName("channel");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8372,6 +8418,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.GuestId).HasColumnName("guest_id");
             entity.Property(e => e.LastPoll)
                 .HasColumnType("timestamp without time zone")
@@ -8404,6 +8451,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AlarmType).HasColumnName("alarm_type");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
@@ -8455,6 +8503,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.Availability).HasColumnName("availability");
             entity.Property(e => e.CommonName).HasColumnName("common_name");
@@ -8508,6 +8557,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Allday).HasColumnName("allday");
@@ -8641,6 +8691,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8680,6 +8731,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8723,6 +8775,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -8761,6 +8814,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CalClientId).HasColumnName("cal_client_id");
             entity.Property(e => e.CalClientSecret).HasColumnName("cal_client_secret");
             entity.Property(e => e.CreationTime)
@@ -8797,6 +8851,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BaseEventId).HasColumnName("base_event_id");
             entity.Property(e => e.Byday).HasColumnName("byday");
             entity.Property(e => e.Count).HasColumnName("count");
@@ -8851,6 +8906,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
@@ -8931,6 +8987,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CardTemplateId).HasColumnName("card_template_id");
             entity.Property(e => e.ContentButton).HasColumnName("content_button");
@@ -9030,6 +9087,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9063,6 +9121,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
             entity.Property(e => e.CreationTime)
@@ -9102,6 +9161,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9175,6 +9235,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ConfirmPassword).HasColumnName("confirm_password");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9206,6 +9267,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9249,6 +9311,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9278,6 +9341,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9577,6 +9641,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CarrierId).HasColumnName("carrier_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9622,6 +9687,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9666,6 +9732,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9714,6 +9781,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -9787,6 +9855,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CompanySizeMax).HasColumnName("company_size_max");
             entity.Property(e => e.CompanySizeMin).HasColumnName("company_size_min");
             entity.Property(e => e.ContactFilterType).HasColumnName("contact_filter_type");
@@ -9941,6 +10010,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -9980,6 +10050,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10260,6 +10331,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Action).HasColumnName("action");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10335,6 +10407,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Action).HasColumnName("action");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10446,6 +10519,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10502,6 +10576,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10553,6 +10628,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10594,6 +10670,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10632,6 +10709,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10667,6 +10745,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -10727,6 +10806,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Action).HasColumnName("action");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10771,6 +10851,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10860,6 +10941,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -10988,6 +11070,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AssignmentDomain).HasColumnName("assignment_domain");
             entity.Property(e => e.AssignmentMax).HasColumnName("assignment_max");
@@ -11556,6 +11639,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CarrierId).HasColumnName("carrier_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -11600,6 +11684,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -11773,6 +11858,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AllowPublicUpload).HasColumnName("allow_public_upload");
             entity.Property(e => e.AnonymousName).HasColumnName("anonymous_name");
@@ -11923,6 +12009,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChannelId).HasColumnName("channel_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -12008,6 +12095,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChannelId).HasColumnName("channel_id");
             entity.Property(e => e.ChannelMemberId).HasColumnName("channel_member_id");
             entity.Property(e => e.CreationTime)
@@ -12055,6 +12143,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -12087,6 +12176,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -17008,15 +17098,17 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_expense_refuse_wizard_create_uid_fkey");
 
-            entity.HasOne(d => d.HrExpenseSheet).WithMany(p => p.HrExpenseRefuseWizards)
-                .HasForeignKey(d => d.HrExpenseSheetId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sheet_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_expense_refuse_wizard_write_uid_fkey");
+
+            // v16-Compat
+            //entity.HasOne(d => d.HrExpenseSheet).WithMany(p => p.HrExpenseRefuseWizards) 
+            //    .HasForeignKey(d => d.HrExpenseSheetId)
+            //    .OnDelete(DeleteBehavior.SetNull)
+            //    .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sheet_id_fkey");
 
             // v16-Compat
             //entity.HasMany(d => d.HrExpenses).WithMany(p => p.HrExpenseRefuseWizards)
@@ -17037,24 +17129,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "HrExpenseId", "HrExpenseRefuseWizardId" }, "hr_expense_hr_expense_refuse__hr_expense_id_hr_expense_refu_idx");
                     });
             */
-            //entity.HasMany(d => d.HrExpenseSheets).WithMany(p => p.HrExpenseRefuseWizards)
-            // entity.HasMany(d => d.HrExpenseSheets).WithMany()
-            //     .UsingEntity<Dictionary<string, object>>(
-            //         "HrExpenseRefuseWizardHrExpenseSheetRel",
-            //         r => r.HasOne<HrExpenseSheet>().WithMany()
-            //             .HasForeignKey("HrExpenseSheetId")
-            //             .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sh_hr_expense_sheet_id_fkey"),
-            //         l => l.HasOne<HrExpenseRefuseWizard>().WithMany()
-            //             .HasForeignKey("HrExpenseRefuseWizardId")
-            //             .HasConstraintName("hr_expense_refuse_wizard_hr_ex_hr_expense_refuse_wizard_id_fkey"),
-            //         j =>
-            //         {
-            //             j.HasKey("HrExpenseRefuseWizardId", "HrExpenseSheetId").HasName("hr_expense_refuse_wizard_hr_expense_sheet_rel_pkey");
-            //             j.ToTable("hr_expense_refuse_wizard_hr_expense_sheet_rel");
-            //             j.HasIndex(new[] { "HrExpenseSheetId", "HrExpenseRefuseWizardId" }, "hr_expense_refuse_wizard_hr_e_hr_expense_sheet_id_hr_expens_idx");
-            //             j.IndexerProperty<Guid>("HrExpenseRefuseWizardId").HasColumnName("hr_expense_refuse_wizard_id");
-            //             j.IndexerProperty<Guid>("HrExpenseSheetId").HasColumnName("hr_expense_sheet_id");
-            //         });
+            entity.HasMany(d => d.HrExpenseSheets).WithMany(p => p.HrExpenseRefuseWizards)
+            //entity.HasMany(d => d.HrExpenseSheets).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "HrExpenseRefuseWizardHrExpenseSheetRel",
+                    r => r.HasOne<HrExpenseSheet>().WithMany()
+                        .HasForeignKey("HrExpenseSheetId")
+                        .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sh_hr_expense_sheet_id_fkey"),
+                    l => l.HasOne<HrExpenseRefuseWizard>().WithMany()
+                        .HasForeignKey("HrExpenseRefuseWizardId")
+                        .HasConstraintName("hr_expense_refuse_wizard_hr_ex_hr_expense_refuse_wizard_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("HrExpenseRefuseWizardId", "HrExpenseSheetId").HasName("hr_expense_refuse_wizard_hr_expense_sheet_rel_pkey");
+                        j.ToTable("hr_expense_refuse_wizard_hr_expense_sheet_rel");
+                        j.HasIndex(new[] { "HrExpenseSheetId", "HrExpenseRefuseWizardId" }, "hr_expense_refuse_wizard_hr_e_hr_expense_sheet_id_hr_expens_idx");
+                        j.IndexerProperty<Guid>("HrExpenseRefuseWizardId").HasColumnName("hr_expense_refuse_wizard_id");
+                        j.IndexerProperty<Guid>("HrExpenseSheetId").HasColumnName("hr_expense_sheet_id");
+                    });
         });
 
         modelBuilder.Entity<HrExpenseSheet>(entity =>
@@ -19015,6 +19107,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountToken).HasColumnName("account_token");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -19083,6 +19176,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21188,6 +21282,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ir_module_module_write_uid_fkey");
+
+            //entity.HasMany(d => d.Countries).WithMany(p => p.Modules)
+            entity.HasMany<ResCountry>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ModuleCountry",
+                    r => r.HasOne<ResCountry>().WithMany()
+                        .HasForeignKey("CountryId")
+                        .HasConstraintName("module_country_country_id_fkey"),
+                    l => l.HasOne<IrModuleModule>().WithMany()
+                        .HasForeignKey("ModuleId")
+                        .HasConstraintName("module_country_module_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ModuleId", "CountryId").HasName("module_country_pkey");
+                        j.ToTable("module_country");
+                        j.HasIndex(new[] { "CountryId", "ModuleId" }, "module_country_country_id_module_id_idx");
+                        j.IndexerProperty<Guid>("ModuleId").HasColumnName("module_id");
+                        j.IndexerProperty<Guid>("CountryId").HasColumnName("country_id");
+                    });
         });
 
         modelBuilder.Entity<IrModuleModuleDependency>(entity =>
@@ -27132,6 +27245,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mrp_production_write_uid_fkey");
+
+            //entity.HasMany(d => d.TemplateAttributeValues).WithMany(p => p.Productions)
+            entity.HasMany<ProductTemplateAttributeValue>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "TemplateAttributeValueMrpProductionRel",
+                    r => r.HasOne<ProductTemplateAttributeValue>().WithMany()
+                        .HasForeignKey("TemplateAttributeValueId")
+                        .HasConstraintName("template_attribute_value_mrp_p_template_attribute_value_id_fkey"),
+                    l => l.HasOne<MrpProduction>().WithMany()
+                        .HasForeignKey("ProductionId")
+                        .HasConstraintName("template_attribute_value_mrp_production_rel_production_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ProductionId", "TemplateAttributeValueId").HasName("template_attribute_value_mrp_production_rel_pkey");
+                        j.ToTable("template_attribute_value_mrp_production_rel");
+                        j.HasIndex(new[] { "TemplateAttributeValueId", "ProductionId" }, "template_attribute_value_mrp__template_attribute_value_id_p_idx");
+                        j.IndexerProperty<Guid>("ProductionId").HasColumnName("production_id");
+                        j.IndexerProperty<Guid>("TemplateAttributeValueId").HasColumnName("template_attribute_value_id");
+                    });
         });
 
         modelBuilder.Entity<MrpProductionBackorder>(entity =>
@@ -28848,6 +28980,25 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("payment_icon_payment_provider_rel");
                         j.HasIndex(new[] { "PaymentIconId", "PaymentProviderId" }, "payment_icon_payment_provider_payment_icon_id_payment_provi_idx");
                     });
+
+            //entity.HasMany(d => d.Currencies).WithMany(p => p.PaymentProviders)
+            entity.HasMany<ResCurrency>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PaymentCurrencyRel",
+                    r => r.HasOne<ResCurrency>().WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .HasConstraintName("payment_currency_rel_currency_id_fkey"),
+                    l => l.HasOne<PaymentProvider>().WithMany()
+                        .HasForeignKey("PaymentProviderId")
+                        .HasConstraintName("payment_currency_rel_payment_provider_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PaymentProviderId", "CurrencyId").HasName("payment_currency_rel_pkey");
+                        j.ToTable("payment_currency_rel");
+                        j.HasIndex(new[] { "CurrencyId", "PaymentProviderId" }, "payment_currency_rel_currency_id_payment_provider_id_idx");
+                        j.IndexerProperty<Guid>("PaymentProviderId").HasColumnName("payment_provider_id");
+                        j.IndexerProperty<Guid>("CurrencyId").HasColumnName("currency_id");
+                    });
         });
 
         modelBuilder.Entity<PaymentProviderOnboardingWizard>(entity =>
@@ -29224,6 +29375,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("picking_label_type_write_uid_fkey");
+
+            //entity.HasMany(d => d.MrpProductions).WithMany(p => p.PickingLabelTypes)
+            entity.HasMany<MrpProduction>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "MrpProductionPickingLabelTypeRel",
+                    r => r.HasOne<MrpProduction>().WithMany()
+                        .HasForeignKey("MrpProductionId")
+                        .HasConstraintName("mrp_production_picking_label_type_rel_mrp_production_id_fkey"),
+                    l => l.HasOne<PickingLabelType>().WithMany()
+                        .HasForeignKey("PickingLabelTypeId")
+                        .HasConstraintName("mrp_production_picking_label_type_re_picking_label_type_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PickingLabelTypeId", "MrpProductionId").HasName("mrp_production_picking_label_type_rel_pkey");
+                        j.ToTable("mrp_production_picking_label_type_rel");
+                        j.HasIndex(new[] { "MrpProductionId", "PickingLabelTypeId" }, "mrp_production_picking_label__mrp_production_id_picking_lab_idx");
+                        j.IndexerProperty<Guid>("PickingLabelTypeId").HasColumnName("picking_label_type_id");
+                        j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
+                    });
 
             //entity.HasMany(d => d.StockPickings).WithMany(p => p.PickingLabelTypes)
             entity.HasMany<StockPicking>().WithMany()
@@ -29698,6 +29868,26 @@ public static class CoreDbModelFluentCreatingExtensions
             //entity.HasMany(d => d.HrEmployees).WithMany(p => p.PosConfigs)
             entity.HasMany<HrEmployee>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
+                    "PosHrAdvancedEmployeeHrEmployee",
+                    r => r.HasOne<HrEmployee>().WithMany()
+                        .HasForeignKey("HrEmployeeId")
+                        .HasConstraintName("pos_hr_advanced_employee_hr_employee_hr_employee_id_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("PosConfigId")
+                        .HasConstraintName("pos_hr_advanced_employee_hr_employee_pos_config_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosConfigId", "HrEmployeeId").HasName("pos_hr_advanced_employee_hr_employee_pkey");
+                        j.ToTable("pos_hr_advanced_employee_hr_employee");
+                        j.HasIndex(new[] { "HrEmployeeId", "PosConfigId" }, "pos_hr_advanced_employee_hr_em_hr_employee_id_pos_config_id_idx");
+                        j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                        j.IndexerProperty<Guid>("HrEmployeeId").HasColumnName("hr_employee_id");
+                    });
+
+
+            //entity.HasMany(d => d.HrEmployees).WithMany(p => p.PosConfigs)
+            entity.HasMany<HrEmployee>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
                     "HrEmployeePosConfigRel",
                     r => r.HasOne<HrEmployee>().WithMany()
                         .HasForeignKey("HrEmployeeId")
@@ -29800,6 +29990,25 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "PosCategoryId", "PosConfigId" }, "pos_category_pos_config_rel_pos_category_id_pos_config_id_idx");
                     });
 
+            //entity.HasMany(d => d.PosNotes).WithMany(p => p.PosConfigs)
+            entity.HasMany<PosNote>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigPosNoteRel",
+                    r => r.HasOne<PosNote>().WithMany()
+                        .HasForeignKey("PosNoteId")
+                        .HasConstraintName("pos_config_pos_note_rel_pos_note_id_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("PosConfigId")
+                        .HasConstraintName("pos_config_pos_note_rel_pos_config_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosConfigId", "PosNoteId").HasName("pos_config_pos_note_rel_pkey");
+                        j.ToTable("pos_config_pos_note_rel");
+                        j.HasIndex(new[] { "PosNoteId", "PosConfigId" }, "pos_config_pos_note_rel_pos_note_id_pos_config_id_idx");
+                        j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                        j.IndexerProperty<Guid>("PosNoteId").HasColumnName("pos_note_id");
+                    });
+
             //entity.HasMany(d => d.PosPaymentMethods).WithMany(p => p.PosConfigs)
             entity.HasMany<PosPaymentMethod>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -29817,6 +30026,25 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "PosPaymentMethodId", "PosConfigId" }, "pos_config_pos_payment_method_pos_payment_method_id_pos_con_idx");
                     });
 
+            //entity.HasMany(d => d.Printers).WithMany(p => p.Configs)
+            entity.HasMany<PosPrinter>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigPrinterRel",
+                    r => r.HasOne<PosPrinter>().WithMany()
+                        .HasForeignKey("PrinterId")
+                        .HasConstraintName("pos_config_printer_rel_printer_id_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("ConfigId")
+                        .HasConstraintName("pos_config_printer_rel_config_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ConfigId", "PrinterId").HasName("pos_config_printer_rel_pkey");
+                        j.ToTable("pos_config_printer_rel");
+                        j.HasIndex(new[] { "PrinterId", "ConfigId" }, "pos_config_printer_rel_printer_id_config_id_idx");
+                        j.IndexerProperty<Guid>("ConfigId").HasColumnName("config_id");
+                        j.IndexerProperty<Guid>("PrinterId").HasColumnName("printer_id");
+                    });
+
             //entity.HasMany(d => d.ProductPricelists).WithMany(p => p.PosConfigsNavigation)
             entity.HasMany<ProductPricelist>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -29832,6 +30060,44 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("PosConfigId", "ProductPricelistId").HasName("pos_config_product_pricelist_rel_pkey");
                         j.ToTable("pos_config_product_pricelist_rel");
                         j.HasIndex(new[] { "ProductPricelistId", "PosConfigId" }, "pos_config_product_pricelist__product_pricelist_id_pos_conf_idx");
+                    });
+
+            //entity.HasMany(d => d.ResLangs).WithMany(p => p.PosConfigsNavigation)
+            entity.HasMany<ResLang>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigResLangRel",
+                    r => r.HasOne<ResLang>().WithMany()
+                        .HasForeignKey("ResLangId")
+                        .HasConstraintName("pos_config_res_lang_rel_res_lang_id_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("PosConfigId")
+                        .HasConstraintName("pos_config_res_lang_rel_pos_config_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosConfigId", "ResLangId").HasName("pos_config_res_lang_rel_pkey");
+                        j.ToTable("pos_config_res_lang_rel");
+                        j.HasIndex(new[] { "ResLangId", "PosConfigId" }, "pos_config_res_lang_rel_res_lang_id_pos_config_id_idx");
+                        j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                        j.IndexerProperty<Guid>("ResLangId").HasColumnName("res_lang_id");
+                    });
+
+            //entity.HasMany(d => d.RestaurantFloors).WithMany(p => p.PosConfigs)
+            entity.HasMany<RestaurantFloor>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosConfigRestaurantFloorRel",
+                    r => r.HasOne<RestaurantFloor>().WithMany()
+                        .HasForeignKey("RestaurantFloorId")
+                        .HasConstraintName("pos_config_restaurant_floor_rel_restaurant_floor_id_fkey"),
+                    l => l.HasOne<PosConfig>().WithMany()
+                        .HasForeignKey("PosConfigId")
+                        .HasConstraintName("pos_config_restaurant_floor_rel_pos_config_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosConfigId", "RestaurantFloorId").HasName("pos_config_restaurant_floor_rel_pkey");
+                        j.ToTable("pos_config_restaurant_floor_rel");
+                        j.HasIndex(new[] { "RestaurantFloorId", "PosConfigId" }, "pos_config_restaurant_floor_r_restaurant_floor_id_pos_confi_idx");
+                        j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                        j.IndexerProperty<Guid>("RestaurantFloorId").HasColumnName("restaurant_floor_id");
                     });
         });
 
@@ -30226,6 +30492,25 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.ToTable("account_tax_pos_order_line_rel");
                         j.HasIndex(new[] { "AccountTaxId", "PosOrderLineId" }, "account_tax_pos_order_line_re_account_tax_id_pos_order_line_idx");
                     });
+            
+            //entity.HasMany(d => d.ProductTemplateAttributeValues).WithMany(p => p.PosOrderLines)
+            entity.HasMany<ProductTemplateAttributeValue>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosOrderLineProductTemplateAttributeValueRel",
+                    r => r.HasOne<ProductTemplateAttributeValue>().WithMany()
+                        .HasForeignKey("ProductTemplateAttributeValueId")
+                        .HasConstraintName("pos_order_line_product_templa_product_template_attribute_v_fkey"),
+                    l => l.HasOne<PosOrderLine>().WithMany()
+                        .HasForeignKey("PosOrderLineId")
+                        .HasConstraintName("pos_order_line_product_template_attribut_pos_order_line_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosOrderLineId", "ProductTemplateAttributeValueId").HasName("pos_order_line_product_template_attribute_value_rel_pkey");
+                        j.ToTable("pos_order_line_product_template_attribute_value_rel");
+                        j.HasIndex(new[] { "ProductTemplateAttributeValueId", "PosOrderLineId" }, "pos_order_line_product_templa_product_template_attribute_va_idx");
+                        j.IndexerProperty<Guid>("PosOrderLineId").HasColumnName("pos_order_line_id");
+                        j.IndexerProperty<Guid>("ProductTemplateAttributeValueId").HasColumnName("product_template_attribute_value_id");
+                    });
         });
 
         modelBuilder.Entity<PosPackOperationLot>(entity =>
@@ -30396,6 +30681,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("pos_payment_method_write_uid_fkey");
+
+            //entity.HasMany(d => d.PaymentProviders).WithMany(p => p.PosPaymentMethods)
+            entity.HasMany<PaymentProvider>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PaymentProviderPosPaymentMethodRel",
+                    r => r.HasOne<PaymentProvider>().WithMany()
+                        .HasForeignKey("PaymentProviderId")
+                        .HasConstraintName("payment_provider_pos_payment_method_re_payment_provider_id_fkey"),
+                    l => l.HasOne<PosPaymentMethod>().WithMany()
+                        .HasForeignKey("PosPaymentMethodId")
+                        .HasConstraintName("payment_provider_pos_payment_method__pos_payment_method_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PosPaymentMethodId", "PaymentProviderId").HasName("payment_provider_pos_payment_method_rel_pkey");
+                        j.ToTable("payment_provider_pos_payment_method_rel");
+                        j.HasIndex(new[] { "PaymentProviderId", "PosPaymentMethodId" }, "payment_provider_pos_payment__payment_provider_id_pos_payme_idx");
+                        j.IndexerProperty<Guid>("PosPaymentMethodId").HasColumnName("pos_payment_method_id");
+                        j.IndexerProperty<Guid>("PaymentProviderId").HasColumnName("payment_provider_id");
+                    });
         });
 
         modelBuilder.Entity<PosPrinter>(entity =>
@@ -31320,6 +31624,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "StockMoveLineId", "ProductLabelLayoutId" }, "product_label_layout_stock_mo_stock_move_line_id_product_la_idx");
                     });
 
+            //entity.HasMany(d => d.StockMoves).WithMany(p => p.ProductLabelLayouts)
+            entity.HasMany<StockMove>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductLabelLayoutStockMoveRel",
+                    r => r.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("StockMoveId")
+                        .HasConstraintName("product_label_layout_stock_move_rel_stock_move_id_fkey"),
+                    l => l.HasOne<ProductLabelLayout>().WithMany()
+                        .HasForeignKey("ProductLabelLayoutId")
+                        .HasConstraintName("product_label_layout_stock_move_re_product_label_layout_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ProductLabelLayoutId", "StockMoveId").HasName("product_label_layout_stock_move_rel_pkey");
+                        j.ToTable("product_label_layout_stock_move_rel");
+                        j.HasIndex(new[] { "StockMoveId", "ProductLabelLayoutId" }, "product_label_layout_stock_mo_stock_move_id_product_label_l_idx");
+                        j.IndexerProperty<Guid>("ProductLabelLayoutId").HasColumnName("product_label_layout_id");
+                        j.IndexerProperty<Guid>("StockMoveId").HasColumnName("stock_move_id");
+                    });
         });
 
         modelBuilder.Entity<ProductPackaging>(entity =>
@@ -32276,6 +32598,63 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("SrcId", "DestId").HasName("product_alternative_rel_pkey");
                         j.ToTable("product_alternative_rel");
                         j.HasIndex(new[] { "DestId", "SrcId" }, "product_alternative_rel_dest_id_src_id_idx");
+                    });
+
+            //entity.HasMany(d => d.PosCategories).WithMany(p => p.ProductTemplates)
+            entity.HasMany<PosCategory>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PosCategoryProductTemplateRel",
+                    r => r.HasOne<PosCategory>().WithMany()
+                        .HasForeignKey("PosCategoryId")
+                        .HasConstraintName("pos_category_product_template_rel_pos_category_id_fkey"),
+                    l => l.HasOne<ProductTemplate>().WithMany()
+                        .HasForeignKey("ProductTemplateId")
+                        .HasConstraintName("pos_category_product_template_rel_product_template_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ProductTemplateId", "PosCategoryId").HasName("pos_category_product_template_rel_pkey");
+                        j.ToTable("pos_category_product_template_rel");
+                        j.HasIndex(new[] { "PosCategoryId", "ProductTemplateId" }, "pos_category_product_template_pos_category_id_product_templ_idx");
+                        j.IndexerProperty<Guid>("ProductTemplateId").HasColumnName("product_template_id");
+                        j.IndexerProperty<Guid>("PosCategoryId").HasColumnName("pos_category_id");
+                    });
+
+            //entity.HasMany(d => d.ProductCombos).WithMany(p => p.ProductTemplates)
+            // entity.HasMany<ProductCombo>().WithMany()
+            //     .UsingEntity<Dictionary<string, object>>(
+            //         "ProductComboProductTemplateRel",
+            //         r => r.HasOne<ProductCombo>().WithMany()
+            //             .HasForeignKey("ProductComboId")
+            //             .HasConstraintName("product_combo_product_template_rel_product_combo_id_fkey"),
+            //         l => l.HasOne<ProductTemplate>().WithMany()
+            //             .HasForeignKey("ProductTemplateId")
+            //             .HasConstraintName("product_combo_product_template_rel_product_template_id_fkey"),
+            //         j =>
+            //         {
+            //             j.HasKey("ProductTemplateId", "ProductComboId").HasName("product_combo_product_template_rel_pkey");
+            //             j.ToTable("product_combo_product_template_rel");
+            //             j.HasIndex(new[] { "ProductComboId", "ProductTemplateId" }, "product_combo_product_templat_product_combo_id_product_temp_idx");
+            //             j.IndexerProperty<Guid>("ProductTemplateId").HasColumnName("product_template_id");
+            //             j.IndexerProperty<Guid>("ProductComboId").HasColumnName("product_combo_id");
+            //         });
+
+            //entity.HasMany(d => d.ProductCombos).WithMany(p => p.ProductTemplates)
+            entity.HasMany<ProductCombo>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductComboProductTemplateRel",
+                    r => r.HasOne<ProductCombo>().WithMany()
+                        .HasForeignKey("ProductComboId")
+                        .HasConstraintName("product_combo_product_template_rel_product_combo_id_fkey"),
+                    l => l.HasOne<ProductTemplate>().WithMany()
+                        .HasForeignKey("ProductTemplateId")
+                        .HasConstraintName("product_combo_product_template_rel_product_template_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ProductTemplateId", "ProductComboId").HasName("product_combo_product_template_rel_pkey");
+                        j.ToTable("product_combo_product_template_rel");
+                        j.HasIndex(new[] { "ProductComboId", "ProductTemplateId" }, "product_combo_product_templat_product_combo_id_product_temp_idx");
+                        j.IndexerProperty<Guid>("ProductTemplateId").HasColumnName("product_template_id");
+                        j.IndexerProperty<Guid>("ProductComboId").HasColumnName("product_combo_id");
                     });
 
             //entity.HasMany(d => d.ProductTags).WithMany(p => p.ProductTemplates)
@@ -33908,6 +34287,45 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("PurchaseOrderLineId", "AccountTaxId").HasName("account_tax_purchase_order_line_rel_pkey");
                         j.ToTable("account_tax_purchase_order_line_rel");
                         j.HasIndex(new[] { "AccountTaxId", "PurchaseOrderLineId" }, "account_tax_purchase_order_li_account_tax_id_purchase_order_idx");
+                    });
+
+            //entity.HasMany(d => d.Moves).WithMany(p => p.CreatedPurchaseLines)
+            entity.HasMany<StockMove>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockMoveCreatedPurchaseLineRel",
+                    r => r.HasOne<StockMove>().WithMany()
+                        .HasForeignKey("MoveId")
+                        .HasConstraintName("stock_move_created_purchase_line_rel_move_id_fkey"),
+                    l => l.HasOne<PurchaseOrderLine>().WithMany()
+                        .HasForeignKey("CreatedPurchaseLineId")
+                        .HasConstraintName("stock_move_created_purchase_line__created_purchase_line_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("CreatedPurchaseLineId", "MoveId").HasName("stock_move_created_purchase_line_rel_pkey");
+                        j.ToTable("stock_move_created_purchase_line_rel");
+                        j.HasIndex(new[] { "MoveId", "CreatedPurchaseLineId" }, "stock_move_created_purchase_l_move_id_created_purchase_line_idx");
+                        j.IndexerProperty<Guid>("CreatedPurchaseLineId").HasColumnName("created_purchase_line_id");
+                        j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                    });
+
+            //entity.HasMany(d => d.ProductTemplateAttributeValues).WithMany(p => p.PurchaseOrderLines)
+            entity.HasMany<ProductTemplateAttributeValue>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductTemplateAttributeValuePurchaseOrderLineRel",
+                    r => r.HasOne<ProductTemplateAttributeValue>().WithMany()
+                        .HasForeignKey("ProductTemplateAttributeValueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("product_template_attribute_v_product_template_attribute_v_fkey1"),
+                    l => l.HasOne<PurchaseOrderLine>().WithMany()
+                        .HasForeignKey("PurchaseOrderLineId")
+                        .HasConstraintName("product_template_attribute_value_pu_purchase_order_line_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PurchaseOrderLineId", "ProductTemplateAttributeValueId").HasName("product_template_attribute_value_purchase_order_line_rel_pkey");
+                        j.ToTable("product_template_attribute_value_purchase_order_line_rel");
+                        j.HasIndex(new[] { "ProductTemplateAttributeValueId", "PurchaseOrderLineId" }, "product_template_attribute_va_product_template_attribute_v_idx1");
+                        j.IndexerProperty<Guid>("PurchaseOrderLineId").HasColumnName("purchase_order_line_id");
+                        j.IndexerProperty<Guid>("ProductTemplateAttributeValueId").HasColumnName("product_template_attribute_value_id");
                     });
         });
 
@@ -36911,7 +37329,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("res_users_settings_pkey");
 
             entity.ToTable("res_users_settings");
-            
+
 
             entity.HasIndex(e => e.TenantId, "res_users_settings_company_id_index");
 
@@ -36949,6 +37367,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("res_users_settings_write_uid_fkey");
+
+            //entity.HasMany(d => d.ResLangs).WithMany(p => p.ResUsersSettings)
+            entity.HasMany<ResLang>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ResLangResUsersSettingsRel",
+                    r => r.HasOne<ResLang>().WithMany()
+                        .HasForeignKey("ResLangId")
+                        .HasConstraintName("res_lang_res_users_settings_rel_res_lang_id_fkey"),
+                    l => l.HasOne<ResUsersSetting>().WithMany()
+                        .HasForeignKey("ResUsersSettingsId")
+                        .HasConstraintName("res_lang_res_users_settings_rel_res_users_settings_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ResUsersSettingsId", "ResLangId").HasName("res_lang_res_users_settings_rel_pkey");
+                        j.ToTable("res_lang_res_users_settings_rel");
+                        j.HasIndex(new[] { "ResLangId", "ResUsersSettingsId" }, "res_lang_res_users_settings_r_res_lang_id_res_users_setting_idx");
+                        j.IndexerProperty<Guid>("ResUsersSettingsId").HasColumnName("res_users_settings_id");
+                        j.IndexerProperty<Guid>("ResLangId").HasColumnName("res_lang_id");
+                    });
         });
 
         modelBuilder.Entity<ResUsersSettingsVolume>(entity =>
@@ -37705,6 +38142,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("sale_order_write_uid_fkey");
 
+            //entity.HasMany(d => d.QuotationDocuments).WithMany(p => p.SaleOrders)
+            entity.HasMany<QuotationDocument>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "QuotationDocumentSaleOrderRel",
+                    r => r.HasOne<QuotationDocument>().WithMany()
+                        .HasForeignKey("QuotationDocumentId")
+                        .HasConstraintName("quotation_document_sale_order_rel_quotation_document_id_fkey"),
+                    l => l.HasOne<SaleOrder>().WithMany()
+                        .HasForeignKey("SaleOrderId")
+                        .HasConstraintName("quotation_document_sale_order_rel_sale_order_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SaleOrderId", "QuotationDocumentId").HasName("quotation_document_sale_order_rel_pkey");
+                        j.ToTable("quotation_document_sale_order_rel");
+                        j.HasIndex(new[] { "QuotationDocumentId", "SaleOrderId" }, "quotation_document_sale_order_quotation_document_id_sale_or_idx");
+                        j.IndexerProperty<Guid>("SaleOrderId").HasColumnName("sale_order_id");
+                        j.IndexerProperty<Guid>("QuotationDocumentId").HasColumnName("quotation_document_id");
+                    });
+
             //entity.HasMany(d => d.Tags).WithMany(p => p.Orders)
             entity.HasMany<CrmTag>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -37998,6 +38454,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "AccountTaxId", "SaleOrderLineId" }, "account_tax_sale_order_line_r_account_tax_id_sale_order_lin_idx");
                     });
 
+            //entity.HasMany(d => d.ProductDocuments).WithMany(p => p.SaleOrderLines)
+            entity.HasMany<ProductDocument>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "SaleOrderLineProductDocumentRel",
+                    r => r.HasOne<ProductDocument>().WithMany()
+                        .HasForeignKey("ProductDocumentId")
+                        .HasConstraintName("sale_order_line_product_document_rel_product_document_id_fkey"),
+                    l => l.HasOne<SaleOrderLine>().WithMany()
+                        .HasForeignKey("SaleOrderLineId")
+                        .HasConstraintName("sale_order_line_product_document_rel_sale_order_line_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SaleOrderLineId", "ProductDocumentId").HasName("sale_order_line_product_document_rel_pkey");
+                        j.ToTable("sale_order_line_product_document_rel");
+                        j.HasIndex(new[] { "ProductDocumentId", "SaleOrderLineId" }, "sale_order_line_product_docum_product_document_id_sale_orde_idx");
+                        j.IndexerProperty<Guid>("SaleOrderLineId").HasColumnName("sale_order_line_id");
+                        j.IndexerProperty<Guid>("ProductDocumentId").HasColumnName("product_document_id");
+                    });
             //entity.HasMany(d => d.ProductTemplateAttributeValues).WithMany(p => p.SaleOrderLines)
             entity.HasMany<ProductTemplateAttributeValue>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -38621,6 +39095,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("slide_channel_write_uid_fkey");
+
+            //entity.HasMany(d => d.Channels).WithMany(p => p.PrerequisiteChannels)
+            entity.HasMany<SlideChannel>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "SlideChannelPrerequisiteSlideChannelRel",
+                    r => r.HasOne<SlideChannel>().WithMany()
+                        .HasForeignKey("ChannelId")
+                        .HasConstraintName("slide_channel_prerequisite_slide_channel_rel_channel_id_fkey"),
+                    l => l.HasOne<SlideChannel>().WithMany()
+                        .HasForeignKey("PrerequisiteChannelId")
+                        .HasConstraintName("slide_channel_prerequisite_slide_c_prerequisite_channel_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("ChannelId", "PrerequisiteChannelId").HasName("slide_channel_prerequisite_slide_channel_rel_pkey");
+                        j.ToTable("slide_channel_prerequisite_slide_channel_rel");
+                        j.HasIndex(new[] { "PrerequisiteChannelId", "ChannelId" }, "slide_channel_prerequisite_sl_prerequisite_channel_id_chann_idx");
+                        j.IndexerProperty<Guid>("ChannelId").HasColumnName("channel_id");
+                        j.IndexerProperty<Guid>("PrerequisiteChannelId").HasColumnName("prerequisite_channel_id");
+                    });
 
             entity.HasMany(d => d.Groups).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -41005,7 +41498,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            entity.HasOne(d => d.AnalyticAccountLine).WithMany(p => p.StockMoves)
+            entity.HasOne(d => d.AnalyticAccountLine).WithMany()
                 .HasForeignKey(d => d.AnalyticAccountLineId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("stock_move_analytic_account_line_id_fkey");
@@ -41222,7 +41715,7 @@ public static class CoreDbModelFluentCreatingExtensions
                     });
             */
             
-            entity.HasMany(d => d.AccountAnalyticLines).WithMany(p => p.StockMoves)
+            entity.HasMany(d => d.AccountAnalyticLines).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountAnalyticLineStockMoveRel",
                     r => r.HasOne<AccountAnalyticLine>().WithMany()
@@ -41925,6 +42418,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("stock_picking_type_write_uid_fkey");
+
+            //entity.HasMany(d => d.Users).WithMany(p => p.PickingTypes)
+            entity.HasMany<ResUser>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "PickingTypeFavoriteUserRel",
+                    r => r.HasOne<ResUser>().WithMany()
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("picking_type_favorite_user_rel_user_id_fkey"),
+                    l => l.HasOne<StockPickingType>().WithMany()
+                        .HasForeignKey("PickingTypeId")
+                        .HasConstraintName("picking_type_favorite_user_rel_picking_type_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("PickingTypeId", "UserId").HasName("picking_type_favorite_user_rel_pkey");
+                        j.ToTable("picking_type_favorite_user_rel");
+                        j.HasIndex(new[] { "UserId", "PickingTypeId" }, "picking_type_favorite_user_rel_user_id_picking_type_id_idx");
+                        j.IndexerProperty<Guid>("PickingTypeId").HasColumnName("picking_type_id");
+                        j.IndexerProperty<Guid>("UserId").HasColumnName("user_id");
+                    });
         });
 
         modelBuilder.Entity<StockPutawayRule>(entity =>
@@ -42979,6 +43491,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("stock_scrap_write_uid_fkey");
+
+            //entity.HasMany(d => d.StockScrapReasonTags).WithMany(p => p.StockScraps)
+            entity.HasMany<StockScrapReasonTag>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockScrapStockScrapReasonTagRel",
+                    r => r.HasOne<StockScrapReasonTag>().WithMany()
+                        .HasForeignKey("StockScrapReasonTagId")
+                        .HasConstraintName("stock_scrap_stock_scrap_reason_t_stock_scrap_reason_tag_id_fkey"),
+                    l => l.HasOne<StockScrap>().WithMany()
+                        .HasForeignKey("StockScrapId")
+                        .HasConstraintName("stock_scrap_stock_scrap_reason_tag_rel_stock_scrap_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("StockScrapId", "StockScrapReasonTagId").HasName("stock_scrap_stock_scrap_reason_tag_rel_pkey");
+                        j.ToTable("stock_scrap_stock_scrap_reason_tag_rel");
+                        j.HasIndex(new[] { "StockScrapReasonTagId", "StockScrapId" }, "stock_scrap_stock_scrap_reaso_stock_scrap_reason_tag_id_sto_idx");
+                        j.IndexerProperty<Guid>("StockScrapId").HasColumnName("stock_scrap_id");
+                        j.IndexerProperty<Guid>("StockScrapReasonTagId").HasColumnName("stock_scrap_reason_tag_id");
+                    });
         });
 
         modelBuilder.Entity<StockScrapReasonTag>(entity =>
@@ -43382,6 +43913,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("stock_valuation_layer_revaluation_write_uid_fkey");
+
+            //entity.HasMany(d => d.StockValuationLayers).WithMany(p => p.StockValuationLayerRevaluations)
+            entity.HasMany<StockValuationLayer>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "StockValuationLayerStockValuationLayerRevaluationRel",
+                    r => r.HasOne<StockValuationLayer>().WithMany()
+                        .HasForeignKey("StockValuationLayerId")
+                        .HasConstraintName("stock_valuation_layer_stock_valua_stock_valuation_layer_id_fkey"),
+                    l => l.HasOne<StockValuationLayerRevaluation>().WithMany()
+                        .HasForeignKey("StockValuationLayerRevaluationId")
+                        .HasConstraintName("stock_valuation_layer_stock_v_stock_valuation_layer_revalu_fkey"),
+                    j =>
+                    {
+                        j.HasKey("StockValuationLayerRevaluationId", "StockValuationLayerId").HasName("stock_valuation_layer_stock_valuation_layer_revaluation_re_pkey");
+                        j.ToTable("stock_valuation_layer_stock_valuation_layer_revaluation_rel");
+                        j.HasIndex(new[] { "StockValuationLayerId", "StockValuationLayerRevaluationId" }, "stock_valuation_layer_stock_v_stock_valuation_layer_id_stoc_idx");
+                        j.IndexerProperty<Guid>("StockValuationLayerRevaluationId").HasColumnName("stock_valuation_layer_revaluation_id");
+                        j.IndexerProperty<Guid>("StockValuationLayerId").HasColumnName("stock_valuation_layer_id");
+                    });
         });
 
         modelBuilder.Entity<StockWarehouse>(entity =>
@@ -44210,6 +44760,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("survey_question_write_uid_fkey");
+
+            //entity.HasMany(d => d.SurveyQuestionAnswers).WithMany(p => p.SurveyQuestions)
+            entity.HasMany<SurveyQuestionAnswer>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "SurveyQuestionSurveyQuestionAnswerRel",
+                    r => r.HasOne<SurveyQuestionAnswer>().WithMany()
+                        .HasForeignKey("SurveyQuestionAnswerId")
+                        .HasConstraintName("survey_question_survey_question__survey_question_answer_id_fkey"),
+                    l => l.HasOne<SurveyQuestion>().WithMany()
+                        .HasForeignKey("SurveyQuestionId")
+                        .HasConstraintName("survey_question_survey_question_answer__survey_question_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SurveyQuestionId", "SurveyQuestionAnswerId").HasName("survey_question_survey_question_answer_rel_pkey");
+                        j.ToTable("survey_question_survey_question_answer_rel");
+                        j.HasIndex(new[] { "SurveyQuestionAnswerId", "SurveyQuestionId" }, "survey_question_survey_questi_survey_question_answer_id_sur_idx");
+                        j.IndexerProperty<Guid>("SurveyQuestionId").HasColumnName("survey_question_id");
+                        j.IndexerProperty<Guid>("SurveyQuestionAnswerId").HasColumnName("survey_question_answer_id");
+                    });
         });
 
         modelBuilder.Entity<SurveyQuestionAnswer>(entity =>
@@ -44453,6 +45022,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("survey_survey_write_uid_fkey");
+
+            //entity.HasMany(d => d.ResUsers).WithMany(p => p.SurveySurveys)
+            entity.HasMany<ResUser>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ResUsersSurveySurveyRel",
+                    r => r.HasOne<ResUser>().WithMany()
+                        .HasForeignKey("ResUsersId")
+                        .HasConstraintName("res_users_survey_survey_rel_res_users_id_fkey"),
+                    l => l.HasOne<SurveySurvey>().WithMany()
+                        .HasForeignKey("SurveySurveyId")
+                        .HasConstraintName("res_users_survey_survey_rel_survey_survey_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("SurveySurveyId", "ResUsersId").HasName("res_users_survey_survey_rel_pkey");
+                        j.ToTable("res_users_survey_survey_rel");
+                        j.HasIndex(new[] { "ResUsersId", "SurveySurveyId" }, "res_users_survey_survey_rel_res_users_id_survey_survey_id_idx");
+                        j.IndexerProperty<Guid>("SurveySurveyId").HasColumnName("survey_survey_id");
+                        j.IndexerProperty<Guid>("ResUsersId").HasColumnName("res_users_id");
+                    });
         });
 
         modelBuilder.Entity<SurveyUserInput>(entity =>
@@ -45940,6 +46528,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("website_menu_write_uid_fkey");
+
+            //entity.HasMany(d => d.ResGroups).WithMany(p => p.WebsiteMenus)
+            entity.HasMany<ResGroup>().WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "ResGroupsWebsiteMenuRel",
+                    r => r.HasOne<ResGroup>().WithMany()
+                        .HasForeignKey("ResGroupsId")
+                        .HasConstraintName("res_groups_website_menu_rel_res_groups_id_fkey"),
+                    l => l.HasOne<WebsiteMenu>().WithMany()
+                        .HasForeignKey("WebsiteMenuId")
+                        .HasConstraintName("res_groups_website_menu_rel_website_menu_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("WebsiteMenuId", "ResGroupsId").HasName("res_groups_website_menu_rel_pkey");
+                        j.ToTable("res_groups_website_menu_rel");
+                        j.HasIndex(new[] { "ResGroupsId", "WebsiteMenuId" }, "res_groups_website_menu_rel_res_groups_id_website_menu_id_idx");
+                        j.IndexerProperty<Guid>("WebsiteMenuId").HasColumnName("website_menu_id");
+                        j.IndexerProperty<Guid>("ResGroupsId").HasColumnName("res_groups_id");
+                    });
         });
 
         modelBuilder.Entity<WebsitePage>(entity =>

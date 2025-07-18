@@ -192,5 +192,10 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("PaymentProviderId")]
     //[InverseProperty("PaymentProviders")]
     [NotMapped]
+    public virtual ICollection<ResCurrency> Currencies { get; set; } = new List<ResCurrency>();
+
+    [ForeignKey("PaymentProviderId")]
+    //[InverseProperty("PaymentProviders")]
+    [NotMapped]
     public virtual ICollection<PaymentIcon> PaymentIcons { get; set; } = new List<PaymentIcon>();
 }

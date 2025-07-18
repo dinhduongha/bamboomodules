@@ -49,16 +49,17 @@ public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    // v16-Compat
-    [ForeignKey("HrExpenseSheetId")]
-    //[InverseProperty("HrExpenseRefuseWizards")]
-    [NotMapped]
-    public virtual HrExpenseSheet? HrExpenseSheet { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("HrExpenseRefuseWizardWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    // v16-Compat
+    //[ForeignKey("HrExpenseSheetId")]
+    //[InverseProperty("HrExpenseRefuseWizards")]
+    //[NotMapped]
+    //public virtual HrExpenseSheet? HrExpenseSheet { get; set; }
 
     // v16-Compat
     //[ForeignKey("HrExpenseRefuseWizardId")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_analytic_account")]
 //[Index("Code", Name = "account_analytic_account_code_index")]
-public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticAccount : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -164,14 +164,15 @@ public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto
     [NotMapped]
     public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
+    //[InverseProperty("AnalyticAccount")]
+    [NotMapped]
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+
+    // RELATIONS BEGIN - MUST HAVE
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
     public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
-
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
@@ -184,4 +185,5 @@ public partial class AccountAnalyticAccount: FullAuditedEntity<Guid>, IEntityDto
     //[InverseProperty("CostsHourAccount")]
     [NotMapped]
     public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } = new List<MrpWorkcenter>();
+    // RELATIONS END
 }

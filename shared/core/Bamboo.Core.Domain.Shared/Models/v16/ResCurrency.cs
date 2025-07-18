@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_currency")]
 //[Index("Name", Name = "res_currency_unique_name", IsUnique = true)]
-public partial class ResCurrency: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ResCurrency : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
 {
     [Key]
     [Column("id")]
@@ -233,4 +233,10 @@ public partial class ResCurrency: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMo
     //[InverseProperty("Currency")]
     [NotMapped]
     public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    
+    [ForeignKey("CurrencyId")]
+    //[InverseProperty("Currencies")]
+    [NotMapped]
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
+
 }

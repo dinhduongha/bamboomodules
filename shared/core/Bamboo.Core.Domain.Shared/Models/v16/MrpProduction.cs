@@ -167,10 +167,6 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [NotMapped]
     public virtual MrpBom? Bom { get; set; }
 
-    //[InverseProperty("Mo")]
-    //[NotMapped]
-    //public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
-
     [ForeignKey("TenantId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
@@ -245,6 +241,14 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [NotMapped]
     public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
 
+    //[InverseProperty("Mo")]
+    //[NotMapped]
+    //public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
+
+    //[InverseProperty("Production")]
+    [NotMapped]
+    public virtual ICollection<MrpBatchProduce> MrpBatchProduces { get; set; } = new List<MrpBatchProduce>();
+
     //[InverseProperty("MrpProduction")]
     [NotMapped]
     public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; } = new List<MrpConsumptionWarningLine>();
@@ -301,10 +305,38 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+
+    [ForeignKey("MrpProductionId")]
+    //[InverseProperty("MrpProductions")]
+    [NotMapped]
+    public virtual ICollection<MrpAccountWipAccounting> MrpAccountWipAccountings { get; set; } = new List<MrpAccountWipAccounting>();
+
+
+    // RELATIONS BEGIN - MUST HAVE
+    //[ForeignKey("MrpProductionId")]
+    //[InverseProperty("MrpProductions")]
+    //[NotMapped]
+    //public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } = new List<AccountAnalyticAccount>();
+    // RELATIONS END
+
+    [ForeignKey("MrpProductionId")]
+    //[InverseProperty("MrpProductions")]
+    [NotMapped]
     public virtual ICollection<MrpImmediateProduction> MrpImmediateProductions { get; set; } = new List<MrpImmediateProduction>();
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
     public virtual ICollection<MrpProductionBackorder> MrpProductionBackorders { get; set; } = new List<MrpProductionBackorder>();
+
+    [ForeignKey("MrpProductionId")]
+    //[InverseProperty("MrpProductions")]
+    [NotMapped]
+    public virtual ICollection<PickingLabelType> PickingLabelTypes { get; set; } = new List<PickingLabelType>();
+
+    [ForeignKey("ProductionId")]
+    //[InverseProperty("Productions")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
 }

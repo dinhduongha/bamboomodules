@@ -89,15 +89,15 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [NotMapped]
     public virtual ResCompany? Company { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpBomCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
-
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("MrpBoms")]
     [NotMapped]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
+
+    [ForeignKey("CreatorId")]
+    //[InverseProperty("MrpBomCreateUs")]
+    [NotMapped]
+    public virtual ResUser? CreateU { get; set; }
 
     [ForeignKey("PickingTypeId")]
     //[InverseProperty("MrpBoms")]
