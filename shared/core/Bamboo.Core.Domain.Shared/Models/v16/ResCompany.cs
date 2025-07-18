@@ -846,10 +846,21 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    [ForeignKey("ResCompanyId")]
+    [ForeignKey("TenantId")]
+    //[InverseProperty("ResCompanies")]
+    [NotMapped]
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+
+
+    [ForeignKey("TenantId")]
     //[InverseProperty("ResCompanies")]
     [NotMapped]
     public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } = new List<AccountPaymentMethodLine>();
+
+    [ForeignKey("TenantId")]
+    //[InverseProperty("ResCompanies")]
+    [NotMapped]
+    public virtual ICollection<IapAccount> IapAccounts { get; set; } = new List<IapAccount>();
 
     /// TODO: DISABLE INVERSE
     //[InverseProperty("Company")]
@@ -1457,10 +1468,6 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [NotMapped]
     public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
 
-    [ForeignKey("ResCompanyId")]
-    //[InverseProperty("ResCompanies")]
-    [NotMapped]
-    public virtual ICollection<IapAccount> IapAccounts { get; set; } = new List<IapAccount>();
 
     [ForeignKey("Cid")]
     //[InverseProperty("Cids")]

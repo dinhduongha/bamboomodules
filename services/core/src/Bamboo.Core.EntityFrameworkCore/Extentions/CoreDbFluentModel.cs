@@ -147,11 +147,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         .HasConstraintName("account_account_res_company_rel_account_account_id_fkey"),
                     j =>
                     {
-                        j.HasKey("AccountAccountId", "ResCompanyId").HasName("account_account_res_company_rel_pkey");
+                        j.HasKey("AccountAccountId", "TenantId").HasName("account_account_res_company_rel_pkey");
                         j.ToTable("account_account_res_company_rel");
-                        j.HasIndex(new[] { "ResCompanyId", "AccountAccountId" }, "account_account_res_company_r_res_company_id_account_accoun_idx");
+                        j.HasIndex(new[] { "TenantId", "AccountAccountId" }, "account_account_res_company_r_res_company_id_account_accoun_idx");
                         j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
-                        j.IndexerProperty<Guid>("ResCompanyId").HasColumnName("res_company_id");
+                        j.IndexerProperty<Guid>("TenantId").HasColumnName("res_company_id");
                     });
 
             entity.HasMany(d => d.Taxes).WithMany()
@@ -17037,24 +17037,24 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "HrExpenseId", "HrExpenseRefuseWizardId" }, "hr_expense_hr_expense_refuse__hr_expense_id_hr_expense_refu_idx");
                     });
             */
-            entity.HasMany(d => d.HrExpenseSheets).WithMany(p => p.HrExpenseRefuseWizards)
-            //entity.HasMany(d => d.HrExpenseSheets).WithMany()
-                .UsingEntity<Dictionary<string, object>>(
-                    "HrExpenseRefuseWizardHrExpenseSheetRel",
-                    r => r.HasOne<HrExpenseSheet>().WithMany()
-                        .HasForeignKey("HrExpenseSheetId")
-                        .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sh_hr_expense_sheet_id_fkey"),
-                    l => l.HasOne<HrExpenseRefuseWizard>().WithMany()
-                        .HasForeignKey("HrExpenseRefuseWizardId")
-                        .HasConstraintName("hr_expense_refuse_wizard_hr_ex_hr_expense_refuse_wizard_id_fkey"),
-                    j =>
-                    {
-                        j.HasKey("HrExpenseRefuseWizardId", "HrExpenseSheetId").HasName("hr_expense_refuse_wizard_hr_expense_sheet_rel_pkey");
-                        j.ToTable("hr_expense_refuse_wizard_hr_expense_sheet_rel");
-                        j.HasIndex(new[] { "HrExpenseSheetId", "HrExpenseRefuseWizardId" }, "hr_expense_refuse_wizard_hr_e_hr_expense_sheet_id_hr_expens_idx");
-                        j.IndexerProperty<Guid>("HrExpenseRefuseWizardId").HasColumnName("hr_expense_refuse_wizard_id");
-                        j.IndexerProperty<Guid>("HrExpenseSheetId").HasColumnName("hr_expense_sheet_id");
-                    });
+            //entity.HasMany(d => d.HrExpenseSheets).WithMany(p => p.HrExpenseRefuseWizards)
+            // entity.HasMany(d => d.HrExpenseSheets).WithMany()
+            //     .UsingEntity<Dictionary<string, object>>(
+            //         "HrExpenseRefuseWizardHrExpenseSheetRel",
+            //         r => r.HasOne<HrExpenseSheet>().WithMany()
+            //             .HasForeignKey("HrExpenseSheetId")
+            //             .HasConstraintName("hr_expense_refuse_wizard_hr_expense_sh_hr_expense_sheet_id_fkey"),
+            //         l => l.HasOne<HrExpenseRefuseWizard>().WithMany()
+            //             .HasForeignKey("HrExpenseRefuseWizardId")
+            //             .HasConstraintName("hr_expense_refuse_wizard_hr_ex_hr_expense_refuse_wizard_id_fkey"),
+            //         j =>
+            //         {
+            //             j.HasKey("HrExpenseRefuseWizardId", "HrExpenseSheetId").HasName("hr_expense_refuse_wizard_hr_expense_sheet_rel_pkey");
+            //             j.ToTable("hr_expense_refuse_wizard_hr_expense_sheet_rel");
+            //             j.HasIndex(new[] { "HrExpenseSheetId", "HrExpenseRefuseWizardId" }, "hr_expense_refuse_wizard_hr_e_hr_expense_sheet_id_hr_expens_idx");
+            //             j.IndexerProperty<Guid>("HrExpenseRefuseWizardId").HasColumnName("hr_expense_refuse_wizard_id");
+            //             j.IndexerProperty<Guid>("HrExpenseSheetId").HasColumnName("hr_expense_sheet_id");
+            //         });
         });
 
         modelBuilder.Entity<HrExpenseSheet>(entity =>
@@ -19041,16 +19041,16 @@ public static class CoreDbModelFluentCreatingExtensions
                 .UsingEntity<Dictionary<string, object>>(
                     "IapAccountResCompanyRel",
                     r => r.HasOne<ResCompany>().WithMany()
-                        .HasForeignKey("ResCompanyId")
+                        .HasForeignKey("TenantId")
                         .HasConstraintName("iap_account_res_company_rel_res_company_id_fkey"),
                     l => l.HasOne<IapAccount>().WithMany()
                         .HasForeignKey("IapAccountId")
                         .HasConstraintName("iap_account_res_company_rel_iap_account_id_fkey"),
                     j =>
                     {
-                        j.HasKey("IapAccountId", "ResCompanyId").HasName("iap_account_res_company_rel_pkey");
+                        j.HasKey("IapAccountId", "TenantId").HasName("iap_account_res_company_rel_pkey");
                         j.ToTable("iap_account_res_company_rel");
-                        j.HasIndex(new[] { "ResCompanyId", "IapAccountId" }, "iap_account_res_company_rel_res_company_id_iap_account_id_idx");
+                        j.HasIndex(new[] { "TenantId", "IapAccountId" }, "iap_account_res_company_rel_res_company_id_iap_account_id_idx");
                     });
 
             entity.HasMany(d => d.ResUsers).WithMany()
@@ -35302,10 +35302,10 @@ public static class CoreDbModelFluentCreatingExtensions
                         .HasConstraintName("account_payment_method_line_res_company_rel_res_company_id_fkey"),
                     j =>
                     {
-                        j.HasKey("ResCompanyId", "AccountPaymentMethodLineId").HasName("account_payment_method_line_res_company_rel_pkey");
+                        j.HasKey("TenantId", "AccountPaymentMethodLineId").HasName("account_payment_method_line_res_company_rel_pkey");
                         j.ToTable("account_payment_method_line_res_company_rel");
-                        j.HasIndex(new[] { "AccountPaymentMethodLineId", "ResCompanyId" }, "account_payment_method_line_r_account_payment_method_line_i_idx");
-                        j.IndexerProperty<Guid>("ResCompanyId").HasColumnName("res_company_id");
+                        j.HasIndex(new[] { "AccountPaymentMethodLineId", "TenantId" }, "account_payment_method_line_r_account_payment_method_line_i_idx");
+                        j.IndexerProperty<Guid>("TenantId").HasColumnName("res_company_id");
                         j.IndexerProperty<Guid>("AccountPaymentMethodLineId").HasColumnName("account_payment_method_line_id");
                     });
 
