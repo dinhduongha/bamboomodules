@@ -31,7 +31,7 @@ public partial class SaleOrderOption : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? LineId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("uom_id")]
     public Guid? UomId { get; set; }

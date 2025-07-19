@@ -21,7 +21,7 @@ public partial class WebsiteConfiguratorFeature: FullAuditedEntity<Guid>, IEntit
     public Guid? TenantId { get; set; }
     
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("page_view_id")]
     public Guid? PageViewId { get; set; }

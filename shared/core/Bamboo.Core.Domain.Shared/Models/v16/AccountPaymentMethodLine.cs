@@ -21,7 +21,7 @@ public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntity
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("payment_method_id")]
     public Guid? PaymentMethodId { get; set; }

@@ -83,7 +83,7 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? DeliveryRouteId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

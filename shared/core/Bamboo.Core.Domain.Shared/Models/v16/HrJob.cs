@@ -24,7 +24,7 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }

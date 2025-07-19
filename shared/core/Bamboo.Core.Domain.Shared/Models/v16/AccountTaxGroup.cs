@@ -21,7 +21,7 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("tax_payable_account_id")]
     public Guid? TaxPayableAccountId { get; set; }

@@ -25,7 +25,7 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? PageId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

@@ -24,7 +24,7 @@ public partial class AccountReconcileModelLineTemplate : FullAuditedEntity<Guid>
     public Guid? ModelId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }

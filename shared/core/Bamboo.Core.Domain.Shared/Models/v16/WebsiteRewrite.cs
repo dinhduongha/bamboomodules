@@ -29,7 +29,7 @@ public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? RouteId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

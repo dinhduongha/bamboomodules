@@ -21,7 +21,7 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long? Sequence { get; set; }
+    public long Sequence { get; set; }
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }

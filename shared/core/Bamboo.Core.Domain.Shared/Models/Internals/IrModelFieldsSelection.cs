@@ -26,7 +26,7 @@ public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto
     public Guid? FieldId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

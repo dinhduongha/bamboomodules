@@ -21,7 +21,7 @@ public partial class MrpWorkcenterProductivityLoss : FullAuditedEntity<Guid>, IE
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("loss_id")]
     public Guid? LossId { get; set; }

@@ -31,7 +31,7 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("backorder_sequence")]
-    public long BackorderSequence { get; set; }
+    public long? BackorderSequence { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

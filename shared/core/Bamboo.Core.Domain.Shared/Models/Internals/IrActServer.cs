@@ -56,7 +56,7 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? LastModificationTime { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }

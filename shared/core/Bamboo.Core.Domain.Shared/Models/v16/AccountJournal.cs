@@ -32,7 +32,7 @@ public partial class AccountJournal: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? SuspenseAccountId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }

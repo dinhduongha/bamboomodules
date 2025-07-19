@@ -35,7 +35,7 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? LocationOutId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("storage_category_id")]
     public Guid? StorageCategoryId { get; set; }

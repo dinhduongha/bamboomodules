@@ -25,7 +25,7 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? ParentId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

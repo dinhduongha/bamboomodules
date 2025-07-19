@@ -22,7 +22,7 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("default_lang_id")]
     public Guid? DefaultLangId { get; set; }

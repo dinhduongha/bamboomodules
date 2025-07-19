@@ -29,7 +29,7 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? ControllerPageId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

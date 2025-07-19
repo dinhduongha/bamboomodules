@@ -26,7 +26,7 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

@@ -25,7 +25,7 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? ChartTemplateId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("tax_group_id")]
     public Guid? TaxGroupId { get; set; }

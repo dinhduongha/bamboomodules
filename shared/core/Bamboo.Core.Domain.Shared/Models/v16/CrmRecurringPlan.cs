@@ -24,7 +24,7 @@ public partial class CrmRecurringPlan : FullAuditedEntity<Guid>, IEntityDto<Guid
     public long? NumberOfMonths { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

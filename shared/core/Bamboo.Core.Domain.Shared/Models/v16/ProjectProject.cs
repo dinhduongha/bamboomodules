@@ -33,7 +33,7 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? AliasId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

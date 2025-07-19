@@ -21,7 +21,7 @@ public partial class HrSkill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("skill_type_id")]
     public Guid? SkillTypeId { get; set; }

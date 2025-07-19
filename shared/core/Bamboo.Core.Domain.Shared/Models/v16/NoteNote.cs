@@ -27,7 +27,7 @@ public partial class NoteNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? UserId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

@@ -25,7 +25,7 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     public long? Color { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("sequence_id")]
     public Guid? SequenceId { get; set; }

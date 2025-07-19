@@ -26,7 +26,7 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? PartnerId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }

@@ -21,7 +21,7 @@ public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("country_id")]
     public Guid? CountryId { get; set; }

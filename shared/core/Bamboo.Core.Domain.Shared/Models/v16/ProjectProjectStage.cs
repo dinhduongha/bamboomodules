@@ -21,7 +21,7 @@ public partial class ProjectProjectStage : FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }

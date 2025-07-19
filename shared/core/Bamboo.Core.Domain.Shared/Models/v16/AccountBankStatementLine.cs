@@ -34,7 +34,7 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     public Guid? StatementId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

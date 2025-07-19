@@ -29,7 +29,7 @@ public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? GroupId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }

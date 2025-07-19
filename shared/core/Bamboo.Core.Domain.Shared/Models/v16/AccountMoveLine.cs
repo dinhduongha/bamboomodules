@@ -38,7 +38,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? CompanyCurrencyId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }

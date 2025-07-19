@@ -21,7 +21,7 @@ public partial class HrDepartureReason : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("reason_code")]
     public long? ReasonCode { get; set; }

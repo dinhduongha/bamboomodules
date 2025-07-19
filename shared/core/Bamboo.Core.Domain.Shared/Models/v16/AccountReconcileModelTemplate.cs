@@ -24,7 +24,7 @@ public partial class AccountReconcileModelTemplate : FullAuditedEntity<Guid>, IE
     public Guid? ChartTemplateId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

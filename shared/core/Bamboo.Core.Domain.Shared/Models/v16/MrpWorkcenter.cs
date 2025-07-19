@@ -30,7 +30,7 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? ResourceCalendarId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

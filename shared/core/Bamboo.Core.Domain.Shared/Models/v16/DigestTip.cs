@@ -21,7 +21,7 @@ public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     public Guid? TenantId { get; set; }
     
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }

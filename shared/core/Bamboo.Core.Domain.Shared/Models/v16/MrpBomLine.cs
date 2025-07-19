@@ -33,7 +33,7 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? ProductUomId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("bom_id")]
     public Guid? BomId { get; set; }

@@ -28,7 +28,7 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("categ_id")]
     public Guid? CategId { get; set; }

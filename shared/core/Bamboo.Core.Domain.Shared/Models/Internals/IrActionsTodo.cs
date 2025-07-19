@@ -25,7 +25,7 @@ public partial class IrActionsTodo: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? ActionId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

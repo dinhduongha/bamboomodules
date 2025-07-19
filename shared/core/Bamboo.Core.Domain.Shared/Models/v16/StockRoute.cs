@@ -22,7 +22,7 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("supplied_wh_id")]
     public Guid? SuppliedWhId { get; set; }

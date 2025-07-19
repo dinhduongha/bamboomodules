@@ -24,7 +24,7 @@ public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? WebsiteId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }

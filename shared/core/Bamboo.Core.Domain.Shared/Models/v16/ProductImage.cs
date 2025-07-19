@@ -23,7 +23,7 @@ public partial class ProductImage : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }

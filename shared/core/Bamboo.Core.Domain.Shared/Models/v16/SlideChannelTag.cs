@@ -24,7 +24,7 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long? Sequence { get; set; }
+    public long Sequence { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }

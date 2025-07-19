@@ -35,7 +35,7 @@ public partial class MrpBomByproduct: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? OperationId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

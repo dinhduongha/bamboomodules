@@ -36511,9 +36511,9 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
-            entity.Property(e => e.Sequence)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("sequence");
+            // entity.Property(e => e.Sequence)
+            //     .ValueGeneratedOnAdd()
+            //     .HasColumnName("sequence");
             entity.Property(e => e.AddressFormat).HasColumnName("address_format");
             entity.Property(e => e.AddressViewId).HasColumnName("address_view_id");
             entity.Property(e => e.Code).HasColumnName("code");
@@ -36917,9 +36917,9 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
-            entity.Property(e => e.Sequence)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("sequence");
+            // entity.Property(e => e.Sequence)
+            //     .ValueGeneratedOnAdd()
+            //     .HasColumnName("sequence");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")

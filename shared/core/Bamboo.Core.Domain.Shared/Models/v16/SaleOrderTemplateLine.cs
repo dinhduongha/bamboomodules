@@ -26,7 +26,7 @@ public partial class SaleOrderTemplateLine: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? SaleOrderTemplateId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

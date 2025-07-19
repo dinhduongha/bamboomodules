@@ -21,7 +21,7 @@ public partial class ProductPricelist: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }

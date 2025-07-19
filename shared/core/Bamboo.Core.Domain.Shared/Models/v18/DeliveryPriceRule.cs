@@ -21,7 +21,7 @@ public partial class DeliveryPriceRule: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long? Sequence { get; set; }
+    public long Sequence { get; set; }
 
     [Column("carrier_id")]
     public Guid? CarrierId { get; set; }

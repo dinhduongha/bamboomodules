@@ -25,7 +25,7 @@ public partial class MrpRoutingWorkcenter : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? WorkcenterId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("bom_id")]
     public Guid? BomId { get; set; }

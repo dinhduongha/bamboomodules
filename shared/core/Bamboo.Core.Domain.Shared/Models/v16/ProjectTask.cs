@@ -34,7 +34,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("stage_id")]
     public Guid? StageId { get; set; }

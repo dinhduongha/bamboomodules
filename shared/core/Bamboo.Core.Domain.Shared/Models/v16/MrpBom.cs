@@ -37,7 +37,7 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public Guid? ProductUomId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }

@@ -21,7 +21,7 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("chart_template_id")]
     public Guid? ChartTemplateId { get; set; }

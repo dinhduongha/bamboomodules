@@ -23,7 +23,7 @@ public partial class ProductPackaging: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

@@ -23,7 +23,7 @@ public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

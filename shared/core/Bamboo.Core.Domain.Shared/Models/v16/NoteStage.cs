@@ -21,7 +21,7 @@ public partial class NoteStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAud
     public Guid? TenantId { get; set; }
     
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

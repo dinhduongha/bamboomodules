@@ -21,7 +21,7 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("accrual_plan_id")]
     public Guid? AccrualPlanId { get; set; }

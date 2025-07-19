@@ -78,7 +78,7 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? License { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("auto_install")]
     public bool? AutoInstall { get; set; }
