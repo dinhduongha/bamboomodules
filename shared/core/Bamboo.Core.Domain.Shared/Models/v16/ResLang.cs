@@ -23,6 +23,9 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModifi
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("sequence", TypeName = "bigserial")]
+    public long Sequence { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 

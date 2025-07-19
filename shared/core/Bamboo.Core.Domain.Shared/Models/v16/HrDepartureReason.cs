@@ -24,7 +24,7 @@ public partial class HrDepartureReason : FullAuditedEntity<Guid>, IEntityDto<Gui
     public long Sequence { get; set; }
 
     [Column("reason_code")]
-    public Guid? ReasonCode { get; set; }
+    public long? ReasonCode { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

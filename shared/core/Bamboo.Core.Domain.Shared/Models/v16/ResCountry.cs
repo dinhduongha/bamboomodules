@@ -22,6 +22,9 @@ public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMod
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("sequence", TypeName = "bigserial")]
+    public long Sequence { get; set; }
+
     [Column("address_view_id")]
     public Guid? AddressViewId { get; set; }
 

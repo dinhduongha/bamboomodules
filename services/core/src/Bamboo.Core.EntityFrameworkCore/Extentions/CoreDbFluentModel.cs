@@ -20297,7 +20297,6 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.CronName)
-                .HasColumnType("jsonb")
                 .HasColumnName("cron_name");
             entity.Property(e => e.Doall).HasColumnName("doall");
             entity.Property(e => e.IntervalNumber).HasColumnName("interval_number");
@@ -36512,6 +36511,9 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Sequence)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("sequence");
             entity.Property(e => e.AddressFormat).HasColumnName("address_format");
             entity.Property(e => e.AddressViewId).HasColumnName("address_view_id");
             entity.Property(e => e.Code).HasColumnName("code");
@@ -36659,6 +36661,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            // entity.Property(e => e.Sequence)
+            //     .ValueGeneratedOnAdd()
+            //     .HasColumnName("sequence");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
@@ -36910,6 +36916,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Sequence)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("sequence");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
