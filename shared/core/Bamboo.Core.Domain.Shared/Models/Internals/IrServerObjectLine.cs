@@ -11,11 +11,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_server_object_lines")]
-public partial class IrServerObjectLine: Entity<Guid>, IEntityDto<Guid>
+public partial class IrServerObjectLine: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("server_id")]
     public Guid? ServerId { get; set; }

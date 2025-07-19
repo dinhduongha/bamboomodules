@@ -19144,6 +19144,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("IapAccountId", "TenantId").HasName("iap_account_res_company_rel_pkey");
                         j.ToTable("iap_account_res_company_rel");
                         j.HasIndex(new[] { "TenantId", "IapAccountId" }, "iap_account_res_company_rel_res_company_id_iap_account_id_idx");
+                        j.IndexerProperty<Guid>("IapAccountId").HasColumnName("iap_account_id");
+                        j.IndexerProperty<Guid>("TenantId").HasColumnName("res_company_id");
                     });
 
             entity.HasMany(d => d.ResUsers).WithMany()
@@ -20092,9 +20094,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.Checksum).HasColumnName("checksum");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20163,6 +20165,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20194,6 +20198,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -20252,6 +20257,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20293,6 +20299,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CallAt)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("call_at");
@@ -20386,6 +20393,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20415,6 +20423,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20457,6 +20466,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20486,6 +20496,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActionId).HasColumnName("action_id");
             entity.Property(e => e.Context).HasColumnName("context");
             entity.Property(e => e.CreationTime)
@@ -20558,6 +20569,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20591,6 +20603,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20630,6 +20643,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActionId).HasColumnName("action_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Context).HasColumnName("context");
@@ -20679,6 +20693,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20708,6 +20723,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -20758,6 +20774,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20813,6 +20830,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -20870,6 +20888,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -20921,6 +20940,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("(now() AT TIME ZONE 'UTC'::text)")
                 .HasColumnType("timestamp without time zone")
@@ -20973,6 +20993,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Column1).HasColumnName("column1");
             entity.Property(e => e.Column2).HasColumnName("column2");
             entity.Property(e => e.CompleteName).HasColumnName("complete_name");
@@ -21075,6 +21096,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21108,6 +21130,38 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("ir_model_fields_selection_write_uid_fkey");
         });
 
+        modelBuilder.Entity<IrModelInherit>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ir_model_inherit_pkey");
+
+            entity.ToTable("ir_model_inherit");
+
+            entity.HasIndex(e => new { e.ModelId, e.ParentId }, "ir_model_inherit_uniq").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.ModelId).HasColumnName("model_id");
+            entity.Property(e => e.ParentFieldId).HasColumnName("parent_field_id");
+            entity.Property(e => e.ParentId).HasColumnName("parent_id");
+
+            entity.HasOne(d => d.Model).WithMany(p => p.IrModelInheritModels)
+                .HasForeignKey(d => d.ModelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_model_inherit_model_id_fkey");
+
+            entity.HasOne(d => d.ParentField).WithMany(p => p.IrModelInherits)
+                .HasForeignKey(d => d.ParentFieldId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_model_inherit_parent_field_id_fkey");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.IrModelInheritParents)
+                .HasForeignKey(d => d.ParentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_model_inherit_parent_id_fkey");
+        });
+
         modelBuilder.Entity<IrModelRelation>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("ir_model_relation_pkey");
@@ -21123,6 +21177,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21167,6 +21222,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21217,6 +21273,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Application)
                 .HasDefaultValueSql("false")
                 .HasColumnName("application");
@@ -21314,6 +21371,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AutoInstallRequired)
                 .HasDefaultValueSql("true")
                 .HasColumnName("auto_install_required");
@@ -21337,6 +21395,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21375,6 +21434,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21407,6 +21467,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -21463,6 +21524,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -21524,6 +21586,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
@@ -21569,6 +21632,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -21607,6 +21671,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Col1).HasColumnName("col1");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -21654,6 +21719,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Action).HasColumnName("action");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
@@ -21724,6 +21790,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.ArchDb)
                 .HasColumnType("jsonb")
@@ -21825,6 +21892,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Arch).HasColumnName("arch");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -22151,6 +22219,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -22225,6 +22294,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -22269,6 +22339,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Address).HasColumnName("address");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
@@ -22312,9 +22383,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22411,9 +22482,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22484,8 +22555,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22523,9 +22594,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AutomaticEmailTime).HasColumnName("automatic_email_time");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22673,6 +22744,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActivityTypeId).HasColumnName("activity_type_id");
             entity.Property(e => e.Automated).HasColumnName("automated");
             entity.Property(e => e.CalendarEventId).HasColumnName("calendar_event_id");
@@ -22775,8 +22847,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -22825,6 +22897,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActivityTypeId).HasColumnName("activity_type_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -22879,6 +22952,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActivityTypeId).HasColumnName("activity_type_id");
             entity.Property(e => e.ActivityUserId).HasColumnName("activity_user_id");
             entity.Property(e => e.CreationTime)
@@ -22964,6 +23038,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23005,6 +23080,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Category).HasColumnName("category");
             entity.Property(e => e.ChainingType).HasColumnName("chaining_type");
@@ -23120,6 +23196,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AliasBouncedContent)
                 .HasColumnType("jsonb")
                 .HasColumnName("alias_bounced_content");
@@ -23179,6 +23256,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BounceAlias).HasColumnName("bounce_alias");
             entity.Property(e => e.CatchallAlias).HasColumnName("catchall_alias");
             entity.Property(e => e.CreationTime)
@@ -23219,6 +23297,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -23256,6 +23335,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23291,6 +23371,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23347,6 +23428,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.ChannelType).HasColumnName("channel_type");
             entity.Property(e => e.CreationTime)
@@ -23442,6 +23524,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChannelId).HasColumnName("channel_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -23521,6 +23604,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ChannelId).HasColumnName("channel_id");
             entity.Property(e => e.ChannelMemberId).HasColumnName("channel_member_id");
             entity.Property(e => e.CreationTime)
@@ -23566,6 +23650,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActiveDomain).HasColumnName("active_domain");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
@@ -23758,6 +23843,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23789,6 +23875,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime)
@@ -23828,6 +23915,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23865,6 +23953,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -23911,6 +24000,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AutoDelete).HasColumnName("auto_delete");
             entity.Property(e => e.BodyHtml).HasColumnName("body_html");
             entity.Property(e => e.CreationTime)
@@ -23997,6 +24087,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorGuestId).HasColumnName("author_guest_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Body).HasColumnName("body");
@@ -24139,6 +24230,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Content).HasColumnName("content");
             entity.Property(e => e.GuestId).HasColumnName("guest_id");
             entity.Property(e => e.MessageId).HasColumnName("message_id");
@@ -24169,6 +24261,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24209,6 +24302,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24263,6 +24357,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -24325,6 +24420,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.FailureReason).HasColumnName("failure_reason");
             entity.Property(e => e.FailureType).HasColumnName("failure_type");
@@ -24381,6 +24477,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24421,6 +24518,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24461,6 +24559,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24513,6 +24612,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24560,6 +24660,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24592,6 +24693,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
@@ -24674,6 +24776,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AutoDelete).HasColumnName("auto_delete");
             entity.Property(e => e.BodyHtml)
@@ -24789,6 +24892,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24827,6 +24931,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24877,6 +24982,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -24943,6 +25049,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -25828,6 +25935,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ContactId).HasColumnName("contact_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -25879,6 +25987,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -26457,6 +26566,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -26513,6 +26623,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -26563,6 +26674,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ComponentSeparator).HasColumnName("component_separator");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -26868,6 +26980,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -26916,6 +27029,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -26967,6 +27081,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -27006,6 +27121,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27054,6 +27170,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27277,6 +27394,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27325,6 +27443,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27369,6 +27488,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Counter).HasColumnName("counter");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -27413,6 +27533,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27460,6 +27581,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27493,6 +27615,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.BomId).HasColumnName("bom_id");
             entity.Property(e => e.CreationTime)
@@ -27814,6 +27937,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Capacity).HasColumnName("capacity");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -27935,6 +28059,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -27979,6 +28104,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -28014,6 +28140,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -28047,6 +28174,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CostsHour).HasColumnName("costs_hour");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -28221,6 +28349,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -28275,6 +28404,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ButtonText)
                 .HasColumnType("jsonb")
                 .HasColumnName("button_text");
@@ -28616,6 +28746,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AmountToCapture).HasColumnName("amount_to_capture");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -28667,6 +28798,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -28702,6 +28834,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.AmountMax).HasColumnName("amount_max");
             entity.Property(e => e.CreationTime)
@@ -28749,6 +28882,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.CreationTime)
@@ -28849,6 +28983,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AllowExpressCheckout).HasColumnName("allow_express_checkout");
             entity.Property(e => e.AllowTokenization).HasColumnName("allow_tokenization");
             entity.Property(e => e.AuthMsg)
@@ -28860,7 +28995,6 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CaptureManually).HasColumnName("capture_manually");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.Color).HasColumnName("color");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29012,6 +29146,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccNumber).HasColumnName("acc_number");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -29052,6 +29187,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AmountToRefund).HasColumnName("amount_to_refund");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -29284,6 +29420,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -29323,6 +29460,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29356,6 +29494,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29424,6 +29563,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29475,6 +29615,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29524,6 +29665,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29568,6 +29710,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29604,6 +29747,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -29645,6 +29789,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.AccountReadonly).HasColumnName("account_readonly");
             entity.Property(e => e.AmountToBalance).HasColumnName("amount_to_balance");
@@ -30110,6 +30255,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AddReportPerEmployee).HasColumnName("add_report_per_employee");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -30148,6 +30294,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -30202,6 +30349,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.ConfigId).HasColumnName("config_id");
             entity.Property(e => e.CreationTime)
@@ -30250,6 +30398,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -30524,6 +30673,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -30768,6 +30918,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -30834,6 +30985,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CashJournalId).HasColumnName("cash_journal_id");
             entity.Property(e => e.CashRealTransaction).HasColumnName("cash_real_transaction");
             entity.Property(e => e.CashRegisterBalanceEndReal).HasColumnName("cash_register_balance_end_real");
@@ -30911,6 +31063,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -30940,6 +31093,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AdditionalNote).HasColumnName("additional_note");
             entity.Property(e => e.AnonymizedEmail).HasColumnName("anonymized_email");
             entity.Property(e => e.AnonymizedName).HasColumnName("anonymized_name");
@@ -30983,6 +31137,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31071,6 +31226,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31125,6 +31281,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31184,6 +31341,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31234,6 +31392,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AttributeId).HasColumnName("attribute_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
@@ -31305,6 +31464,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CompleteName).HasColumnName("complete_name");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -31437,6 +31597,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AttachedOnMrp).HasColumnName("attached_on_mrp");
             entity.Property(e => e.AttachedOnSale).HasColumnName("attached_on_sale");
@@ -31501,6 +31662,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CanImage1024BeZoomed).HasColumnName("can_image_1024_be_zoomed");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -31550,6 +31712,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31657,8 +31820,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Barcode).HasColumnName("barcode");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Barcode).HasColumnName("barcode");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31712,9 +31875,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");    
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Code).HasColumnName("code");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -31790,6 +31953,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AppliedOn).HasColumnName("applied_on");
             entity.Property(e => e.Base).HasColumnName("base");
@@ -31893,6 +32057,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Barcode).HasColumnName("barcode");
             entity.Property(e => e.BaseUnitCount).HasColumnName("base_unit_count");
@@ -32011,6 +32176,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32094,6 +32260,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32208,6 +32375,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BgColor).HasColumnName("bg_color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -32323,6 +32491,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -32374,6 +32543,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AllowOutOfStockOrder).HasColumnName("allow_out_of_stock_order");
             entity.Property(e => e.AvailableInPos).HasColumnName("available_in_pos");
@@ -32384,7 +32554,6 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CanImage1024BeZoomed).HasColumnName("can_image_1024_be_zoomed");
             entity.Property(e => e.CategId).HasColumnName("categ_id");
             entity.Property(e => e.Color).HasColumnName("color");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CompareListPrice).HasColumnName("compare_list_price");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -32762,6 +32931,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32826,6 +32996,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AttributeId).HasColumnName("attribute_id");
             entity.Property(e => e.CreationTime)
@@ -32881,6 +33052,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AttributeId).HasColumnName("attribute_id");
             entity.Property(e => e.AttributeLineId).HasColumnName("attribute_line_id");
             entity.Property(e => e.Color).HasColumnName("color");
@@ -32941,6 +33113,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -32984,6 +33157,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33195,6 +33369,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -33244,6 +33419,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33291,6 +33467,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessMode).HasColumnName("access_mode");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -33336,6 +33513,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessMode).HasColumnName("access_mode");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -33392,6 +33570,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -33455,12 +33634,12 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AnalyticAccountId).HasColumnName("analytic_account_id");
             entity.Property(e => e.AncestorId).HasColumnName("ancestor_id");
             entity.Property(e => e.Color).HasColumnName("color");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33658,6 +33837,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33710,6 +33890,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AutoValidationKanbanState).HasColumnName("auto_validation_kanban_state");
             entity.Property(e => e.CreationTime)
@@ -33803,6 +33984,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33874,6 +34056,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -33923,6 +34106,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -34338,6 +34522,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -34426,6 +34611,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.Consumed).HasColumnName("consumed");
             entity.Property(e => e.CreationTime)
@@ -34975,11 +35161,11 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.AmountTax).HasColumnName("amount_tax");
             entity.Property(e => e.AmountTotal).HasColumnName("amount_total");
             entity.Property(e => e.AmountUntaxed).HasColumnName("amount_untaxed");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -35128,6 +35314,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -35163,6 +35350,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -35195,6 +35383,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -35237,6 +35426,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -35285,6 +35475,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Bic).HasColumnName("bic");
             entity.Property(e => e.City).HasColumnName("city");
@@ -35755,6 +35946,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -35784,6 +35976,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -35813,6 +36006,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AliasDomain).HasColumnName("alias_domain");
             entity.Property(e => e.AllowOutOfStockOrder).HasColumnName("allow_out_of_stock_order");
             entity.Property(e => e.AuthSignupResetPassword).HasColumnName("auth_signup_reset_password");
@@ -35821,7 +36015,6 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.AutomaticInvoice).HasColumnName("automatic_invoice");
             entity.Property(e => e.AvailableThreshold).HasColumnName("available_threshold");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -36195,6 +36388,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AddressFormat).HasColumnName("address_format");
             entity.Property(e => e.AddressViewId).HasColumnName("address_view_id");
             entity.Property(e => e.Code).HasColumnName("code");
@@ -36266,6 +36460,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -36434,6 +36629,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Browser).HasColumnName("browser");
             entity.Property(e => e.City).HasColumnName("city");
             entity.Property(e => e.Country).HasColumnName("country");
@@ -36489,6 +36685,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.Comment)
@@ -36651,6 +36848,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AdditionalInfo).HasColumnName("additional_info");
             entity.Property(e => e.CalendarLastNotifAck)
@@ -36661,7 +36859,6 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Comment).HasColumnName("comment");
             entity.Property(e => e.CommercialCompanyName).HasColumnName("commercial_company_name");
             entity.Property(e => e.CommercialPartnerId).HasColumnName("commercial_partner_id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CompanyName).HasColumnName("company_name");
             entity.Property(e => e.CompanyRegistry).HasColumnName("company_registry");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
@@ -36839,6 +37036,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -36881,6 +37079,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccHolderName).HasColumnName("acc_holder_name");
             entity.Property(e => e.AccNumber).HasColumnName("acc_number");
             entity.Property(e => e.Active).HasColumnName("active");
@@ -36955,6 +37154,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
@@ -37016,6 +37216,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -37055,6 +37256,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37096,11 +37298,11 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActionId).HasColumnName("action_id");
             entity.Property(e => e.Active)
                 .HasDefaultValueSql("true")
                 .HasColumnName("active");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37174,6 +37376,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("(now() AT TIME ZONE 'utc'::text)")
                 .HasColumnType("timestamp without time zone")
@@ -37200,6 +37403,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37232,6 +37436,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37271,6 +37476,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37304,6 +37510,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37338,6 +37545,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37413,6 +37621,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37503,6 +37712,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
@@ -37719,6 +37929,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.BackgroundColor).HasColumnName("background_color");
             entity.Property(e => e.CreationTime)
@@ -37752,6 +37963,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
@@ -37894,6 +38106,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -37957,6 +38170,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.AmountTax).HasColumnName("amount_tax");
             entity.Property(e => e.AmountTotal).HasColumnName("amount_total");
@@ -37969,7 +38183,6 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CommitmentDate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("commitment_date");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -38192,6 +38405,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
@@ -38243,6 +38457,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -38315,10 +38530,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AnalyticDistribution)
                 .HasColumnType("jsonb")
                 .HasColumnName("analytic_distribution");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -38504,6 +38719,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -38741,6 +38957,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccNumber).HasColumnName("acc_number");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -38781,6 +38998,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -39949,6 +40167,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -39985,6 +40204,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -40021,6 +40241,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -40059,6 +40280,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CompositionMode).HasColumnName("composition_mode");
             entity.Property(e => e.CreationTime)
@@ -40107,6 +40329,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40144,6 +40367,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40192,6 +40416,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -40241,6 +40466,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Body)
                 .HasColumnType("jsonb")
                 .HasColumnName("body");
@@ -40293,6 +40519,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40332,6 +40559,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40380,6 +40608,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40422,6 +40651,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40458,6 +40688,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
             entity.Property(e => e.City).HasColumnName("city");
             entity.Property(e => e.Color).HasColumnName("color");
@@ -40547,6 +40778,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40583,6 +40815,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.City).HasColumnName("city");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime)
@@ -40640,6 +40873,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40717,6 +40951,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40750,6 +40985,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -40791,6 +41027,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.ExpectedQty).HasColumnName("expected_qty");
             entity.Property(e => e.MoveId).HasColumnName("move_id");
@@ -40839,6 +41076,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40888,6 +41126,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.BackorderConfirmationId).HasColumnName("backorder_confirmation_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -40932,6 +41171,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -40976,6 +41216,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -41025,6 +41266,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -41069,6 +41311,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -41119,6 +41362,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -41186,6 +41430,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -41985,6 +42230,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42035,6 +42281,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42546,8 +42793,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.AccountingDate).HasColumnName("accounting_date");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.AccountingDate).HasColumnName("accounting_date");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42693,6 +42940,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42755,6 +43003,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42789,6 +43038,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42843,6 +43093,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -42892,6 +43143,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountingDate).HasColumnName("accounting_date");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -42949,6 +43201,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43003,6 +43256,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43181,10 +43435,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Action).HasColumnName("action");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Auto).HasColumnName("auto");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43281,6 +43535,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43359,6 +43614,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43523,6 +43779,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -43557,6 +43814,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AllowNewProduct).HasColumnName("allow_new_product");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
@@ -43653,6 +43911,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43684,6 +43943,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43749,6 +44009,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43796,9 +44057,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountMoveId).HasColumnName("account_move_id");
             entity.Property(e => e.AccountMoveLineId).HasColumnName("account_move_line_id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -43947,11 +44208,11 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.BuyPullId).HasColumnName("buy_pull_id");
             entity.Property(e => e.BuyToResupply).HasColumnName("buy_to_resupply");
             entity.Property(e => e.Code).HasColumnName("code");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -44207,9 +44468,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.BomId).HasColumnName("bom_id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -44308,6 +44569,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -44359,6 +44621,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -44410,6 +44673,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -45527,6 +45791,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -45560,6 +45825,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.CreationTime)
@@ -45602,6 +45868,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AttributeValueId).HasColumnName("attribute_value_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -45640,8 +45907,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -45712,6 +45979,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -45745,6 +46013,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -45778,6 +46047,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -45816,6 +46086,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Color).HasColumnName("color");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -45851,6 +46122,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -45899,6 +46171,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Binary).HasColumnName("binary");
             entity.Property(e => e.Char).HasColumnName("char");
             entity.Property(e => e.CreationTime)
@@ -45946,6 +46219,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46075,6 +46349,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountOnCheckout).HasColumnName("account_on_checkout");
             entity.Property(e => e.AddToCartAction).HasColumnName("add_to_cart_action");
             entity.Property(e => e.AuthSignupUninvited).HasColumnName("auth_signup_uninvited");
@@ -46084,7 +46359,6 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CdnActivated).HasColumnName("cdn_activated");
             entity.Property(e => e.CdnFilters).HasColumnName("cdn_filters");
             entity.Property(e => e.CdnUrl).HasColumnName("cdn_url");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ConfiguratorDone).HasColumnName("configurator_done");
             entity.Property(e => e.ContactUsButtonUrl)
                 .HasColumnType("jsonb")
@@ -46229,6 +46503,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46261,6 +46536,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46323,6 +46599,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46375,6 +46652,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Content).HasColumnName("content");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -46473,6 +46751,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46562,6 +46841,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46619,6 +46899,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46656,6 +46937,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46702,6 +46984,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -46751,6 +47034,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.Content).HasColumnName("content");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -46781,6 +47065,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46811,6 +47096,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -46859,6 +47145,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.ActionServerId).HasColumnName("action_server_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
@@ -46921,6 +47208,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.PageId).HasColumnName("page_id");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.Url).HasColumnName("url");
@@ -46958,6 +47246,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime)
@@ -47017,6 +47306,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
