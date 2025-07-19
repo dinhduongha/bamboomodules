@@ -22,7 +22,7 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("height")]

@@ -20,7 +20,7 @@ public partial class CrmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("team_id")]

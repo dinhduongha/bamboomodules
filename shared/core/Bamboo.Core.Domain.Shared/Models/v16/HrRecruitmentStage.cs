@@ -20,7 +20,7 @@ public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
     
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("template_id")]

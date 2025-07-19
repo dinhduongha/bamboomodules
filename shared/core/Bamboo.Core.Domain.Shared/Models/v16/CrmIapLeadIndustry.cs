@@ -24,7 +24,7 @@ public partial class CrmIapLeadIndustry : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("color")]
     public long? Color { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]

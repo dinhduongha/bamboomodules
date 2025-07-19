@@ -30,7 +30,7 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]

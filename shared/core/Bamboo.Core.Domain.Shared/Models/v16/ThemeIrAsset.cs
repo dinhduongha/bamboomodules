@@ -20,7 +20,7 @@ public partial class ThemeIrAsset : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long Sequence { get; set; }
 
     [Column("create_uid")]

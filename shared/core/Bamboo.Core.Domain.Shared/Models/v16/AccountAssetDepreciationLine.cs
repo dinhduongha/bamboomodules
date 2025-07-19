@@ -22,7 +22,7 @@ public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEn
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long Sequence { get; set; }
 
     [Column("asset_id")]

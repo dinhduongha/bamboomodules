@@ -23,7 +23,7 @@ public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("view_id")]
     public Guid? ViewId { get; set; }
 
-    [Column("sequence", TypeName = "bigserial")]
+    [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
