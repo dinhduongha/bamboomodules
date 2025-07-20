@@ -33,7 +33,7 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public string? UomType { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("factor")]
     public decimal? Factor { get; set; }

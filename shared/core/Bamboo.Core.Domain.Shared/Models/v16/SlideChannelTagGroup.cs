@@ -32,7 +32,7 @@ public partial class SlideChannelTagGroup: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }

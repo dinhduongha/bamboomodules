@@ -33,7 +33,7 @@ public partial class AccountGroupTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("code_prefix_start")]
     public string? CodePrefixStart { get; set; }

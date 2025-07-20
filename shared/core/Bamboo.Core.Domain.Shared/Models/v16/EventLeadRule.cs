@@ -45,7 +45,7 @@ public partial class EventLeadRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public string? LeadType { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("event_registration_filter")]
     public string? EventRegistrationFilter { get; set; }

@@ -40,7 +40,7 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("rule_type")]
     public string? RuleType { get; set; }

@@ -36,7 +36,7 @@ public partial class ChatbotScriptAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
     public string? RedirectLink { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

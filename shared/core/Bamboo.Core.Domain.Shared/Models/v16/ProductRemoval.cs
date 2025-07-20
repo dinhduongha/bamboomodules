@@ -29,7 +29,7 @@ public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     // v16-Compat json
     //[Column("method")]

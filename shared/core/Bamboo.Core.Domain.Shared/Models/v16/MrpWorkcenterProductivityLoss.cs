@@ -35,7 +35,7 @@ public partial class MrpWorkcenterProductivityLoss : FullAuditedEntity<Guid>, IE
     // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("loss_type")]
     public string? LossType { get; set; }

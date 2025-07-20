@@ -38,7 +38,7 @@ public partial class SaleOrderTemplateOption: FullAuditedEntity<Guid>, IEntityDt
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("quantity")]
     public decimal? Quantity { get; set; }

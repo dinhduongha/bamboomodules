@@ -47,7 +47,7 @@ public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? Type { get; set; }
 
     [Column("message", TypeName = "jsonb")]
-    public string? Message { get; set; }
+    public StringDictionary? Message { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }

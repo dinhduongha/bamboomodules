@@ -41,7 +41,7 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

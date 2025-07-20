@@ -40,7 +40,7 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     // v16-Compat
     [Column("description", TypeName = "jsonb")]

@@ -33,7 +33,7 @@ public partial class CrmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("requirements")]
     public string? Requirements { get; set; }

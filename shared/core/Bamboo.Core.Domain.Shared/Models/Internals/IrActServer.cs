@@ -44,10 +44,10 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? BindingViewTypes { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [Column("help", TypeName = "jsonb")]
-    public string? Help { get; set; }
+    [Column("name", TypeName = "jsonb")]
+    public StringDictionary? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

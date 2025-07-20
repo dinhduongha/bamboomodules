@@ -45,7 +45,7 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public string? PosReceiptLabel { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     //[Column("preceding_subtotal")]
     [Column("preceding_subtotal", TypeName = "jsonb")]

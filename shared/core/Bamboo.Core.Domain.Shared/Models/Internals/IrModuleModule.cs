@@ -57,13 +57,13 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? LatestVersion { get; set; }
 
     [Column("shortdesc", TypeName = "jsonb")]
-    public string? Shortdesc { get; set; }
+    public StringDictionary? Shortdesc { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("application")]
     public bool? Application { get; set; }

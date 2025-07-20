@@ -58,7 +58,7 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? Mode { get; set; }
 
     [Column("arch_db", TypeName = "jsonb")]
-    public string? ArchDb { get; set; }
+    public StringDictionary? ArchDb { get; set; }
 
     [Column("arch_prev")]
     public string? ArchPrev { get; set; }
@@ -94,16 +94,16 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? VisibilityPassword { get; set; }
 
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public StringDictionary? WebsiteMetaKeywords { get; set; }
 
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
     [Column("track")]
     public bool? Track { get; set; }

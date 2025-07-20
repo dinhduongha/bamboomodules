@@ -37,7 +37,7 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? State { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("info")]
     public string? Info { get; set; }

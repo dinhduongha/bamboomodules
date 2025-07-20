@@ -36,7 +36,7 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public string? DefaultTimezone { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("ticket_instructions", TypeName = "jsonb")]
     public string? TicketInstructions { get; set; }

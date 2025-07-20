@@ -36,7 +36,7 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime? NextRunDate { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("kpi_res_users_connected")]
     public bool? KpiResUsersConnected { get; set; }

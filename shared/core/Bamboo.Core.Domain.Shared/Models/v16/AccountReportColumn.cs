@@ -42,7 +42,7 @@ public partial class AccountReportColumn: FullAuditedEntity<Guid>, IEntityDto<Gu
     public string? FigureType { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("sortable")]
     public bool? Sortable { get; set; }

@@ -42,7 +42,7 @@ public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto
     public string? HtmlColor { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("is_custom")]
     public bool? IsCustom { get; set; }

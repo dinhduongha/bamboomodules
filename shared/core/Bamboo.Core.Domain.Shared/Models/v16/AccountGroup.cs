@@ -35,7 +35,7 @@ public partial class AccountGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public string? ParentPath { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("code_prefix_start")]
     public string? CodePrefixStart { get; set; }

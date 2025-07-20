@@ -30,7 +30,7 @@ public partial class FleetServiceType : FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? Category { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

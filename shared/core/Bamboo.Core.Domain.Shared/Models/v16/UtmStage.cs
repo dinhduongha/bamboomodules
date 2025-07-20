@@ -30,7 +30,7 @@ public partial class UtmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

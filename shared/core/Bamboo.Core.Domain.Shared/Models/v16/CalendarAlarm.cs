@@ -42,7 +42,7 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Interval { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("body")]
     public string? Body { get; set; }

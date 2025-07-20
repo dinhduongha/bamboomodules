@@ -59,7 +59,7 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public string? ModuleState { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     // v16-Compat
     [Column("display_as", TypeName = "jsonb")]

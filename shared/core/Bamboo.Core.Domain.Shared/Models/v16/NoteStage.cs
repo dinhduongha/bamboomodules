@@ -33,7 +33,7 @@ public partial class NoteStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAud
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("fold")]
     public bool? Fold { get; set; }

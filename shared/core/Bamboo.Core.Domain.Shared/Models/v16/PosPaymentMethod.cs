@@ -48,7 +48,7 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? QrCodeMethod { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("is_cash_count")]
     public bool? IsCashCount { get; set; }

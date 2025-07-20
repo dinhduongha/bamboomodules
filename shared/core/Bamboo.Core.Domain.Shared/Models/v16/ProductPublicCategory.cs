@@ -58,7 +58,7 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
     public string? SeoName { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }

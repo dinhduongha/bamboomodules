@@ -36,7 +36,7 @@ public partial class EventTypeTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }

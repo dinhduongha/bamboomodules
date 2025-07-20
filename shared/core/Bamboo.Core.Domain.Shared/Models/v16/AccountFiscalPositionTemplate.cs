@@ -39,7 +39,7 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("zip_from")]
     public string? ZipFrom { get; set; }

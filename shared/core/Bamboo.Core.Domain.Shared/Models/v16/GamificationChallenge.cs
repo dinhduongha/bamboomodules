@@ -86,7 +86,7 @@ public partial class GamificationChallenge : FullAuditedEntity<Guid>, IEntityDto
     public DateTime? NextReportDate { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }

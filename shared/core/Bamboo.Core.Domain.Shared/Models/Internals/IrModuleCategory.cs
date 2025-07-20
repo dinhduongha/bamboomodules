@@ -37,13 +37,13 @@ public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? ParentId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("visible")]
     public bool? Visible { get; set; }

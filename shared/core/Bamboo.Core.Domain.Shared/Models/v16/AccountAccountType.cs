@@ -31,7 +31,7 @@ public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Gui
     public string? Type { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

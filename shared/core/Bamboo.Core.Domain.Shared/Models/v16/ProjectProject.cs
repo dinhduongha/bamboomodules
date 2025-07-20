@@ -90,7 +90,7 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public DateTime? Date { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("label_tasks", TypeName = "jsonb")]
     public string? LabelTasks { get; set; }

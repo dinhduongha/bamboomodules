@@ -33,7 +33,7 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
     public string? RoundingMethod { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("profit_account_id", TypeName = "jsonb")]
     public string? ProfitAccountId { get; set; }

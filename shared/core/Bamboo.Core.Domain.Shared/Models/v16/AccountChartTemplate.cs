@@ -108,7 +108,7 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("bank_account_code_prefix")]
     public string? BankAccountCodePrefix { get; set; }

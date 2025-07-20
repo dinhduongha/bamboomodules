@@ -60,7 +60,7 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
     public string? ResIdField { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("suffix", TypeName = "jsonb")]
     public string? Suffix { get; set; }

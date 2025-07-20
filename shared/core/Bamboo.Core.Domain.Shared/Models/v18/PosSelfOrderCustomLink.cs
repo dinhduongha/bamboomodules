@@ -36,7 +36,7 @@ public partial class PosSelfOrderCustomLink: FullAuditedEntity<Guid>, IEntityDto
     public string? Style { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("link_html")]
     public string? LinkHtml { get; set; }

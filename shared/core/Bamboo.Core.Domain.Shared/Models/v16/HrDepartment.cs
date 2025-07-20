@@ -48,7 +48,7 @@ public partial class HrDepartment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("complete_name")]
     public string? CompleteName { get; set; }

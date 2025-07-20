@@ -71,7 +71,7 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public string? RequestUnit { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_calendar_meeting")]
     public bool? CreateCalendarMeeting { get; set; }

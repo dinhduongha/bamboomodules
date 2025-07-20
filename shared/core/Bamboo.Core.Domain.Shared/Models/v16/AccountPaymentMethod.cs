@@ -34,7 +34,7 @@ public partial class AccountPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<G
     public string? PaymentType { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

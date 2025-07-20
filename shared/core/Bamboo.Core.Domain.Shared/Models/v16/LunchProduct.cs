@@ -36,7 +36,7 @@ public partial class LunchProduct: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime? NewUntil { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }

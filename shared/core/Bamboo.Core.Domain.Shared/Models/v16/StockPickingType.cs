@@ -82,7 +82,7 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? MoveType { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("picking_properties_definition", TypeName = "jsonb")]
     public string? PickingPropertiesDefinition { get; set; }

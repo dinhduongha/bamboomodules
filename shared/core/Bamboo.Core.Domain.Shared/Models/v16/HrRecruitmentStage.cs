@@ -33,7 +33,7 @@ public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("legend_blocked", TypeName = "jsonb")]
     public string? LegendBlocked { get; set; }

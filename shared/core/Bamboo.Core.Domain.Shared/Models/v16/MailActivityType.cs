@@ -63,7 +63,7 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? Category { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("summary", TypeName = "jsonb")]
     public string? Summary { get; set; }

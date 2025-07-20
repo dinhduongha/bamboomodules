@@ -44,7 +44,7 @@ public partial class SaleOrderTemplateLine: FullAuditedEntity<Guid>, IEntityDto<
     public string? DisplayType { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("product_uom_qty")]
     public decimal? ProductUomQty { get; set; }

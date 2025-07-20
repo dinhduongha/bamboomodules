@@ -36,7 +36,7 @@ public partial class AccountAccountTemplate : FullAuditedEntity<Guid>, IEntityDt
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("code")]
     public string? Code { get; set; }

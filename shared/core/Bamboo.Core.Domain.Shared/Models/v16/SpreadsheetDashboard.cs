@@ -38,7 +38,7 @@ public partial class SpreadsheetDashboard: FullAuditedEntity<Guid>, IEntityDto<G
     // v16-Compat json
     //[Column("name")]
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }

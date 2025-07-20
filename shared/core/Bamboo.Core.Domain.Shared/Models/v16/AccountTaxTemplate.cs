@@ -40,7 +40,7 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? LastModifierId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("type_tax_use")]
     public string? TypeTaxUse { get; set; }

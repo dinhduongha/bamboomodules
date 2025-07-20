@@ -23,7 +23,7 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? TenantId { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }

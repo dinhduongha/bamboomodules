@@ -40,7 +40,7 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     public string? ResModel { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }

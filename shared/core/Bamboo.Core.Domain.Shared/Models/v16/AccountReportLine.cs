@@ -55,7 +55,7 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     public string? HorizontalSplitSide { get; set; }
 
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("foldable")]
     public bool? Foldable { get; set; }
