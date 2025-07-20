@@ -299,6 +299,11 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
 
+    [ForeignKey("ExpenseSheetId")]
+    //[InverseProperty("AccountMoves")]
+    [NotMapped]
+    public virtual HrExpenseSheet? ExpenseSheet { get; set; }
+
     [ForeignKey("FiscalPositionId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
@@ -339,6 +344,11 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    [ForeignKey("OriginPaymentId")]
+    //[InverseProperty("AccountMoves")]
+    [NotMapped]
+    public virtual AccountPayment? OriginPayment { get; set; }
+
     [ForeignKey("PartnerId")]
     //[InverseProperty("AccountMovePartners")]
     [NotMapped]
@@ -354,6 +364,7 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [NotMapped]
     public virtual ResPartner? PartnerShipping { get; set; }
 
+    // v16-Compat
     [ForeignKey("PaymentId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
@@ -363,6 +374,16 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     //[InverseProperty("InverseReversedEntry")]
     [NotMapped]
     public virtual AccountMove? ReversedEntry { get; set; }
+
+   [ForeignKey("ReversedPosOrderId")]
+    //[InverseProperty("AccountMoves")]
+    [NotMapped]
+    public virtual PosOrder? ReversedPosOrder { get; set; }
+ 
+     [ForeignKey("PreferredPaymentMethodLineId")]
+    //[InverseProperty("AccountMoves")]
+    [NotMapped]
+    public virtual AccountPaymentMethodLine? PreferredPaymentMethodLine { get; set; }
 
     [ForeignKey("SourceId")]
     //[InverseProperty("AccountMoves")]

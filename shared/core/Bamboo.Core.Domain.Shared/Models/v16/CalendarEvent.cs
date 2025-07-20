@@ -122,6 +122,11 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual HrApplicant? Applicant { get; set; }
 
+    [ForeignKey("CandidateId")]
+    //[InverseProperty("CalendarEvents")]
+    [NotMapped]
+    public virtual HrCandidate? Candidate { get; set; }
+
     [ForeignKey("CreatorId")]
     //[InverseProperty("CalendarEventCreateUs")]
     [NotMapped]

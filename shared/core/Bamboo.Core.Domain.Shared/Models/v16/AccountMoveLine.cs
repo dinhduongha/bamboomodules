@@ -325,6 +325,11 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [NotMapped]
     public virtual AccountReconcileModel? ReconcileModel { get; set; }
 
+   [ForeignKey("CogsOriginId")]
+    //[InverseProperty("InverseCogsOrigin")]
+    [NotMapped]
+    public virtual AccountMoveLine? CogsOrigin { get; set; }
+
     [ForeignKey("StatementId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]

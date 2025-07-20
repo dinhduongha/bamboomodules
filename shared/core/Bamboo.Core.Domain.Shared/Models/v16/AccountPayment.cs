@@ -157,10 +157,21 @@ public partial class AccountPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [NotMapped]
     public virtual AccountAccount? DestinationAccount { get; set; }
 
-    [ForeignKey("DestinationJournalId")]
+    [ForeignKey("JournalId")]
     //[InverseProperty("AccountPayments")]
     [NotMapped]
-    public virtual AccountJournal? DestinationJournal { get; set; }
+    public virtual AccountJournal? Journal { get; set; }
+
+    [ForeignKey("PosOrderId")]
+    //[InverseProperty("AccountPayments")]
+    [NotMapped]
+    public virtual PosOrder? PosOrder { get; set; }
+
+    // v16-Compat
+    // [ForeignKey("DestinationJournalId")]
+    // //[InverseProperty("AccountPayments")]
+    // [NotMapped]
+    // public virtual AccountJournal? DestinationJournal { get; set; }
 
     [ForeignKey("ForceOutstandingAccountId")]
     //[InverseProperty("AccountPaymentForceOutstandingAccounts")]

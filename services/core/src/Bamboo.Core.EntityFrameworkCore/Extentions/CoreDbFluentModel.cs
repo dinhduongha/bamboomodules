@@ -16,15 +16,19 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_account_pkey");
 
             entity.ToTable("account_account");
+            entity.HasIndex(e => e.AccountType, "account_account__account_type_index");
             entity.HasIndex(e => e.TenantId, "account_account_company_id_index");
             entity.HasIndex(e => new { e.TenantId, e.Code }, "account_account_code_company_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.AccountType).HasColumnName("account_type");
             entity.Property(e => e.Code).HasColumnName("code");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.CodeStore)
+                .HasColumnType("jsonb")
+                .HasColumnName("code_store");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -91,6 +95,7 @@ public static class CoreDbModelFluentCreatingExtensions
                     "AccountAccountAccountTag",
                     r => r.HasOne<AccountAccountTag>().WithMany()
                         .HasForeignKey("AccountAccountTagId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("account_account_account_tag_account_account_tag_id_fkey"),
                     l => l.HasOne<AccountAccount>().WithMany()
                         .HasForeignKey("AccountAccountId")
@@ -100,6 +105,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountAccountId", "AccountAccountTagId").HasName("account_account_account_tag_pkey");
                         j.ToTable("account_account_account_tag");
                         j.HasIndex(new[] { "AccountAccountTagId", "AccountAccountId" }, "account_account_account_tag_account_account_tag_id_account__idx");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
+                        j.IndexerProperty<Guid>("AccountAccountTagId").HasColumnName("account_account_tag_id");
                     });
 
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountAccounts)
@@ -117,6 +124,27 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountAccountId", "AccountJournalId").HasName("account_account_account_journal_rel_pkey");
                         j.ToTable("account_account_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountAccountId" }, "account_account_account_journ_account_journal_id_account_ac_idx");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
+                    });
+
+            //entity.HasMany(d => d.ResCompanies).WithMany(p => p.AccountAccounts)
+            entity.HasMany(d => d.ResCompanies).WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountAccountResCompanyRel",
+                    r => r.HasOne<ResCompany>().WithMany()
+                        .HasForeignKey("TenantId")
+                        .HasConstraintName("account_account_res_company_rel_res_company_id_fkey"),
+                    l => l.HasOne<AccountAccount>().WithMany()
+                        .HasForeignKey("AccountAccountId")
+                        .HasConstraintName("account_account_res_company_rel_account_account_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountAccountId", "TenantId").HasName("account_account_res_company_rel_pkey");
+                        j.ToTable("account_account_res_company_rel");
+                        j.HasIndex(new[] { "TenantId", "AccountAccountId" }, "account_account_res_company_r_res_company_id_account_accoun_idx");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
+                        j.IndexerProperty<Guid>("TenantId").HasColumnName("res_company_id");
                     });
 
             //entity.HasMany(d => d.Taxes).WithMany(p => p.Accounts)
@@ -136,24 +164,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "TaxId", "AccountId" }, "account_account_tax_default_rel_tax_id_account_id_idx");
                     });
 
-            entity.HasMany(d => d.ResCompanies).WithMany()
-                .UsingEntity<Dictionary<string, object>>(
-                    "AccountAccountResCompanyRel",
-                    r => r.HasOne<ResCompany>().WithMany()
-                        .HasForeignKey("TenantId")
-                        .HasConstraintName("account_account_res_company_rel_res_company_id_fkey"),
-                    l => l.HasOne<AccountAccount>().WithMany()
-                        .HasForeignKey("AccountAccountId")
-                        .HasConstraintName("account_account_res_company_rel_account_account_id_fkey"),
-                    j =>
-                    {
-                        j.HasKey("AccountAccountId", "TenantId").HasName("account_account_res_company_rel_pkey");
-                        j.ToTable("account_account_res_company_rel");
-                        j.HasIndex(new[] { "TenantId", "AccountAccountId" }, "account_account_res_company_r_res_company_id_account_accoun_idx");
-                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
-                        j.IndexerProperty<Guid>("TenantId").HasColumnName("res_company_id");
-                    });
-
+            //TODO: RELATION CHECK
+            //entity.HasMany(d => d.Taxes).WithMany(p => p.Accounts)
             entity.HasMany(d => d.Taxes).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountAccountTaxDefaultRel",
@@ -180,6 +192,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.ToTable("account_account_tag");
 
             entity.HasIndex(e => e.TenantId, "account_account_tag_company_id_index");
+
+            entity.HasIndex(e => new { e.Name, e.Applicability, e.CountryId }, "account_account_tag_name_uniq").IsUnique();
 
             //entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id)
@@ -378,6 +392,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
             entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.JournalId).HasColumnName("journal_id");
             entity.Property(e => e.ReversalDate).HasColumnName("reversal_date");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
@@ -403,6 +418,13 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.CurrencyId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_accrued_orders_wizard_currency_id_fkey");
+
+	    // TODO: RELATION CHECK
+        //entity.HasOne(d => d.Journal).WithMany(p => p.AccountAccruedOrdersWizards)
+        entity.HasOne(d => d.Journal).WithMany()
+                .HasForeignKey(d => d.JournalId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_accrued_orders_wizard_journal_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.LastModifierId)
@@ -449,6 +471,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_aged_trial_balance_write_uid_fkey");
 
+	    // TODO: RELATION CHECK
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountAgedTrialBalances)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -464,6 +487,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountAgedTrialBalanceId", "AccountJournalId").HasName("account_aged_trial_balance_account_journal_rel_pkey");
                         j.ToTable("account_aged_trial_balance_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountAgedTrialBalanceId" }, "account_aged_trial_balance_ac_account_journal_id_account_ag_idx");
+                        j.IndexerProperty<Guid>("AccountAgedTrialBalanceId").HasColumnName("account_aged_trial_balance_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountAgedTrialBalances)
@@ -481,6 +506,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountAgedTrialBalanceId", "ResPartnerId").HasName("account_aged_trial_balance_res_partner_rel_pkey");
                         j.ToTable("account_aged_trial_balance_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountAgedTrialBalanceId" }, "account_aged_trial_balance_re_res_partner_id_account_aged_t_idx");
+                        j.IndexerProperty<Guid>("AccountAgedTrialBalanceId").HasColumnName("account_aged_trial_balance_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -490,6 +517,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_analytic_account");
 
+            entity.HasIndex(e => e.Code, "account_analytic_account__code_index");
             entity.HasIndex(e => e.TenantId, "account_analytic_account_company_id_index");
             entity.HasIndex(e => e.Code, "account_analytic_account_code_index");
 
@@ -550,6 +578,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_analytic_account_write_uid_fkey");
 
+            // TODO: RELATION CHECK
             //entity.HasMany(d => d.MrpBoms).WithMany()
             entity.HasMany<MrpBom>(d => d.MrpBoms).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -569,6 +598,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("MrpBomId").HasColumnName("mrp_bom_id");
                     });
 
+            // TODO: RELATION CHECK
             //entity.HasMany(d => d.MrpProductions).WithMany(p => p.AccountAnalyticAccounts)
             entity.HasMany<MrpProduction>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -588,6 +618,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
                     });
 
+            // TODO: RELATION CHECK
             //entity.HasMany(d => d.MrpWorkcenters).WithMany()
             entity.HasMany<MrpWorkcenter>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -633,15 +664,15 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            entity.HasOne<ResCompany>().WithMany()
-                .HasForeignKey(d => d.TenantId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("account_account_applicability_company_id_fkey");
-
             entity.HasOne(d => d.AnalyticPlan).WithMany(p => p.AccountAnalyticApplicabilities)
                 .HasForeignKey(d => d.AnalyticPlanId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_analytic_applicability_analytic_plan_id_fkey");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_account_applicability_company_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
@@ -684,6 +715,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.ProductCategId).HasColumnName("product_categ_id");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
@@ -737,7 +769,13 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.MoveLineId, "account_analytic_line_move_line_id_index");
 
+            entity.HasIndex(e => e.SoLine, "account_analytic_line__so_line_index").HasFilter("(so_line IS NOT NULL)");
+
             entity.HasIndex(e => e.UserId, "account_analytic_line_user_id_index");
+
+            entity.HasIndex(e => e.XPlan2Id, "account_analytic_line__x_plan2_id_index").HasFilter("(x_plan2_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.XPlan3Id, "account_analytic_line__x_plan3_id_index").HasFilter("(x_plan3_id IS NOT NULL)");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -770,8 +808,13 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+            entity.Property(e => e.XPlan2Id).HasColumnName("x_plan2_id");
+            entity.Property(e => e.XPlan3Id).HasColumnName("x_plan3_id");
 
-            entity.HasOne(d => d.Account).WithMany(p => p.AccountAnalyticLines)
+            // v16-Compat
+            // TODO: CHECK RELATION
+            //entity.HasOne(d => d.Account).WithMany(p => p.AccountAnalyticLines)
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountAnalyticLineAccounts)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("account_analytic_line_account_id_fkey");
@@ -840,6 +883,16 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_analytic_line_write_uid_fkey");
+
+            entity.HasOne(d => d.XPlan2).WithMany(p => p.AccountAnalyticLineXPlan2s)
+                .HasForeignKey(d => d.XPlan2Id)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_analytic_line_x_plan2_id_fkey");
+
+            entity.HasOne(d => d.XPlan3).WithMany(p => p.AccountAnalyticLineXPlan3s)
+                .HasForeignKey(d => d.XPlan3Id)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_analytic_line_x_plan3_id_fkey");
         });
 
         modelBuilder.Entity<AccountAnalyticPlan>(entity =>
@@ -860,11 +913,14 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-            entity.Property(e => e.DefaultApplicability).HasColumnName("default_applicability");
+            entity.Property(e => e.DefaultApplicability)
+                .HasColumnName("default_applicability");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Name)
+                .HasColumnName("name");
             entity.Property(e => e.ParentId).HasColumnName("parent_id");
             entity.Property(e => e.ParentPath).HasColumnName("parent_path");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
@@ -990,11 +1046,11 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_asset_category");
 
-            entity.HasIndex(e => e.AnalyticDistribution, "account_asset_category_analytic_distribution_gin_index").HasMethod("gin");
-
             entity.HasIndex(e => e.Name, "account_asset_category_name_index");
 
             entity.HasIndex(e => e.Type, "account_asset_category_type_index");
+
+            entity.HasIndex(e => e.AnalyticDistribution, "account_asset_category_analytic_distribution_gin_index").HasMethod("gin");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -1177,6 +1233,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_automatic_entry_wizard_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountMoveLines).WithMany(p => p.AccountAutomaticEntryWizards)
             entity.HasMany<AccountMoveLine>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1192,6 +1249,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountAutomaticEntryWizardId", "AccountMoveLineId").HasName("account_automatic_entry_wizard_account_move_line_rel_pkey");
                         j.ToTable("account_automatic_entry_wizard_account_move_line_rel");
                         j.HasIndex(new[] { "AccountMoveLineId", "AccountAutomaticEntryWizardId" }, "account_automatic_entry_wizar_account_move_line_id_account__idx");
+                        j.IndexerProperty<Guid>("AccountAutomaticEntryWizardId").HasColumnName("account_automatic_entry_wizard_id");
+                        j.IndexerProperty<Guid>("AccountMoveLineId").HasColumnName("account_move_line_id");
                     });
         });
 
@@ -1205,6 +1264,8 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.NbUnmodifiedBills).HasColumnName("nb_unmodified_bills");
+            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
@@ -1215,15 +1276,15 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("account_autopost_bills_wizard_company_id_fkey");
 
-            entity.HasOne<ResPartner>().WithMany()
-                .HasForeignKey(d => d.PartnerId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("account_autopost_bills_wizard_partner_id_fkey");
-
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_autopost_bills_wizard_create_uid_fkey");
+
+            entity.HasOne<ResPartner>().WithMany()
+                .HasForeignKey(d => d.PartnerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_autopost_bills_wizard_partner_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.LastModifierId)
@@ -1269,6 +1330,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_balance_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountAccounts).WithMany(p => p.AccountBalanceReports)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1284,8 +1346,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountBalanceReportId", "AccountAccountId").HasName("account_account_account_balance_report_rel_pkey");
                         j.ToTable("account_account_account_balance_report_rel");
                         j.HasIndex(new[] { "AccountAccountId", "AccountBalanceReportId" }, "account_account_account_balan_account_account_id_account_ba_idx");
+                        j.IndexerProperty<Guid>("AccountBalanceReportId").HasColumnName("account_balance_report_id");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountAnalyticAccounts).WithMany(p => p.AccountBalanceReports)
             entity.HasMany<AccountAnalyticAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1301,8 +1366,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountBalanceReportId", "AccountAnalyticAccountId").HasName("account_trial_balance_analytic_rel_pkey");
                         j.ToTable("account_trial_balance_analytic_rel");
                         j.HasIndex(new[] { "AccountAnalyticAccountId", "AccountBalanceReportId" }, "account_trial_balance_analyti_account_analytic_account_id_a_idx");
+                        j.IndexerProperty<Guid>("AccountBalanceReportId").HasColumnName("account_balance_report_id");
+                        j.IndexerProperty<Guid>("AccountAnalyticAccountId").HasColumnName("account_analytic_account_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Journals).WithMany(p => p.Accounts)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1318,6 +1386,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountId", "JournalId").HasName("account_balance_report_journal_rel_pkey");
                         j.ToTable("account_balance_report_journal_rel");
                         j.HasIndex(new[] { "JournalId", "AccountId" }, "account_balance_report_journal_rel_journal_id_account_id_idx");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
+                        j.IndexerProperty<Guid>("JournalId").HasColumnName("journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountBalanceReports)
@@ -1335,6 +1405,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountBalanceReportId", "ResPartnerId").HasName("account_balance_report_res_partner_rel_pkey");
                         j.ToTable("account_balance_report_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountBalanceReportId" }, "account_balance_report_res_pa_res_partner_id_account_balanc_idx");
+                        j.IndexerProperty<Guid>("AccountBalanceReportId").HasColumnName("account_balance_report_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -1343,6 +1415,12 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasKey(e => e.Id).HasName("account_bank_statement_pkey");
 
             entity.ToTable("account_bank_statement");
+
+            entity.HasIndex(e => e.Date, "account_bank_statement__date_index");
+
+            entity.HasIndex(e => new { e.JournalId, e.FirstLineIndex }, "account_bank_statement_first_line_index_idx");
+
+            entity.HasIndex(e => new { e.JournalId, e.Date, e.Id }, "account_bank_statement_journal_id_date_desc_id_desc_idx").IsDescending(false, true, true);
 
             entity.HasIndex(e => e.FirstLineIndex, "account_bank_statement_first_line_index_index");
 
@@ -1388,6 +1466,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_bank_statement_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.IrAttachments).WithMany(p => p.AccountBankStatements)
             entity.HasMany<IrAttachment>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1403,6 +1482,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountBankStatementId", "IrAttachmentId").HasName("account_bank_statement_ir_attachment_rel_pkey");
                         j.ToTable("account_bank_statement_ir_attachment_rel");
                         j.HasIndex(new[] { "IrAttachmentId", "AccountBankStatementId" }, "account_bank_statement_ir_att_ir_attachment_id_account_bank_idx");
+                        j.IndexerProperty<Guid>("AccountBankStatementId").HasColumnName("account_bank_statement_id");
+                        j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
                     });
         });
 
@@ -1498,6 +1579,15 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_bank_statement_line");
 
+            entity.HasIndex(e => e.MoveId, "account_bank_statement_line__move_id_index");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_main_idx");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_orphan_idx").HasFilter("(statement_id IS NULL)");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_unreconciled_idx").HasFilter("((NOT is_reconciled) OR (is_reconciled IS NULL))");
+
+
             entity.HasIndex(e => e.TenantId, "account_bank_statement_line_company_id_index");
 
             entity.HasIndex(e => e.InternalIndex, "account_bank_statement_line_internal_index_index");
@@ -1517,9 +1607,11 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
             entity.Property(e => e.ForeignCurrencyId).HasColumnName("foreign_currency_id");
             entity.Property(e => e.InternalIndex).HasColumnName("internal_index");
             entity.Property(e => e.IsReconciled).HasColumnName("is_reconciled");
+            entity.Property(e => e.JournalId).HasColumnName("journal_id");
             entity.Property(e => e.MoveId).HasColumnName("move_id");
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.PartnerName).HasColumnName("partner_name");
@@ -1528,12 +1620,20 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Sequence)
                 .HasColumnName("sequence");
             entity.Property(e => e.StatementId).HasColumnName("statement_id");
+            entity.Property(e => e.TransactionDetails)
+                .HasColumnType("jsonb")
+                .HasColumnName("transaction_details");
             entity.Property(e => e.TransactionType).HasColumnName("transaction_type");
             entity.Property(e => e.UniqueImportId).HasColumnName("unique_import_id");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_bank_statement_line_company_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
@@ -1545,10 +1645,24 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_bank_statement_line_currency_id_fkey");
 
-            entity.HasOne(d => d.ForeignCurrency).WithMany(p => p.AccountBankStatementLineForeignCurrencies)
+            // TODO: RELATION CHECK
+            //entity.HasOne(d => d.Employee).WithMany(p => p.AccountBankStatementLines)
+            entity.HasOne(d => d.Employee).WithMany()
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_bank_statement_line_employee_id_fkey");
+
+            //entity.HasOne(d => d.ForeignCurrency).WithMany(p => p.AccountBankStatementLineForeignCurrencies)
+            entity.HasOne(d => d.ForeignCurrency).WithMany()
                 .HasForeignKey(d => d.ForeignCurrencyId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_bank_statement_line_foreign_currency_id_fkey");
+
+            //entity.HasOne(d => d.Journal).WithMany(p => p.AccountBankStatementLines)
+            entity.HasOne(d => d.Journal).WithMany()
+                .HasForeignKey(d => d.JournalId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_bank_statement_line_journal_id_fkey");
 
             entity.HasOne(d => d.Move).WithMany(p => p.AccountBankStatementLines)
                 .HasForeignKey(d => d.MoveId)
@@ -1575,6 +1689,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_bank_statement_line_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountPayments).WithMany(p => p.AccountBankStatementLines)
             entity.HasMany<AccountPayment>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1590,6 +1705,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountBankStatementLineId", "AccountPaymentId").HasName("account_payment_account_bank_statement_line_rel_pkey");
                         j.ToTable("account_payment_account_bank_statement_line_rel");
                         j.HasIndex(new[] { "AccountPaymentId", "AccountBankStatementLineId" }, "account_payment_account_bank__account_payment_id_account_ba_idx");
+                        j.IndexerProperty<Guid>("AccountBankStatementLineId").HasColumnName("account_bank_statement_line_id");
+                        j.IndexerProperty<Guid>("AccountPaymentId").HasColumnName("account_payment_id");
                     });
         });
 
@@ -1630,6 +1747,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_bankbook_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountBankbookReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1645,8 +1763,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountBankbookReportId", "AccountJournalId").HasName("account_bankbook_report_account_journal_rel_pkey");
                         j.ToTable("account_bankbook_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountBankbookReportId" }, "account_bankbook_report_accou_account_journal_id_account_ba_idx");
+                        j.IndexerProperty<Guid>("AccountBankbookReportId").HasColumnName("account_bankbook_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Accounts).WithMany(p => p.ReportLines)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1662,6 +1783,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReportLineId", "AccountId").HasName("account_account_bankbook_report_pkey");
                         j.ToTable("account_account_bankbook_report");
                         j.HasIndex(new[] { "AccountId", "ReportLineId" }, "account_account_bankbook_report_account_id_report_line_id_idx");
+                        j.IndexerProperty<Guid>("ReportLineId").HasColumnName("report_line_id");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
                     });
         });
 
@@ -1700,6 +1823,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_budget_post_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Accounts).WithMany(p => p.Budgets)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1715,6 +1839,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("BudgetId", "AccountId").HasName("account_budget_rel_pkey");
                         j.ToTable("account_budget_rel");
                         j.HasIndex(new[] { "AccountId", "BudgetId" }, "account_budget_rel_account_id_budget_id_idx");
+                        j.IndexerProperty<Guid>("BudgetId").HasColumnName("budget_id");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
                     });
         });
 
@@ -1734,9 +1860,15 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.LossAccountId)
+                .HasColumnType("jsonb")
+                .HasColumnName("loss_account_id");
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
+            entity.Property(e => e.ProfitAccountId)
+                .HasColumnType("jsonb")
+                .HasColumnName("profit_account_id");
             entity.Property(e => e.Rounding).HasColumnName("rounding");
             entity.Property(e => e.RoundingMethod).HasColumnName("rounding_method");
             entity.Property(e => e.Strategy).HasColumnName("strategy");
@@ -1793,6 +1925,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_cashbook_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountCashbookReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1808,8 +1941,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCashbookReportId", "AccountJournalId").HasName("account_cashbook_report_account_journal_rel_pkey");
                         j.ToTable("account_cashbook_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountCashbookReportId" }, "account_cashbook_report_accou_account_journal_id_account_ca_idx");
+                        j.IndexerProperty<Guid>("AccountCashbookReportId").HasColumnName("account_cashbook_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Accounts).WithMany(p => p.ReportLinesNavigation)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -1825,6 +1961,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReportLineId", "AccountId").HasName("account_account_cashbook_report_pkey");
                         j.ToTable("account_account_cashbook_report");
                         j.HasIndex(new[] { "AccountId", "ReportLineId" }, "account_account_cashbook_report_account_id_report_line_id_idx");
+                        j.IndexerProperty<Guid>("ReportLineId").HasColumnName("report_line_id");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
                     });
         });
 
@@ -2065,6 +2203,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_common_account_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountAccounts).WithMany(p => p.AccountCommonAccountReports)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2080,8 +2219,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonAccountReportId", "AccountAccountId").HasName("account_account_account_common_account_report_rel_pkey");
                         j.ToTable("account_account_account_common_account_report_rel");
                         j.HasIndex(new[] { "AccountAccountId", "AccountCommonAccountReportId" }, "account_account_account_commo_account_account_id_account_co_idx");
+                        j.IndexerProperty<Guid>("AccountCommonAccountReportId").HasColumnName("account_common_account_report_id");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountAnalyticAccounts).WithMany(p => p.AccountCommonAccountReports)
             entity.HasMany<AccountAnalyticAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2097,8 +2239,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonAccountReportId", "AccountAnalyticAccountId").HasName("account_analytic_account_account_common_account_report_rel_pkey");
                         j.ToTable("account_analytic_account_account_common_account_report_rel");
                         j.HasIndex(new[] { "AccountAnalyticAccountId", "AccountCommonAccountReportId" }, "account_analytic_account_acco_account_analytic_account_id_a_idx");
+                        j.IndexerProperty<Guid>("AccountCommonAccountReportId").HasColumnName("account_common_account_report_id");
+                        j.IndexerProperty<Guid>("AccountAnalyticAccountId").HasColumnName("account_analytic_account_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountCommonAccountReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2114,6 +2259,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonAccountReportId", "AccountJournalId").HasName("account_common_account_report_account_journal_rel_pkey");
                         j.ToTable("account_common_account_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountCommonAccountReportId" }, "account_common_account_report_account_journal_id_account_co_idx");
+                        j.IndexerProperty<Guid>("AccountCommonAccountReportId").HasColumnName("account_common_account_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountCommonAccountReports)
@@ -2131,6 +2278,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonAccountReportId", "ResPartnerId").HasName("account_common_account_report_res_partner_rel_pkey");
                         j.ToTable("account_common_account_report_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountCommonAccountReportId" }, "account_common_account_report_res_partner_id_account_common_idx");
+                        j.IndexerProperty<Guid>("AccountCommonAccountReportId").HasColumnName("account_common_account_report_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -2172,6 +2321,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_common_journal_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountCommonJournalReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2187,6 +2337,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonJournalReportId", "AccountJournalId").HasName("account_common_journal_report_account_journal_rel_pkey");
                         j.ToTable("account_common_journal_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountCommonJournalReportId" }, "account_common_journal_report_account_journal_id_account_co_idx");
+                        j.IndexerProperty<Guid>("AccountCommonJournalReportId").HasColumnName("account_common_journal_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
         });
 
@@ -2228,6 +2380,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_common_partner_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountCommonPartnerReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2243,6 +2396,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonPartnerReportId", "AccountJournalId").HasName("account_common_partner_report_account_journal_rel_pkey");
                         j.ToTable("account_common_partner_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountCommonPartnerReportId" }, "account_common_partner_report_account_journal_id_account_co_idx");
+                        j.IndexerProperty<Guid>("AccountCommonPartnerReportId").HasColumnName("account_common_partner_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountCommonPartnerReports)
@@ -2260,6 +2415,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonPartnerReportId", "ResPartnerId").HasName("account_common_partner_report_res_partner_rel_pkey");
                         j.ToTable("account_common_partner_report_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountCommonPartnerReportId" }, "account_common_partner_report_res_partner_id_account_common_idx");
+                        j.IndexerProperty<Guid>("AccountCommonPartnerReportId").HasColumnName("account_common_partner_report_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -2300,6 +2457,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_common_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountCommonReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2315,6 +2473,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountCommonReportId", "AccountJournalId").HasName("account_common_report_account_journal_rel_pkey");
                         j.ToTable("account_common_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountCommonReportId" }, "account_common_report_account_account_journal_id_account_co_idx");
+                        j.IndexerProperty<Guid>("AccountCommonReportId").HasColumnName("account_common_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
         });
 
@@ -2352,6 +2512,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_daybook_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountDaybookReports)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2367,8 +2528,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountDaybookReportId", "AccountJournalId").HasName("account_daybook_report_account_journal_rel_pkey");
                         j.ToTable("account_daybook_report_account_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountDaybookReportId" }, "account_daybook_report_accoun_account_journal_id_account_da_idx");
+                        j.IndexerProperty<Guid>("AccountDaybookReportId").HasColumnName("account_daybook_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Accounts).WithMany(p => p.ReportLines1)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2384,6 +2548,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReportLineId", "AccountId").HasName("account_account_daybook_report_pkey");
                         j.ToTable("account_account_daybook_report");
                         j.HasIndex(new[] { "AccountId", "ReportLineId" }, "account_account_daybook_report_account_id_report_line_id_idx");
+                        j.IndexerProperty<Guid>("ReportLineId").HasColumnName("report_line_id");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
                     });
         });
 
@@ -2532,6 +2698,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_financial_report_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountTypes).WithMany(p => p.Reports)
             entity.HasMany<AccountAccountType>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2547,8 +2714,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReportId", "AccountTypeId").HasName("account_account_financial_report_type_pkey");
                         j.ToTable("account_account_financial_report_type");
                         j.HasIndex(new[] { "AccountTypeId", "ReportId" }, "account_account_financial_report__account_type_id_report_id_idx");
+                        j.IndexerProperty<Guid>("ReportId").HasColumnName("report_id");
+                        j.IndexerProperty<Guid>("AccountTypeId").HasColumnName("account_type_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Accounts).WithMany(p => p.ReportLines2)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -2564,6 +2734,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReportLineId", "AccountId").HasName("account_account_financial_report_pkey");
                         j.ToTable("account_account_financial_report");
                         j.HasIndex(new[] { "AccountId", "ReportLineId" }, "account_account_financial_report_account_id_report_line_id_idx");
+                        j.IndexerProperty<Guid>("ReportLineId").HasColumnName("report_line_id");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
                     });
         });
 
@@ -2677,6 +2849,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountFiscalPositionId", "ResCountryStateId").HasName("account_fiscal_position_res_country_state_rel_pkey");
                         j.ToTable("account_fiscal_position_res_country_state_rel");
                         j.HasIndex(new[] { "ResCountryStateId", "AccountFiscalPositionId" }, "account_fiscal_position_res_c_res_country_state_id_account__idx");
+                        j.IndexerProperty<Guid>("AccountFiscalPositionId").HasColumnName("account_fiscal_position_id");
+                        j.IndexerProperty<Guid>("ResCountryStateId").HasColumnName("res_country_state_id");
                     });
         });
 
@@ -3018,6 +3192,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.ToTable("account_full_reconcile");
 
             entity.HasIndex(e => e.TenantId, "account_full_reconcile_company_id_index");
+            entity.HasIndex(e => e.ExchangeMoveId, "account_full_reconcile__exchange_move_id_index").HasFilter("(exchange_move_id IS NOT NULL)");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -3265,8 +3440,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
+            entity.Property(e => e.AccessToken).HasColumnName("access_token");
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AliasId).HasColumnName("alias_id");
+            entity.Property(e => e.AutocheckOnPost).HasColumnName("autocheck_on_post");
             entity.Property(e => e.BankAccountId).HasColumnName("bank_account_id");
             entity.Property(e => e.BankStatementsSource).HasColumnName("bank_statements_source");
             entity.Property(e => e.Code).HasColumnName("code");
@@ -3306,7 +3483,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasOne(d => d.Alias).WithMany(p => p.AccountJournals)
                 .HasForeignKey(d => d.AliasId)
-                .OnDelete(DeleteBehavior.SetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("account_journal_alias_id_fkey");
 
             entity.HasOne(d => d.BankAccount).WithMany(p => p.AccountJournals)
@@ -3374,6 +3551,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_journal_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountEdiFormats).WithMany(p => p.AccountJournals)
             entity.HasMany<AccountEdiFormat>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -3391,6 +3569,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "AccountEdiFormatId", "AccountJournalId" }, "account_edi_format_account_jo_account_edi_format_id_account_idx");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Accounts1).WithMany(p => p.Journals)
             entity.HasMany<AccountAccount>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -3406,6 +3585,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("JournalId", "AccountId").HasName("journal_account_control_rel_pkey");
                         j.ToTable("journal_account_control_rel");
                         j.HasIndex(new[] { "AccountId", "JournalId" }, "journal_account_control_rel_account_id_journal_id_idx");
+                        j.IndexerProperty<Guid>("JournalId").HasColumnName("journal_id");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
                     });
         });
 
@@ -3452,6 +3633,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_journal_group_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountJournalGroups)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -3467,8 +3649,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountJournalGroupId", "AccountJournalId").HasName("account_journal_account_journal_group_rel_pkey");
                         j.ToTable("account_journal_account_journal_group_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountJournalGroupId" }, "account_journal_account_journ_account_journal_id_account_jo_idx");
+                        j.IndexerProperty<Guid>("AccountJournalGroupId").HasColumnName("account_journal_group_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
         });
+
         modelBuilder.Entity<AccountLockException>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("account_lock_exception_pkey");
@@ -3621,13 +3806,25 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_move");
 
+            entity.HasIndex(e => e.AutoPostOriginId, "account_move__auto_post_origin_id_index").HasFilter("(auto_post_origin_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.CampaignId, "account_move__campaign_id_index").HasFilter("(campaign_id IS NOT NULL)");
+
             entity.HasIndex(e => e.TenantId, "account_move_company_id_index");
 
             entity.HasIndex(e => e.Date, "account_move_date_index");
 
+            entity.HasIndex(e => e.ExpenseSheetId, "account_move__expense_sheet_id_index").HasFilter("(expense_sheet_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.InalterableHash, "account_move__inalterable_hash_index").HasFilter("(inalterable_hash IS NOT NULL)");
+
             entity.HasIndex(e => e.InvoiceDateDue, "account_move_invoice_date_due_index");
 
             entity.HasIndex(e => e.InvoiceDate, "account_move_invoice_date_index");
+
+            entity.HasIndex(e => e.MediumId, "account_move__medium_id_index").HasFilter("(medium_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.MessageMainAttachmentId, "account_move__message_main_attachment_id_index").HasFilter("(message_main_attachment_id IS NOT NULL)");
 
             entity.HasIndex(e => e.MoveType, "account_move_move_type_index");
 
@@ -3637,11 +3834,19 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasMethod("gin")
                 .HasOperators(new[] { "gin_trgm_ops" });
 
+            entity.HasIndex(e => e.OriginPaymentId, "account_move__origin_payment_id_index").HasFilter("(origin_payment_id IS NOT NULL)");
+
             entity.HasIndex(e => e.PaymentId, "account_move_payment_id_index").HasFilter("(payment_id IS NOT NULL)");
 
             entity.HasIndex(e => new { e.TenantId, e.JournalId, e.State, e.PaymentState, e.MoveType, e.Date }, "account_move_payment_idx");
 
+            entity.HasIndex(e => e.PartnerId, "account_move__partner_id_index");
+
             entity.HasIndex(e => e.PaymentReference, "account_move_payment_reference_index")
+                .HasMethod("gin")
+                .HasOperators(new[] { "gin_trgm_ops" });
+
+            entity.HasIndex(e => e.Ref, "account_move__ref_index")
                 .HasMethod("gin")
                 .HasOperators(new[] { "gin_trgm_ops" });
 
@@ -3651,11 +3856,27 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => new { e.TenantId, e.JournalId, e.Id, e.SequencePrefix }, "account_move_sequence_index2").IsDescending(false, false, true, false);
 
+            entity.HasIndex(e => e.SecureSequenceNumber, "account_move__secure_sequence_number_index");
+
+            entity.HasIndex(e => e.SourceId, "account_move__source_id_index").HasFilter("(source_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.StatementLineId, "account_move__statement_line_id_index").HasFilter("(statement_line_id IS NOT NULL)");
+
             entity.HasIndex(e => e.StockMoveId, "account_move_stock_move_id_index").HasFilter("(stock_move_id IS NOT NULL)");
 
             entity.HasIndex(e => e.TaxCashBasisOriginMoveId, "account_move_tax_cash_basis_origin_move_id_index").HasFilter("(tax_cash_basis_origin_move_id IS NOT NULL)");
 
+            entity.HasIndex(e => e.TaxCashBasisRecId, "account_move__tax_cash_basis_rec_id_index").HasFilter("(tax_cash_basis_rec_id IS NOT NULL)");
+
             entity.HasIndex(e => e.JournalId, "account_move_to_check_idx").HasFilter("(to_check = true)");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId, e.Date }, "account_move_journal_id_company_id_idx");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId, e.Date }, "account_move_made_gaps").HasFilter("(made_sequence_gap = true)");
+
+            entity.HasIndex(e => new { e.Name, e.JournalId }, "account_move_unique_name")
+                .IsUnique()
+                .HasFilter("((state = 'posted'::text) AND (name <> '/'::text))");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -3670,11 +3891,13 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.AmountTotalInCurrencySigned).HasColumnName("amount_total_in_currency_signed");
             entity.Property(e => e.AmountTotalSigned).HasColumnName("amount_total_signed");
             entity.Property(e => e.AmountUntaxed).HasColumnName("amount_untaxed");
+            entity.Property(e => e.AmountUntaxedInCurrencySigned).HasColumnName("amount_untaxed_in_currency_signed");
             entity.Property(e => e.AmountUntaxedSigned).HasColumnName("amount_untaxed_signed");
             entity.Property(e => e.AutoPost).HasColumnName("auto_post");
             entity.Property(e => e.AutoPostOriginId).HasColumnName("auto_post_origin_id");
             entity.Property(e => e.AutoPostUntil).HasColumnName("auto_post_until");
             entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
+            entity.Property(e => e.Checked).HasColumnName("checked");
             entity.Property(e => e.CommercialPartnerId).HasColumnName("commercial_partner_id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
@@ -3683,10 +3906,14 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
             entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.DeliveryDate).HasColumnName("delivery_date");
+            entity.Property(e => e.ExpenseSheetId).HasColumnName("expense_sheet_id");
             entity.Property(e => e.EdiState).HasColumnName("edi_state");
             entity.Property(e => e.FiscalPositionId).HasColumnName("fiscal_position_id");
             entity.Property(e => e.InalterableHash).HasColumnName("inalterable_hash");
+            entity.Property(e => e.IncotermLocation).HasColumnName("incoterm_location");
             entity.Property(e => e.InvoiceCashRoundingId).HasColumnName("invoice_cash_rounding_id");
+            entity.Property(e => e.InvoiceCurrencyRate).HasColumnName("invoice_currency_rate");
             entity.Property(e => e.InvoiceDate).HasColumnName("invoice_date");
             entity.Property(e => e.InvoiceDateDue).HasColumnName("invoice_date_due");
             entity.Property(e => e.InvoiceIncotermId).HasColumnName("invoice_incoterm_id");
@@ -3695,14 +3922,18 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.InvoicePaymentTermId).HasColumnName("invoice_payment_term_id");
             entity.Property(e => e.InvoiceSourceEmail).HasColumnName("invoice_source_email");
             entity.Property(e => e.InvoiceUserId).HasColumnName("invoice_user_id");
+            entity.Property(e => e.IsManuallyModified).HasColumnName("is_manually_modified");
             entity.Property(e => e.IsMoveSent).HasColumnName("is_move_sent");
             entity.Property(e => e.IsStorno).HasColumnName("is_storno");
             entity.Property(e => e.JournalId).HasColumnName("journal_id");
+            entity.Property(e => e.L10nVnEInvoiceNumber).HasColumnName("l10n_vn_e_invoice_number");
+            entity.Property(e => e.MadeSequenceGap).HasColumnName("made_sequence_gap");
             entity.Property(e => e.MediumId).HasColumnName("medium_id");
             entity.Property(e => e.MessageMainAttachmentId).HasColumnName("message_main_attachment_id");
             entity.Property(e => e.MoveType).HasColumnName("move_type");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Narration).HasColumnName("narration");
+            entity.Property(e => e.OriginPaymentId).HasColumnName("origin_payment_id");
             entity.Property(e => e.PartnerBankId).HasColumnName("partner_bank_id");
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.PartnerShippingId).HasColumnName("partner_shipping_id");
@@ -3710,10 +3941,12 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.PaymentReference).HasColumnName("payment_reference");
             entity.Property(e => e.PaymentState).HasColumnName("payment_state");
             entity.Property(e => e.PostedBefore).HasColumnName("posted_before");
+            entity.Property(e => e.PreferredPaymentMethodLineId).HasColumnName("preferred_payment_method_line_id");
             entity.Property(e => e.QrCodeMethod).HasColumnName("qr_code_method");
             entity.Property(e => e.QuickEditTotalAmount).HasColumnName("quick_edit_total_amount");
             entity.Property(e => e.Ref).HasColumnName("ref");
             entity.Property(e => e.ReversedEntryId).HasColumnName("reversed_entry_id");
+            entity.Property(e => e.ReversedPosOrderId).HasColumnName("reversed_pos_order_id");
             entity.Property(e => e.SecureSequenceNumber).HasColumnName("secure_sequence_number");
             entity.Property(e => e.SequenceNumber)
                 .HasColumnName("sequence_number");
@@ -3762,6 +3995,13 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("account_move_currency_id_fkey");
 
+            // TODO: RELATION CHECK
+            //entity.HasOne(d => d.ExpenseSheet).WithMany(p => p.AccountMoves)
+            entity.HasOne(d => d.ExpenseSheet).WithMany()
+                .HasForeignKey(d => d.ExpenseSheetId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_expense_sheet_id_fkey");
+
             entity.HasOne(d => d.FiscalPosition).WithMany(p => p.AccountMoves)
                 .HasForeignKey(d => d.FiscalPositionId)
                 .OnDelete(DeleteBehavior.Restrict)
@@ -3782,6 +4022,8 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_invoice_payment_term_id_fkey");
 
+            // TODO: CHECK RELATION
+            //entity.HasOne(d => d.InvoiceUser).WithMany(p => p.AccountMoveInvoiceUsers)
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.InvoiceUserId)
                 .OnDelete(DeleteBehavior.SetNull)
@@ -3797,14 +4039,19 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_medium_id_fkey");
 
-            entity.HasOne(d => d.MessageMainAttachment).WithMany(p => p.AccountMoves)
+            entity.HasOne(d => d.MessageMainAttachment).WithMany()
                 .HasForeignKey(d => d.MessageMainAttachmentId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_message_main_attachment_id_fkey");
 
+            entity.HasOne(d => d.OriginPayment).WithMany(p => p.AccountMoves)
+                .HasForeignKey(d => d.OriginPaymentId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_origin_payment_id_fkey");
+
             entity.HasOne(d => d.PartnerBank).WithMany(p => p.AccountMoves)
                 .HasForeignKey(d => d.PartnerBankId)
-                .OnDelete(DeleteBehavior.SetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("account_move_partner_bank_id_fkey");
 
             entity.HasOne<ResPartner>().WithMany()
@@ -3817,15 +4064,28 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_partner_shipping_id_fkey");
 
-            entity.HasOne(d => d.Payment).WithMany(p => p.AccountMoves)
-                .HasForeignKey(d => d.PaymentId)
+            //entity.HasOne(d => d.PreferredPaymentMethodLine).WithMany(p => p.AccountMoves)
+            entity.HasOne(d => d.PreferredPaymentMethodLine).WithMany()
+                .HasForeignKey(d => d.PreferredPaymentMethodLineId)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("account_move_payment_id_fkey");
+                .HasConstraintName("account_move_preferred_payment_method_line_id_fkey");
+
+            // v16-Compat
+            // entity.HasOne(d => d.Payment).WithMany(p => p.AccountMoves)
+            //     .HasForeignKey(d => d.PaymentId)
+            //     .OnDelete(DeleteBehavior.SetNull)
+            //     .HasConstraintName("account_move_payment_id_fkey");
 
             entity.HasOne(d => d.ReversedEntry).WithMany(p => p.InverseReversedEntry)
                 .HasForeignKey(d => d.ReversedEntryId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_reversed_entry_id_fkey");
+
+            //entity.HasOne(d => d.ReversedPosOrder).WithMany(p => p.AccountMoves)
+            entity.HasOne(d => d.ReversedPosOrder).WithMany()
+                .HasForeignKey(d => d.ReversedPosOrderId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_reversed_pos_order_id_fkey");
 
             entity.HasOne(d => d.Source).WithMany(p => p.AccountMoves)
                 .HasForeignKey(d => d.SourceId)
@@ -3867,6 +4127,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Transactions).WithMany(p => p.Invoices)
             entity.HasMany<PaymentTransaction>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -3884,6 +4145,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "TransactionId", "InvoiceId" }, "account_invoice_transaction_rel_transaction_id_invoice_id_idx");
                     });
 
+            // TODO: CHECK RELATION
+            //entity.HasMany(d => d.MrpProductions).WithMany(p => p.AccountMoves)
             entity.HasMany(d => d.MrpProductions).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountMoveMrpProductionRel",
@@ -3902,6 +4165,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
                     });
 
+            // TODO: CHECK RELATION
             entity.HasMany(d => d.OriginalAccountMoves).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "RefundedInvoice",
@@ -3920,6 +4184,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("OriginalAccountMove").HasColumnName("original_account_move");
                     });
 
+            // TODO: CHECK RELATION
             entity.HasMany(d => d.Payments).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountMoveAccountPayment",
@@ -3956,6 +4221,7 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.IndexerProperty<Guid>("OriginalAccountMove").HasColumnName("original_account_move");
                     });
 
+            // TODO: CHECK RELATION
             entity.HasMany(d => d.Transactions).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountInvoiceTransactionRel",
@@ -3981,6 +4247,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.ToTable("account_move_line");
 
+            entity.HasIndex(e => e.CogsOriginId, "account_move_line__cogs_origin_id_index").HasFilter("(cogs_origin_id IS NOT NULL)");
+
             entity.HasIndex(e => e.AccountId, "account_move_line_account_id_index");
 
             entity.HasIndex(e => e.TenantId, "account_move_line_company_id_index");
@@ -3994,6 +4262,8 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasIndex(e => e.GroupTaxId, "account_move_line_group_tax_id_index").HasFilter("(group_tax_id IS NOT NULL)");
 
             entity.HasIndex(e => e.JournalId, "account_move_line_journal_id_index");
+
+            entity.HasIndex(e => e.MatchingNumber, "account_move_line__matching_number_index");
 
             entity.HasIndex(e => e.MoveId, "account_move_line_move_id_index");
 
@@ -4013,7 +4283,17 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.StatementLineId, "account_move_line_statement_line_id_index").HasFilter("(statement_line_id IS NOT NULL)");
 
+            entity.HasIndex(e => new { e.AccountId, e.PartnerId }, "account_move_line__unreconciled_index").HasFilter("(((reconciled IS NULL) OR (reconciled = false) OR (reconciled IS NOT TRUE)) AND (parent_state = 'posted'::text))");
+
             entity.HasIndex(e => e.VehicleId, "account_move_line_vehicle_id_index").HasFilter("(vehicle_id IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.AccountId, e.Date }, "account_move_line_account_id_date_idx");
+
+            //entity.HasIndex(e => new { e.Date, e.MoveName, e.Id }, "account_move_line_date_name_id_idx").IsDescending(true, true, false);
+
+            entity.HasIndex(e => e.JournalId, "account_move_line_journal_id_neg_amnt_residual_idx").HasFilter("((amount_residual < (0)::numeric) AND (parent_state = 'posted'::text))");
+
+            //entity.HasIndex(e => new { e.PartnerId, e.Ref }, "account_move_line_partner_id_ref_idx");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4031,6 +4311,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.AssetMrr).HasColumnName("asset_mrr");
             entity.Property(e => e.AssetStartDate).HasColumnName("asset_start_date");
             entity.Property(e => e.Balance).HasColumnName("balance");
+            entity.Property(e => e.CogsOriginId).HasColumnName("cogs_origin_id");
             entity.Property(e => e.Blocked).HasColumnName("blocked");
             entity.Property(e => e.CompanyCurrencyId).HasColumnName("company_currency_id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
@@ -4054,7 +4335,9 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.FollowupLineId).HasColumnName("followup_line_id");
             entity.Property(e => e.FullReconcileId).HasColumnName("full_reconcile_id");
             entity.Property(e => e.GroupTaxId).HasColumnName("group_tax_id");
+            entity.Property(e => e.InvoiceDate).HasColumnName("invoice_date");
             entity.Property(e => e.IsDownpayment).HasColumnName("is_downpayment");
+            entity.Property(e => e.IsImported).HasColumnName("is_imported");
             entity.Property(e => e.JournalId).HasColumnName("journal_id");
             entity.Property(e => e.MatchingNumber).HasColumnName("matching_number");
             entity.Property(e => e.MoveId).HasColumnName("move_id");
@@ -4098,6 +4381,12 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.AssetCategoryId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_line_asset_category_id_fkey");
+
+            //entity.HasOne(d => d.CogsOrigin).WithMany(p => p.InverseCogsOrigin)
+            entity.HasOne(d => d.CogsOrigin).WithMany()
+                .HasForeignKey(d => d.CogsOriginId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_move_line_cogs_origin_id_fkey");
 
             entity.HasOne(d => d.CompanyCurrency).WithMany(p => p.AccountMoveLineCompanyCurrencies)
                 .HasForeignKey(d => d.CompanyCurrencyId)
@@ -4214,6 +4503,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_line_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountAccountTags).WithMany(p => p.AccountMoveLines)
             entity.HasMany<AccountAccountTag>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -4230,8 +4520,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountMoveLineId", "AccountAccountTagId").HasName("account_account_tag_account_move_line_rel_pkey");
                         j.ToTable("account_account_tag_account_move_line_rel");
                         j.HasIndex(new[] { "AccountAccountTagId", "AccountMoveLineId" }, "account_account_tag_account_m_account_account_tag_id_accoun_idx");
+                        j.IndexerProperty<Guid>("AccountMoveLineId").HasColumnName("account_move_line_id");
+                        j.IndexerProperty<Guid>("AccountAccountTagId").HasColumnName("account_account_tag_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountTaxes).WithMany(p => p.AccountMoveLines)
             entity.HasMany<AccountTax>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -4247,10 +4540,14 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountMoveLineId", "AccountTaxId").HasName("account_move_line_account_tax_rel_pkey");
                         j.ToTable("account_move_line_account_tax_rel");
                         j.HasIndex(new[] { "AccountTaxId", "AccountMoveLineId" }, "account_move_line_account_tax_account_tax_id_account_move_l_idx");
+                        j.IndexerProperty<Guid>("AccountMoveLineId").HasColumnName("account_move_line_id");
+                        j.IndexerProperty<Guid>("AccountTaxId").HasColumnName("account_tax_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.OrderLines).WithMany(p => p.InvoiceLines)
-            entity.HasMany<SaleOrderLine>().WithMany()
+            //entity.HasMany<SaleOrderLine>().WithMany()
+            entity.HasMany(d => d.OrderLines).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "SaleOrderLineInvoiceRel",
                     r => r.HasOne<SaleOrderLine>().WithMany()
@@ -4264,6 +4561,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("InvoiceLineId", "OrderLineId").HasName("sale_order_line_invoice_rel_pkey");
                         j.ToTable("sale_order_line_invoice_rel");
                         j.HasIndex(new[] { "OrderLineId", "InvoiceLineId" }, "sale_order_line_invoice_rel_order_line_id_invoice_line_id_idx");
+                        j.IndexerProperty<Guid>("InvoiceLineId").HasColumnName("invoice_line_id");
+                        j.IndexerProperty<Guid>("OrderLineId").HasColumnName("order_line_id");
                     });
         });
 
@@ -4310,7 +4609,8 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.LastModifierId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_reversal_write_uid_fkey");
-            
+
+            // TODO: CHECK RELATION
             /// TODO: Add SharedTypeEntity
             //entity.HasMany(d => d.Moves).WithMany(p => p.Reversals)
             entity.HasMany<AccountMove>().WithMany()
@@ -4327,8 +4627,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReversalId", "MoveId").HasName("account_move_reversal_move_pkey");
                         j.ToTable("account_move_reversal_move");
                         j.HasIndex(new[] { "MoveId", "ReversalId" }, "account_move_reversal_move_move_id_reversal_id_idx");
+                        j.IndexerProperty<Guid>("ReversalId").HasColumnName("reversal_id");
+                        j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
                     });
 
+            // TODO: CHECK RELATION
             /// TODO: Add SharedTypeEntity
             //entity.HasMany(d => d.NewMoves).WithMany(p => p.ReversalsNavigation)
             entity.HasMany<AccountMove>().WithMany()
@@ -4345,6 +4648,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ReversalId", "NewMoveId").HasName("account_move_reversal_new_move_pkey");
                         j.ToTable("account_move_reversal_new_move");
                         j.HasIndex(new[] { "NewMoveId", "ReversalId" }, "account_move_reversal_new_move_new_move_id_reversal_id_idx");
+                        j.IndexerProperty<Guid>("ReversalId").HasColumnName("reversal_id");
+                        j.IndexerProperty<Guid>("NewMoveId").HasColumnName("new_move_id");
                     });
         });
 
@@ -4377,6 +4682,8 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_send_batch_wizard_write_uid_fkey");
 
+            // TODO: CHECK RELATION
+            //entity.HasMany(d => d.AccountMoves).WithMany(p => p.AccountMoveSendBatchWizards)
             entity.HasMany(d => d.AccountMoves).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountMoveAccountMoveSendBatchWizardRel",
@@ -4434,11 +4741,15 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_send_wizard_create_uid_fkey");
 
+            // TODO: CHECK RELATION
+            //entity.HasOne(d => d.MailTemplate).WithMany(p => p.AccountMoveSendWizards)
             entity.HasOne(d => d.MailTemplate).WithMany()
                 .HasForeignKey(d => d.MailTemplateId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_send_wizard_mail_template_id_fkey");
 
+            // TODO: CHECK RELATION
+            //entity.HasOne(d => d.Move).WithMany(p => p.AccountMoveSendWizards)
             entity.HasOne(d => d.Move).WithMany()
                 .HasForeignKey(d => d.MoveId)
                 .OnDelete(DeleteBehavior.Cascade)
@@ -4454,6 +4765,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_send_wizard_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             entity.HasMany(d => d.ResPartners).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountMoveSendWizardResPartnerRel",
@@ -4482,6 +4794,10 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.HasIndex(e => e.CreditMoveId, "account_partial_reconcile_credit_move_id_index");
 
             entity.HasIndex(e => e.DebitMoveId, "account_partial_reconcile_debit_move_id_index");
+
+            entity.HasIndex(e => e.ExchangeMoveId, "account_partial_reconcile__exchange_move_id_index").HasFilter("(exchange_move_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.FullReconcileId, "account_partial_reconcile__full_reconcile_id_index").HasFilter("(full_reconcile_id IS NOT NULL)");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -4560,6 +4876,20 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.TenantId, "account_payment_company_id_index");
 
+            entity.HasIndex(e => e.MessageMainAttachmentId, "account_payment__message_main_attachment_id_index").HasFilter("(message_main_attachment_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.MoveId, "account_payment__move_id_index");
+
+            entity.HasIndex(e => e.OutstandingAccountId, "account_payment__outstanding_account_id_index").HasFilter("(outstanding_account_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.PairedInternalTransferPaymentId, "account_payment__paired_internal_transfer_payment_id_index").HasFilter("(paired_internal_transfer_payment_id IS NOT NULL)");
+
+            entity.HasIndex(e => e.SourcePaymentId, "account_payment__source_payment_id_index").HasFilter("(source_payment_id IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId }, "account_payment_journal_id_company_id_idx");
+
+            entity.HasIndex(e => new { e.JournalId, e.TenantId }, "account_payment_unmatched_idx").HasFilter("((NOT is_matched) OR (is_matched IS NULL))");
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -4571,14 +4901,19 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.DestinationAccountId).HasColumnName("destination_account_id");
             entity.Property(e => e.DestinationJournalId).HasColumnName("destination_journal_id");
             entity.Property(e => e.ForceOutstandingAccountId).HasColumnName("force_outstanding_account_id");
             entity.Property(e => e.IsInternalTransfer).HasColumnName("is_internal_transfer");
             entity.Property(e => e.IsMatched).HasColumnName("is_matched");
             entity.Property(e => e.IsReconciled).HasColumnName("is_reconciled");
+            entity.Property(e => e.IsSent).HasColumnName("is_sent");
+            entity.Property(e => e.JournalId).HasColumnName("journal_id");
+            entity.Property(e => e.Memo).HasColumnName("memo");
             entity.Property(e => e.MessageMainAttachmentId).HasColumnName("message_main_attachment_id");
             entity.Property(e => e.MoveId).HasColumnName("move_id");
+            entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.OutstandingAccountId).HasColumnName("outstanding_account_id");
             entity.Property(e => e.PairedInternalTransferPaymentId).HasColumnName("paired_internal_transfer_payment_id");
             entity.Property(e => e.PartnerBankId).HasColumnName("partner_bank_id");
@@ -4590,13 +4925,20 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.PaymentTokenId).HasColumnName("payment_token_id");
             entity.Property(e => e.PaymentTransactionId).HasColumnName("payment_transaction_id");
             entity.Property(e => e.PaymentType).HasColumnName("payment_type");
+            entity.Property(e => e.PosOrderId).HasColumnName("pos_order_id");
             entity.Property(e => e.PosPaymentMethodId).HasColumnName("pos_payment_method_id");
             entity.Property(e => e.PosSessionId).HasColumnName("pos_session_id");
             entity.Property(e => e.SourcePaymentId).HasColumnName("source_payment_id");
+            entity.Property(e => e.State).HasColumnName("state");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_payment_company_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
@@ -4613,15 +4955,21 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_destination_account_id_fkey");
 
-            entity.HasOne(d => d.DestinationJournal).WithMany(p => p.AccountPayments)
-                .HasForeignKey(d => d.DestinationJournalId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("account_payment_destination_journal_id_fkey");
+            // v16-Compat
+            // entity.HasOne(d => d.DestinationJournal).WithMany(p => p.AccountPayments)
+            //     .HasForeignKey(d => d.DestinationJournalId)
+            //     .OnDelete(DeleteBehavior.SetNull)
+            //     .HasConstraintName("account_payment_destination_journal_id_fkey");
 
             entity.HasOne(d => d.ForceOutstandingAccount).WithMany(p => p.AccountPaymentForceOutstandingAccounts)
                 .HasForeignKey(d => d.ForceOutstandingAccountId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_force_outstanding_account_id_fkey");
+
+            entity.HasOne(d => d.Journal).WithMany(p => p.AccountPayments)
+                .HasForeignKey(d => d.JournalId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_payment_journal_id_fkey");
 
             entity.HasOne(d => d.MessageMainAttachment).WithMany(p => p.AccountPayments)
                 .HasForeignKey(d => d.MessageMainAttachmentId)
@@ -4630,7 +4978,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasOne(d => d.Move).WithMany(p => p.AccountPayments)
                 .HasForeignKey(d => d.MoveId)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_move_id_fkey");
 
             entity.HasOne(d => d.OutstandingAccount).WithMany(p => p.AccountPaymentOutstandingAccounts)
@@ -4645,7 +4993,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasOne(d => d.PartnerBank).WithMany(p => p.AccountPayments)
                 .HasForeignKey(d => d.PartnerBankId)
-                .OnDelete(DeleteBehavior.SetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("account_payment_partner_bank_id_fkey");
 
             entity.HasOne<ResPartner>().WithMany()
@@ -4672,6 +5020,12 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.PaymentTransactionId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_payment_transaction_id_fkey");
+
+            //entity.HasOne(d => d.PosOrder).WithMany(p => p.AccountPayments)
+            entity.HasOne(d => d.PosOrder).WithMany()
+                .HasForeignKey(d => d.PosOrderId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_payment_pos_order_id_fkey");
 
             entity.HasOne(d => d.PosPaymentMethod).WithMany(p => p.AccountPayments)
                 .HasForeignKey(d => d.PosPaymentMethodId)
@@ -4768,7 +5122,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasOne(d => d.Journal).WithMany(p => p.AccountPaymentMethodLines)
                 .HasForeignKey(d => d.JournalId)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_method_line_journal_id_fkey");
 
             entity.HasOne(d => d.PaymentAccount).WithMany(p => p.AccountPaymentMethodLines)
@@ -4811,7 +5165,10 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.CustomUserAmount).HasColumnName("custom_user_amount");
+            entity.Property(e => e.CustomUserCurrencyId).HasColumnName("custom_user_currency_id");
             entity.Property(e => e.GroupPayment).HasColumnName("group_payment");
+            entity.Property(e => e.InstallmentsMode).HasColumnName("installments_mode");
             entity.Property(e => e.JournalId).HasColumnName("journal_id");
             entity.Property(e => e.PartnerBankId).HasColumnName("partner_bank_id");
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
@@ -4845,6 +5202,11 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.CurrencyId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_register_currency_id_fkey");
+
+            entity.HasOne(d => d.CustomUserCurrency).WithMany()
+                .HasForeignKey(d => d.CustomUserCurrencyId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_payment_register_custom_user_currency_id_fkey");
 
             entity.HasOne(d => d.Journal).WithMany(p => p.AccountPaymentRegisters)
                 .HasForeignKey(d => d.JournalId)
@@ -4886,6 +5248,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_payment_register_writeoff_account_id_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.Lines).WithMany(p => p.Wizards)
             entity.HasMany<AccountMoveLine>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -4901,6 +5264,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("WizardId", "LineId").HasName("account_payment_register_move_line_rel_pkey");
                         j.ToTable("account_payment_register_move_line_rel");
                         j.HasIndex(new[] { "LineId", "WizardId" }, "account_payment_register_move_line_rel_line_id_wizard_id_idx");
+                        j.IndexerProperty<Guid>("WizardId").HasColumnName("wizard_id");
+                        j.IndexerProperty<Guid>("LineId").HasColumnName("line_id");
                     });
         });
 
@@ -4919,7 +5284,11 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DiscountDays).HasColumnName("discount_days");
+            entity.Property(e => e.DiscountPercentage).HasColumnName("discount_percentage");
             entity.Property(e => e.DisplayOnInvoice).HasColumnName("display_on_invoice");
+            entity.Property(e => e.EarlyDiscount).HasColumnName("early_discount");
+            entity.Property(e => e.EarlyPayDiscountComputation).HasColumnName("early_pay_discount_computation");
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
@@ -4967,6 +5336,9 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DaysNextMonth).HasColumnName("days_next_month");
+            entity.Property(e => e.DelayType).HasColumnName("delay_type");
+            entity.Property(e => e.NbDays).HasColumnName("nb_days");
             entity.Property(e => e.Days).HasColumnName("days");
             entity.Property(e => e.DaysAfter).HasColumnName("days_after");
             entity.Property(e => e.DiscountDays).HasColumnName("discount_days");
@@ -5036,7 +5408,9 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_print_journal_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountPrintJournals)
+            //entity.HasMany(d => d.AccountJournals).WithMany()
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "AccountJournalAccountPrintJournalRel",
@@ -5051,6 +5425,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountPrintJournalId", "AccountJournalId").HasName("account_journal_account_print_journal_rel_pkey");
                         j.ToTable("account_journal_account_print_journal_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountPrintJournalId" }, "account_journal_account_print_account_journal_id_account_pr_idx");
+                        j.IndexerProperty<Guid>("AccountPrintJournalId").HasColumnName("account_print_journal_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
         });
 
@@ -5126,6 +5502,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_reconcile_model_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountJournals).WithMany(p => p.AccountReconcileModels)
             entity.HasMany<AccountJournal>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -5141,6 +5518,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReconcileModelId", "AccountJournalId").HasName("account_journal_account_reconcile_model_rel_pkey");
                         j.ToTable("account_journal_account_reconcile_model_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountReconcileModelId" }, "account_journal_account_recon_account_journal_id_account_re_idx");
+                        j.IndexerProperty<Guid>("AccountReconcileModelId").HasColumnName("account_reconcile_model_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartnerCategories).WithMany(p => p.AccountReconcileModels)
@@ -5158,8 +5537,11 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReconcileModelId", "ResPartnerCategoryId").HasName("account_reconcile_model_res_partner_category_rel_pkey");
                         j.ToTable("account_reconcile_model_res_partner_category_rel");
                         j.HasIndex(new[] { "ResPartnerCategoryId", "AccountReconcileModelId" }, "account_reconcile_model_res_p_res_partner_category_id_accou_idx");
+                        j.IndexerProperty<Guid>("AccountReconcileModelId").HasColumnName("account_reconcile_model_id");
+                        j.IndexerProperty<Guid>("ResPartnerCategoryId").HasColumnName("res_partner_category_id");
                     });
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountReconcileModels)
             entity.HasMany<ResPartner>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -5175,6 +5557,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReconcileModelId", "ResPartnerId").HasName("account_reconcile_model_res_partner_rel_pkey");
                         j.ToTable("account_reconcile_model_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountReconcileModelId" }, "account_reconcile_model_res_p_res_partner_id_account_reconc_idx");
+                        j.IndexerProperty<Guid>("AccountReconcileModelId").HasColumnName("account_reconcile_model_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -5242,6 +5626,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_reconcile_model_line_write_uid_fkey");
 
+            // TODO: CHECK RELATION
             //entity.HasMany(d => d.AccountTaxes).WithMany(p => p.AccountReconcileModelLines)
             entity.HasMany<AccountTax>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
@@ -5258,6 +5643,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReconcileModelLineId", "AccountTaxId").HasName("account_reconcile_model_line_account_tax_rel_pkey");
                         j.ToTable("account_reconcile_model_line_account_tax_rel");
                         j.HasIndex(new[] { "AccountTaxId", "AccountReconcileModelLineId" }, "account_reconcile_model_line__account_tax_id_account_reconc_idx");
+                        j.IndexerProperty<Guid>("AccountReconcileModelLineId").HasColumnName("account_reconcile_model_line_id");
+                        j.IndexerProperty<Guid>("AccountTaxId").HasColumnName("account_tax_id");
                     });
         });
 
@@ -5549,19 +5936,25 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
             entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AvailabilityCondition).HasColumnName("availability_condition");
+            entity.Property(e => e.ChartTemplate).HasColumnName("chart_template");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.CurrencyTranslation).HasColumnName("currency_translation");
             entity.Property(e => e.DefaultOpeningDateFilter).HasColumnName("default_opening_date_filter");
             entity.Property(e => e.FilterAccountType).HasColumnName("filter_account_type");
+            entity.Property(e => e.FilterAmlIrFilters).HasColumnName("filter_aml_ir_filters");
             entity.Property(e => e.FilterAnalytic).HasColumnName("filter_analytic");
+            entity.Property(e => e.FilterBudgets).HasColumnName("filter_budgets");
             entity.Property(e => e.FilterDateRange).HasColumnName("filter_date_range");
             entity.Property(e => e.FilterFiscalPosition).HasColumnName("filter_fiscal_position");
             entity.Property(e => e.FilterGrowthComparison).HasColumnName("filter_growth_comparison");
+            entity.Property(e => e.FilterHide0Lines).HasColumnName("filter_hide_0_lines");
             entity.Property(e => e.FilterHierarchy).HasColumnName("filter_hierarchy");
             entity.Property(e => e.FilterJournals).HasColumnName("filter_journals");
             entity.Property(e => e.FilterMultiCompany).HasColumnName("filter_multi_company");
@@ -5570,13 +5963,17 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.FilterShowDraft).HasColumnName("filter_show_draft");
             entity.Property(e => e.FilterUnfoldAll).HasColumnName("filter_unfold_all");
             entity.Property(e => e.FilterUnreconciled).HasColumnName("filter_unreconciled");
+            entity.Property(e => e.IntegerRounding).HasColumnName("integer_rounding");
             entity.Property(e => e.LoadMoreLimit).HasColumnName("load_more_limit");
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
             entity.Property(e => e.OnlyTaxExigible).HasColumnName("only_tax_exigible");
+            entity.Property(e => e.PrefixGroupsThreshold).HasColumnName("prefix_groups_threshold");
             entity.Property(e => e.RootReportId).HasColumnName("root_report_id");
             entity.Property(e => e.SearchBar).HasColumnName("search_bar");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.UseSections).HasColumnName("use_sections");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
@@ -5705,6 +6102,8 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.TenantId, "account_report_expression_company_id_index");
 
+            entity.HasIndex(e => new { e.ReportLineId, e.Label }, "account_report_expression_line_label_uniq").IsUnique();
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
@@ -5765,6 +6164,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.ForeignVatFiscalPositionId).HasColumnName("foreign_vat_fiscal_position_id");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.TargetReportExpressionId).HasColumnName("target_report_expression_id");
+            entity.Property(e => e.TextValue).HasColumnName("text_value");
             entity.Property(e => e.Value).HasColumnName("value");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
@@ -5857,6 +6257,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReportGeneralLedgerId", "AccountAccountId").HasName("account_account_account_report_general_ledger_rel_pkey");
                         j.ToTable("account_account_account_report_general_ledger_rel");
                         j.HasIndex(new[] { "AccountAccountId", "AccountReportGeneralLedgerId" }, "account_account_account_repor_account_account_id_account_re_idx");
+                        j.IndexerProperty<Guid>("AccountReportGeneralLedgerId").HasColumnName("account_report_general_ledger_id");
+                        j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
                     });
 
             //entity.HasMany(d => d.AccountAnalyticAccounts).WithMany(p => p.AccountReportGeneralLedgers)
@@ -5874,6 +6276,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReportGeneralLedgerId", "AccountAnalyticAccountId").HasName("account_analytic_account_account_report_general_ledger_rel_pkey");
                         j.ToTable("account_analytic_account_account_report_general_ledger_rel");
                         j.HasIndex(new[] { "AccountAnalyticAccountId", "AccountReportGeneralLedgerId" }, "account_analytic_account_acco_account_analytic_account_id__idx1");
+                        j.IndexerProperty<Guid>("AccountReportGeneralLedgerId").HasColumnName("account_report_general_ledger_id");
+                        j.IndexerProperty<Guid>("AccountAnalyticAccountId").HasColumnName("account_analytic_account_id");
                     });
 
             //entity.HasMany(d => d.Journals).WithMany(p => p.AccountsNavigation)
@@ -5891,6 +6295,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountId", "JournalId").HasName("account_report_general_ledger_journal_rel_pkey");
                         j.ToTable("account_report_general_ledger_journal_rel");
                         j.HasIndex(new[] { "JournalId", "AccountId" }, "account_report_general_ledger_journal_journal_id_account_id_idx");
+                        j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
+                        j.IndexerProperty<Guid>("JournalId").HasColumnName("journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountReportGeneralLedgers)
@@ -5908,6 +6314,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReportGeneralLedgerId", "ResPartnerId").HasName("account_report_general_ledger_res_partner_rel_pkey");
                         j.ToTable("account_report_general_ledger_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountReportGeneralLedgerId" }, "account_report_general_ledger_res_partner_id_account_report_idx");
+                        j.IndexerProperty<Guid>("AccountReportGeneralLedgerId").HasColumnName("account_report_general_ledger_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -5919,7 +6327,9 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasIndex(e => e.TenantId, "account_report_line_company_id_index");
 
-            entity.HasIndex(e => new { e.TenantId, e.Code }, "account_report_line_code_uniq").IsUnique();
+            entity.HasIndex(e => new { e.TenantId, e.ReportId, e.Code }, "account_company_report_line_code_uniq").IsUnique();
+
+            entity.HasIndex(e => new { e.ReportId, e.Code }, "account_report_line_code_uniq").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
@@ -5935,6 +6345,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Groupby).HasColumnName("groupby");
             entity.Property(e => e.HideIfZero).HasColumnName("hide_if_zero");
             entity.Property(e => e.HierarchyLevel).HasColumnName("hierarchy_level");
+            entity.Property(e => e.HorizontalSplitSide).HasColumnName("horizontal_split_side");
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
@@ -5942,6 +6353,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.PrintOnNewPage).HasColumnName("print_on_new_page");
             entity.Property(e => e.ReportId).HasColumnName("report_id");
             entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.UserGroupby).HasColumnName("user_groupby");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
@@ -6023,6 +6435,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReportPartnerLedgerId", "AccountJournalId").HasName("account_journal_account_report_partner_ledger_rel_pkey");
                         j.ToTable("account_journal_account_report_partner_ledger_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountReportPartnerLedgerId" }, "account_journal_account_repor_account_journal_id_account_re_idx");
+                        j.IndexerProperty<Guid>("AccountReportPartnerLedgerId").HasColumnName("account_report_partner_ledger_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
 
             //entity.HasMany(d => d.ResPartners).WithMany(p => p.AccountReportPartnerLedgers)
@@ -6040,6 +6454,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountReportPartnerLedgerId", "ResPartnerId").HasName("account_report_partner_ledger_res_partner_rel_pkey");
                         j.ToTable("account_report_partner_ledger_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "AccountReportPartnerLedgerId" }, "account_report_partner_ledger_res_partner_id_account_report_idx");
+                        j.IndexerProperty<Guid>("AccountReportPartnerLedgerId").HasColumnName("account_report_partner_ledger_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -6093,6 +6509,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountResequenceWizardId", "AccountMoveId").HasName("account_move_account_resequence_wizard_rel_pkey");
                         j.ToTable("account_move_account_resequence_wizard_rel");
                         j.HasIndex(new[] { "AccountMoveId", "AccountResequenceWizardId" }, "account_move_account_resequen_account_move_id_account_reseq_idx");
+                        j.IndexerProperty<Guid>("AccountResequenceWizardId").HasColumnName("account_resequence_wizard_id");
+                        j.IndexerProperty<Guid>("AccountMoveId").HasColumnName("account_move_id");
                     });
         });
 
@@ -6200,12 +6618,17 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("jsonb")
                 .HasColumnName("description");
             entity.Property(e => e.IncludeBaseAmount).HasColumnName("include_base_amount");
+            entity.Property(e => e.InvoiceLabel)
+                .HasColumnType("jsonb")
+                .HasColumnName("invoice_label");
+            entity.Property(e => e.InvoiceLegalNotes).HasColumnName("invoice_legal_notes");
             entity.Property(e => e.IsBaseAffected).HasColumnName("is_base_affected");
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
             entity.Property(e => e.PriceInclude).HasColumnName("price_include");
             entity.Property(e => e.RealAmount).HasColumnName("real_amount");
+            entity.Property(e => e.PriceIncludeOverride).HasColumnName("price_include_override");
             entity.Property(e => e.Sequence)
                 .HasColumnName("sequence");
             entity.Property(e => e.TaxExigibility).HasColumnName("tax_exigibility");
@@ -6262,6 +6685,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ParentTax", "ChildTax").HasName("account_tax_filiation_rel_pkey");
                         j.ToTable("account_tax_filiation_rel");
                         j.HasIndex(new[] { "ChildTax", "ParentTax" }, "account_tax_filiation_rel_child_tax_parent_tax_idx");
+                        j.IndexerProperty<Guid>("ParentTax").HasColumnName("parent_tax");
+                        j.IndexerProperty<Guid>("ChildTax").HasColumnName("child_tax");
                     });
 
             //entity.HasMany(d => d.ParentTaxes).WithMany(p => p.ChildTaxes)
@@ -6279,6 +6704,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ParentTax", "ChildTax").HasName("account_tax_filiation_rel_pkey");
                         j.ToTable("account_tax_filiation_rel");
                         j.HasIndex(new[] { "ChildTax", "ParentTax" }, "account_tax_filiation_rel_child_tax_parent_tax_idx");
+                        j.IndexerProperty<Guid>("ParentTax").HasColumnName("parent_tax");
+                        j.IndexerProperty<Guid>("ChildTax").HasColumnName("child_tax");
                     });
         });
 
@@ -6302,13 +6729,26 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
+            entity.Property(e => e.PosReceiptLabel).HasColumnName("pos_receipt_label");
             entity.Property(e => e.PrecedingSubtotal).HasColumnName("preceding_subtotal");
             entity.Property(e => e.Sequence)
                 .HasColumnName("sequence");
+            entity.Property(e => e.TaxPayableAccountId).HasColumnName("tax_payable_account_id");
+            entity.Property(e => e.TaxReceivableAccountId).HasColumnName("tax_receivable_account_id");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.AdvanceTaxPaymentAccount).WithMany(p => p.AccountTaxGroupAdvanceTaxPaymentAccounts)
+                .HasForeignKey(d => d.AdvanceTaxPaymentAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_tax_group_advance_tax_payment_account_id_fkey");
+
+            entity.HasOne<ResCompany>().WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("account_tax_group_company_id_fkey");
 
             entity.HasOne<ResCountry>().WithMany()
                 .HasForeignKey(d => d.CountryId)
@@ -6319,6 +6759,16 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_tax_group_create_uid_fkey");
+
+            entity.HasOne(d => d.TaxPayableAccount).WithMany(p => p.AccountTaxGroupTaxPayableAccounts)
+                .HasForeignKey(d => d.TaxPayableAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_tax_group_tax_payable_account_id_fkey");
+
+            entity.HasOne(d => d.TaxReceivableAccount).WithMany(p => p.AccountTaxGroupTaxReceivableAccounts)
+                .HasForeignKey(d => d.TaxReceivableAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_tax_group_tax_receivable_account_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.LastModifierId)
@@ -6341,12 +6791,14 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DocumentType).HasColumnName("document_type");
             entity.Property(e => e.FactorPercent).HasColumnName("factor_percent");
             entity.Property(e => e.InvoiceTaxId).HasColumnName("invoice_tax_id");
             entity.Property(e => e.RefundTaxId).HasColumnName("refund_tax_id");
             entity.Property(e => e.RepartitionType).HasColumnName("repartition_type");
             entity.Property(e => e.Sequence)
                 .HasColumnName("sequence");
+            entity.Property(e => e.TaxId).HasColumnName("tax_id");
             entity.Property(e => e.UseInTaxClosing).HasColumnName("use_in_tax_closing");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
@@ -6367,6 +6819,12 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_tax_repartition_line_create_uid_fkey");
+
+            entity.HasOne(d => d.Tax).WithMany(p => p.AccountTaxRepartitionLines)
+                .HasForeignKey(d => d.TaxId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_tax_repartition_line_tax_id_fkey");
+
 
             entity.HasOne(d => d.InvoiceTax).WithMany(p => p.AccountTaxRepartitionLineInvoiceTaxes)
                 .HasForeignKey(d => d.InvoiceTaxId)
@@ -6389,6 +6847,7 @@ public static class CoreDbModelFluentCreatingExtensions
                     "AccountAccountTagAccountTaxRepartitionLineRel",
                     r => r.HasOne<AccountAccountTag>().WithMany()
                         .HasForeignKey("AccountAccountTagId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("account_account_tag_account_tax_rep_account_account_tag_id_fkey"),
                     l => l.HasOne<AccountTaxRepartitionLine>().WithMany()
                         .HasForeignKey("AccountTaxRepartitionLineId")
@@ -6398,6 +6857,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountTaxRepartitionLineId", "AccountAccountTagId").HasName("account_account_tag_account_tax_repartition_line_rel_pkey");
                         j.ToTable("account_account_tag_account_tax_repartition_line_rel");
                         j.HasIndex(new[] { "AccountAccountTagId", "AccountTaxRepartitionLineId" }, "account_account_tag_account_t_account_account_tag_id_accoun_idx");
+                        j.IndexerProperty<Guid>("AccountTaxRepartitionLineId").HasColumnName("account_tax_repartition_line_id");
+                        j.IndexerProperty<Guid>("AccountAccountTagId").HasColumnName("account_account_tag_id");
                     });
         });
 
@@ -6559,6 +7020,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountTaxReportWizardId", "AccountJournalId").HasName("account_journal_account_tax_report_wizard_rel_pkey");
                         j.ToTable("account_journal_account_tax_report_wizard_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountTaxReportWizardId" }, "account_journal_account_tax_r_account_journal_id_account_ta_idx");
+                        j.IndexerProperty<Guid>("AccountTaxReportWizardId").HasColumnName("account_tax_report_wizard_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
         });
 
@@ -6845,6 +7308,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("AccountingReportId", "AccountJournalId").HasName("account_journal_accounting_report_rel_pkey");
                         j.ToTable("account_journal_accounting_report_rel");
                         j.HasIndex(new[] { "AccountJournalId", "AccountingReportId" }, "account_journal_accounting_re_account_journal_id_accounting_idx");
+                        j.IndexerProperty<Guid>("AccountingReportId").HasColumnName("accounting_report_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                     });
         });
 
@@ -6864,6 +7329,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.Duplicates).HasColumnName("duplicates");
             entity.Property(e => e.RefuseReasonId).HasColumnName("refuse_reason_id");
             entity.Property(e => e.SendMail).HasColumnName("send_mail");
             entity.Property(e => e.TemplateId).HasColumnName("template_id");
@@ -6907,6 +7373,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ApplicantGetRefuseReasonId", "HrApplicantId").HasName("applicant_get_refuse_reason_hr_applicant_rel_pkey");
                         j.ToTable("applicant_get_refuse_reason_hr_applicant_rel");
                         j.HasIndex(new[] { "HrApplicantId", "ApplicantGetRefuseReasonId" }, "applicant_get_refuse_reason_h_hr_applicant_id_applicant_get_idx");
+                        j.IndexerProperty<Guid>("ApplicantGetRefuseReasonId").HasColumnName("applicant_get_refuse_reason_id");
+                        j.IndexerProperty<Guid>("HrApplicantId").HasColumnName("hr_applicant_id");
                     });
         });
 
@@ -6971,6 +7439,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("ApplicantSendMailId", "HrApplicantId").HasName("applicant_send_mail_hr_applicant_rel_pkey");
                         j.ToTable("applicant_send_mail_hr_applicant_rel");
                         j.HasIndex(new[] { "HrApplicantId", "ApplicantSendMailId" }, "applicant_send_mail_hr_applic_hr_applicant_id_applicant_sen_idx");
+                        j.IndexerProperty<Guid>("ApplicantSendMailId").HasColumnName("applicant_send_mail_id");
+                        j.IndexerProperty<Guid>("HrApplicantId").HasColumnName("hr_applicant_id");
                     });
 
             entity.HasMany(d => d.IrAttachments).WithMany(p => p.ApplicantSendMails)
@@ -7072,10 +7542,13 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
+            entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("(now() AT TIME ZONE 'utc'::text)")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
+            entity.Property(e => e.ExpirationDate)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("expiration_date");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("write_date");
@@ -7087,6 +7560,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("auth_totp_device_user_id_fkey");
         });
 
@@ -7232,6 +7706,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.FromInvoice).HasColumnName("from_invoice");
             entity.Property(e => e.ReportLayoutId).HasColumnName("report_layout_id");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
@@ -7896,8 +8371,11 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasColumnName("create_date");
             entity.Property(e => e.CreatorId).HasColumnName("create_uid");
             entity.Property(e => e.Data).HasColumnName("data");
+            entity.Property(e => e.Domain).HasColumnName("domain");
+            entity.Property(e => e.ExportType).HasColumnName("export_type");
             entity.Property(e => e.Format).HasColumnName("format");
             entity.Property(e => e.Lang).HasColumnName("lang");
+            entity.Property(e => e.ModelId).HasColumnName("model_id");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.State).HasColumnName("state");
             entity.Property(e => e.LastModificationTime)
@@ -7909,6 +8387,12 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("base_language_export_create_uid_fkey");
+
+            //entity.HasOne(d => d.Model).WithMany(p => p.BaseLanguageExports)
+            entity.HasOne(d => d.Model).WithMany()
+                .HasForeignKey(d => d.ModelId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("base_language_export_model_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.LastModifierId)
@@ -7930,6 +8414,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("WizId", "ModuleId").HasName("rel_modules_langexport_pkey");
                         j.ToTable("rel_modules_langexport");
                         j.HasIndex(new[] { "ModuleId", "WizId" }, "rel_modules_langexport_module_id_wiz_id_idx");
+                        j.IndexerProperty<Guid>("WizId").HasColumnName("wiz_id");
+                        j.IndexerProperty<Guid>("ModuleId").HasColumnName("module_id");
                     });
         });
 
@@ -8011,6 +8497,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("LanguageWizardId", "LangId").HasName("res_lang_install_rel_pkey");
                         j.ToTable("res_lang_install_rel");
                         j.HasIndex(new[] { "LangId", "LanguageWizardId" }, "res_lang_install_rel_lang_id_language_wizard_id_idx");
+                        j.IndexerProperty<Guid>("LanguageWizardId").HasColumnName("language_wizard_id");
+                        j.IndexerProperty<Guid>("LangId").HasColumnName("lang_id");
                     });
 
             //entity.HasMany(d => d.Websites).WithMany(p => p.BaseLanguageInstalls)
@@ -8028,6 +8516,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("BaseLanguageInstallId", "WebsiteId").HasName("base_language_install_website_rel_pkey");
                         j.ToTable("base_language_install_website_rel");
                         j.HasIndex(new[] { "WebsiteId", "BaseLanguageInstallId" }, "base_language_install_website_website_id_base_language_inst_idx");
+                        j.IndexerProperty<Guid>("BaseLanguageInstallId").HasColumnName("base_language_install_id");
+                        j.IndexerProperty<Guid>("WebsiteId").HasColumnName("website_id");
                     });
         });
 
@@ -8272,6 +8762,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("BasePartnerMergeAutomaticWizardId", "ResPartnerId").HasName("base_partner_merge_automatic_wizard_res_partner_rel_pkey");
                         j.ToTable("base_partner_merge_automatic_wizard_res_partner_rel");
                         j.HasIndex(new[] { "ResPartnerId", "BasePartnerMergeAutomaticWizardId" }, "base_partner_merge_automatic__res_partner_id_base_partner_m_idx");
+                        j.IndexerProperty<Guid>("BasePartnerMergeAutomaticWizardId").HasColumnName("base_partner_merge_automatic_wizard_id");
+                        j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
                     });
         });
 
@@ -8344,6 +8836,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("bill_to_po_wizard_partner_id_fkey");
 
+	    //entity.HasOne(d => d.PurchaseOrder).WithMany(p => p.BillToPoWizards)
             entity.HasOne(d => d.PurchaseOrder).WithMany()
                 .HasForeignKey(d => d.PurchaseOrderId)
                 .OnDelete(DeleteBehavior.SetNull)
@@ -8457,6 +8950,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Name)
                 .HasColumnType("jsonb")
                 .HasColumnName("name");
+            entity.Property(e => e.SmsNotifyResponsible).HasColumnName("sms_notify_responsible");
             entity.Property(e => e.SmsTemplateId).HasColumnName("sms_template_id");
             entity.Property(e => e.LastModificationTime)
                 .HasColumnType("timestamp without time zone")
@@ -8523,7 +9017,7 @@ public static class CoreDbModelFluentCreatingExtensions
 
             entity.HasOne<ResPartner>().WithMany()
                 .HasForeignKey(d => d.PartnerId)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("calendar_attendee_partner_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
@@ -8554,6 +9048,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.Allday).HasColumnName("allday");
             entity.Property(e => e.ApplicantId).HasColumnName("applicant_id");
+            entity.Property(e => e.CandidateId).HasColumnName("candidate_id");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("create_date");
@@ -8592,6 +9087,11 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasForeignKey(d => d.ApplicantId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("calendar_event_applicant_id_fkey");
+
+            entity.HasOne(d => d.Candidate).WithMany(p => p.CalendarEvents)
+                .HasForeignKey(d => d.CandidateId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("calendar_event_candidate_id_fkey");
 
             entity.HasOne<ResUser>().WithMany()
                 .HasForeignKey(d => d.CreatorId)
@@ -8649,6 +9149,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("CalendarEventId", "CalendarAlarmId").HasName("calendar_alarm_calendar_event_rel_pkey");
                         j.ToTable("calendar_alarm_calendar_event_rel");
                         j.HasIndex(new[] { "CalendarAlarmId", "CalendarEventId" }, "calendar_alarm_calendar_event_calendar_alarm_id_calendar_ev_idx");
+                        j.IndexerProperty<Guid>("CalendarEventId").HasColumnName("calendar_event_id");
+                        j.IndexerProperty<Guid>("CalendarAlarmId").HasColumnName("calendar_alarm_id");
                     });
 
             //entity.HasMany(d => d.Types).WithMany(p => p.Events)
@@ -8666,6 +9168,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("EventId", "TypeId").HasName("meeting_category_rel_pkey");
                         j.ToTable("meeting_category_rel");
                         j.HasIndex(new[] { "TypeId", "EventId" }, "meeting_category_rel_type_id_event_id_idx");
+                        j.IndexerProperty<Guid>("EventId").HasColumnName("event_id");
+                        j.IndexerProperty<Guid>("TypeId").HasColumnName("type_id");
                     });
         });
 

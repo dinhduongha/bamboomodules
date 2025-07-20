@@ -120,10 +120,20 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [NotMapped]
     public virtual ResCurrency? Currency { get; set; }
 
+    [ForeignKey("EmployeeId")]
+    //[InverseProperty("AccountBankStatementLines")]
+    [NotMapped]
+    public virtual HrEmployee? Employee { get; set; }
+
     [ForeignKey("ForeignCurrencyId")]
     //[InverseProperty("AccountBankStatementLineForeignCurrencies")]
     [NotMapped]
     public virtual ResCurrency? ForeignCurrency { get; set; }
+
+    [ForeignKey("JournalId")]
+    //[InverseProperty("AccountBankStatementLines")]
+    [NotMapped]
+    public virtual AccountJournal? Journal { get; set; }
 
     [ForeignKey("MoveId")]
     //[InverseProperty("AccountBankStatementLines")]

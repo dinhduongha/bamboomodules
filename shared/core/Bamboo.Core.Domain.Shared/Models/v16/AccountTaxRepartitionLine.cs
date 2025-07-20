@@ -64,6 +64,11 @@ public partial class AccountTaxRepartitionLine: FullAuditedEntity<Guid>, IEntity
     [NotMapped]
     public virtual AccountAccount? Account { get; set; }
 
+    [ForeignKey("TaxId")]
+    //[InverseProperty("AccountTaxRepartitionLines")]
+    [NotMapped]
+    public virtual AccountTax? Tax { get; set; }
+
     //[InverseProperty("TaxRepartitionLine")]
     [NotMapped]
     public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();

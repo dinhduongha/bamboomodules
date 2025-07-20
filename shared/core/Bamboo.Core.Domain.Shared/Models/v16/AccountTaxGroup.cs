@@ -77,6 +77,21 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    [ForeignKey("AdvanceTaxPaymentAccountId")]
+    //[InverseProperty("AccountTaxGroupAdvanceTaxPaymentAccounts")]
+    [NotMapped]
+    public virtual AccountAccount? AdvanceTaxPaymentAccount { get; set; }
+
+    [ForeignKey("TaxPayableAccountId")]
+    //[InverseProperty("AccountTaxGroupTaxPayableAccounts")]
+    [NotMapped]
+    public virtual AccountAccount? TaxPayableAccount { get; set; }
+
+    [ForeignKey("TaxReceivableAccountId")]
+    //[InverseProperty("AccountTaxGroupTaxReceivableAccounts")]
+    [NotMapped]
+    public virtual AccountAccount? TaxReceivableAccount { get; set; }
+
     //[InverseProperty("TaxGroup")]
     [NotMapped]
     public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
