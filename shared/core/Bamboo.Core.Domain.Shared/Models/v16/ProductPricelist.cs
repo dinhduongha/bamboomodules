@@ -36,6 +36,7 @@ public partial class ProductPricelist: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("discount_policy")]
     public string? DiscountPolicy { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

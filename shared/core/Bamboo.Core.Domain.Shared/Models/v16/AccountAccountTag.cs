@@ -36,6 +36,7 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("applicability")]
     public string? Applicability { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

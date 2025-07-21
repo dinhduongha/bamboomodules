@@ -36,6 +36,7 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

@@ -58,6 +58,7 @@ public partial class PurchaseOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("display_type")]
     public string? DisplayType { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

@@ -45,6 +45,7 @@ public partial class ProductProduct : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("combination_indices")]
     public string? CombinationIndices { get; set; }
 
+    [JsonField]
     [Column("standard_price", TypeName = "jsonb")]
     public string? StandardPrice { get; set; }
 
@@ -66,6 +67,7 @@ public partial class ProductProduct : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [JsonField]
     [Column("lot_properties_definition", TypeName = "jsonb")]
     public string? LotPropertiesDefinition { get; set; }
 

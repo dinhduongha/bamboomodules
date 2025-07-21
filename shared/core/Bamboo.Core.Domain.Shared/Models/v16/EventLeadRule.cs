@@ -44,6 +44,7 @@ public partial class EventLeadRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("lead_type")]
     public string? LeadType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

@@ -152,6 +152,7 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("date_deadline")]
     public DateTime? DateDeadline { get; set; }
 
+    [JsonField]
     [Column("lead_properties", TypeName = "jsonb")]
     public string? LeadProperties { get; set; }
 

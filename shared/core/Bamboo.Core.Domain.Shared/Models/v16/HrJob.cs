@@ -54,11 +54,13 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
     // v16-Compat json
     //[Column("description")]
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
@@ -105,9 +107,11 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("date_to")]
     public DateTime? DateTo { get; set; }
 
+    [JsonField]
     [Column("job_properties", TypeName = "jsonb")]
     public string? JobProperties { get; set; }
 
+    [JsonField]
     [Column("applicant_properties_definition", TypeName = "jsonb")]
     public string? ApplicantPropertiesDefinition { get; set; }
 
@@ -120,21 +124,27 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("published_date")]
     public DateTime? PublishedDate { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
+    [JsonField]
     [Column("job_details", TypeName = "jsonb")]
     public string? JobDetails { get; set; }
 

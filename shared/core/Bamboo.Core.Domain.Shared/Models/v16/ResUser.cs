@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 [Table("res_users")]
 //[Index("PartnerId", Name = "res_users_partner_id_index")]
 //[Index("Login", "WebsiteId", Name = "res_users_login_key", IsUnique = true)]
-public partial class ResUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -86,6 +86,7 @@ public partial class ResUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("target_sales_invoiced")]
     public long? TargetSalesInvoiced { get; set; }
 
+    [JsonField]
     [Column("property_warehouse_id", TypeName = "jsonb")]
     public string? PropertyWarehouseId { get; set; }
 
@@ -154,8 +155,12 @@ public partial class ResUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    [ForeignKey("Uid")]
+    [InverseProperty("UidsNavigation")]
+    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+
     /// TODO: DISABLE INVERSE COLLECTIONS
-    
+
     /*
     //[InverseProperty("CreateU")]
     //[NotMapped]
@@ -4666,11 +4671,6 @@ public partial class ResUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [NotMapped]
     public virtual ICollection<DigestTip> DigestTips { get; set; } = new List<DigestTip>();
 
-    [ForeignKey("Uid")]
-    //[InverseProperty("UidsNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
-
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
@@ -4710,5 +4710,5 @@ public partial class ResUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     //[InverseProperty("Users")]
     [NotMapped]
     public virtual ICollection<CrmTeam> Teams { get; set; } = new List<CrmTeam>();
-    */   
+    */
 }

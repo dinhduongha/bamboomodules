@@ -43,6 +43,7 @@ public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("action")]
     public string? Action { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

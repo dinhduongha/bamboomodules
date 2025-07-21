@@ -37,6 +37,7 @@ public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

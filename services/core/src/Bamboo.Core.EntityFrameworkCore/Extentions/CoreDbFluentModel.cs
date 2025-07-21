@@ -21430,6 +21430,70 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("ir_model_access_write_uid_fkey");
         });
 
+        modelBuilder.Entity<IrModelFieldAccess>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ir_model_field_access_pkey");
+
+            entity.ToTable("ir_model_field_access");
+
+            entity.HasIndex(e => e.TenantId, "ir_model_field_access_company_id_index");
+
+            entity.HasIndex(e => e.GroupId, "ir_model_field_access_group_id_index");
+
+            entity.HasIndex(e => e.ModelId, "ir_model_field_access_model_id_index");
+
+            entity.HasIndex(e => e.FieldId, "ir_model_field_access_model_field_id_index");
+            
+            entity.HasIndex(e => new { e.ModelId, e.FieldId, e.GroupId }, "ir_model_field_access_model_field_group_id_index").IsUnique();
+
+            entity.HasIndex(e => e.Name, "ir_model_field_access_name_index");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.GroupId).HasColumnName("group_id");
+            entity.Property(e => e.ModelId).HasColumnName("model_id");
+            entity.Property(e => e.FieldId).HasColumnName("field_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.PermRead).HasColumnName("perm_read");
+            entity.Property(e => e.PermWrite).HasColumnName("perm_write");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ir_model_field_access_create_uid_fkey");
+
+            entity.HasOne(d => d.Group).WithMany()
+                .HasForeignKey(d => d.GroupId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("ir_model_field_access_field_group_id_fkey");
+
+            entity.HasOne(d => d.Model).WithMany()
+                .HasForeignKey(d => d.ModelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_model_field_access_field_model_id_fkey");
+
+            entity.HasOne(d => d.Field).WithMany()
+                .HasForeignKey(d => d.FieldId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("ir_model_field_access_field_model_field_id_fkey");
+
+            entity.HasOne<ResUser>().WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ir_model_field_access_write_uid_fkey");
+        });
+
         modelBuilder.Entity<IrModelConstraint>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("ir_model_constraint_pkey");
@@ -22135,8 +22199,8 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ir_rule_write_uid_fkey");
 
-            //entity.HasMany(d => d.Groups).WithMany(p => p.RuleGroups)
-            entity.HasMany<ResGroup>().WithMany()
+            entity.HasMany(d => d.Groups).WithMany(p => p.RuleGroups)
+            //entity.HasMany<ResGroup>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "RuleGroupRel",
                     r => r.HasOne<ResGroup>().WithMany()
@@ -22151,6 +22215,9 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("RuleGroupId", "GroupId").HasName("rule_group_rel_pkey");
                         j.ToTable("rule_group_rel");
                         j.HasIndex(new[] { "GroupId", "RuleGroupId" }, "rule_group_rel_group_id_rule_group_id_idx");
+                        j.IndexerProperty<Guid>("RuleGroupId").HasColumnName("rule_group_id");
+                        j.IndexerProperty<Guid>("GroupId").HasColumnName("group_id");
+
                     });
         });
 
@@ -37341,8 +37408,8 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasIndex(new[] { "Hid", "Gid" }, "res_groups_implied_rel_hid_gid_idx");
                     });
 
-            //entity.HasMany(d => d.UidsNavigation).WithMany(p => p.Gids)
-            entity.HasMany<ResUser>().WithMany()
+            entity.HasMany(d => d.UidsNavigation).WithMany(p => p.Gids)
+            //entity.HasMany<ResUser>().WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "ResGroupsUsersRel",
                     r => r.HasOne<ResUser>().WithMany()
@@ -37356,6 +37423,9 @@ public static class CoreDbModelFluentCreatingExtensions
                         j.HasKey("Gid", "Uid").HasName("res_groups_users_rel_pkey");
                         j.ToTable("res_groups_users_rel");
                         j.HasIndex(new[] { "Uid", "Gid" }, "res_groups_users_rel_uid_gid_idx");
+                        j.IndexerProperty<Guid>("Gid").HasColumnName("gid");
+                        j.IndexerProperty<Guid>("Uid").HasColumnName("uid");
+
                     });
         });
 

@@ -36,6 +36,7 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

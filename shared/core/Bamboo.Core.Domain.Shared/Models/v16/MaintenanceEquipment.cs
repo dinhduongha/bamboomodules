@@ -104,9 +104,11 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("next_action_date")]
     public DateTime? NextActionDate { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("equipment_properties", TypeName = "jsonb")]
     public string? EquipmentProperties { get; set; }
 

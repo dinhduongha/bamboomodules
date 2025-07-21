@@ -211,6 +211,7 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("departure_date")]
     public DateTime? DepartureDate { get; set; }
 
+    [JsonField]
     [Column("employee_properties", TypeName = "jsonb")]
     public string? EmployeeProperties { get; set; }
 

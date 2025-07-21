@@ -47,6 +47,7 @@ public partial class ThemeIrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("inherit_id")]
     public string? InheritId { get; set; }
 
+    [JsonField]
     [Column("arch", TypeName = "jsonb")]
     public string? Arch { get; set; }
 

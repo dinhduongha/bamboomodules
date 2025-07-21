@@ -90,9 +90,11 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("currency_field")]
     public string? CurrencyField { get; set; }
 
+    [JsonField]
     [Column("field_description", TypeName = "jsonb")]
     public StringDictionary? FieldDescription { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Help { get; set; }
 

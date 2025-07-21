@@ -38,6 +38,7 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("value_image_filename")]
     public string? ValueImageFilename { get; set; }
 
+    [JsonField]
     [Column("value", TypeName = "jsonb")]
     public string? Value { get; set; }
 

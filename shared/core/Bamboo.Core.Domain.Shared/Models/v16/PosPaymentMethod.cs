@@ -47,6 +47,7 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("qr_code_method")]
     public string? QrCodeMethod { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

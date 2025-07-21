@@ -35,6 +35,7 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("step_type")]
     public string? StepType { get; set; }
 
+    [JsonField]
     [Column("message", TypeName = "jsonb")]
     public string? Message { get; set; }
 

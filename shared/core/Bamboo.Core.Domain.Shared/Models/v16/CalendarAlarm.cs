@@ -41,6 +41,7 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("interval")]
     public string? Interval { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

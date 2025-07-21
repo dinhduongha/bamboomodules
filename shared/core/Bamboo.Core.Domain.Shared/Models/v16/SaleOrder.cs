@@ -157,6 +157,7 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("sale_order_template_id")]
     public Guid? SaleOrderTemplateId { get; set; }
 
+    [JsonField]
     [Column("customizable_pdf_form_fields", TypeName = "jsonb")]
     public string? CustomizablePdfFormFields { get; set; }
 
@@ -197,6 +198,7 @@ public partial class SaleOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("delivery_message")]
     public string? DeliveryMessage { get; set; }
 
+    [JsonField]
     [Column("pickup_location_data", TypeName = "jsonb")]
     public string? PickupLocationData { get; set; }
 

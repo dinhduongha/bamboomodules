@@ -126,6 +126,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("discount_date")]
     public DateTime? DiscountDate { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

@@ -69,6 +69,7 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("accounting_date")]
     public DateTime? AccountingDate { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

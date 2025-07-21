@@ -30,6 +30,7 @@ public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("type")]
     public string? Type { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

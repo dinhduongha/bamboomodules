@@ -33,6 +33,7 @@ public partial class StockScrapReasonTag: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("color")]
     public string? Color { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

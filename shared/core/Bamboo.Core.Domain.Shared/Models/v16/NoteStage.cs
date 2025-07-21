@@ -32,6 +32,7 @@ public partial class NoteStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAud
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

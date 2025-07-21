@@ -40,6 +40,7 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("url")]
     public string? Url { get; set; }
 
+    [JsonField]
     [Column("rainbow_man_message", TypeName = "jsonb")]
     public string? RainbowManMessage { get; set; }
 

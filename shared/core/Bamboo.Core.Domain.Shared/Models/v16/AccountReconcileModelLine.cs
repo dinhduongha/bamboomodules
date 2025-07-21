@@ -40,6 +40,7 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
 
     // v16-Compat json
     //[Column("label")]
+    [JsonField]
     [Column("label", TypeName = "jsonb")]
     public string? Label { get; set; }
 
@@ -49,6 +50,7 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("amount_string")]
     public string? AmountString { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

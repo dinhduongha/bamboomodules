@@ -35,6 +35,7 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("next_run_date")]
     public DateTime? NextRunDate { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

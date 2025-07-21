@@ -38,6 +38,7 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("website")]
     public string? Website { get; set; }
 
+    [JsonField]
     [Column("summary", TypeName = "jsonb")]
     public string? Summary { get; set; }
 
@@ -56,12 +57,14 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("latest_version")]
     public string? LatestVersion { get; set; }
 
+    [JsonField]
     [Column("shortdesc", TypeName = "jsonb")]
     public StringDictionary? Shortdesc { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public StringDictionary? Description { get; set; }
 

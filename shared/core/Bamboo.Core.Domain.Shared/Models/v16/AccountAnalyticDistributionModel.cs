@@ -35,6 +35,7 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

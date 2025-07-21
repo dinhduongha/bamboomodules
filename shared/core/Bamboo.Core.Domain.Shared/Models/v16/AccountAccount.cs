@@ -46,14 +46,17 @@ public partial class AccountAccount: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("account_type")]
     public string? AccountType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
     // v16-Compat json
     //[Column("code")]
+    [JsonField]
     [Column("code_store", TypeName = "jsonb")]
     public string? Code { get; set; }
 
+    [JsonField]
     [Column("code_store", TypeName = "jsonb")]
     public string? CodeStore { get; set; }
 

@@ -72,6 +72,7 @@ public partial class AccountReport : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("filter_account_type")]
     public string? FilterAccountType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

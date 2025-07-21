@@ -80,6 +80,7 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("invoice_status")]
     public string? InvoiceStatus { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

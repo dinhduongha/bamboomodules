@@ -42,6 +42,7 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("name")]
     public string? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

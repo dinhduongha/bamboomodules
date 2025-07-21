@@ -36,12 +36,14 @@ public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public StringDictionary? Description { get; set; }
 

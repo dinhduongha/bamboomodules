@@ -56,6 +56,7 @@ public partial class IrEmbeddedAction: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("context")]
     public string? Context { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

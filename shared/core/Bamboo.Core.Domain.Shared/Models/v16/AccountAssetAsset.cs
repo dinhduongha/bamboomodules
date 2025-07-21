@@ -78,6 +78,7 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("first_depreciation_manual_date")]
     public DateTime? FirstDepreciationManualDate { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

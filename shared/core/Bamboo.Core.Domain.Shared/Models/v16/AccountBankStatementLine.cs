@@ -66,6 +66,7 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("internal_index")]
     public string? InternalIndex { get; set; }
 
+    [JsonField]
     [Column("transaction_details", TypeName = "jsonb")]
     public string? TransactionDetails { get; set; }
 

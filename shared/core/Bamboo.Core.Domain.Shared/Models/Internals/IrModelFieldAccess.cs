@@ -10,10 +10,11 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("ir_rule")]
-//[Index("ModelId", Name = "ir_rule_model_id_index")]
-//[Index("Name", Name = "ir_rule_name_index")]
-public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
+[Table("ir_model_field_access")]
+//[Index("GroupId", Name = "ir_model_access_group_id_index")]
+//[Index("ModelId", Name = "ir_model_access_model_id_index")]
+//[Index("Name", Name = "ir_model_access_name_index")]
+public partial class IrModelFieldAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -25,6 +26,12 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
+    [Column("field_id")]
+    public Guid? FieldId { get; set; }
+
+    [Column("group_id")]
+    public Guid? GroupId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
@@ -34,8 +41,8 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("domain_force")]
-    public string? DomainForce { get; set; }
+    [Column("model_name")]
+    public string? ModelName { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -45,12 +52,6 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("perm_write")]
     public bool? PermWrite { get; set; }
-
-    [Column("perm_create")]
-    public bool? PermCreate { get; set; }
-
-    [Column("perm_unlink")]
-    public bool? PermUnlink { get; set; }
 
     [Column("global")]
     public bool? Global { get; set; }
@@ -62,21 +63,27 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrRuleCreateUs")]
+    //[InverseProperty("IrModelAccessCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("GroupId")]
+    //[InverseProperty("IrModelAccesses")]
+    [NotMapped]
+    public virtual ResGroup? Group { get; set; }
+
     [ForeignKey("ModelId")]
-    //[InverseProperty("IrRules")]
+    //[InverseProperty("IrModelAccesses")]
     [NotMapped]
     public virtual IrModel? Model { get; set; }
 
+    [ForeignKey("FieldId")]
+    //[InverseProperty("IrModelAccesses")]
+    [NotMapped]
+    public virtual IrModelField? Field { get; set; }
+
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrRuleWriteUs")]
+    //[InverseProperty("IrModelAccessWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("RuleGroupId")]
-    [InverseProperty("RuleGroups")]
-    public virtual ICollection<ResGroup> Groups { get; set; } = new List<ResGroup>();
 }

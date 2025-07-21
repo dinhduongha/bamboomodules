@@ -53,6 +53,7 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? IntervalType { get; set; }
 
     // v16-Compat
+    // [JsonField]
     // [Column("cron_name", TypeName = "jsonb")]
     // public StringDictionary? CronName { get; set; }
 

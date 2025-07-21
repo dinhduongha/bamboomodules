@@ -35,6 +35,7 @@ public partial class ChatbotScriptAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("redirect_link")]
     public string? RedirectLink { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

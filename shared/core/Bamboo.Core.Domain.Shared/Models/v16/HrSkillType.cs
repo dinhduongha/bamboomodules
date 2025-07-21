@@ -31,6 +31,7 @@ public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // v16-Compat json
     //[Column("name")]
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

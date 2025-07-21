@@ -35,9 +35,11 @@ public partial class LunchProduct: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("new_until")]
     public DateTime? NewUntil { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

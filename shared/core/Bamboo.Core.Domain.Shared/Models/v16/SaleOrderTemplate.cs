@@ -38,9 +38,11 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("name")]
     public string? Name { get; set; }
 
+    [JsonField]
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 
+    [JsonField]
     [Column("journal_id", TypeName = "jsonb")]
     public string? JournalId { get; set; }
 

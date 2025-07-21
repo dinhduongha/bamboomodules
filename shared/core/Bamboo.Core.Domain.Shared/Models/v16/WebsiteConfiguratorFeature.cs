@@ -50,9 +50,11 @@ public partial class WebsiteConfiguratorFeature: FullAuditedEntity<Guid>, IEntit
     [Column("feature_url")]
     public string? FeatureUrl { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

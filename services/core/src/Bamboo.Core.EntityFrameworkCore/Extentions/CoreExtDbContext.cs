@@ -666,6 +666,8 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrModelAccess> IrModelAccesses { get; set; }
 
+    public virtual DbSet<IrModelFieldAccess> IrModelFieldAccesses { get; set; }
+
     public virtual DbSet<IrModelConstraint> IrModelConstraints { get; set; }
 
     public virtual DbSet<IrModelDatum> IrModelData { get; set; }

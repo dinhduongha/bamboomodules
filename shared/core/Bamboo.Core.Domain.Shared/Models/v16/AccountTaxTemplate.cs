@@ -39,6 +39,7 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
@@ -51,6 +52,7 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("amount_type")]
     public string? AmountType { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

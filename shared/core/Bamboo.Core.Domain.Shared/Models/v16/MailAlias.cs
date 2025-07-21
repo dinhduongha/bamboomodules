@@ -58,6 +58,7 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("alias_status")]
     public string? AliasStatus { get; set; }
 
+    [JsonField]
     [Column("alias_bounced_content", TypeName = "jsonb")]
     public string? AliasBouncedContent { get; set; }
 

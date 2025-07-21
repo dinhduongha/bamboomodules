@@ -15,13 +15,14 @@ namespace Bamboo.Core.Models;
 //[Index("CategoryId", "Name", Name = "res_groups_name_uniq", IsUnique = true)]
 public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
-    [Key]
+    [Key] 
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
@@ -37,6 +38,7 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("comment", TypeName = "jsonb")]
     public string? Comment { get; set; }
 
@@ -71,6 +73,15 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     //[InverseProperty("ResGroupWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    [ForeignKey("Gid")]
+    [InverseProperty("Gids")]
+    public virtual ICollection<ResUser> UidsNavigation { get; set; } = new List<ResUser>();
+
+    [ForeignKey("GroupId")]
+    [InverseProperty("Groups")]
+    //[NotMapped]
+    public virtual ICollection<IrRule> RuleGroups { get; set; } = new List<IrRule>();
 
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Group")]
@@ -128,11 +139,6 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual ICollection<IrUiMenu> Menus { get; set; } = new List<IrUiMenu>();
 
-    [ForeignKey("GroupId")]
-    //[InverseProperty("Groups")]
-    [NotMapped]
-    public virtual ICollection<IrRule> RuleGroups { get; set; } = new List<IrRule>();
-
     [ForeignKey("ResGroupsId")]
     //[InverseProperty("ResGroups")]
     [NotMapped]
@@ -142,11 +148,6 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     //[InverseProperty("Gids")]
     [NotMapped]
     public virtual ICollection<IrActReportXml> Uids { get; set; } = new List<IrActReportXml>();
-
-    [ForeignKey("Gid")]
-    //[InverseProperty("Gids")]
-    [NotMapped]
-    public virtual ICollection<ResUser> UidsNavigation { get; set; } = new List<ResUser>();
 
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]

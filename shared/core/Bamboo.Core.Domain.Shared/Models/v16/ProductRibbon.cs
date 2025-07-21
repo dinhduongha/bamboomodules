@@ -35,6 +35,7 @@ public partial class ProductRibbon : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("position")]
     public string? Position { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
@@ -43,6 +44,7 @@ public partial class ProductRibbon : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? HtmlClass { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("html", TypeName = "jsonb")]
     public string? Html { get; set; }
 

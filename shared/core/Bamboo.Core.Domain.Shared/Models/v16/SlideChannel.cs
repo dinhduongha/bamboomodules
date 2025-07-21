@@ -123,30 +123,39 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("slide_last_update")]
     public DateTime? SlideLastUpdate { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("description_short", TypeName = "jsonb")]
     public string? DescriptionShort { get; set; }
 
+    [JsonField]
     [Column("description_html", TypeName = "jsonb")]
     public string? DescriptionHtml { get; set; }
 
+    [JsonField]
     [Column("enroll_msg", TypeName = "jsonb")]
     public string? EnrollMsg { get; set; }
 

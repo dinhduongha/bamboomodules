@@ -32,6 +32,7 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("uom_type")]
     public string? UomType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

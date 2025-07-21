@@ -123,6 +123,7 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("priority")]
     public string? Priority { get; set; }
 
+    [JsonField]
     [Column("repair_properties", TypeName = "jsonb")]
     public string? RepairProperties { get; set; }
 

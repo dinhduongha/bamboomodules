@@ -42,6 +42,7 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("mega_menu_classes")]
     public string? MegaMenuClasses { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

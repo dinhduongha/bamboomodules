@@ -36,6 +36,7 @@ public partial class CrmIapLeadIndustry : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("reveal_ids")]
     public string? RevealIds { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

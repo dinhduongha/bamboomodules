@@ -117,6 +117,7 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("first_contract_date")]
     public DateTime? FirstContractDate { get; set; }
 
+    [JsonField]
     [Column("vehicle_properties", TypeName = "jsonb")]
     public string? VehicleProperties { get; set; }
 

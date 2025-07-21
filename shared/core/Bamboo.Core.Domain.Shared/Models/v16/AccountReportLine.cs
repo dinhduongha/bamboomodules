@@ -54,6 +54,7 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("horizontal_split_side")]
     public string? HorizontalSplitSide { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

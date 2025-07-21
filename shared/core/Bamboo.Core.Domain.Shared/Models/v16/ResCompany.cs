@@ -81,12 +81,15 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public string? LayoutBackground { get; set; }
 
     // v16-Compat json
+    [JsonField]
     [Column("report_header", TypeName = "jsonb")]
     public string? ReportHeader { get; set; }
 
+    [JsonField]
     [Column("report_footer", TypeName = "jsonb")]
     public string? ReportFooter { get; set; }
 
+    [JsonField]
     [Column("company_details", TypeName = "jsonb")]
     public string? CompanyDetails { get; set; }
 
@@ -336,9 +339,11 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("account_opening_date")]
     public DateTime? AccountOpeningDate { get; set; }
 
+    [JsonField]
     [Column("invoice_terms", TypeName = "jsonb")]
     public string? InvoiceTerms { get; set; }
 
+    [JsonField]
     [Column("invoice_terms_html", TypeName = "jsonb")]
     public string? InvoiceTermsHtml { get; set; }
 
@@ -505,6 +510,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("company_expense_journal_id")]
     public Guid? CompanyExpenseJournalId { get; set; }
 
+    [JsonField]
     [Column("employee_properties_definition", TypeName = "jsonb")]
     public string? EmployeePropertiesDefinition { get; set; }
 
@@ -526,9 +532,11 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("work_permit_expiration_notice_period")]
     public long? WorkPermitExpirationNoticePeriod { get; set; }
 
+    [JsonField]
     [Column("candidate_properties_definition", TypeName = "jsonb")]
     public string? CandidatePropertiesDefinition { get; set; }
 
+    [JsonField]
     [Column("job_properties_definition", TypeName = "jsonb")]
     public string? JobPropertiesDefinition { get; set; }
 
@@ -577,6 +585,7 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("expense_outstanding_account_id")]
     public Guid? ExpenseOutstandingAccountId { get; set; }
 
+    [JsonField]
     [Column("lunch_notify_message", TypeName = "jsonb")]
     public string? LunchNotifyMessage { get; set; }
 
@@ -619,7 +628,8 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public string? WebsiteSaleOnboardingPaymentProviderState { get; set; }
 
     // v16-Compat
-    //[Column("lunch_notify_message", TypeName = "jsonb")]
+    //[JsonField]
+    [Column("lunch_notify_message", TypeName = "jsonb")]
     //public string? LunchNotifyMessage { get; set; }
 
     // v16-Compat

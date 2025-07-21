@@ -32,6 +32,7 @@ public partial class ChatbotScript: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 

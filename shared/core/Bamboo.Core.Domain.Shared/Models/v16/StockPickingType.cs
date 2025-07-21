@@ -81,9 +81,11 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("move_type")]
     public string? MoveType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("picking_properties_definition", TypeName = "jsonb")]
     public string? PickingPropertiesDefinition { get; set; }
 
@@ -157,6 +159,7 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("default_recycle_location_dest_id")]
     public Guid? DefaultRecycleLocationDestId { get; set; }
 
+    [JsonField]
     [Column("repair_properties_definition", TypeName = "jsonb")]
     public string? RepairPropertiesDefinition { get; set; }
 

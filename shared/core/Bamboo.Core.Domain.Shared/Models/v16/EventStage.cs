@@ -29,18 +29,23 @@ public partial class EventStage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("legend_blocked", TypeName = "jsonb")]
     public string? LegendBlocked { get; set; }
 
+    [JsonField]
     [Column("legend_done", TypeName = "jsonb")]
     public string? LegendDone { get; set; }
 
+    [JsonField]
     [Column("legend_normal", TypeName = "jsonb")]
     public string? LegendNormal { get; set; }
 

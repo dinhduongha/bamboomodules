@@ -77,6 +77,7 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("priority")]
     public string? Priority { get; set; }
 
+    [JsonField]
     [Column("picking_properties", TypeName = "jsonb")]
     public string? PickingProperties { get; set; }
 

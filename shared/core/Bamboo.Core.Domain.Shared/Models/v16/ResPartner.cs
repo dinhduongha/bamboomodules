@@ -124,6 +124,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_name")]
     public string? CompanyName { get; set; }
 
+    [JsonField]
     [Column("barcode", TypeName = "jsonb")]
     public string? Barcode { get; set; }
 
@@ -172,6 +173,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("signup_type")]
     public string? SignupType { get; set; }
 
+    [JsonField]
     [Column("specific_property_product_pricelist", TypeName = "jsonb")]
     public string? SpecificPropertyProductPricelist { get; set; }
 
@@ -207,42 +209,55 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("autopost_bills")]
     public string? AutopostBills { get; set; }
 
+    [JsonField]
     [Column("credit_limit", TypeName = "jsonb")]
     public string? CreditLimit { get; set; }
 
+    [JsonField]
     [Column("property_account_payable_id", TypeName = "jsonb")]
     public string? PropertyAccountPayableId { get; set; }
 
+    [JsonField]
     [Column("property_account_receivable_id", TypeName = "jsonb")]
     public string? PropertyAccountReceivableId { get; set; }
 
+    [JsonField]
     [Column("property_account_position_id", TypeName = "jsonb")]
     public string? PropertyAccountPositionId { get; set; }
 
+    [JsonField]
     [Column("property_payment_term_id", TypeName = "jsonb")]
     public string? PropertyPaymentTermId { get; set; }
 
+    [JsonField]
     [Column("property_supplier_payment_term_id", TypeName = "jsonb")]
     public string? PropertySupplierPaymentTermId { get; set; }
 
+    [JsonField]
     [Column("trust", TypeName = "jsonb")]
     public string? Trust { get; set; }
 
+    [JsonField]
     [Column("ignore_abnormal_invoice_date", TypeName = "jsonb")]
     public string? IgnoreAbnormalInvoiceDate { get; set; }
 
+    [JsonField]
     [Column("ignore_abnormal_invoice_amount", TypeName = "jsonb")]
     public string? IgnoreAbnormalInvoiceAmount { get; set; }
 
+    [JsonField]
     [Column("invoice_sending_method", TypeName = "jsonb")]
     public string? InvoiceSendingMethod { get; set; }
 
+    [JsonField]
     [Column("invoice_edi_format_store", TypeName = "jsonb")]
     public string? InvoiceEdiFormatStore { get; set; }
 
+    [JsonField]
     [Column("property_outbound_payment_method_line_id", TypeName = "jsonb")]
     public string? PropertyOutboundPaymentMethodLineId { get; set; }
 
+    [JsonField]
     [Column("property_inbound_payment_method_line_id", TypeName = "jsonb")]
     public string? PropertyInboundPaymentMethodLineId { get; set; }
 
@@ -297,9 +312,11 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("picking_warn")]
     public string? PickingWarn { get; set; }
 
+    [JsonField]
     [Column("property_stock_customer", TypeName = "jsonb")]
     public string? PropertyStockCustomer { get; set; }
 
+    [JsonField]
     [Column("property_stock_supplier", TypeName = "jsonb")]
     public string? PropertyStockSupplier { get; set; }
 
@@ -312,12 +329,15 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("purchase_warn")]
     public string? PurchaseWarn { get; set; }
 
+    [JsonField]
     [Column("property_purchase_currency_id", TypeName = "jsonb")]
     public string? PropertyPurchaseCurrencyId { get; set; }
 
+    [JsonField]
     [Column("receipt_reminder_email", TypeName = "jsonb")]
     public string? ReceiptReminderEmail { get; set; }
 
+    [JsonField]
     [Column("reminder_date_before_receipt", TypeName = "jsonb")]
     public string? ReminderDateBeforeReceipt { get; set; }
 
@@ -368,27 +388,34 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
+    [JsonField]
     [Column("property_delivery_carrier_id", TypeName = "jsonb")]
     public string? PropertyDeliveryCarrierId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
+    [JsonField]
     [Column("website_short_description", TypeName = "jsonb")]
     public string? WebsiteShortDescription { get; set; }
 

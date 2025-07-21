@@ -79,6 +79,7 @@ public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("push_domain")]
     public string? PushDomain { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

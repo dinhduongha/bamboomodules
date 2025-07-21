@@ -165,6 +165,7 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("delivery_date")]
     public DateTime? DeliveryDate { get; set; }
 
+    [JsonField]
     [Column("sending_data", TypeName = "jsonb")]
     public string? SendingData { get; set; }
 

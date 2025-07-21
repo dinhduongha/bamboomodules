@@ -93,6 +93,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("state")]
     public string? State { get; set; }
 
+    [JsonField]
     [Column("html_field_history", TypeName = "jsonb")]
     public string? HtmlFieldHistory { get; set; }
 
@@ -116,6 +117,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     // [Column("date_deadline")]
     // public DateTime? DateDeadline { get; set; }
 
+    [JsonField]
     [Column("task_properties", TypeName = "jsonb")]
     public string? TaskProperties { get; set; }
 

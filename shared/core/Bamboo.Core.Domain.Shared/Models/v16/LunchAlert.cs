@@ -44,9 +44,11 @@ public partial class LunchAlert : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("until")]
     public DateTime? Until { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("message", TypeName = "jsonb")]
     public string? Message { get; set; }
 

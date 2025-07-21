@@ -42,9 +42,11 @@ public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("binding_view_types")]
     public string? BindingViewTypes { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Help { get; set; }
 
@@ -75,6 +77,7 @@ public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("domain")]
     public string? Domain { get; set; }
 
+    [JsonField]
     [Column("print_report_name", TypeName = "jsonb")]
     public string? PrintReportName { get; set; }
 

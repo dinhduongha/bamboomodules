@@ -65,18 +65,23 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("priority")]
     public string? Priority { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("description_purchase", TypeName = "jsonb")]
     public string? DescriptionPurchase { get; set; }
 
+    [JsonField]
     [Column("description_sale", TypeName = "jsonb")]
     public string? DescriptionSale { get; set; }
 
+    [JsonField]
     [Column("product_properties", TypeName = "jsonb")]
     public string? ProductProperties { get; set; }
 
@@ -113,15 +118,19 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [JsonField]
     [Column("property_account_income_id", TypeName = "jsonb")]
     public string? PropertyAccountIncomeId { get; set; }
 
+    [JsonField]
     [Column("property_account_expense_id", TypeName = "jsonb")]
     public string? PropertyAccountExpenseId { get; set; }
 
+    [JsonField]
     [Column("asset_category_id", TypeName = "jsonb")]
     public string? AssetCategoryId { get; set; }
 
+    [JsonField]
     [Column("deferred_revenue_category_id", TypeName = "jsonb")]
     public string? DeferredRevenueCategoryId { get; set; }
 
@@ -146,21 +155,27 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("tracking")]
     public string? Tracking { get; set; }
 
+    [JsonField]
     [Column("responsible_id", TypeName = "jsonb")]
     public string? ResponsibleId { get; set; }
 
+    [JsonField]
     [Column("property_stock_production", TypeName = "jsonb")]
     public string? PropertyStockProduction { get; set; }
 
+    [JsonField]
     [Column("property_stock_inventory", TypeName = "jsonb")]
     public string? PropertyStockInventory { get; set; }
 
+    [JsonField]
     [Column("description_picking", TypeName = "jsonb")]
     public string? DescriptionPicking { get; set; }
 
+    [JsonField]
     [Column("description_pickingout", TypeName = "jsonb")]
     public string? DescriptionPickingout { get; set; }
 
+    [JsonField]
     [Column("description_pickingin", TypeName = "jsonb")]
     public string? DescriptionPickingin { get; set; }
 
@@ -170,6 +185,7 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("lot_valuated")]
     public bool? LotValuated { get; set; }
 
+    [JsonField]
     [Column("public_description", TypeName = "jsonb")]
     public string? PublicDescription { get; set; }
 
@@ -190,9 +206,11 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("self_order_available")]
     public bool? SelfOrderAvailable { get; set; }
 
+    [JsonField]
     [Column("project_id", TypeName = "jsonb")]
     public string? ProjectId { get; set; }
 
+    [JsonField]
     [Column("project_template_id", TypeName = "jsonb")]
     public string? ProjectTemplateId { get; set; }
 
@@ -208,9 +226,11 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("purchase_line_warn_msg")]
     public string? PurchaseLineWarnMsg { get; set; }
 
+    [JsonField]
     [Column("property_account_creditor_price_difference", TypeName = "jsonb")]
     public string? PropertyAccountCreditorPriceDifference { get; set; }
 
+    [JsonField]
     [Column("service_to_purchase", TypeName = "jsonb")]
     public string? ServiceToPurchase { get; set; }
 
@@ -256,21 +276,27 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
+    [JsonField]
     [Column("description_ecommerce", TypeName = "jsonb")]
     public string? DescriptionEcommerce { get; set; }
 
@@ -286,6 +312,7 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("base_unit_count")]
     public double? BaseUnitCount { get; set; }
 
+    [JsonField]
     [Column("out_of_stock_message", TypeName = "jsonb")]
     public string? OutOfStockMessage { get; set; }
 

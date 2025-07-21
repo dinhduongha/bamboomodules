@@ -39,6 +39,7 @@ public partial class OnboardingOnboarding: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("panel_close_action_name")]
     public string? PanelCloseActionName { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

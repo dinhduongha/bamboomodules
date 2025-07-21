@@ -32,6 +32,7 @@ public partial class SlideQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("question", TypeName = "jsonb")]
     public string? Question { get; set; }
 

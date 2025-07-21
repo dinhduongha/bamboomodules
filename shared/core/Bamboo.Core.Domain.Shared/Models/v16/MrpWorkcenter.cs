@@ -83,6 +83,7 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("expense_account_id")]
     public Guid? ExpenseAccountId { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

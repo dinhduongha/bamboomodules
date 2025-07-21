@@ -38,6 +38,7 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("support_refund")]
     public string? SupportRefund { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

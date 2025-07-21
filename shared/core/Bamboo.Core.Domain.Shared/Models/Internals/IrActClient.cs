@@ -42,9 +42,11 @@ public partial class IrActClient: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("binding_view_types")]
     public string? BindingViewTypes { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Help { get; set; }
 

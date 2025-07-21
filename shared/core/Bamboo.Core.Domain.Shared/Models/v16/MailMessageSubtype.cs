@@ -39,9 +39,11 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("res_model")]
     public string? ResModel { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

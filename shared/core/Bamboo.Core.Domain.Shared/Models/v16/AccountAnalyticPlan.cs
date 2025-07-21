@@ -44,11 +44,13 @@ public partial class AccountAnalyticPlan: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // v16-Compat json
     //[Column("name")]
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
     // v16-Compat json
     //[Column("default_applicability")]
+    [JsonField]
     [Column("default_applicability", TypeName = "jsonb")]
     public string? DefaultApplicability { get; set; }
 

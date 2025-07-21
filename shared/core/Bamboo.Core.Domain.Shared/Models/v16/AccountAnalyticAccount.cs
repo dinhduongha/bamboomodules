@@ -43,6 +43,7 @@ public partial class AccountAnalyticAccount : FullAuditedEntity<Guid>, IEntityDt
     [Column("code")]
     public string? Code { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

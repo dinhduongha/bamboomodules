@@ -79,6 +79,7 @@ public partial class HrCandidate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("availability")]
     public DateTime? Availability { get; set; }
 
+    [JsonField]
     [Column("candidate_properties", TypeName = "jsonb")]
     public string? CandidateProperties { get; set; }
 

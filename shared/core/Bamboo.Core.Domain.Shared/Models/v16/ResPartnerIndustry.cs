@@ -26,9 +26,11 @@ public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("full_name", TypeName = "jsonb")]
     public string? FullName { get; set; }
 

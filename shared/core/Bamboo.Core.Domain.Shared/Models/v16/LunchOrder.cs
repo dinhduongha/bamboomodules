@@ -54,6 +54,7 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime? Date { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

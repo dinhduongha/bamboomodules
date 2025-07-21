@@ -40,9 +40,11 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("rule_auth")]
     public string? RuleAuth { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

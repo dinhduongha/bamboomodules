@@ -49,9 +49,11 @@ public partial class DeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("invoice_policy")]
     public string? InvoicePolicy { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("carrier_description", TypeName = "jsonb")]
     public string? CarrierDescription { get; set; }
 

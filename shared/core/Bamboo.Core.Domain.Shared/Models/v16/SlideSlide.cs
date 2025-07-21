@@ -103,24 +103,31 @@ public partial class SlideSlide: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("slide_type")]
     public string? SlideType { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("html_content", TypeName = "jsonb")]
     public string? HtmlContent { get; set; }
 

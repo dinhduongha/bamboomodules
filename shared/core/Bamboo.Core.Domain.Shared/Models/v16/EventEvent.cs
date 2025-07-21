@@ -68,15 +68,19 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("badge_format")]
     public string? BadgeFormat { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("registration_properties_definition", TypeName = "jsonb")]
     public string? RegistrationPropertiesDefinition { get; set; }
 
+    [JsonField]
     [Column("ticket_instructions", TypeName = "jsonb")]
     public string? TicketInstructions { get; set; }
 
@@ -116,18 +120,23 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("website_visibility")]
     public string? WebsiteVisibility { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("subtitle", TypeName = "jsonb")]
     public string? Subtitle { get; set; }
 

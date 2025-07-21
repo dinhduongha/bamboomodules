@@ -58,25 +58,32 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("module_state")]
     public string? ModuleState { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("display_as", TypeName = "jsonb")]
     public string? DisplayAs { get; set; }
 
+    [JsonField]
     [Column("pre_msg", TypeName = "jsonb")]
     public string? PreMsg { get; set; }
 
+    [JsonField]
     [Column("pending_msg", TypeName = "jsonb")]
     public string? PendingMsg { get; set; }
 
+    [JsonField]
     [Column("auth_msg", TypeName = "jsonb")]
     public string? AuthMsg { get; set; }
 
+    [JsonField]
     [Column("done_msg", TypeName = "jsonb")]
     public string? DoneMsg { get; set; }
 
+    [JsonField]
     [Column("cancel_msg", TypeName = "jsonb")]
     public string? CancelMsg { get; set; }
 

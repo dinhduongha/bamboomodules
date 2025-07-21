@@ -33,9 +33,11 @@ public partial class IapService: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("technical_name")]
     public string? TechnicalName { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("unit_name", TypeName = "jsonb")]
     public string? UnitName { get; set; }
 

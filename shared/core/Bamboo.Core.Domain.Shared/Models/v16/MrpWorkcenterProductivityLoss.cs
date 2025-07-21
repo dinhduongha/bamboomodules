@@ -34,6 +34,7 @@ public partial class MrpWorkcenterProductivityLoss : FullAuditedEntity<Guid>, IE
 
     // v16-Compat json
     //[Column("name")]
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

@@ -35,9 +35,11 @@ public partial class AccountPaymentTerm: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("early_pay_discount_computation")]
     public string? EarlyPayDiscountComputation { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 

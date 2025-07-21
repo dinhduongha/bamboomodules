@@ -40,7 +40,8 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? LastModifierId { get; set; }
 
     // v16-Compat
-    // [Column("name", TypeName = "jsonb")]
+    // [JsonField]
+    //[Column("name", TypeName = "jsonb")]
     // public string? Name { get; set; }
 
     [Column("type_tax_use")]
@@ -56,18 +57,22 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public string? PriceIncludeOverride { get; set; }
 
     // v16-Compat
+    // [JsonField]
     // [Column("description", TypeName = "jsonb")]
     // public string? Description { get; set; }
 
     [Column("tax_exigibility")]
     public string? TaxExigibility { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("invoice_label", TypeName = "jsonb")]
     public string? InvoiceLabel { get; set; }
 

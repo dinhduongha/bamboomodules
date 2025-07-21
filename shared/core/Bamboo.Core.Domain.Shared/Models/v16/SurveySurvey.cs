@@ -84,12 +84,15 @@ public partial class SurveySurvey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("session_code")]
     public string? SessionCode { get; set; }
 
+    [JsonField]
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("description_done", TypeName = "jsonb")]
     public string? DescriptionDone { get; set; }
 

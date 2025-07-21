@@ -37,6 +37,7 @@ public partial class SpreadsheetDashboard: FullAuditedEntity<Guid>, IEntityDto<G
 
     // v16-Compat json
     //[Column("name")]
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

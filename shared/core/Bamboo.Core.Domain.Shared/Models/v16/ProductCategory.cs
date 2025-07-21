@@ -40,6 +40,7 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
+    [JsonField]
     [Column("product_properties_definition", TypeName = "jsonb")]
     public string? ProductPropertiesDefinition { get; set; }
 
@@ -49,12 +50,15 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [JsonField]
     [Column("property_account_income_categ_id", TypeName = "jsonb")]
     public string? PropertyAccountIncomeCategId { get; set; }
 
+    [JsonField]
     [Column("property_account_expense_categ_id", TypeName = "jsonb")]
     public string? PropertyAccountExpenseCategId { get; set; }
 
+    [JsonField]
     [Column("property_account_downpayment_categ_id", TypeName = "jsonb")]
     public string? PropertyAccountDownpaymentCategId { get; set; }
 
@@ -64,27 +68,35 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("packaging_reserve_method")]
     public string? PackagingReserveMethod { get; set; }
 
+    [JsonField]
     [Column("property_valuation", TypeName = "jsonb")]
     public string? PropertyValuation { get; set; }
 
+    [JsonField]
     [Column("property_cost_method", TypeName = "jsonb")]
     public string? PropertyCostMethod { get; set; }
 
+    [JsonField]
     [Column("property_stock_journal", TypeName = "jsonb")]
     public string? PropertyStockJournal { get; set; }
 
+    [JsonField]
     [Column("property_stock_account_input_categ_id", TypeName = "jsonb")]
     public string? PropertyStockAccountInputCategId { get; set; }
 
+    [JsonField]
     [Column("property_stock_account_output_categ_id", TypeName = "jsonb")]
     public string? PropertyStockAccountOutputCategId { get; set; }
 
+    [JsonField]
     [Column("property_stock_valuation_account_id", TypeName = "jsonb")]
     public string? PropertyStockValuationAccountId { get; set; }
 
+    [JsonField]
     [Column("property_account_creditor_price_difference_categ", TypeName = "jsonb")]
     public string? PropertyAccountCreditorPriceDifferenceCateg { get; set; }
 
+    [JsonField]
     [Column("property_stock_account_production_cost_id", TypeName = "jsonb")]
     public string? PropertyStockAccountProductionCostId { get; set; }
 

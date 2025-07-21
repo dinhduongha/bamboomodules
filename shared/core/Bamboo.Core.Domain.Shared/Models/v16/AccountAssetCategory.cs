@@ -71,6 +71,7 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("method_end")]
     public DateTime? MethodEnd { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

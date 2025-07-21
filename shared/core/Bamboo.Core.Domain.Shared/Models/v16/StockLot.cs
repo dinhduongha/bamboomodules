@@ -47,6 +47,7 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("ref")]
     public string? Ref { get; set; }
 
+    [JsonField]
     [Column("lot_properties", TypeName = "jsonb")]
     public string? LotProperties { get; set; }
 
@@ -59,6 +60,7 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [JsonField]
     [Column("standard_price", TypeName = "jsonb")]
     public string? StandardPrice { get; set; }
 

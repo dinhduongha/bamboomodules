@@ -29,6 +29,7 @@ public partial class FleetServiceType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("category")]
     public string? Category { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

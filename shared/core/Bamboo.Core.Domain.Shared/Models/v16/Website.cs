@@ -188,12 +188,15 @@ public partial class Website: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public string? EcommerceAccess { get; set; }
 
     // v16-Compat
+    // [JsonField]
     // [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
     // public string? PreventZeroPriceSaleText { get; set; }
 
+    [JsonField]
     [Column("contact_us_button_url", TypeName = "jsonb")]
     public string? ContactUsButtonUrl { get; set; }
 
+    [JsonField]
     [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
     public string? PreventZeroPriceSaleText { get; set; }
 

@@ -43,14 +43,17 @@ public partial class ImLivechatChannel: FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? ButtonTextColor { get; set; }
 
     // v16-Compat json
+    [JsonField]
     [Column("button_text", TypeName = "jsonb")]
     public string? ButtonText { get; set; }
 
     // v16-Compat json
+    [JsonField]
     [Column("default_message", TypeName = "jsonb")]
     public string? DefaultMessage { get; set; }
 
     // v16-Compat json
+    [JsonField]
     [Column("input_placeholder", TypeName = "jsonb")]
     public string? InputPlaceholder { get; set; }
 
@@ -60,6 +63,7 @@ public partial class ImLivechatChannel: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public DateTime? LastModificationTime { get; set; }
 
+    [JsonField]
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 

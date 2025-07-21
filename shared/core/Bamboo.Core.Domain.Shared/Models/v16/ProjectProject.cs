@@ -89,12 +89,15 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("date")]
     public DateTime? Date { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("label_tasks", TypeName = "jsonb")]
     public string? LabelTasks { get; set; }
 
+    [JsonField]
     [Column("task_properties_definition", TypeName = "jsonb")]
     public string? TaskPropertiesDefinition { get; set; }
 

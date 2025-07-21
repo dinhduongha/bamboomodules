@@ -73,19 +73,24 @@ public partial class MailTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("scheduled_date")]
     public string? ScheduledDate { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("subject", TypeName = "jsonb")]
     public string? Subject { get; set; }
 
+    [JsonField]
     [Column("body_html", TypeName = "jsonb")]
     public string? BodyHtml { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("report_name", TypeName = "jsonb")]
     public string? ReportName { get; set; }
 

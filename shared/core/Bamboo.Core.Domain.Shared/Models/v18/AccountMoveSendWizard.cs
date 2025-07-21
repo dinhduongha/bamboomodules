@@ -38,12 +38,15 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     [Column("mail_subject")]
     public string? MailSubject { get; set; }
 
+    [JsonField]
     [Column("sending_method_checkboxes", TypeName = "jsonb")]
     public string? SendingMethodCheckboxes { get; set; }
 
+    [JsonField]
     [Column("extra_edi_checkboxes", TypeName = "jsonb")]
     public string? ExtraEdiCheckboxes { get; set; }
 
+    [JsonField]
     [Column("mail_attachments_widget", TypeName = "jsonb")]
     public string? MailAttachmentsWidget { get; set; }
 

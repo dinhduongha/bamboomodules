@@ -32,9 +32,11 @@ public partial class SlideAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("text_value", TypeName = "jsonb")]
     public string? TextValue { get; set; }
 
+    [JsonField]
     [Column("comment", TypeName = "jsonb")]
     public string? Comment { get; set; }
 

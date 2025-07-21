@@ -38,6 +38,7 @@ public partial class EventQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("question_type")]
     public string? QuestionType { get; set; }
 
+    [JsonField]
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 

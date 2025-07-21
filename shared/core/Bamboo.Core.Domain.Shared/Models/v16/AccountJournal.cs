@@ -70,6 +70,7 @@ public partial class AccountJournal: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("access_token")]
     public string? AccessToken { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

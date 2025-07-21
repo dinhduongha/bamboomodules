@@ -70,6 +70,7 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("request_unit")]
     public string? RequestUnit { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

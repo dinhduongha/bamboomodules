@@ -46,9 +46,11 @@ public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMod
     [Column("name_position")]
     public string? NamePosition { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("vat_label", TypeName = "jsonb")]
     public string? VatLabel { get; set; }
 

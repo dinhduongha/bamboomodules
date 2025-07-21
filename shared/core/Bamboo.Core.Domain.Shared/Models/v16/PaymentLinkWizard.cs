@@ -61,6 +61,7 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("discount_date")]
     public DateTime? DiscountDate { get; set; }
 
+    [JsonField]
     [Column("open_installments", TypeName = "jsonb")]
     public string? OpenInstallments { get; set; }
 

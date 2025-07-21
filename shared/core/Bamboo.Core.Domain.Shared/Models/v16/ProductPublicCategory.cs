@@ -45,24 +45,31 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
+    [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
     public string? WebsiteMetaTitle { get; set; }
 
+    [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
     public string? WebsiteMetaDescription { get; set; }
 
+    [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
     public string? WebsiteMetaKeywords { get; set; }
 
+    [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
     public string? SeoName { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
+    [JsonField]
     [Column("website_footer", TypeName = "jsonb")]
     public string? WebsiteFooter { get; set; }
 

@@ -43,6 +43,7 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("field_names")]
     public string? FieldNames { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

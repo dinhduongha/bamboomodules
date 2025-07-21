@@ -113,6 +113,7 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
+    [JsonField]
     [Column("applicant_properties", TypeName = "jsonb")]
     public string? ApplicantProperties { get; set; }
 

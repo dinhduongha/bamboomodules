@@ -52,7 +52,7 @@ public class StringDictionary : Dictionary<string, string?>, IComparable<StringD
             // Keys are equal, compare values
             var thisValue = this[thisKeys[i]];
             var otherValue = other[otherKeys[i]];
-            
+
             // Handle null values
             if (thisValue == null && otherValue == null)
             {
@@ -79,3 +79,19 @@ public class StringDictionary : Dictionary<string, string?>, IComparable<StringD
         return 0;
     }
 }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class JsonFieldAttribute : Attribute { }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class RelationFieldAttribute : Attribute
+    {
+        public string RelatedModel { get; }
+        public string RelationType { get; }
+
+        public RelationFieldAttribute(string relatedModel, string relationType)
+        {
+            RelatedModel = relatedModel;
+            RelationType = relationType;
+        }
+    }

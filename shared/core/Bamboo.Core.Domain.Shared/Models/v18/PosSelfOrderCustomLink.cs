@@ -35,6 +35,7 @@ public partial class PosSelfOrderCustomLink: FullAuditedEntity<Guid>, IEntityDto
     [Column("style")]
     public string? Style { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

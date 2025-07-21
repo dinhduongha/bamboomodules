@@ -39,6 +39,7 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("name")]
     public string? Name { get; set; }
 
+    [JsonField]
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 

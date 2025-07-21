@@ -65,6 +65,7 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("new_value_char")]
     public string? NewValueChar { get; set; }
 
+    [JsonField]
     [Column("field_info", TypeName = "jsonb")]
     public string? FieldInfo { get; set; }
 

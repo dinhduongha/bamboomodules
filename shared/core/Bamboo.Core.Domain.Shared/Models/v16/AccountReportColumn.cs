@@ -41,6 +41,7 @@ public partial class AccountReportColumn: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("figure_type")]
     public string? FigureType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

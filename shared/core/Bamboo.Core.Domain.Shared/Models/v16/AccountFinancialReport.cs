@@ -53,6 +53,7 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
     [Column("style_overwrite")]
     public string? StyleOverwrite { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

@@ -74,30 +74,39 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("validation_max_date")]
     public DateTime? ValidationMaxDate { get; set; }
 
+    [JsonField]
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("question_placeholder", TypeName = "jsonb")]
     public string? QuestionPlaceholder { get; set; }
 
+    [JsonField]
     [Column("scale_min_label", TypeName = "jsonb")]
     public string? ScaleMinLabel { get; set; }
 
+    [JsonField]
     [Column("scale_mid_label", TypeName = "jsonb")]
     public string? ScaleMidLabel { get; set; }
 
+    [JsonField]
     [Column("scale_max_label", TypeName = "jsonb")]
     public string? ScaleMaxLabel { get; set; }
 
+    [JsonField]
     [Column("comments_message", TypeName = "jsonb")]
     public string? CommentsMessage { get; set; }
 
+    [JsonField]
     [Column("validation_error_msg", TypeName = "jsonb")]
     public string? ValidationErrorMsg { get; set; }
 
+    [JsonField]
     [Column("constr_error_msg", TypeName = "jsonb")]
     public string? ConstrErrorMsg { get; set; }
 

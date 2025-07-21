@@ -35,9 +35,11 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("default_timezone")]
     public string? DefaultTimezone { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("ticket_instructions", TypeName = "jsonb")]
     public string? TicketInstructions { get; set; }
 

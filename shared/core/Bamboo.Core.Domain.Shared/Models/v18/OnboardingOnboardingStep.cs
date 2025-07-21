@@ -38,18 +38,23 @@ public partial class OnboardingOnboardingStep: FullAuditedEntity<Guid>, IEntityD
     [Column("panel_step_open_action_name")]
     public string? PanelStepOpenActionName { get; set; }
 
+    [JsonField]
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
+    [JsonField]
     [Column("button_text", TypeName = "jsonb")]
     public string? ButtonText { get; set; }
 
+    [JsonField]
     [Column("done_text", TypeName = "jsonb")]
     public string? DoneText { get; set; }
 
+    [JsonField]
     [Column("step_image_alt", TypeName = "jsonb")]
     public string? StepImageAlt { get; set; }
 

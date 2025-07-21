@@ -71,6 +71,7 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("power_unit")]
     public string? PowerUnit { get; set; }
 
+    [JsonField]
     [Column("vehicle_properties_definition", TypeName = "jsonb")]
     public string? VehiclePropertiesDefinition { get; set; }
 

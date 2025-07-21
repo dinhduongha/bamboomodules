@@ -42,9 +42,11 @@ public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("model")]
     public string? Model { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("body", TypeName = "jsonb")]
     public string? Body { get; set; }
 

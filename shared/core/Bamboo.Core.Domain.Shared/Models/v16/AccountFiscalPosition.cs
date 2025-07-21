@@ -35,6 +35,7 @@ public partial class AccountFiscalPosition: FullAuditedEntity<Guid>, IEntityDto<
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
@@ -47,6 +48,7 @@ public partial class AccountFiscalPosition: FullAuditedEntity<Guid>, IEntityDto<
     [Column("foreign_vat")]
     public string? ForeignVat { get; set; }
 
+    [JsonField]
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 

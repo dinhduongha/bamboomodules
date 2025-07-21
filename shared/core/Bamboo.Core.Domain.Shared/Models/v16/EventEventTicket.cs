@@ -41,9 +41,11 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("color")]
     public string? Color { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 

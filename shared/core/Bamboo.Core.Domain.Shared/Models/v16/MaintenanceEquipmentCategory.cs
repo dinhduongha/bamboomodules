@@ -39,12 +39,15 @@ public partial class MaintenanceEquipmentCategory: FullAuditedEntity<Guid>, IEnt
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 
+    [JsonField]
     [Column("equipment_properties_definition", TypeName = "jsonb")]
     public string? EquipmentPropertiesDefinition { get; set; }
 

@@ -36,6 +36,7 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("display_type")]
     public string? DisplayType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

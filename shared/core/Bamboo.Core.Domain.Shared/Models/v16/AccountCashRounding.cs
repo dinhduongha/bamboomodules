@@ -32,12 +32,15 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("rounding_method")]
     public string? RoundingMethod { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
+    [JsonField]
     [Column("profit_account_id", TypeName = "jsonb")]
     public string? ProfitAccountId { get; set; }
 
+    [JsonField]
     [Column("loss_account_id", TypeName = "jsonb")]
     public string? LossAccountId { get; set; }
 

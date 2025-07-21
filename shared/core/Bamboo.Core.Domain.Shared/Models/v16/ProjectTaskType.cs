@@ -39,22 +39,27 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("legend_blocked", TypeName = "jsonb")]
     public string? LegendBlocked { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("legend_done", TypeName = "jsonb")]
     public string? LegendDone { get; set; }
 
     // v16-Compat
+    [JsonField]
     [Column("legend_normal", TypeName = "jsonb")]
     public string? LegendNormal { get; set; }
 

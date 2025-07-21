@@ -46,6 +46,7 @@ public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("type")]
     public string? Type { get; set; }
 
+    [JsonField]
     [Column("message", TypeName = "jsonb")]
     public StringDictionary? Message { get; set; }
 

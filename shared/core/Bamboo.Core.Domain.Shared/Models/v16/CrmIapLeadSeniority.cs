@@ -30,6 +30,7 @@ public partial class CrmIapLeadSeniority : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("reveal_id")]
     public string? RevealId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

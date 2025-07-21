@@ -40,6 +40,7 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
@@ -66,6 +67,7 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("assignment_domain")]
     public string? AssignmentDomain { get; set; }
 
+    [JsonField]
     [Column("lead_properties_definition", TypeName = "jsonb")]
     public string? LeadPropertiesDefinition { get; set; }
 

@@ -33,6 +33,7 @@ public partial class AccountPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("payment_type")]
     public string? PaymentType { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

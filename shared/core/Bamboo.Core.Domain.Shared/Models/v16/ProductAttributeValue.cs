@@ -41,6 +41,7 @@ public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto
     [Column("html_color")]
     public string? HtmlColor { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

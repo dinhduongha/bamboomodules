@@ -74,6 +74,7 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("state")]
     public string? State { get; set; }
 
+    [JsonField]
     [Column("registration_properties", TypeName = "jsonb")]
     public string? RegistrationProperties { get; set; }
 

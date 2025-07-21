@@ -31,6 +31,7 @@ public partial class EventTagCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

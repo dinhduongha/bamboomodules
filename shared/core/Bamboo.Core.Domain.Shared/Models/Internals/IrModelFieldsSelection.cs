@@ -37,6 +37,7 @@ public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto
     [Column("value")]
     public string? Value { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 

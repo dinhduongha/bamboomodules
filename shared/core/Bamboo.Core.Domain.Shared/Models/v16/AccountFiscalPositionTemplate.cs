@@ -38,6 +38,7 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     [Column("write_uid")]
     public Guid? LastModifierId { get; set; }
 
+    [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
@@ -47,6 +48,7 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     [Column("zip_to")]
     public string? ZipTo { get; set; }
 
+    [JsonField]
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 

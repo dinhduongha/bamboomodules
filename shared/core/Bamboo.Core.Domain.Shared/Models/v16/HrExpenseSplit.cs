@@ -44,6 +44,7 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("name")]
     public string? Name { get; set; }
 
+    [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 

@@ -50,11 +50,13 @@ public partial class ResCurrency : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // v16-Compat json
     //[Column("currency_unit_label")]
+    [JsonField]
     [Column("currency_unit_label", TypeName = "jsonb")]
     public string? CurrencyUnitLabel { get; set; }
 
     // v16-Compat json
     //[Column("currency_subunit_label")]
+    [JsonField]
     [Column("currency_subunit_label", TypeName = "jsonb")]
     public string? CurrencySubunitLabel { get; set; }
 
