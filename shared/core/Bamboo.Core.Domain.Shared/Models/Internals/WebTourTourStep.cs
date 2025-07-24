@@ -10,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("ir_cron_progress")]
-//[Index("CronId", Name = "ir_cron_progress__cron_id_index")]
-public partial class IrCronProgress: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+[Table("web_tour_tour_step")]
+public partial class WebTourTourStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,45 +20,45 @@ public partial class IrCronProgress: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("cron_id")]
-    public Guid? CronId { get; set; }
+    [Column("tour_id")]
+    public Guid? TourId { get; set; }
 
-    [Column("remaining")]
-    public long? Remaining { get; set; }
-
-    [Column("done")]
-    public long? Done { get; set; }
-
-    [Column("timed_out_counter")]
-    public long? TimedOutCounter { get; set; }
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
-    [Column("deactivate")]
-    public bool? Deactivate { get; set; }
+    [Column("trigger")]
+    public string? Trigger { get; set; }
+
+    [Column("content")]
+    public string? Content { get; set; }
+
+    [Column("run")]
+    public string? Run { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrCronProgressCreateUs")]
+    //[InverseProperty("WebTourTourStepCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    [ForeignKey("CronId")]
-    //[InverseProperty("IrCronProgresses")]
+    [ForeignKey("TourId")]
+    //[InverseProperty("WebTourTourSteps")]
     [NotMapped]
-    public virtual IrCron? Cron { get; set; }
+    public virtual WebTourTour? Tour { get; set; }
 
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrCronProgressWriteUs")]
+    //[InverseProperty("WebTourTourStepWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 }

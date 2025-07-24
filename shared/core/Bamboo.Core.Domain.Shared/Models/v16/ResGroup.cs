@@ -13,9 +13,10 @@ namespace Bamboo.Core.Models;
 [Table("res_groups")]
 //[Index("CategoryId", Name = "res_groups_category_id_index")]
 //[Index("CategoryId", "Name", Name = "res_groups_name_uniq", IsUnique = true)]
+[ModelName("res_group")]
 public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
-    [Key] 
+    [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
@@ -36,7 +37,7 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("comment", TypeName = "jsonb")]
@@ -49,7 +50,7 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("api_key_duration")]
     public double? ApiKeyDuration { get; set; }

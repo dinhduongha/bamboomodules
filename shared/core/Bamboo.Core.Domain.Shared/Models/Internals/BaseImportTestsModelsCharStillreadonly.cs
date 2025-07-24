@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_import_tests_models_char_stillreadonly")]
-public partial class BaseImportTestsModelsCharStillreadonly: Entity<Guid>, IEntityDto<Guid>
+public partial class BaseImportTestsModelsCharStillreadonly: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -21,7 +21,7 @@ public partial class BaseImportTestsModelsCharStillreadonly: Entity<Guid>, IEnti
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("value")]
     public string? Value { get; set; }
@@ -30,7 +30,7 @@ public partial class BaseImportTestsModelsCharStillreadonly: Entity<Guid>, IEnti
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("BaseImportTestsModelsCharStillreadonlyCreateUs")]

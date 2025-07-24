@@ -27,7 +27,7 @@ public partial class OnboardingOnboardingStep: FullAuditedEntity<Guid>, IEntityD
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("done_icon")]
     public string? DoneIcon { get; set; }
@@ -65,7 +65,7 @@ public partial class OnboardingOnboardingStep: FullAuditedEntity<Guid>, IEntityD
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("OnboardingOnboardingStepCreateUs")]

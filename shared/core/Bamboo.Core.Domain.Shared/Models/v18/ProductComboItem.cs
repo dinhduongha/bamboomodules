@@ -30,7 +30,7 @@ public partial class ProductComboItem: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("extra_price")]
     public decimal? ExtraPrice { get; set; }
@@ -39,7 +39,7 @@ public partial class ProductComboItem: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("ComboId")]
     //[InverseProperty("ProductComboItems")]

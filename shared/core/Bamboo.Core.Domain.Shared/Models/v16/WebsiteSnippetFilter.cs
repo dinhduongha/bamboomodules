@@ -38,7 +38,7 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("field_names")]
     public string? FieldNames { get; set; }
@@ -54,7 +54,7 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("product_cross_selling")]
     public bool? ProductCrossSelling { get; set; }

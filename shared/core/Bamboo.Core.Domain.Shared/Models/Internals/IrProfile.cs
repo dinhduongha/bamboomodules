@@ -18,8 +18,8 @@ public partial class IrProfile: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("sql_count")]
     public long? SqlCount { get; set; }

@@ -30,7 +30,7 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("access_mode")]
     public string? AccessMode { get; set; }
@@ -42,7 +42,7 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ProjectShareCollaboratorWizardCreateUs")]

@@ -27,7 +27,7 @@ public partial class CalendarPopoverDeleteWizard: FullAuditedEntity<Guid>, IEnti
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("delete")]
     public string? Delete { get; set; }
@@ -36,7 +36,7 @@ public partial class CalendarPopoverDeleteWizard: FullAuditedEntity<Guid>, IEnti
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CalendarPopoverDeleteWizardCreateUs")]

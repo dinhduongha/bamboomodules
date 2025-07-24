@@ -10,8 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("base_enable_profiling_wizard")]
-public partial class BaseEnableProfilingWizard: Entity<Guid>, IEntityDto<Guid>
+[Table("base_document_layout")]
+public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,31 +20,41 @@ public partial class BaseEnableProfilingWizard: Entity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("report_layout_id")]
+    public Guid? ReportLayoutId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
-
-    [Column("duration")]
-    public string? Duration { get; set; }
-
-    [Column("expiration", TypeName = "timestamp without time zone")]
-    public DateTime? Expiration { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
+
+    [Column("from_invoice")]
+    public bool? FromInvoice { get; set; }
+
+    [ForeignKey("TenantId")]
+    //[InverseProperty("BaseDocumentLayouts")]
+    [NotMapped]
+    public virtual ResCompany? Company { get; set; }
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BaseEnableProfilingWizardCreateUs")]
+    //[InverseProperty("BaseDocumentLayoutCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("ReportLayoutId")]
+    //[InverseProperty("BaseDocumentLayouts")]
+    [NotMapped]
+    public virtual ReportLayout? ReportLayout { get; set; }
+
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BaseEnableProfilingWizardWriteUs")]
+    //[InverseProperty("BaseDocumentLayoutWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 }

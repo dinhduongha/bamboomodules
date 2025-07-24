@@ -33,7 +33,7 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("value_image_filename")]
     public string? ValueImageFilename { get; set; }
@@ -49,7 +49,7 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("answer_score")]
     public double? AnswerScore { get; set; }

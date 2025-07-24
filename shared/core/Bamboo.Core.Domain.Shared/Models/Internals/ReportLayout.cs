@@ -10,8 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("bus_bus")]
-public partial class BusBu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+[Table("report_layout")]
+public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,32 +19,50 @@ public partial class BusBu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
+
+    [Column("view_id")]
+    public Guid? ViewId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
-    [Column("channel")]
-    public string? Channel { get; set; }
+    [Column("image")]
+    public string? Image { get; set; }
 
-    [Column("message")]
-    public string? Message { get; set; }
+    [Column("pdf")]
+    public string? Pdf { get; set; }
+
+    [Column("name")]
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
+
+    //[InverseProperty("ReportLayout")]
+    [NotMapped]
+    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayouts { get; set; } = new List<BaseDocumentLayout>();
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BusBuCreateUs")]
+    //[InverseProperty("ReportLayoutCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
+    [ForeignKey("ViewId")]
+    //[InverseProperty("ReportLayouts")]
+    [NotMapped]
+    public virtual IrUiView? View { get; set; }
+
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BusBuWriteUs")]
+    //[InverseProperty("ReportLayoutWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 }

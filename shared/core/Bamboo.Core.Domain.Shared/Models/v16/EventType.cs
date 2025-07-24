@@ -30,7 +30,7 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("default_timezone")]
     public string? DefaultTimezone { get; set; }
@@ -59,7 +59,7 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("website_menu")]
     public bool? WebsiteMenu { get; set; }

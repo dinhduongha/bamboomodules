@@ -31,14 +31,16 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("applicability")]
     public string? Applicability { get; set; }
 
+    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    //public Dictionary<string, string?>? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -50,7 +52,7 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // v16-Compat
     [ForeignKey("TenantId")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_model_inherit")]
 //[Index("ModelId", "ParentId", Name = "ir_model_inherit_uniq", IsUnique = true)]
-public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]

@@ -43,7 +43,7 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat json=>character varying
     [Column("cron_name")]
@@ -55,7 +55,7 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     // v16-Compat
     // [JsonField]
     // [Column("cron_name", TypeName = "jsonb")]
-    // public StringDictionary? CronName { get; set; }
+    // public Dictionary<string, string?>? CronName { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -77,7 +77,7 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrCronCreateUs")]

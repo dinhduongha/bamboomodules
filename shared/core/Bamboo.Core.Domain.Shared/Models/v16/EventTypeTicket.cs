@@ -33,7 +33,7 @@ public partial class EventTypeTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -50,7 +50,7 @@ public partial class EventTypeTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

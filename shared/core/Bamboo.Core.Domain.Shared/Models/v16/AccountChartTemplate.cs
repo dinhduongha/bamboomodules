@@ -105,7 +105,7 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -133,7 +133,7 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("spoken_languages")]
     public string? SpokenLanguages { get; set; }

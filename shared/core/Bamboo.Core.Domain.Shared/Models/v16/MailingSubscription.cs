@@ -34,7 +34,7 @@ public partial class MailingSubscription: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("opt_out")]
     public bool? OptOut { get; set; }
@@ -46,7 +46,7 @@ public partial class MailingSubscription: FullAuditedEntity<Guid>, IEntityDto<Gu
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("ContactId")]
     //[InverseProperty("MailingSubscriptions")]

@@ -28,7 +28,7 @@ public partial class HrAttendanceOvertime : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("date")]
     public DateTime? Date { get; set; }
@@ -40,7 +40,7 @@ public partial class HrAttendanceOvertime : FullAuditedEntity<Guid>, IEntityDto<
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("duration")]
     public double? Duration { get; set; }

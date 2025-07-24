@@ -27,7 +27,7 @@ public partial class WebsitePagePropertiesBase: FullAuditedEntity<Guid>, IEntity
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("target_model_id")]
     public string? TargetModelId { get; set; }
@@ -39,7 +39,7 @@ public partial class WebsitePagePropertiesBase: FullAuditedEntity<Guid>, IEntity
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("WebsitePagePropertiesBaseCreateUs")]

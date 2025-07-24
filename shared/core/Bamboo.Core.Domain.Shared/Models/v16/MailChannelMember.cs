@@ -45,7 +45,7 @@ public partial class MailChannelMember: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("custom_channel_name")]
     public string? CustomChannelName { get; set; }
@@ -69,7 +69,7 @@ public partial class MailChannelMember: FullAuditedEntity<Guid>, IEntityDto<Guid
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("ChannelId")]
     //[InverseProperty("MailChannelMembers")]

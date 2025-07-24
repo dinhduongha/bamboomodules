@@ -35,13 +35,15 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat json
     //[Column("name")]
+    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    //public Dictionary<string, string?>? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("rule_type")]
     public string? RuleType { get; set; }
@@ -113,7 +115,7 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("match_amount_min")]
     public double? MatchAmountMin { get; set; }

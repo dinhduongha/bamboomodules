@@ -10,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("decimal_precision")]
-//[Index("Name", Name = "decimal_precision_name_uniq", IsUnique = true)]
-public partial class DecimalPrecision : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+[Table("web_editor_converter_test_sub")]
+public partial class WebEditorConverterTestSub: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,15 +19,12 @@ public partial class DecimalPrecision : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-
-    [Column("digits")]
-    public long? Digits { get; set; }
-
+    
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -37,15 +33,20 @@ public partial class DecimalPrecision : FullAuditedEntity<Guid>, IEntityDto<Guid
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("DecimalPrecisionCreateUs")]
+    //[InverseProperty("WebEditorConverterTestSubCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("DecimalPrecisionWriteUs")]
+    //[InverseProperty("WebEditorConverterTestSubWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
+
+    //[InverseProperty("Many2oneNavigation")]
+    [NotMapped]
+    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTests { get; set; } = new List<WebEditorConverterTest>();
+
 }

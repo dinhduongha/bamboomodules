@@ -76,7 +76,7 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("email_cc")]
     public string? EmailCc { get; set; }
@@ -151,7 +151,7 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime? RefuseDate { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("probability")]
     public double? Probability { get; set; }

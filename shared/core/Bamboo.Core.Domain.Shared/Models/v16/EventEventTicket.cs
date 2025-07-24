@@ -33,7 +33,7 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -56,7 +56,7 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("start_sale_datetime", TypeName = "timestamp without time zone")]
     public DateTime? StartSaleDatetime { get; set; }

@@ -58,7 +58,7 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("start_type")]
     public string? StartType { get; set; }
@@ -113,7 +113,7 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("frequency_hourly_source")]
     public string? FrequencyHourlySource { get; set; }

@@ -46,7 +46,7 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat
     [Column("detailed_type")]
@@ -116,7 +116,7 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [JsonField]
     [Column("property_account_income_id", TypeName = "jsonb")]

@@ -10,8 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("web_editor_converter_test_sub")]
-public partial class WebEditorConverterTestSub: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+[Table("bus_bus")]
+public partial class BusBu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,29 +24,27 @@ public partial class WebEditorConverterTestSub: FullAuditedEntity<Guid>, IEntity
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
+    [Column("channel")]
+    public string? Channel { get; set; }
+
+    [Column("message")]
+    public string? Message { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebEditorConverterTestSubCreateUs")]
+    //[InverseProperty("BusBuCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebEditorConverterTestSubWriteUs")]
+    //[InverseProperty("BusBuWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Many2oneNavigation")]
-    [NotMapped]
-    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTests { get; set; } = new List<WebEditorConverterTest>();
-
 }

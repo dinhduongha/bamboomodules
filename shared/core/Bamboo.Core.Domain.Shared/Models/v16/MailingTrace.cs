@@ -40,7 +40,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("trace_type")]
     public string? TraceType { get; set; }
@@ -79,7 +79,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("sms_sms_id")]
     public Guid? SmsSmsId { get; set; }

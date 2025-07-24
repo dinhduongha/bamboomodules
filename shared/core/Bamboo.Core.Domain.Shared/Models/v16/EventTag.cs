@@ -38,7 +38,7 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -48,7 +48,7 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

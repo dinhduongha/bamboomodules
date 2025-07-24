@@ -30,7 +30,7 @@ public partial class AccountReconcileModelTemplate : FullAuditedEntity<Guid>, IE
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -99,7 +99,7 @@ public partial class AccountReconcileModelTemplate : FullAuditedEntity<Guid>, IE
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("match_amount_min")]
     public double? MatchAmountMin { get; set; }

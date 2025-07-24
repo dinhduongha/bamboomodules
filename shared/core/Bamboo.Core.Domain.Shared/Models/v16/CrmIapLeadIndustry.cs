@@ -31,20 +31,22 @@ public partial class CrmIapLeadIndustry : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("reveal_ids")]
     public string? RevealIds { get; set; }
 
+    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
+    //public Dictionary<string, string?>? Name { get; set; }
     public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CrmIapLeadIndustryCreateUs")]

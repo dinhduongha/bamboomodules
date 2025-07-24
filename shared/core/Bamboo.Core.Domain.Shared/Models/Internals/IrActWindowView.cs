@@ -34,7 +34,7 @@ public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("view_mode")]
     public string? ViewMode { get; set; }
@@ -46,7 +46,7 @@ public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("ActWindowId")]
     //[InverseProperty("IrActWindowViews")]

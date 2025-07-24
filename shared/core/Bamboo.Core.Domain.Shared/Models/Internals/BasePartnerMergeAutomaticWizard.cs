@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_partner_merge_automatic_wizard")]
-public partial class BasePartnerMergeAutomaticWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class BasePartnerMergeAutomaticWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -36,7 +36,7 @@ public partial class BasePartnerMergeAutomaticWizard: FullAuditedEntity<Guid>, I
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("state")]
     public string? State { get; set; }
@@ -66,11 +66,7 @@ public partial class BasePartnerMergeAutomaticWizard: FullAuditedEntity<Guid>, I
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
-
-    //[InverseProperty("Wizard")]
-    [NotMapped]
-    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; set; } = new List<BasePartnerMergeLine>();
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("BasePartnerMergeAutomaticWizardCreateUs")]
@@ -96,4 +92,9 @@ public partial class BasePartnerMergeAutomaticWizard: FullAuditedEntity<Guid>, I
     //[InverseProperty("BasePartnerMergeAutomaticWizardsNavigation")]
     [NotMapped]
     public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    
+    //[InverseProperty("Wizard")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; set; } = new List<BasePartnerMergeLine>();
+
 }

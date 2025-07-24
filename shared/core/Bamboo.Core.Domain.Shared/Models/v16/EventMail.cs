@@ -39,7 +39,7 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("notification_type")]
     public string? NotificationType { get; set; }
@@ -63,7 +63,7 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("EventMailCreateUs")]

@@ -29,7 +29,7 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -42,7 +42,7 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

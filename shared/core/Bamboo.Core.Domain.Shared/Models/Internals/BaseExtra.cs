@@ -95,3 +95,13 @@ public class StringDictionary : Dictionary<string, string?>, IComparable<StringD
             RelationType = relationType;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class ModelNameAttribute : Attribute
+    {
+        public string[] Names { get; }
+        public ModelNameAttribute(params string[] names)
+        {
+            Names = names;    
+        }
+    }

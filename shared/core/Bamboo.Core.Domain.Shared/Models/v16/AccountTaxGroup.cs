@@ -39,7 +39,7 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("pos_receipt_label")]
     public string? PosReceiptLabel { get; set; }
@@ -57,7 +57,7 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountTaxGroups")]

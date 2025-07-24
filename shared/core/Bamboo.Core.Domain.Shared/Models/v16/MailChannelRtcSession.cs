@@ -32,7 +32,7 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("is_screen_sharing_on")]
     public bool? IsScreenSharingOn { get; set; }
@@ -47,7 +47,7 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
     public bool? IsDeaf { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }

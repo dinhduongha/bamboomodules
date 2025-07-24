@@ -100,7 +100,7 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
@@ -178,7 +178,7 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("rating_last_value")]
     public double? RatingLastValue { get; set; }

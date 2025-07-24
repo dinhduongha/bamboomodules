@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_partner_industry")]
-public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,7 +24,7 @@ public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -41,7 +41,7 @@ public partial class ResPartnerIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ResPartnerIndustryCreateUs")]

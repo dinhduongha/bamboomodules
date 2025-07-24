@@ -24,7 +24,7 @@ public partial class AccountReportPartnerLedger: FullAuditedEntity<Guid>, IEntit
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("target_move")]
     public string? TargetMove { get; set; }
@@ -48,7 +48,7 @@ public partial class AccountReportPartnerLedger: FullAuditedEntity<Guid>, IEntit
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountReportPartnerLedgers")]

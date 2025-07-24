@@ -18,8 +18,8 @@ public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDt
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("module_id")]
     public Guid? ModuleId { get; set; }
@@ -28,7 +28,7 @@ public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDt
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -37,7 +37,7 @@ public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDt
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrModuleModuleExclusionCreateUs")]

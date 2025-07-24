@@ -45,7 +45,7 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -79,7 +79,7 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("supplier_id")]
     public Guid? SupplierId { get; set; }

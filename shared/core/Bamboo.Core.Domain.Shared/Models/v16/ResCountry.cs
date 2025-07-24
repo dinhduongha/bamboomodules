@@ -13,14 +13,14 @@ namespace Bamboo.Core.Models;
 [Table("res_country")]
 //[Index("Code", Name = "res_country_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_country_name_uniq", IsUnique = true)]
-public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("sequence", TypeName = "bigserial")]
     public long? Sequence { get; set; }
@@ -38,7 +38,7 @@ public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMod
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("code")]
     public string? Code { get; set; }
@@ -67,7 +67,7 @@ public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMod
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("AddressViewId")]
     //[InverseProperty("ResCountries")]

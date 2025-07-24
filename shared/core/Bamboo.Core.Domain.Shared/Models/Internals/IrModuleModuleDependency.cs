@@ -18,8 +18,8 @@ public partial class IrModuleModuleDependency: FullAuditedEntity<Guid>, IEntityD
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }

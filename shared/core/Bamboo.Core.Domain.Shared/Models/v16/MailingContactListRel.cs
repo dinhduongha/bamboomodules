@@ -45,7 +45,7 @@ public partial class MailingContactListRel: FullAuditedEntity<Guid>, IEntityDto<
     /// Last Updated by
     /// </summary>
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     /// <summary>
     /// Opt Out
@@ -69,7 +69,7 @@ public partial class MailingContactListRel: FullAuditedEntity<Guid>, IEntityDto<
     /// Last Updated on
     /// </summary>
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("ContactId")]
     //[InverseProperty("MailingContactListRels")]

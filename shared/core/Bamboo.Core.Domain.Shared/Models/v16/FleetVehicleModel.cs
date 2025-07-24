@@ -48,7 +48,7 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -88,7 +88,7 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("default_co2")]
     public double? DefaultCo2 { get; set; }

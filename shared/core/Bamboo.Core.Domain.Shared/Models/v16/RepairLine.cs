@@ -52,7 +52,7 @@ public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("type")]
     public string? Type { get; set; }
@@ -82,7 +82,7 @@ public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("RepairLines")]

@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("iap_account")]
-public partial class IapAccount : Entity<Guid>, IEntityDto<Guid>
+public partial class IapAccount : FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class IapAccount : Entity<Guid>, IEntityDto<Guid>
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -52,7 +52,7 @@ public partial class IapAccount : Entity<Guid>, IEntityDto<Guid>
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("warning_threshold")]
     public double? WarningThreshold { get; set; }

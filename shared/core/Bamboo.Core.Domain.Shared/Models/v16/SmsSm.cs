@@ -31,7 +31,7 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("uuid")]
     public string? Uuid { get; set; }
@@ -55,7 +55,7 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("mailing_id")]
     public Guid? MailingId { get; set; }

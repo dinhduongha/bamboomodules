@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("res_bank")]
 //[Index("Bic", Name = "res_bank_bic_index")]
-public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -31,7 +31,7 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModif
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -64,7 +64,7 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModif
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("Country")]
     //[InverseProperty("ResBanks")]

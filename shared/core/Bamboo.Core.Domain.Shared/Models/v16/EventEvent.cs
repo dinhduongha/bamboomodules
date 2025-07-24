@@ -51,7 +51,7 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
@@ -106,7 +106,7 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

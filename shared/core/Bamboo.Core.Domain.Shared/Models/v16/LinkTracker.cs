@@ -36,7 +36,7 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("url")]
     public string? Url { get; set; }
@@ -51,7 +51,7 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("mass_mailing_id")]
     public Guid? MassMailingId { get; set; }

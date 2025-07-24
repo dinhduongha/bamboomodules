@@ -36,7 +36,7 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat json
     //[Column("label")]
@@ -61,7 +61,7 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("amount")]
     public double? Amount { get; set; }

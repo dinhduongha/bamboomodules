@@ -37,7 +37,7 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat
     // [JsonField]
@@ -64,9 +64,11 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("tax_exigibility")]
     public string? TaxExigibility { get; set; }
 
+    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
+    //public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -102,7 +104,7 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // v16-Compat
     [Column("real_amount")]

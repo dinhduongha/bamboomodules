@@ -52,8 +52,9 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
+    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
@@ -74,7 +75,7 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }

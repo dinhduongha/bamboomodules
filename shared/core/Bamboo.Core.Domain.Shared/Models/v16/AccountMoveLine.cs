@@ -90,7 +90,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("move_name")]
     public string? MoveName { get; set; }
@@ -189,7 +189,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // v16-Compat
     [Column("discount_percentage")]

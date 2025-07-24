@@ -30,7 +30,7 @@ public partial class ChangePasswordUser: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("user_login")]
     public string? UserLogin { get; set; }
@@ -42,7 +42,7 @@ public partial class ChangePasswordUser: FullAuditedEntity<Guid>, IEntityDto<Gui
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ChangePasswordUserCreateUs")]

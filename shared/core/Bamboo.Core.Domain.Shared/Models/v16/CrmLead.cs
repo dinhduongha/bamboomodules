@@ -84,7 +84,7 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("phone_sanitized")]
     public string? PhoneSanitized { get; set; }
@@ -203,7 +203,7 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("day_open")]
     public double? DayOpen { get; set; }

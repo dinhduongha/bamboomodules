@@ -10,8 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("auth_totp_wizard")]
-public partial class AuthTotpWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+[Table("base_partner_merge_line")]
+public partial class BasePartnerMergeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,46 +19,44 @@ public partial class AuthTotpWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-    
-    [Column("user_id")]
-    public Guid? UserId { get; set; }
+
+    [Column("wizard_id")]
+    public Guid? WizardId { get; set; }
+
+    [Column("min_id")]
+    public Guid? MinId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
-    [Column("secret")]
-    public string? Secret { get; set; }
-
-    [Column("url")]
-    public string? Url { get; set; }
-
-    [Column("code")]
-    public string? Code { get; set; }
+    [Column("aggr_ids")]
+    public string? AggrIds { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
-    [Column("qrcode")]
-    public byte[]? Qrcode { get; set; }
+    //[InverseProperty("CurrentLine")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizards { get; set; } = new List<BasePartnerMergeAutomaticWizard>();
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AuthTotpWizardCreateUs")]
+    //[InverseProperty("BasePartnerMergeLineCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    [ForeignKey("UserId")]
-    //[InverseProperty("AuthTotpWizardUsers")]
+    [ForeignKey("WizardId")]
+    //[InverseProperty("BasePartnerMergeLines")]
     [NotMapped]
-    public virtual ResUser? User { get; set; }
+    public virtual BasePartnerMergeAutomaticWizard? Wizard { get; set; }
 
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AuthTotpWizardWriteUs")]
+    //[InverseProperty("BasePartnerMergeLineWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 }

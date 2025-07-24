@@ -28,7 +28,7 @@ public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("email")]
     public string? Email { get; set; }
@@ -40,7 +40,7 @@ public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("opt_out_reason_id")]
     public Guid? OptOutReasonId { get; set; }

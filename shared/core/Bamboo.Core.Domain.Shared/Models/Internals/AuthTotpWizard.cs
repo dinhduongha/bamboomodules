@@ -10,8 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Table("report_layout")]
-public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+[Table("auth_totp_wizard")]
+public partial class AuthTotpWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,50 +19,46 @@ public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
-
-    [Column("view_id")]
-    public Guid? ViewId { get; set; }
-
-    [Column("sequence")]
-    public long? Sequence { get; set; }
+    
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
-    [Column("image")]
-    public string? Image { get; set; }
+    [Column("secret")]
+    public string? Secret { get; set; }
 
-    [Column("pdf")]
-    public string? Pdf { get; set; }
+    [Column("url")]
+    public string? Url { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
+    [Column("code")]
+    public string? Code { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("ReportLayout")]
-    [NotMapped]
-    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayouts { get; set; } = new List<BaseDocumentLayout>();
+    [Column("qrcode")]
+    public byte[]? Qrcode { get; set; }
 
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ReportLayoutCreateUs")]
+    //[InverseProperty("AuthTotpWizardCreateUs")]
     [NotMapped]
     public virtual ResUser? CreateU { get; set; }
 
-    [ForeignKey("ViewId")]
-    //[InverseProperty("ReportLayouts")]
+    [ForeignKey("UserId")]
+    //[InverseProperty("AuthTotpWizardUsers")]
     [NotMapped]
-    public virtual IrUiView? View { get; set; }
+    public virtual ResUser? User { get; set; }
 
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ReportLayoutWriteUs")]
+    //[InverseProperty("AuthTotpWizardWriteUs")]
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 }

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_mail_server")]
 //[Index("Name", Name = "ir_mail_server_name_index")]
-public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant
 {
     [Key]
     [Column("id")]
@@ -31,7 +31,7 @@ public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -64,7 +64,7 @@ public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("max_email_size")]
     public double? MaxEmailSize { get; set; }

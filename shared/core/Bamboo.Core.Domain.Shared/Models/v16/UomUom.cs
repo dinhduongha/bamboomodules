@@ -27,7 +27,7 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("uom_type")]
     public string? UomType { get; set; }
@@ -49,7 +49,7 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("UomUoms")]

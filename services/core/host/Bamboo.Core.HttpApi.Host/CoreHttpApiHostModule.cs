@@ -39,6 +39,9 @@ using Volo.Abp.TenantManagement.EntityFrameworkCore;
 
 using Bamboo.Core.EntityFrameworkCore;
 using Bamboo.MultiTenancy;
+using Volo.Abp.Auditing;
+using Npgsql;
+using Bamboo.Core.Application;
 
 namespace Bamboo.Core;
 [DependsOn(
@@ -65,11 +68,21 @@ public class CoreHttpApiHostModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
+        // Tắt Audit Logging
+        Configure<AbpAuditingOptions>(options =>
+        {
+            options.IsEnabled = false; // Tắt toàn bộ Audit Logging
+        });
+
+        NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
         Configure<AbpDbContextOptions>(options =>
         {
             options.UseNpgsql();
         });
 
+        // USE FOR SEED DATA 
+        context.Services.AddTransient<IDataSeedService, DataSeedService>();
+        context.Services.AddTransient<IJunctionTableService, JunctionTableService>();
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;

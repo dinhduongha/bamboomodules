@@ -49,7 +49,7 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat
     [Column("field_desc")]
@@ -85,7 +85,7 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("old_value_float")]
     public double? OldValueFloat { get; set; }

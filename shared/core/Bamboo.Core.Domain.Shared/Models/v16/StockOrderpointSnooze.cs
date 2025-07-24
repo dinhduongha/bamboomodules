@@ -24,7 +24,7 @@ public partial class StockOrderpointSnooze : FullAuditedEntity<Guid>, IEntityDto
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("predefined_date")]
     public string? PredefinedDate { get; set; }
@@ -36,7 +36,7 @@ public partial class StockOrderpointSnooze : FullAuditedEntity<Guid>, IEntityDto
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("TenantId")]
     [NotMapped]

@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("base_import_tests_models_char_noreadonly")]
-public partial class BaseImportTestsModelsCharNoreadonly: Entity<Guid>, IEntityDto<Guid>
+public partial class BaseImportTestsModelsCharNoreadonly: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -21,7 +21,7 @@ public partial class BaseImportTestsModelsCharNoreadonly: Entity<Guid>, IEntityD
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("value")]
     public string? Value { get; set; }

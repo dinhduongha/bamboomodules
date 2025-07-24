@@ -64,7 +64,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("complete_name")]
     public string? CompleteName { get; set; }
@@ -154,7 +154,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public bool? PartnerShare { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // v16-Compat
     [Column("message_main_attachment_id")]

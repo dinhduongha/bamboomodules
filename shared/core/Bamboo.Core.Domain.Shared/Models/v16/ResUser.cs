@@ -16,6 +16,7 @@ namespace Bamboo.Core.Models;
 [Table("res_users")]
 //[Index("PartnerId", Name = "res_users_partner_id_index")]
 //[Index("Login", "WebsiteId", Name = "res_users_login_key", IsUnique = true)]
+[ModelName("res.user")]
 public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -48,7 +49,7 @@ public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("signature")]
     public string? Signature { get; set; }
@@ -57,7 +58,7 @@ public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public bool? Share { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("totp_secret")]
     public string? TotpSecret { get; set; }

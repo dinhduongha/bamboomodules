@@ -61,7 +61,7 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     // v16-Compat
     [Column("product_category_name")]
@@ -107,7 +107,7 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("workorder_id")]
     public Guid? WorkorderId { get; set; }

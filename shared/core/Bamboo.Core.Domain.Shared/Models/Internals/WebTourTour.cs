@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("web_tour_tour")]
 //[Index("Name", Name = "web_tour_tour_uniq_name", IsUnique = true)]
-public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     //v16-Compat
     [Column("user_id")]
@@ -51,7 +51,7 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("WebTourTourCreateUs")]

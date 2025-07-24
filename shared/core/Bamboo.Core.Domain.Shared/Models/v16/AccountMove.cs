@@ -103,7 +103,7 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("sequence_prefix")]
     public string? SequencePrefix { get; set; }
@@ -237,7 +237,7 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("l10n_vn_e_invoice_number")]
     public string? L10nVnEInvoiceNumber { get; set; }
