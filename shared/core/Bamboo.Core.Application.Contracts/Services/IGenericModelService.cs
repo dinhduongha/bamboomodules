@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application
     public interface IGenericModelService : ITransientDependency
     {
         Task<List<object>> ReadAsync(string modelName, List<Guid> ids, List<string> fields = null);
-        Task<List<Guid>> SearchAsync(string modelName, string domain, long offset = 0, long limit = 100, string order = null);
-        Task<List<object>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, long limit = 100, string order = null);
+        Task<List<Guid>> SearchAsync(string modelName, string domain, long offset = 0, int limit = 100, string order = null);
+        Task<List<object>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, int limit = 100, string order = null);
         Task<object> CreateAsync(string modelName, object entity, List<string> fields);
         Task<List<object>> WriteAsync(string modelName, List<Guid> ids, object entity, List<string> fields);
         Task DeleteAsync(string modelName, List<Guid> id);

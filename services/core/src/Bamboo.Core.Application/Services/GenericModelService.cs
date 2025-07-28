@@ -26,13 +26,13 @@ namespace Bamboo.Core.Application
             return await CallServiceMethodAsync<List<object>>(service, "ReadAsync", ids, fields);
         }
 
-        public async Task<List<Guid>> SearchAsync(string modelName, string domain, long offset = 0, long limit = 100, string order = null)
+        public async Task<List<Guid>> SearchAsync(string modelName, string domain, long offset = 0, int limit = 100, string order = null)
         {
             var service = GetGenericService(modelName);
             return await CallServiceMethodAsync<List<Guid>>(service, "SearchAsync", domain, offset, limit, order);
         }
 
-        public async Task<List<object>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, long limit = 100, string order = null)
+        public async Task<List<object>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, int limit = 100, string order = null)
         {
             var service = GetGenericService(modelName);
             return await CallServiceMethodAsync<List<object>>(service, "SearchReadAsync", domain, fields, offset, limit, order);

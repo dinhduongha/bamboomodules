@@ -5,6 +5,7 @@ using Bamboo.CodeGenerators;
 
 namespace Bamboo.Core.Controllers;
 
+[NonController]
 [Area(CoreRemoteServiceConsts.ModuleName)]
 [RemoteService(Name = CoreRemoteServiceConsts.RemoteServiceName)]
 [Route("api/v1/core/CodeGenerate")]
