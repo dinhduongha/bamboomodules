@@ -53,6 +53,6 @@ public partial class ThemeIrAttachment : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("ThemeTemplate")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
 
 }

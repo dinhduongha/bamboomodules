@@ -71,10 +71,10 @@ public partial class ProductRibbon : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Ribbon")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+    public virtual ICollection<ProductTag> ProductTags { get; set; } 
 
     //[InverseProperty("WebsiteRibbon")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 
 }

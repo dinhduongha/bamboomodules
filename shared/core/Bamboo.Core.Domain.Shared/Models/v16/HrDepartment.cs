@@ -106,59 +106,59 @@ public partial class HrDepartment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } = new List<HrEmployeeSkillLog>();
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<HrPlan> HrPlans { get; set; } = new List<HrPlan>();
+    public virtual ICollection<HrPlan> HrPlans { get; set; } 
 
     //[InverseProperty("MasterDepartment")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> InverseMasterDepartment { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> InverseMasterDepartment { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> InverseParent { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> InverseParent { get; set; } 
 
     //[InverseProperty("Department")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } 
 
     [ForeignKey("HrDepartmentId")]
     //[InverseProperty("HrDepartments")]
     [NotMapped]
-    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDays { get; set; } = new List<HrLeaveStressDay>();
+    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDays { get; set; } 
 
     [ForeignKey("HrDepartmentId")]
     //[InverseProperty("HrDepartments")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannels { get; set; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannels { get; set; } 
 }

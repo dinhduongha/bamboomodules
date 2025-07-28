@@ -60,13 +60,13 @@ public partial class ResPartnerTitle : FullAuditedEntity<Guid>, IEntityDto<Guid>
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("TitleNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("Title")]
     [NotMapped]
-    public virtual ICollection<MailingContact> MailingContacts { get; set; } = new List<MailingContact>();
+    public virtual ICollection<MailingContact> MailingContacts { get; set; } 
 
     //[InverseProperty("TitleNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

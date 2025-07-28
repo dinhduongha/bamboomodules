@@ -46,7 +46,7 @@ public partial class BarcodeNomenclature : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("BarcodeNomenclature")]
     [NotMapped]
-    public virtual ICollection<BarcodeRule> BarcodeRules { get; set; } = new List<BarcodeRule>();
+    public virtual ICollection<BarcodeRule> BarcodeRules { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("BarcodeNomenclatureCreateUs")]
@@ -55,7 +55,7 @@ public partial class BarcodeNomenclature : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Nomenclature")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("BarcodeNomenclatureWriteUs")]

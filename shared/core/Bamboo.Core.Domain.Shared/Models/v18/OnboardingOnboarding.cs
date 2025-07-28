@@ -56,7 +56,7 @@ public partial class OnboardingOnboarding: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Onboarding")]
     [NotMapped]
-    public virtual ICollection<OnboardingProgress> OnboardingProgresses { get; set; } = new List<OnboardingProgress>();
+    public virtual ICollection<OnboardingProgress> OnboardingProgresses { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("OnboardingOnboardingWriteUs")]
@@ -66,5 +66,5 @@ public partial class OnboardingOnboarding: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("OnboardingOnboardingId")]
     //[InverseProperty("OnboardingOnboardings")]
     [NotMapped]
-    public virtual ICollection<OnboardingOnboardingStep> OnboardingOnboardingSteps { get; set; } = new List<OnboardingOnboardingStep>();
+    public virtual ICollection<OnboardingOnboardingStep> OnboardingOnboardingSteps { get; set; } 
 }

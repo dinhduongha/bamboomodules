@@ -69,6 +69,6 @@ public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("WorkLocation")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
 }

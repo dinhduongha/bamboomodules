@@ -86,7 +86,7 @@ public partial class IrFilter: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Filter")]
     [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } = new List<WebsiteSnippetFilter>();
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrFilterWriteUs")]

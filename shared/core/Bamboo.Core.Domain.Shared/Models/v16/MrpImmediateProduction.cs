@@ -48,10 +48,10 @@ public partial class MrpImmediateProduction : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("ImmediateProduction")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLines { get; set; } = new List<MrpImmediateProductionLine>();
+    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLines { get; set; } 
 
     [ForeignKey("MrpImmediateProductionId")]
     //[InverseProperty("MrpImmediateProductions")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 }

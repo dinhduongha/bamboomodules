@@ -49,7 +49,7 @@ public partial class MailingFilter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("MailingFilter")]
     [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
 
     [ForeignKey("MailingModelId")]
     //[InverseProperty("MailingFilters")]

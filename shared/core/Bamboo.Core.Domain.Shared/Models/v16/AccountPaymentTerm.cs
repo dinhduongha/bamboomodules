@@ -63,11 +63,11 @@ public partial class AccountPaymentTerm: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("InvoicePaymentTerm")]
     // [NotMapped]
-    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("Payment")]
     // [NotMapped]
-    // public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLines { get; set; } = new List<AccountPaymentTermLine>();
+    // public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLines { get; set; } 
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountPaymentTerms")]
@@ -86,18 +86,18 @@ public partial class AccountPaymentTerm: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("InvoicePaymentTerm")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("Payment")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLines { get; set; } = new List<AccountPaymentTermLine>();
+    public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLines { get; set; } 
 
     //[InverseProperty("PaymentTerm")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     //[InverseProperty("PaymentTerm")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
 }

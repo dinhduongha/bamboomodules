@@ -65,5 +65,5 @@ public partial class CrmMergeOpportunity : FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("MergeId")]
     //[InverseProperty("Merges")]
     [NotMapped]
-    public virtual ICollection<CrmLead> Opportunities { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> Opportunities { get; set; } 
 }

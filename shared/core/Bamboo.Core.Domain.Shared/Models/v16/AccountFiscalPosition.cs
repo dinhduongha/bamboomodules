@@ -94,52 +94,52 @@ public partial class AccountFiscalPosition: FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Position")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccounts { get; set; } = new List<AccountFiscalPositionAccount>();
+    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccounts { get; set; } 
 
     //[InverseProperty("Position")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxes { get; set; } = new List<AccountFiscalPositionTax>();
+    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxes { get; set; } 
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("ForeignVatFiscalPosition")]
     [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } = new List<AccountReportExternalValue>();
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } 
 
     //[InverseProperty("DefaultFiscalPosition")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } 
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     //[InverseProperty("PosDefaultFiscalPosition")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } 
 
     //[InverseProperty("FiscalPosition")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     [ForeignKey("AccountFiscalPositionId")]
     //[InverseProperty("AccountFiscalPositions")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     [ForeignKey("AccountFiscalPositionId")]
     //[InverseProperty("AccountFiscalPositions")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
 
     [ForeignKey("AccountFiscalPositionId")]
     //[InverseProperty("AccountFiscalPositions")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } 
 }

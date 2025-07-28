@@ -103,5 +103,5 @@ public partial class RepairFee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [ForeignKey("RepairFeeLineId")]
     //[InverseProperty("RepairFeeLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> Taxes { get; set; } 
 }

@@ -50,7 +50,7 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("ScriptStep")]
     [NotMapped]
-    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } = new List<ChatbotMessage>();
+    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } 
 
     [ForeignKey("ChatbotScriptId")]
     //[InverseProperty("ChatbotScriptSteps")]
@@ -59,7 +59,7 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("ScriptStep")]
     [NotMapped]
-    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswers { get; set; } = new List<ChatbotScriptAnswer>();
+    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswers { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ChatbotScriptStepCreateUs")]
@@ -73,7 +73,7 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("ChatbotCurrentStep")]
     [NotMapped]
-    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } = new List<DiscussChannel>();
+    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("ChatbotScriptStepWriteUs")]
@@ -83,5 +83,5 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("ChatbotScriptStepId")]
     //[InverseProperty("ChatbotScriptSteps")]
     [NotMapped]
-    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswersNavigation { get; set; } = new List<ChatbotScriptAnswer>();
+    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswersNavigation { get; set; } 
 }

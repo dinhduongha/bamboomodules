@@ -63,11 +63,11 @@ public partial class AccountGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     // v16-Compat
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<AccountGroup> InverseParent { get; set; } = new List<AccountGroup>();
+    public virtual ICollection<AccountGroup> InverseParent { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]

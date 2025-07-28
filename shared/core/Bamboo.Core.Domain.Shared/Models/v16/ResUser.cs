@@ -159,4558 +159,4558 @@ public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [ForeignKey("Uid")]
     [InverseProperty("UidsNavigation")]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } 
 
     /// TODO: DISABLE INVERSE COLLECTIONS
 
     /*
     //[InverseProperty("CreateU")]
     //[NotMapped]
-    //public virtual ICollection<ResUser> InverseCreateU { get; set; } = new List<ResUser>();
+    //public virtual ICollection<ResUser> InverseCreateU { get; set; } 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccountCreateUs { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccountCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTagCreateUs { get; set; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTagCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTagWriteUs { get; set; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTagWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplateCreateUs { get; set; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplateWriteUs { get; set; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     //[NotMapped]
     //[NotMapped]
-    public virtual ICollection<AccountAccountType> AccountAccountTypeCreateUs { get; set; } = new List<AccountAccountType>();
+    public virtual ICollection<AccountAccountType> AccountAccountTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     //[NotMapped]
     //[NotMapped]
-    public virtual ICollection<AccountAccountType> AccountAccountTypeWriteUs { get; set; } = new List<AccountAccountType>();
+    public virtual ICollection<AccountAccountType> AccountAccountTypeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccountWriteUs { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccountWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAccruedOrdersWizard> AccountAccruedOrdersWizardCreateUs { get; set; } = new List<AccountAccruedOrdersWizard>();
+    public virtual ICollection<AccountAccruedOrdersWizard> AccountAccruedOrdersWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAccruedOrdersWizard> AccountAccruedOrdersWizardWriteUs { get; set; } = new List<AccountAccruedOrdersWizard>();
+    public virtual ICollection<AccountAccruedOrdersWizard> AccountAccruedOrdersWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalanceCreateUs { get; set; } = new List<AccountAgedTrialBalance>();
+    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalanceCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalanceWriteUs { get; set; } = new List<AccountAgedTrialBalance>();
+    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalanceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountCreateUs { get; set; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountWriteUs { get; set; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilityCreateUs { get; set; } = new List<AccountAnalyticApplicability>();
+    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilityCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilityWriteUs { get; set; } = new List<AccountAnalyticApplicability>();
+    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilityWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModelCreateUs { get; set; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModelCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModelWriteUs { get; set; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineCreateUs { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineUsers { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineWriteUs { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticPlan> AccountAnalyticPlanCreateUs { get; set; } = new List<AccountAnalyticPlan>();
+    public virtual ICollection<AccountAnalyticPlan> AccountAnalyticPlanCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticPlan> AccountAnalyticPlanWriteUs { get; set; } = new List<AccountAnalyticPlan>();
+    public virtual ICollection<AccountAnalyticPlan> AccountAnalyticPlanWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssetCreateUs { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssetCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssetWriteUs { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssetWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAssetCategory> AccountAssetCategoryCreateUs { get; set; } = new List<AccountAssetCategory>();
+    public virtual ICollection<AccountAssetCategory> AccountAssetCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAssetCategory> AccountAssetCategoryWriteUs { get; set; } = new List<AccountAssetCategory>();
+    public virtual ICollection<AccountAssetCategory> AccountAssetCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLineCreateUs { get; set; } = new List<AccountAssetDepreciationLine>();
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLineWriteUs { get; set; } = new List<AccountAssetDepreciationLine>();
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizardCreateUs { get; set; } = new List<AccountAutomaticEntryWizard>();
+    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizardWriteUs { get; set; } = new List<AccountAutomaticEntryWizard>();
+    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReportCreateUs { get; set; } = new List<AccountBalanceReport>();
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReportWriteUs { get; set; } = new List<AccountBalanceReport>();
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatement> AccountBankStatementCreateUs { get; set; } = new List<AccountBankStatement>();
+    public virtual ICollection<AccountBankStatement> AccountBankStatementCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementImport> AccountBankStatementImportCreateUs { get; set; } = new List<AccountBankStatementImport>();
+    public virtual ICollection<AccountBankStatementImport> AccountBankStatementImportCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementImportJournalCreation> AccountBankStatementImportJournalCreationCreateUs { get; set; } = new List<AccountBankStatementImportJournalCreation>();
+    public virtual ICollection<AccountBankStatementImportJournalCreation> AccountBankStatementImportJournalCreationCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementImportJournalCreation> AccountBankStatementImportJournalCreationWriteUs { get; set; } = new List<AccountBankStatementImportJournalCreation>();
+    public virtual ICollection<AccountBankStatementImportJournalCreation> AccountBankStatementImportJournalCreationWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementImport> AccountBankStatementImportWriteUs { get; set; } = new List<AccountBankStatementImport>();
+    public virtual ICollection<AccountBankStatementImport> AccountBankStatementImportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineCreateUs { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineWriteUs { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatement> AccountBankStatementWriteUs { get; set; } = new List<AccountBankStatement>();
+    public virtual ICollection<AccountBankStatement> AccountBankStatementWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBankbookReport> AccountBankbookReportCreateUs { get; set; } = new List<AccountBankbookReport>();
+    public virtual ICollection<AccountBankbookReport> AccountBankbookReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBankbookReport> AccountBankbookReportWriteUs { get; set; } = new List<AccountBankbookReport>();
+    public virtual ICollection<AccountBankbookReport> AccountBankbookReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountBudgetPost> AccountBudgetPostCreateUs { get; set; } = new List<AccountBudgetPost>();
+    public virtual ICollection<AccountBudgetPost> AccountBudgetPostCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountBudgetPost> AccountBudgetPostWriteUs { get; set; } = new List<AccountBudgetPost>();
+    public virtual ICollection<AccountBudgetPost> AccountBudgetPostWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountCashRounding> AccountCashRoundingCreateUs { get; set; } = new List<AccountCashRounding>();
+    public virtual ICollection<AccountCashRounding> AccountCashRoundingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountCashRounding> AccountCashRoundingWriteUs { get; set; } = new List<AccountCashRounding>();
+    public virtual ICollection<AccountCashRounding> AccountCashRoundingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountCashbookReport> AccountCashbookReportCreateUs { get; set; } = new List<AccountCashbookReport>();
+    public virtual ICollection<AccountCashbookReport> AccountCashbookReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountCashbookReport> AccountCashbookReportWriteUs { get; set; } = new List<AccountCashbookReport>();
+    public virtual ICollection<AccountCashbookReport> AccountCashbookReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateCreateUs { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateWriteUs { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReportCreateUs { get; set; } = new List<AccountCommonAccountReport>();
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReportWriteUs { get; set; } = new List<AccountCommonAccountReport>();
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonJournalReport> AccountCommonJournalReportCreateUs { get; set; } = new List<AccountCommonJournalReport>();
+    public virtual ICollection<AccountCommonJournalReport> AccountCommonJournalReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonJournalReport> AccountCommonJournalReportWriteUs { get; set; } = new List<AccountCommonJournalReport>();
+    public virtual ICollection<AccountCommonJournalReport> AccountCommonJournalReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReportCreateUs { get; set; } = new List<AccountCommonPartnerReport>();
+    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReportWriteUs { get; set; } = new List<AccountCommonPartnerReport>();
+    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonReport> AccountCommonReportCreateUs { get; set; } = new List<AccountCommonReport>();
+    public virtual ICollection<AccountCommonReport> AccountCommonReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountCommonReport> AccountCommonReportWriteUs { get; set; } = new List<AccountCommonReport>();
+    public virtual ICollection<AccountCommonReport> AccountCommonReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountDaybookReport> AccountDaybookReportCreateUs { get; set; } = new List<AccountDaybookReport>();
+    public virtual ICollection<AccountDaybookReport> AccountDaybookReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountDaybookReport> AccountDaybookReportWriteUs { get; set; } = new List<AccountDaybookReport>();
+    public virtual ICollection<AccountDaybookReport> AccountDaybookReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountEdiDocument> AccountEdiDocumentCreateUs { get; set; } = new List<AccountEdiDocument>();
+    public virtual ICollection<AccountEdiDocument> AccountEdiDocumentCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountEdiDocument> AccountEdiDocumentWriteUs { get; set; } = new List<AccountEdiDocument>();
+    public virtual ICollection<AccountEdiDocument> AccountEdiDocumentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountEdiFormat> AccountEdiFormatCreateUs { get; set; } = new List<AccountEdiFormat>();
+    public virtual ICollection<AccountEdiFormat> AccountEdiFormatCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountEdiFormat> AccountEdiFormatWriteUs { get; set; } = new List<AccountEdiFormat>();
+    public virtual ICollection<AccountEdiFormat> AccountEdiFormatWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialReport> AccountFinancialReportCreateUs { get; set; } = new List<AccountFinancialReport>();
+    public virtual ICollection<AccountFinancialReport> AccountFinancialReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialReport> AccountFinancialReportWriteUs { get; set; } = new List<AccountFinancialReport>();
+    public virtual ICollection<AccountFinancialReport> AccountFinancialReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialYearOp> AccountFinancialYearOpCreateUs { get; set; } = new List<AccountFinancialYearOp>();
+    public virtual ICollection<AccountFinancialYearOp> AccountFinancialYearOpCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialYearOp> AccountFinancialYearOpWriteUs { get; set; } = new List<AccountFinancialYearOp>();
+    public virtual ICollection<AccountFinancialYearOp> AccountFinancialYearOpWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccountCreateUs { get; set; } = new List<AccountFiscalPositionAccount>();
+    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccountCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateCreateUs { get; set; } = new List<AccountFiscalPositionAccountTemplate>();
+    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateWriteUs { get; set; } = new List<AccountFiscalPositionAccountTemplate>();
+    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccountWriteUs { get; set; } = new List<AccountFiscalPositionAccount>();
+    public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccountWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositionCreateUs { get; set; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositionCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxCreateUs { get; set; } = new List<AccountFiscalPositionTax>();
+    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateCreateUs { get; set; } = new List<AccountFiscalPositionTaxTemplate>();
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateWriteUs { get; set; } = new List<AccountFiscalPositionTaxTemplate>();
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxWriteUs { get; set; } = new List<AccountFiscalPositionTax>();
+    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplateCreateUs { get; set; } = new List<AccountFiscalPositionTemplate>();
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplateWriteUs { get; set; } = new List<AccountFiscalPositionTemplate>();
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositionWriteUs { get; set; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalYear> AccountFiscalYearCreateUs { get; set; } = new List<AccountFiscalYear>();
+    public virtual ICollection<AccountFiscalYear> AccountFiscalYearCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalYear> AccountFiscalYearWriteUs { get; set; } = new List<AccountFiscalYear>();
+    public virtual ICollection<AccountFiscalYear> AccountFiscalYearWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountFullReconcile> AccountFullReconcileCreateUs { get; set; } = new List<AccountFullReconcile>();
+    public virtual ICollection<AccountFullReconcile> AccountFullReconcileCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountFullReconcile> AccountFullReconcileWriteUs { get; set; } = new List<AccountFullReconcile>();
+    public virtual ICollection<AccountFullReconcile> AccountFullReconcileWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountGroup> AccountGroupCreateUs { get; set; } = new List<AccountGroup>();
+    public virtual ICollection<AccountGroup> AccountGroupCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplateCreateUs { get; set; } = new List<AccountGroupTemplate>();
+    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplateWriteUs { get; set; } = new List<AccountGroupTemplate>();
+    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountGroup> AccountGroupWriteUs { get; set; } = new List<AccountGroup>();
+    public virtual ICollection<AccountGroup> AccountGroupWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountIncoterm> AccountIncotermCreateUs { get; set; } = new List<AccountIncoterm>();
+    public virtual ICollection<AccountIncoterm> AccountIncotermCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountIncoterm> AccountIncotermWriteUs { get; set; } = new List<AccountIncoterm>();
+    public virtual ICollection<AccountIncoterm> AccountIncotermWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSendCreateUs { get; set; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSendCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSendWriteUs { get; set; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSendWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournalCreateUs { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournalCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountJournalGroup> AccountJournalGroupCreateUs { get; set; } = new List<AccountJournalGroup>();
+    public virtual ICollection<AccountJournalGroup> AccountJournalGroupCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountJournalGroup> AccountJournalGroupWriteUs { get; set; } = new List<AccountJournalGroup>();
+    public virtual ICollection<AccountJournalGroup> AccountJournalGroupWriteUs { get; set; } 
 
     //[InverseProperty("SaleActivityUser")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournalSaleActivityUsers { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournalSaleActivityUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournalWriteUs { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournalWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoveCreateUs { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoveCreateUs { get; set; } 
 
     //[InverseProperty("InvoiceUser")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoveInvoiceUsers { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoveInvoiceUsers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLineCreateUs { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLineWriteUs { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountMoveReversal> AccountMoveReversalCreateUs { get; set; } = new List<AccountMoveReversal>();
+    public virtual ICollection<AccountMoveReversal> AccountMoveReversalCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountMoveReversal> AccountMoveReversalWriteUs { get; set; } = new List<AccountMoveReversal>();
+    public virtual ICollection<AccountMoveReversal> AccountMoveReversalWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoveWriteUs { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoveWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreateUs { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileWriteUs { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPaymentCreateUs { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPaymentCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethod> AccountPaymentMethodCreateUs { get; set; } = new List<AccountPaymentMethod>();
+    public virtual ICollection<AccountPaymentMethod> AccountPaymentMethodCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLineCreateUs { get; set; } = new List<AccountPaymentMethodLine>();
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLineWriteUs { get; set; } = new List<AccountPaymentMethodLine>();
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethod> AccountPaymentMethodWriteUs { get; set; } = new List<AccountPaymentMethod>();
+    public virtual ICollection<AccountPaymentMethod> AccountPaymentMethodWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterCreateUs { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterWriteUs { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentTerm> AccountPaymentTermCreateUs { get; set; } = new List<AccountPaymentTerm>();
+    public virtual ICollection<AccountPaymentTerm> AccountPaymentTermCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLineCreateUs { get; set; } = new List<AccountPaymentTermLine>();
+    public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLineWriteUs { get; set; } = new List<AccountPaymentTermLine>();
+    public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentTerm> AccountPaymentTermWriteUs { get; set; } = new List<AccountPaymentTerm>();
+    public virtual ICollection<AccountPaymentTerm> AccountPaymentTermWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPaymentWriteUs { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPaymentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountPrintJournal> AccountPrintJournalCreateUs { get; set; } = new List<AccountPrintJournal>();
+    public virtual ICollection<AccountPrintJournal> AccountPrintJournalCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountPrintJournal> AccountPrintJournalWriteUs { get; set; } = new List<AccountPrintJournal>();
+    public virtual ICollection<AccountPrintJournal> AccountPrintJournalWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModelCreateUs { get; set; } = new List<AccountReconcileModel>();
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModelCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLineCreateUs { get; set; } = new List<AccountReconcileModelLine>();
+    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLineCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplateCreateUs { get; set; } = new List<AccountReconcileModelLineTemplate>();
+    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplateWriteUs { get; set; } = new List<AccountReconcileModelLineTemplate>();
+    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLineWriteUs { get; set; } = new List<AccountReconcileModelLine>();
+    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappingCreateUs { get; set; } = new List<AccountReconcileModelPartnerMapping>();
+    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappingWriteUs { get; set; } = new List<AccountReconcileModelPartnerMapping>();
+    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplateCreateUs { get; set; } = new List<AccountReconcileModelTemplate>();
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplateWriteUs { get; set; } = new List<AccountReconcileModelTemplate>();
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModelWriteUs { get; set; } = new List<AccountReconcileModel>();
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountRecurringTemplate> AccountRecurringTemplateCreateUs { get; set; } = new List<AccountRecurringTemplate>();
+    public virtual ICollection<AccountRecurringTemplate> AccountRecurringTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountRecurringTemplate> AccountRecurringTemplateWriteUs { get; set; } = new List<AccountRecurringTemplate>();
+    public virtual ICollection<AccountRecurringTemplate> AccountRecurringTemplateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReportColumn> AccountReportColumnCreateUs { get; set; } = new List<AccountReportColumn>();
+    public virtual ICollection<AccountReportColumn> AccountReportColumnCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReportColumn> AccountReportColumnWriteUs { get; set; } = new List<AccountReportColumn>();
+    public virtual ICollection<AccountReportColumn> AccountReportColumnWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReport> AccountReportCreateUs { get; set; } = new List<AccountReport>();
+    public virtual ICollection<AccountReport> AccountReportCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressionCreateUs { get; set; } = new List<AccountReportExpression>();
+    public virtual ICollection<AccountReportExpression> AccountReportExpressionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressionWriteUs { get; set; } = new List<AccountReportExpression>();
+    public virtual ICollection<AccountReportExpression> AccountReportExpressionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValueCreateUs { get; set; } = new List<AccountReportExternalValue>();
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValueCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValueWriteUs { get; set; } = new List<AccountReportExternalValue>();
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValueWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgerCreateUs { get; set; } = new List<AccountReportGeneralLedger>();
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgerWriteUs { get; set; } = new List<AccountReportGeneralLedger>();
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReportLine> AccountReportLineCreateUs { get; set; } = new List<AccountReportLine>();
+    public virtual ICollection<AccountReportLine> AccountReportLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReportLine> AccountReportLineWriteUs { get; set; } = new List<AccountReportLine>();
+    public virtual ICollection<AccountReportLine> AccountReportLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgerCreateUs { get; set; } = new List<AccountReportPartnerLedger>();
+    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgerWriteUs { get; set; } = new List<AccountReportPartnerLedger>();
+    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgerWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountReport> AccountReportWriteUs { get; set; } = new List<AccountReport>();
+    public virtual ICollection<AccountReport> AccountReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizardCreateUs { get; set; } = new List<AccountResequenceWizard>();
+    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizardWriteUs { get; set; } = new List<AccountResequenceWizard>();
+    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigCreateUs { get; set; } = new List<AccountSetupBankManualConfig>();
+    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigWriteUs { get; set; } = new List<AccountSetupBankManualConfig>();
+    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxCreateUs { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxGroup> AccountTaxGroupCreateUs { get; set; } = new List<AccountTaxGroup>();
+    public virtual ICollection<AccountTaxGroup> AccountTaxGroupCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxGroup> AccountTaxGroupWriteUs { get; set; } = new List<AccountTaxGroup>();
+    public virtual ICollection<AccountTaxGroup> AccountTaxGroupWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineCreateUs { get; set; } = new List<AccountTaxRepartitionLine>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateCreateUs { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateWriteUs { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineWriteUs { get; set; } = new List<AccountTaxRepartitionLine>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxReportWizard> AccountTaxReportWizardCreateUs { get; set; } = new List<AccountTaxReportWizard>();
+    public virtual ICollection<AccountTaxReportWizard> AccountTaxReportWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxReportWizard> AccountTaxReportWizardWriteUs { get; set; } = new List<AccountTaxReportWizard>();
+    public virtual ICollection<AccountTaxReportWizard> AccountTaxReportWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplateCreateUs { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplateWriteUs { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxWriteUs { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTourUploadBill> AccountTourUploadBillCreateUs { get; set; } = new List<AccountTourUploadBill>();
+    public virtual ICollection<AccountTourUploadBill> AccountTourUploadBillCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountTourUploadBillEmailConfirm> AccountTourUploadBillEmailConfirmCreateUs { get; set; } = new List<AccountTourUploadBillEmailConfirm>();
+    public virtual ICollection<AccountTourUploadBillEmailConfirm> AccountTourUploadBillEmailConfirmCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTourUploadBillEmailConfirm> AccountTourUploadBillEmailConfirmWriteUs { get; set; } = new List<AccountTourUploadBillEmailConfirm>();
+    public virtual ICollection<AccountTourUploadBillEmailConfirm> AccountTourUploadBillEmailConfirmWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountTourUploadBill> AccountTourUploadBillWriteUs { get; set; } = new List<AccountTourUploadBill>();
+    public virtual ICollection<AccountTourUploadBill> AccountTourUploadBillWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountUnreconcile> AccountUnreconcileCreateUs { get; set; } = new List<AccountUnreconcile>();
+    public virtual ICollection<AccountUnreconcile> AccountUnreconcileCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountUnreconcile> AccountUnreconcileWriteUs { get; set; } = new List<AccountUnreconcile>();
+    public virtual ICollection<AccountUnreconcile> AccountUnreconcileWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AccountingReport> AccountingReportCreateUs { get; set; } = new List<AccountingReport>();
+    public virtual ICollection<AccountingReport> AccountingReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AccountingReport> AccountingReportWriteUs { get; set; } = new List<AccountingReport>();
+    public virtual ICollection<AccountingReport> AccountingReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasonCreateUs { get; set; } = new List<ApplicantGetRefuseReason>();
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasonCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasonWriteUs { get; set; } = new List<ApplicantGetRefuseReason>();
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasonWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMailCreateUs { get; set; } = new List<ApplicantSendMail>();
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMailCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMailWriteUs { get; set; } = new List<ApplicantSendMail>();
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMailWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AssetDepreciationConfirmationWizard> AssetDepreciationConfirmationWizardCreateUs { get; set; } = new List<AssetDepreciationConfirmationWizard>();
+    public virtual ICollection<AssetDepreciationConfirmationWizard> AssetDepreciationConfirmationWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AssetDepreciationConfirmationWizard> AssetDepreciationConfirmationWizardWriteUs { get; set; } = new List<AssetDepreciationConfirmationWizard>();
+    public virtual ICollection<AssetDepreciationConfirmationWizard> AssetDepreciationConfirmationWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AssetModify> AssetModifyCreateUs { get; set; } = new List<AssetModify>();
+    public virtual ICollection<AssetModify> AssetModifyCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<AssetModify> AssetModifyWriteUs { get; set; } = new List<AssetModify>();
+    public virtual ICollection<AssetModify> AssetModifyWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<AuthTotpDevice> AuthTotpDevices { get; set; } = new List<AuthTotpDevice>();
+    public virtual ICollection<AuthTotpDevice> AuthTotpDevices { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<AuthTotpWizard> AuthTotpWizardCreateUs { get; set; } = new List<AuthTotpWizard>();
-
-    //[InverseProperty("User")]
-    [NotMapped]
-    public virtual ICollection<AuthTotpWizard> AuthTotpWizardUsers { get; set; } = new List<AuthTotpWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<AuthTotpWizard> AuthTotpWizardWriteUs { get; set; } = new List<AuthTotpWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BarcodeNomenclature> BarcodeNomenclatureCreateUs { get; set; } = new List<BarcodeNomenclature>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BarcodeNomenclature> BarcodeNomenclatureWriteUs { get; set; } = new List<BarcodeNomenclature>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BarcodeRule> BarcodeRuleCreateUs { get; set; } = new List<BarcodeRule>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BarcodeRule> BarcodeRuleWriteUs { get; set; } = new List<BarcodeRule>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayoutCreateUs { get; set; } = new List<BaseDocumentLayout>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayoutWriteUs { get; set; } = new List<BaseDocumentLayout>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseEnableProfilingWizard> BaseEnableProfilingWizardCreateUs { get; set; } = new List<BaseEnableProfilingWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseEnableProfilingWizard> BaseEnableProfilingWizardWriteUs { get; set; } = new List<BaseEnableProfilingWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportImport> BaseImportImportCreateUs { get; set; } = new List<BaseImportImport>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportImport> BaseImportImportWriteUs { get; set; } = new List<BaseImportImport>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportMapping> BaseImportMappingCreateUs { get; set; } = new List<BaseImportMapping>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportMapping> BaseImportMappingWriteUs { get; set; } = new List<BaseImportMapping>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsChar> BaseImportTestsModelsCharCreateUs { get; set; } = new List<BaseImportTestsModelsChar>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharNoreadonly> BaseImportTestsModelsCharNoreadonlyCreateUs { get; set; } = new List<BaseImportTestsModelsCharNoreadonly>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharNoreadonly> BaseImportTestsModelsCharNoreadonlyWriteUs { get; set; } = new List<BaseImportTestsModelsCharNoreadonly>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharReadonly> BaseImportTestsModelsCharReadonlyCreateUs { get; set; } = new List<BaseImportTestsModelsCharReadonly>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharReadonly> BaseImportTestsModelsCharReadonlyWriteUs { get; set; } = new List<BaseImportTestsModelsCharReadonly>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharRequired> BaseImportTestsModelsCharRequiredCreateUs { get; set; } = new List<BaseImportTestsModelsCharRequired>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharRequired> BaseImportTestsModelsCharRequiredWriteUs { get; set; } = new List<BaseImportTestsModelsCharRequired>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharState> BaseImportTestsModelsCharStateCreateUs { get; set; } = new List<BaseImportTestsModelsCharState>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharState> BaseImportTestsModelsCharStateWriteUs { get; set; } = new List<BaseImportTestsModelsCharState>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharStillreadonly> BaseImportTestsModelsCharStillreadonlyCreateUs { get; set; } = new List<BaseImportTestsModelsCharStillreadonly>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsCharStillreadonly> BaseImportTestsModelsCharStillreadonlyWriteUs { get; set; } = new List<BaseImportTestsModelsCharStillreadonly>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsChar> BaseImportTestsModelsCharWriteUs { get; set; } = new List<BaseImportTestsModelsChar>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexCreateUs { get; set; } = new List<BaseImportTestsModelsComplex>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexWriteUs { get; set; } = new List<BaseImportTestsModelsComplex>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsFloat> BaseImportTestsModelsFloatCreateUs { get; set; } = new List<BaseImportTestsModelsFloat>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsFloat> BaseImportTestsModelsFloatWriteUs { get; set; } = new List<BaseImportTestsModelsFloat>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2oCreateUs { get; set; } = new List<BaseImportTestsModelsM2o>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2oRelated> BaseImportTestsModelsM2oRelatedCreateUs { get; set; } = new List<BaseImportTestsModelsM2oRelated>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2oRelated> BaseImportTestsModelsM2oRelatedWriteUs { get; set; } = new List<BaseImportTestsModelsM2oRelated>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2oRequired> BaseImportTestsModelsM2oRequiredCreateUs { get; set; } = new List<BaseImportTestsModelsM2oRequired>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2oRequiredRelated> BaseImportTestsModelsM2oRequiredRelatedCreateUs { get; set; } = new List<BaseImportTestsModelsM2oRequiredRelated>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2oRequiredRelated> BaseImportTestsModelsM2oRequiredRelatedWriteUs { get; set; } = new List<BaseImportTestsModelsM2oRequiredRelated>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2oRequired> BaseImportTestsModelsM2oRequiredWriteUs { get; set; } = new List<BaseImportTestsModelsM2oRequired>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2oWriteUs { get; set; } = new List<BaseImportTestsModelsM2o>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildCreateUs { get; set; } = new List<BaseImportTestsModelsO2mChild>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildWriteUs { get; set; } = new List<BaseImportTestsModelsO2mChild>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsO2m> BaseImportTestsModelsO2mCreateUs { get; set; } = new List<BaseImportTestsModelsO2m>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsO2m> BaseImportTestsModelsO2mWriteUs { get; set; } = new List<BaseImportTestsModelsO2m>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsPreview> BaseImportTestsModelsPreviewCreateUs { get; set; } = new List<BaseImportTestsModelsPreview>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsPreview> BaseImportTestsModelsPreviewWriteUs { get; set; } = new List<BaseImportTestsModelsPreview>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageExport> BaseLanguageExportCreateUs { get; set; } = new List<BaseLanguageExport>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageExport> BaseLanguageExportWriteUs { get; set; } = new List<BaseLanguageExport>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageImport> BaseLanguageImportCreateUs { get; set; } = new List<BaseLanguageImport>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageImport> BaseLanguageImportWriteUs { get; set; } = new List<BaseLanguageImport>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstallCreateUs { get; set; } = new List<BaseLanguageInstall>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstallWriteUs { get; set; } = new List<BaseLanguageInstall>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequestCreateUs { get; set; } = new List<BaseModuleInstallRequest>();
+    public virtual ICollection<AuthTotpWizard> AuthTotpWizardCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequestUsers { get; set; } = new List<BaseModuleInstallRequest>();
+    public virtual ICollection<AuthTotpWizard> AuthTotpWizardUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequestWriteUs { get; set; } = new List<BaseModuleInstallRequest>();
+    public virtual ICollection<AuthTotpWizard> AuthTotpWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviewCreateUs { get; set; } = new List<BaseModuleInstallReview>();
+    public virtual ICollection<BarcodeNomenclature> BarcodeNomenclatureCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviewWriteUs { get; set; } = new List<BaseModuleInstallReview>();
+    public virtual ICollection<BarcodeNomenclature> BarcodeNomenclatureWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstallCreateUs { get; set; } = new List<BaseModuleUninstall>();
+    public virtual ICollection<BarcodeRule> BarcodeRuleCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstallWriteUs { get; set; } = new List<BaseModuleUninstall>();
+    public virtual ICollection<BarcodeRule> BarcodeRuleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUpdate> BaseModuleUpdateCreateUs { get; set; } = new List<BaseModuleUpdate>();
+    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayoutCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUpdate> BaseModuleUpdateWriteUs { get; set; } = new List<BaseModuleUpdate>();
+    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayoutWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUpgrade> BaseModuleUpgradeCreateUs { get; set; } = new List<BaseModuleUpgrade>();
+    public virtual ICollection<BaseEnableProfilingWizard> BaseEnableProfilingWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUpgrade> BaseModuleUpgradeWriteUs { get; set; } = new List<BaseModuleUpgrade>();
+    public virtual ICollection<BaseEnableProfilingWizard> BaseEnableProfilingWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardCreateUs { get; set; } = new List<BasePartnerMergeAutomaticWizard>();
+    public virtual ICollection<BaseImportImport> BaseImportImportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardWriteUs { get; set; } = new List<BasePartnerMergeAutomaticWizard>();
+    public virtual ICollection<BaseImportImport> BaseImportImportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLineCreateUs { get; set; } = new List<BasePartnerMergeLine>();
+    public virtual ICollection<BaseImportMapping> BaseImportMappingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLineWriteUs { get; set; } = new List<BasePartnerMergeLine>();
+    public virtual ICollection<BaseImportMapping> BaseImportMappingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<BusBu> BusBuCreateUs { get; set; } = new List<BusBu>();
+    public virtual ICollection<BaseImportTestsModelsChar> BaseImportTestsModelsCharCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsCharNoreadonly> BaseImportTestsModelsCharNoreadonlyCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<BusBu> BusBuWriteUs { get; set; } = new List<BusBu>();
+    public virtual ICollection<BaseImportTestsModelsCharNoreadonly> BaseImportTestsModelsCharNoreadonlyWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarmCreateUs { get; set; } = new List<CalendarAlarm>();
+    public virtual ICollection<BaseImportTestsModelsCharReadonly> BaseImportTestsModelsCharReadonlyCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarmWriteUs { get; set; } = new List<CalendarAlarm>();
+    public virtual ICollection<BaseImportTestsModelsCharReadonly> BaseImportTestsModelsCharReadonlyWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CalendarAttendee> CalendarAttendeeCreateUs { get; set; } = new List<CalendarAttendee>();
+    public virtual ICollection<BaseImportTestsModelsCharRequired> BaseImportTestsModelsCharRequiredCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CalendarAttendee> CalendarAttendeeWriteUs { get; set; } = new List<CalendarAttendee>();
+    public virtual ICollection<BaseImportTestsModelsCharRequired> BaseImportTestsModelsCharRequiredWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEventCreateUs { get; set; } = new List<CalendarEvent>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CalendarEventType> CalendarEventTypeCreateUs { get; set; } = new List<CalendarEventType>();
+    public virtual ICollection<BaseImportTestsModelsCharState> BaseImportTestsModelsCharStateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CalendarEventType> CalendarEventTypeWriteUs { get; set; } = new List<CalendarEventType>();
+    public virtual ICollection<BaseImportTestsModelsCharState> BaseImportTestsModelsCharStateWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsCharStillreadonly> BaseImportTestsModelsCharStillreadonlyCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsCharStillreadonly> BaseImportTestsModelsCharStillreadonlyWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsChar> BaseImportTestsModelsCharWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsFloat> BaseImportTestsModelsFloatCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsFloat> BaseImportTestsModelsFloatWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2oCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2oRelated> BaseImportTestsModelsM2oRelatedCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2oRelated> BaseImportTestsModelsM2oRelatedWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2oRequired> BaseImportTestsModelsM2oRequiredCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2oRequiredRelated> BaseImportTestsModelsM2oRequiredRelatedCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2oRequiredRelated> BaseImportTestsModelsM2oRequiredRelatedWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2oRequired> BaseImportTestsModelsM2oRequiredWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2oWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsO2m> BaseImportTestsModelsO2mCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsO2m> BaseImportTestsModelsO2mWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsPreview> BaseImportTestsModelsPreviewCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseImportTestsModelsPreview> BaseImportTestsModelsPreviewWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseLanguageExport> BaseLanguageExportCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseLanguageExport> BaseLanguageExportWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseLanguageImport> BaseLanguageImportCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseLanguageImport> BaseLanguageImportWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstallCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstallWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequestCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEventUsers { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequestUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEventWriteUs { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequestWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CalendarFilter> CalendarFilterCreateUs { get; set; } = new List<CalendarFilter>();
+    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviewCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviewWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstallCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstallWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUpdate> BaseModuleUpdateCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUpdate> BaseModuleUpdateWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUpgrade> BaseModuleUpgradeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BaseModuleUpgrade> BaseModuleUpgradeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLineWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<BusBu> BusBuCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<BusBu> BusBuWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CalendarAlarm> CalendarAlarmCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CalendarAlarm> CalendarAlarmWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CalendarAttendee> CalendarAttendeeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CalendarAttendee> CalendarAttendeeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CalendarEvent> CalendarEventCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CalendarEventType> CalendarEventTypeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CalendarEventType> CalendarEventTypeWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CalendarFilter> CalendarFilterUsers { get; set; } = new List<CalendarFilter>();
+    public virtual ICollection<CalendarEvent> CalendarEventUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CalendarFilter> CalendarFilterWriteUs { get; set; } = new List<CalendarFilter>();
+    public virtual ICollection<CalendarEvent> CalendarEventWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CalendarProviderConfig> CalendarProviderConfigCreateUs { get; set; } = new List<CalendarProviderConfig>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CalendarProviderConfig> CalendarProviderConfigWriteUs { get; set; } = new List<CalendarProviderConfig>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CalendarRecurrence> CalendarRecurrenceCreateUs { get; set; } = new List<CalendarRecurrence>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CalendarRecurrence> CalendarRecurrenceWriteUs { get; set; } = new List<CalendarRecurrence>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ChangeLockDate> ChangeLockDateCreateUs { get; set; } = new List<ChangeLockDate>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ChangeLockDate> ChangeLockDateWriteUs { get; set; } = new List<ChangeLockDate>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ChangePasswordOwn> ChangePasswordOwnCreateUs { get; set; } = new List<ChangePasswordOwn>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ChangePasswordOwn> ChangePasswordOwnWriteUs { get; set; } = new List<ChangePasswordOwn>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ChangePasswordUser> ChangePasswordUserCreateUs { get; set; } = new List<ChangePasswordUser>();
+    public virtual ICollection<CalendarFilter> CalendarFilterCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ChangePasswordUser> ChangePasswordUserUsers { get; set; } = new List<ChangePasswordUser>();
+    public virtual ICollection<CalendarFilter> CalendarFilterUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ChangePasswordUser> ChangePasswordUserWriteUs { get; set; } = new List<ChangePasswordUser>();
+    public virtual ICollection<CalendarFilter> CalendarFilterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ChangePasswordWizard> ChangePasswordWizardCreateUs { get; set; } = new List<ChangePasswordWizard>();
+    public virtual ICollection<CalendarProviderConfig> CalendarProviderConfigCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ChangePasswordWizard> ChangePasswordWizardWriteUs { get; set; } = new List<ChangePasswordWizard>();
+    public virtual ICollection<CalendarProviderConfig> CalendarProviderConfigWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ChangeProductionQty> ChangeProductionQtyCreateUs { get; set; } = new List<ChangeProductionQty>();
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrenceCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ChangeProductionQty> ChangeProductionQtyWriteUs { get; set; } = new List<ChangeProductionQty>();
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrenceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ConfirmStockSm> ConfirmStockSmCreateUs { get; set; } = new List<ConfirmStockSm>();
+    public virtual ICollection<ChangeLockDate> ChangeLockDateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ConfirmStockSm> ConfirmStockSmWriteUs { get; set; } = new List<ConfirmStockSm>();
+    public virtual ICollection<ChangeLockDate> ChangeLockDateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadHelper> CrmIapLeadHelperCreateUs { get; set; } = new List<CrmIapLeadHelper>();
+    public virtual ICollection<ChangePasswordOwn> ChangePasswordOwnCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadHelper> CrmIapLeadHelperWriteUs { get; set; } = new List<CrmIapLeadHelper>();
+    public virtual ICollection<ChangePasswordOwn> ChangePasswordOwnWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustryCreateUs { get; set; } = new List<CrmIapLeadIndustry>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustryWriteUs { get; set; } = new List<CrmIapLeadIndustry>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestCreateUs { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<ChangePasswordUser> ChangePasswordUserCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestUsers { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<ChangePasswordUser> ChangePasswordUserUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestWriteUs { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<ChangePasswordUser> ChangePasswordUserWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoleCreateUs { get; set; } = new List<CrmIapLeadRole>();
+    public virtual ICollection<ChangePasswordWizard> ChangePasswordWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoleWriteUs { get; set; } = new List<CrmIapLeadRole>();
+    public virtual ICollection<ChangePasswordWizard> ChangePasswordWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadSeniority> CrmIapLeadSeniorityCreateUs { get; set; } = new List<CrmIapLeadSeniority>();
+    public virtual ICollection<ChangeProductionQty> ChangeProductionQtyCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadSeniority> CrmIapLeadSeniorityWriteUs { get; set; } = new List<CrmIapLeadSeniority>();
+    public virtual ICollection<ChangeProductionQty> ChangeProductionQtyWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerCreateUs { get; set; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<ConfirmStockSm> ConfirmStockSmCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ConfirmStockSm> ConfirmStockSmWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassCreateUs { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmIapLeadHelper> CrmIapLeadHelperCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadHelper> CrmIapLeadHelperWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustryCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustryWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassUsers { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassWriteUs { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoleCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoleWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadSeniority> CrmIapLeadSeniorityCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmIapLeadSeniority> CrmIapLeadSeniorityWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerUsers { get; set; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerWriteUs { get; set; } = new List<CrmLead2opportunityPartner>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeadCreateUs { get; set; } = new List<CrmLead>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadLost> CrmLeadLostCreateUs { get; set; } = new List<CrmLeadLost>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadLost> CrmLeadLostWriteUs { get; set; } = new List<CrmLeadLost>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdateCreateUs { get; set; } = new List<CrmLeadPlsUpdate>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdateWriteUs { get; set; } = new List<CrmLeadPlsUpdate>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencyCreateUs { get; set; } = new List<CrmLeadScoringFrequency>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFieldCreateUs { get; set; } = new List<CrmLeadScoringFrequencyField>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFieldWriteUs { get; set; } = new List<CrmLeadScoringFrequencyField>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencyWriteUs { get; set; } = new List<CrmLeadScoringFrequency>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeadUsers { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeadWriteUs { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmLostReason> CrmLostReasonCreateUs { get; set; } = new List<CrmLostReason>();
+    public virtual ICollection<CrmLead> CrmLeadCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadLost> CrmLeadLostCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmLostReason> CrmLostReasonWriteUs { get; set; } = new List<CrmLostReason>();
+    public virtual ICollection<CrmLeadLost> CrmLeadLostWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunityCreateUs { get; set; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdateCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdateWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencyCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFieldCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFieldWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencyWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunityUsers { get; set; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmLead> CrmLeadUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunityWriteUs { get; set; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmLead> CrmLeadWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartnerCreateUs { get; set; } = new List<CrmQuotationPartner>();
+    public virtual ICollection<CrmLostReason> CrmLostReasonCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartnerWriteUs { get; set; } = new List<CrmQuotationPartner>();
+    public virtual ICollection<CrmLostReason> CrmLostReasonWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<CrmRecurringPlan> CrmRecurringPlanCreateUs { get; set; } = new List<CrmRecurringPlan>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmRecurringPlan> CrmRecurringPlanWriteUs { get; set; } = new List<CrmRecurringPlan>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmStage> CrmStageCreateUs { get; set; } = new List<CrmStage>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmStage> CrmStageWriteUs { get; set; } = new List<CrmStage>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmTag> CrmTagCreateUs { get; set; } = new List<CrmTag>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrmTag> CrmTagWriteUs { get; set; } = new List<CrmTag>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmTeam> CrmTeamCreateUs { get; set; } = new List<CrmTeam>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrmTeamMember> CrmTeamMemberCreateUs { get; set; } = new List<CrmTeamMember>();
+    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunityCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmTeamMember> CrmTeamMemberUsers { get; set; } = new List<CrmTeamMember>();
+    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunityUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmTeamMember> CrmTeamMemberWriteUs { get; set; } = new List<CrmTeamMember>();
+    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunityWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartnerCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartnerWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmRecurringPlan> CrmRecurringPlanCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmRecurringPlan> CrmRecurringPlanWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmStage> CrmStageCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmStage> CrmStageWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmTag> CrmTagCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<CrmTag> CrmTagWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmTeam> CrmTeamCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrmTeamMember> CrmTeamMemberCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrmTeam> CrmTeamUsers { get; set; } = new List<CrmTeam>();
+    public virtual ICollection<CrmTeamMember> CrmTeamMemberUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrmTeam> CrmTeamWriteUs { get; set; } = new List<CrmTeam>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrossoveredBudget> CrossoveredBudgetCreateUs { get; set; } = new List<CrossoveredBudget>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLineCreateUs { get; set; } = new List<CrossoveredBudgetLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLineWriteUs { get; set; } = new List<CrossoveredBudgetLine>();
+    public virtual ICollection<CrmTeamMember> CrmTeamMemberWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<CrossoveredBudget> CrossoveredBudgetUsers { get; set; } = new List<CrossoveredBudget>();
+    public virtual ICollection<CrmTeam> CrmTeamUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<CrossoveredBudget> CrossoveredBudgetWriteUs { get; set; } = new List<CrossoveredBudget>();
+    public virtual ICollection<CrmTeam> CrmTeamWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<DecimalPrecision> DecimalPrecisionCreateUs { get; set; } = new List<DecimalPrecision>();
+    public virtual ICollection<CrossoveredBudget> CrossoveredBudgetCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<DecimalPrecision> DecimalPrecisionWriteUs { get; set; } = new List<DecimalPrecision>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<DigestDigest> DigestDigestCreateUs { get; set; } = new List<DigestDigest>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<DigestDigest> DigestDigestWriteUs { get; set; } = new List<DigestDigest>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<DigestTip> DigestTipCreateUs { get; set; } = new List<DigestTip>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<DigestTip> DigestTipWriteUs { get; set; } = new List<DigestTip>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<FetchmailServer> FetchmailServerCreateUs { get; set; } = new List<FetchmailServer>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<FetchmailServer> FetchmailServerWriteUs { get; set; } = new List<FetchmailServer>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<FleetServiceType> FleetServiceTypeCreateUs { get; set; } = new List<FleetServiceType>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<FleetServiceType> FleetServiceTypeWriteUs { get; set; } = new List<FleetServiceType>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogCreateUs { get; set; } = new List<FleetVehicleAssignationLog>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogWriteUs { get; set; } = new List<FleetVehicleAssignationLog>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleCreateUs { get; set; } = new List<FleetVehicle>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractCreateUs { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLineWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractUsers { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<CrossoveredBudget> CrossoveredBudgetUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractWriteUs { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<CrossoveredBudget> CrossoveredBudgetWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceCreateUs { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<DecimalPrecision> DecimalPrecisionCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<DecimalPrecision> DecimalPrecisionWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<DigestDigest> DigestDigestCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<DigestDigest> DigestDigestWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<DigestTip> DigestTipCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<DigestTip> DigestTipWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<FetchmailServer> FetchmailServerCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<FetchmailServer> FetchmailServerWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<FleetServiceType> FleetServiceTypeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<FleetServiceType> FleetServiceTypeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicle> FleetVehicleCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractCreateUs { get; set; } 
+
+    //[InverseProperty("User")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractUsers { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceCreateUs { get; set; } 
 
     //[InverseProperty("Manager")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceManagers { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceManagers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceWriteUs { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceWriteUs { get; set; } 
 
     //[InverseProperty("Manager")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleManagers { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicleManagers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModelBrand> FleetVehicleModelBrandCreateUs { get; set; } = new List<FleetVehicleModelBrand>();
+    public virtual ICollection<FleetVehicleModelBrand> FleetVehicleModelBrandCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModelBrand> FleetVehicleModelBrandWriteUs { get; set; } = new List<FleetVehicleModelBrand>();
+    public virtual ICollection<FleetVehicleModelBrand> FleetVehicleModelBrandWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModelCategory> FleetVehicleModelCategoryCreateUs { get; set; } = new List<FleetVehicleModelCategory>();
+    public virtual ICollection<FleetVehicleModelCategory> FleetVehicleModelCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModelCategory> FleetVehicleModelCategoryWriteUs { get; set; } = new List<FleetVehicleModelCategory>();
+    public virtual ICollection<FleetVehicleModelCategory> FleetVehicleModelCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModel> FleetVehicleModelCreateUs { get; set; } = new List<FleetVehicleModel>();
+    public virtual ICollection<FleetVehicleModel> FleetVehicleModelCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModel> FleetVehicleModelWriteUs { get; set; } = new List<FleetVehicleModel>();
+    public virtual ICollection<FleetVehicleModel> FleetVehicleModelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometerCreateUs { get; set; } = new List<FleetVehicleOdometer>();
+    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometerWriteUs { get; set; } = new List<FleetVehicleOdometer>();
+    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleState> FleetVehicleStateCreateUs { get; set; } = new List<FleetVehicleState>();
+    public virtual ICollection<FleetVehicleState> FleetVehicleStateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleState> FleetVehicleStateWriteUs { get; set; } = new List<FleetVehicleState>();
+    public virtual ICollection<FleetVehicleState> FleetVehicleStateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleTag> FleetVehicleTagCreateUs { get; set; } = new List<FleetVehicleTag>();
+    public virtual ICollection<FleetVehicleTag> FleetVehicleTagCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleTag> FleetVehicleTagWriteUs { get; set; } = new List<FleetVehicleTag>();
+    public virtual ICollection<FleetVehicleTag> FleetVehicleTagWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleWriteUs { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FollowupFollowup> FollowupFollowupCreateUs { get; set; } = new List<FollowupFollowup>();
+    public virtual ICollection<FollowupFollowup> FollowupFollowupCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FollowupFollowup> FollowupFollowupWriteUs { get; set; } = new List<FollowupFollowup>();
+    public virtual ICollection<FollowupFollowup> FollowupFollowupWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FollowupLine> FollowupLineCreateUs { get; set; } = new List<FollowupLine>();
+    public virtual ICollection<FollowupLine> FollowupLineCreateUs { get; set; } 
 
     //[InverseProperty("ManualActionResponsible")]
     [NotMapped]
-    public virtual ICollection<FollowupLine> FollowupLineManualActionResponsibles { get; set; } = new List<FollowupLine>();
+    public virtual ICollection<FollowupLine> FollowupLineManualActionResponsibles { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FollowupLine> FollowupLineWriteUs { get; set; } = new List<FollowupLine>();
+    public virtual ICollection<FollowupLine> FollowupLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FollowupPrint> FollowupPrintCreateUs { get; set; } = new List<FollowupPrint>();
+    public virtual ICollection<FollowupPrint> FollowupPrintCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FollowupPrint> FollowupPrintWriteUs { get; set; } = new List<FollowupPrint>();
+    public virtual ICollection<FollowupPrint> FollowupPrintWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<FollowupSendingResult> FollowupSendingResultCreateUs { get; set; } = new List<FollowupSendingResult>();
+    public virtual ICollection<FollowupSendingResult> FollowupSendingResultCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<FollowupSendingResult> FollowupSendingResultWriteUs { get; set; } = new List<FollowupSendingResult>();
+    public virtual ICollection<FollowupSendingResult> FollowupSendingResultWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrApplicantCategory> HrApplicantCategoryCreateUs { get; set; } = new List<HrApplicantCategory>();
+    public virtual ICollection<HrApplicantCategory> HrApplicantCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrApplicantCategory> HrApplicantCategoryWriteUs { get; set; } = new List<HrApplicantCategory>();
+    public virtual ICollection<HrApplicantCategory> HrApplicantCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantCreateUs { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicantCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReasonCreateUs { get; set; } = new List<HrApplicantRefuseReason>();
+    public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReasonCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReasonWriteUs { get; set; } = new List<HrApplicantRefuseReason>();
+    public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReasonWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkillCreateUs { get; set; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkillCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkillWriteUs { get; set; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkillWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantUsers { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicantUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantWriteUs { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicantWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrAttendance> HrAttendanceCreateUs { get; set; } = new List<HrAttendance>();
+    public virtual ICollection<HrAttendance> HrAttendanceCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertimeCreateUs { get; set; } = new List<HrAttendanceOvertime>();
+    public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertimeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertimeWriteUs { get; set; } = new List<HrAttendanceOvertime>();
+    public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertimeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrAttendance> HrAttendanceWriteUs { get; set; } = new List<HrAttendance>();
+    public virtual ICollection<HrAttendance> HrAttendanceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContractCreateUs { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContractCreateUs { get; set; } 
 
     //[InverseProperty("HrResponsible")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContractHrResponsibles { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContractHrResponsibles { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrContractType> HrContractTypeCreateUs { get; set; } = new List<HrContractType>();
+    public virtual ICollection<HrContractType> HrContractTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrContractType> HrContractTypeWriteUs { get; set; } = new List<HrContractType>();
+    public virtual ICollection<HrContractType> HrContractTypeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContractWriteUs { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContractWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartmentCreateUs { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> HrDepartmentCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartmentWriteUs { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> HrDepartmentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrDepartureReason> HrDepartureReasonCreateUs { get; set; } = new List<HrDepartureReason>();
+    public virtual ICollection<HrDepartureReason> HrDepartureReasonCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrDepartureReason> HrDepartureReasonWriteUs { get; set; } = new List<HrDepartureReason>();
+    public virtual ICollection<HrDepartureReason> HrDepartureReasonWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrDepartureWizard> HrDepartureWizardCreateUs { get; set; } = new List<HrDepartureWizard>();
+    public virtual ICollection<HrDepartureWizard> HrDepartureWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrDepartureWizard> HrDepartureWizardWriteUs { get; set; } = new List<HrDepartureWizard>();
+    public virtual ICollection<HrDepartureWizard> HrDepartureWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeCategory> HrEmployeeCategoryCreateUs { get; set; } = new List<HrEmployeeCategory>();
+    public virtual ICollection<HrEmployeeCategory> HrEmployeeCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeCategory> HrEmployeeCategoryWriteUs { get; set; } = new List<HrEmployeeCategory>();
+    public virtual ICollection<HrEmployeeCategory> HrEmployeeCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeCreateUs { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeCreateUs { get; set; } 
 
     //[InverseProperty("ExpenseManager")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeExpenseManagers { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeExpenseManagers { get; set; } 
 
     //[InverseProperty("LeaveManager")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeLeaveManagers { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeLeaveManagers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkillCreateUs { get; set; } = new List<HrEmployeeSkill>();
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkillCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogCreateUs { get; set; } = new List<HrEmployeeSkillLog>();
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogWriteUs { get; set; } = new List<HrEmployeeSkillLog>();
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkillWriteUs { get; set; } = new List<HrEmployeeSkill>();
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkillWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeUsers { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeWriteUs { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicateCreateUs { get; set; } = new List<HrExpenseApproveDuplicate>();
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicateWriteUs { get; set; } = new List<HrExpenseApproveDuplicate>();
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenseCreateUs { get; set; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenseCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizardCreateUs { get; set; } = new List<HrExpenseRefuseWizard>();
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizardWriteUs { get; set; } = new List<HrExpenseRefuseWizard>();
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheetCreateUs { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheetCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheetUsers { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheetUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheetWriteUs { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheetWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplitCreateUs { get; set; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplitCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizardCreateUs { get; set; } = new List<HrExpenseSplitWizard>();
+    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizardWriteUs { get; set; } = new List<HrExpenseSplitWizard>();
+    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizardWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplitWriteUs { get; set; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplitWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenseWriteUs { get; set; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenseWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaveCreateUs { get; set; } = new List<HrHolidaysCancelLeave>();
+    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaveCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaveWriteUs { get; set; } = new List<HrHolidaysCancelLeave>();
+    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaveWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrHolidaysSummaryEmployee> HrHolidaysSummaryEmployeeCreateUs { get; set; } = new List<HrHolidaysSummaryEmployee>();
+    public virtual ICollection<HrHolidaysSummaryEmployee> HrHolidaysSummaryEmployeeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrHolidaysSummaryEmployee> HrHolidaysSummaryEmployeeWriteUs { get; set; } = new List<HrHolidaysSummaryEmployee>();
+    public virtual ICollection<HrHolidaysSummaryEmployee> HrHolidaysSummaryEmployeeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobCreateUs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobCreateUs { get; set; } 
 
     //[InverseProperty("HrResponsible")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobHrResponsibles { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobHrResponsibles { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobUsers { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobWriteUs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevelCreateUs { get; set; } = new List<HrLeaveAccrualLevel>();
+    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevelCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevelWriteUs { get; set; } = new List<HrLeaveAccrualLevel>();
+    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlanCreateUs { get; set; } = new List<HrLeaveAccrualPlan>();
+    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlanCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlanWriteUs { get; set; } = new List<HrLeaveAccrualPlan>();
+    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlanWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationCreateUs { get; set; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationWriteUs { get; set; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveCreateUs { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaveCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDayCreateUs { get; set; } = new List<HrLeaveStressDay>();
+    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDayCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDayWriteUs { get; set; } = new List<HrLeaveStressDay>();
+    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDayWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeCreateUs { get; set; } = new List<HrLeaveType>();
+    public virtual ICollection<HrLeaveType> HrLeaveTypeCreateUs { get; set; } 
 
     //[InverseProperty("Responsible")]
     [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeResponsibles { get; set; } = new List<HrLeaveType>();
+    public virtual ICollection<HrLeaveType> HrLeaveTypeResponsibles { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeWriteUs { get; set; } = new List<HrLeaveType>();
+    public virtual ICollection<HrLeaveType> HrLeaveTypeWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveUsers { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaveUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveWriteUs { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaveWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrPayrollStructureType> HrPayrollStructureTypeCreateUs { get; set; } = new List<HrPayrollStructureType>();
+    public virtual ICollection<HrPayrollStructureType> HrPayrollStructureTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrPayrollStructureType> HrPayrollStructureTypeWriteUs { get; set; } = new List<HrPayrollStructureType>();
+    public virtual ICollection<HrPayrollStructureType> HrPayrollStructureTypeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypeCreateUs { get; set; } = new List<HrPlanActivityType>();
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypeCreateUs { get; set; } 
 
     //[InverseProperty("ResponsibleNavigation")]
     [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypeResponsibleNavigations { get; set; } = new List<HrPlanActivityType>();
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypeResponsibleNavigations { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypeWriteUs { get; set; } = new List<HrPlanActivityType>();
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrPlan> HrPlanCreateUs { get; set; } = new List<HrPlan>();
+    public virtual ICollection<HrPlan> HrPlanCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrPlanWizard> HrPlanWizardCreateUs { get; set; } = new List<HrPlanWizard>();
+    public virtual ICollection<HrPlanWizard> HrPlanWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrPlanWizard> HrPlanWizardWriteUs { get; set; } = new List<HrPlanWizard>();
+    public virtual ICollection<HrPlanWizard> HrPlanWizardWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrPlan> HrPlanWriteUs { get; set; } = new List<HrPlan>();
+    public virtual ICollection<HrPlan> HrPlanWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentDegree> HrRecruitmentDegreeCreateUs { get; set; } = new List<HrRecruitmentDegree>();
+    public virtual ICollection<HrRecruitmentDegree> HrRecruitmentDegreeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentDegree> HrRecruitmentDegreeWriteUs { get; set; } = new List<HrRecruitmentDegree>();
+    public virtual ICollection<HrRecruitmentDegree> HrRecruitmentDegreeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSourceCreateUs { get; set; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSourceCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSourceWriteUs { get; set; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSourceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStageCreateUs { get; set; } = new List<HrRecruitmentStage>();
+    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStageCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStageWriteUs { get; set; } = new List<HrRecruitmentStage>();
+    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLineCreateUs { get; set; } = new List<HrResumeLine>();
+    public virtual ICollection<HrResumeLine> HrResumeLineCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrResumeLineType> HrResumeLineTypeCreateUs { get; set; } = new List<HrResumeLineType>();
+    public virtual ICollection<HrResumeLineType> HrResumeLineTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrResumeLineType> HrResumeLineTypeWriteUs { get; set; } = new List<HrResumeLineType>();
+    public virtual ICollection<HrResumeLineType> HrResumeLineTypeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLineWriteUs { get; set; } = new List<HrResumeLine>();
+    public virtual ICollection<HrResumeLine> HrResumeLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkillCreateUs { get; set; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkillCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrSkillLevel> HrSkillLevelCreateUs { get; set; } = new List<HrSkillLevel>();
+    public virtual ICollection<HrSkillLevel> HrSkillLevelCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrSkillLevel> HrSkillLevelWriteUs { get; set; } = new List<HrSkillLevel>();
+    public virtual ICollection<HrSkillLevel> HrSkillLevelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrSkillType> HrSkillTypeCreateUs { get; set; } = new List<HrSkillType>();
+    public virtual ICollection<HrSkillType> HrSkillTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrSkillType> HrSkillTypeWriteUs { get; set; } = new List<HrSkillType>();
+    public virtual ICollection<HrSkillType> HrSkillTypeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkillWriteUs { get; set; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkillWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<HrWorkLocation> HrWorkLocationCreateUs { get; set; } = new List<HrWorkLocation>();
+    public virtual ICollection<HrWorkLocation> HrWorkLocationCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<HrWorkLocation> HrWorkLocationWriteUs { get; set; } = new List<HrWorkLocation>();
+    public virtual ICollection<HrWorkLocation> HrWorkLocationWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IapAccount> IapAccountCreateUs { get; set; } = new List<IapAccount>();
+    public virtual ICollection<IapAccount> IapAccountCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IapAccount> IapAccountWriteUs { get; set; } = new List<IapAccount>();
+    public virtual ICollection<IapAccount> IapAccountWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUser> InverseCreateU { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> InverseCreateU { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUser> InverseWriteU { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> InverseWriteU { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActClient> IrActClientCreateUs { get; set; } = new List<IrActClient>();
+    public virtual ICollection<IrActClient> IrActClientCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActClient> IrActClientWriteUs { get; set; } = new List<IrActClient>();
+    public virtual ICollection<IrActClient> IrActClientWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> IrActReportXmlCreateUs { get; set; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> IrActReportXmlCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> IrActReportXmlWriteUs { get; set; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> IrActReportXmlWriteUs { get; set; } 
 
     //[InverseProperty("ActivityUser")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerActivityUsers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerActivityUsers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerCreateUs { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerWriteUs { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActUrl> IrActUrlCreateUs { get; set; } = new List<IrActUrl>();
+    public virtual ICollection<IrActUrl> IrActUrlCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActUrl> IrActUrlWriteUs { get; set; } = new List<IrActUrl>();
+    public virtual ICollection<IrActUrl> IrActUrlWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActWindow> IrActWindowCreateUs { get; set; } = new List<IrActWindow>();
+    public virtual ICollection<IrActWindow> IrActWindowCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActWindowView> IrActWindowViewCreateUs { get; set; } = new List<IrActWindowView>();
+    public virtual ICollection<IrActWindowView> IrActWindowViewCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActWindowView> IrActWindowViewWriteUs { get; set; } = new List<IrActWindowView>();
+    public virtual ICollection<IrActWindowView> IrActWindowViewWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActWindow> IrActWindowWriteUs { get; set; } = new List<IrActWindow>();
+    public virtual ICollection<IrActWindow> IrActWindowWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrAction> IrActionCreateUs { get; set; } = new List<IrAction>();
+    public virtual ICollection<IrAction> IrActionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrAction> IrActionWriteUs { get; set; } = new List<IrAction>();
+    public virtual ICollection<IrAction> IrActionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrActionsTodo> IrActionsTodoCreateUs { get; set; } = new List<IrActionsTodo>();
+    public virtual ICollection<IrActionsTodo> IrActionsTodoCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrActionsTodo> IrActionsTodoWriteUs { get; set; } = new List<IrActionsTodo>();
+    public virtual ICollection<IrActionsTodo> IrActionsTodoWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrAsset> IrAssetCreateUs { get; set; } = new List<IrAsset>();
+    public virtual ICollection<IrAsset> IrAssetCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrAsset> IrAssetWriteUs { get; set; } = new List<IrAsset>();
+    public virtual ICollection<IrAsset> IrAssetWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachmentCreateUs { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachmentCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachmentWriteUs { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachmentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrConfigParameter> IrConfigParameterCreateUs { get; set; } = new List<IrConfigParameter>();
+    public virtual ICollection<IrConfigParameter> IrConfigParameterCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrConfigParameter> IrConfigParameterWriteUs { get; set; } = new List<IrConfigParameter>();
+    public virtual ICollection<IrConfigParameter> IrConfigParameterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrCron> IrCronCreateUs { get; set; } = new List<IrCron>();
+    public virtual ICollection<IrCron> IrCronCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrCronTrigger> IrCronTriggerCreateUs { get; set; } = new List<IrCronTrigger>();
+    public virtual ICollection<IrCronTrigger> IrCronTriggerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrCronTrigger> IrCronTriggerWriteUs { get; set; } = new List<IrCronTrigger>();
+    public virtual ICollection<IrCronTrigger> IrCronTriggerWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<IrCron> IrCronUsers { get; set; } = new List<IrCron>();
+    public virtual ICollection<IrCron> IrCronUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrCron> IrCronWriteUs { get; set; } = new List<IrCron>();
+    public virtual ICollection<IrCron> IrCronWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrDefault> IrDefaultCreateUs { get; set; } = new List<IrDefault>();
+    public virtual ICollection<IrDefault> IrDefaultCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<IrDefault> IrDefaultUsers { get; set; } = new List<IrDefault>();
+    public virtual ICollection<IrDefault> IrDefaultUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrDefault> IrDefaultWriteUs { get; set; } = new List<IrDefault>();
+    public virtual ICollection<IrDefault> IrDefaultWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrDemo> IrDemoCreateUs { get; set; } = new List<IrDemo>();
+    public virtual ICollection<IrDemo> IrDemoCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailureCreateUs { get; set; } = new List<IrDemoFailure>();
+    public virtual ICollection<IrDemoFailure> IrDemoFailureCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrDemoFailureWizard> IrDemoFailureWizardCreateUs { get; set; } = new List<IrDemoFailureWizard>();
+    public virtual ICollection<IrDemoFailureWizard> IrDemoFailureWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrDemoFailureWizard> IrDemoFailureWizardWriteUs { get; set; } = new List<IrDemoFailureWizard>();
+    public virtual ICollection<IrDemoFailureWizard> IrDemoFailureWizardWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailureWriteUs { get; set; } = new List<IrDemoFailure>();
+    public virtual ICollection<IrDemoFailure> IrDemoFailureWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrDemo> IrDemoWriteUs { get; set; } = new List<IrDemo>();
+    public virtual ICollection<IrDemo> IrDemoWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrExport> IrExportCreateUs { get; set; } = new List<IrExport>();
+    public virtual ICollection<IrExport> IrExportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrExport> IrExportWriteUs { get; set; } = new List<IrExport>();
+    public virtual ICollection<IrExport> IrExportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrExportsLine> IrExportsLineCreateUs { get; set; } = new List<IrExportsLine>();
+    public virtual ICollection<IrExportsLine> IrExportsLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrExportsLine> IrExportsLineWriteUs { get; set; } = new List<IrExportsLine>();
+    public virtual ICollection<IrExportsLine> IrExportsLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrFilter> IrFilterCreateUs { get; set; } = new List<IrFilter>();
+    public virtual ICollection<IrFilter> IrFilterCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<IrFilter> IrFilterUsers { get; set; } = new List<IrFilter>();
+    public virtual ICollection<IrFilter> IrFilterUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrFilter> IrFilterWriteUs { get; set; } = new List<IrFilter>();
+    public virtual ICollection<IrFilter> IrFilterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrMailServer> IrMailServerCreateUs { get; set; } = new List<IrMailServer>();
+    public virtual ICollection<IrMailServer> IrMailServerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrMailServer> IrMailServerWriteUs { get; set; } = new List<IrMailServer>();
+    public virtual ICollection<IrMailServer> IrMailServerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModelAccess> IrModelAccessCreateUs { get; set; } = new List<IrModelAccess>();
+    public virtual ICollection<IrModelAccess> IrModelAccessCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModelAccess> IrModelAccessWriteUs { get; set; } = new List<IrModelAccess>();
+    public virtual ICollection<IrModelAccess> IrModelAccessWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModelConstraint> IrModelConstraintCreateUs { get; set; } = new List<IrModelConstraint>();
+    public virtual ICollection<IrModelConstraint> IrModelConstraintCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModelConstraint> IrModelConstraintWriteUs { get; set; } = new List<IrModelConstraint>();
+    public virtual ICollection<IrModelConstraint> IrModelConstraintWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModel> IrModelCreateUs { get; set; } = new List<IrModel>();
+    public virtual ICollection<IrModel> IrModelCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModelDatum> IrModelDatumCreateUs { get; set; } = new List<IrModelDatum>();
+    public virtual ICollection<IrModelDatum> IrModelDatumCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModelDatum> IrModelDatumWriteUs { get; set; } = new List<IrModelDatum>();
+    public virtual ICollection<IrModelDatum> IrModelDatumWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModelField> IrModelFieldCreateUs { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> IrModelFieldCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModelField> IrModelFieldWriteUs { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> IrModelFieldWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelectionCreateUs { get; set; } = new List<IrModelFieldsSelection>();
+    public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelectionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelectionWriteUs { get; set; } = new List<IrModelFieldsSelection>();
+    public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelectionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModelRelation> IrModelRelationCreateUs { get; set; } = new List<IrModelRelation>();
+    public virtual ICollection<IrModelRelation> IrModelRelationCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModelRelation> IrModelRelationWriteUs { get; set; } = new List<IrModelRelation>();
+    public virtual ICollection<IrModelRelation> IrModelRelationWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModel> IrModelWriteUs { get; set; } = new List<IrModel>();
+    public virtual ICollection<IrModel> IrModelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModuleCategory> IrModuleCategoryCreateUs { get; set; } = new List<IrModuleCategory>();
+    public virtual ICollection<IrModuleCategory> IrModuleCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModuleCategory> IrModuleCategoryWriteUs { get; set; } = new List<IrModuleCategory>();
+    public virtual ICollection<IrModuleCategory> IrModuleCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModuleModule> IrModuleModuleCreateUs { get; set; } = new List<IrModuleModule>();
+    public virtual ICollection<IrModuleModule> IrModuleModuleCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusionCreateUs { get; set; } = new List<IrModuleModuleExclusion>();
+    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusionWriteUs { get; set; } = new List<IrModuleModuleExclusion>();
+    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusionWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrModuleModule> IrModuleModuleWriteUs { get; set; } = new List<IrModuleModule>();
+    public virtual ICollection<IrModuleModule> IrModuleModuleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrProperty> IrPropertyCreateUs { get; set; } = new List<IrProperty>();
+    public virtual ICollection<IrProperty> IrPropertyCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrProperty> IrPropertyWriteUs { get; set; } = new List<IrProperty>();
+    public virtual ICollection<IrProperty> IrPropertyWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrRule> IrRuleCreateUs { get; set; } = new List<IrRule>();
+    public virtual ICollection<IrRule> IrRuleCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrRule> IrRuleWriteUs { get; set; } = new List<IrRule>();
+    public virtual ICollection<IrRule> IrRuleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrSequence> IrSequenceCreateUs { get; set; } = new List<IrSequence>();
+    public virtual ICollection<IrSequence> IrSequenceCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRangeCreateUs { get; set; } = new List<IrSequenceDateRange>();
+    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRangeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRangeWriteUs { get; set; } = new List<IrSequenceDateRange>();
+    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRangeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrSequence> IrSequenceWriteUs { get; set; } = new List<IrSequence>();
+    public virtual ICollection<IrSequence> IrSequenceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrServerObjectLine> IrServerObjectLineCreateUs { get; set; } = new List<IrServerObjectLine>();
+    public virtual ICollection<IrServerObjectLine> IrServerObjectLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrServerObjectLine> IrServerObjectLineWriteUs { get; set; } = new List<IrServerObjectLine>();
+    public virtual ICollection<IrServerObjectLine> IrServerObjectLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrUiMenu> IrUiMenuCreateUs { get; set; } = new List<IrUiMenu>();
+    public virtual ICollection<IrUiMenu> IrUiMenuCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrUiMenu> IrUiMenuWriteUs { get; set; } = new List<IrUiMenu>();
+    public virtual ICollection<IrUiMenu> IrUiMenuWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrUiView> IrUiViewCreateUs { get; set; } = new List<IrUiView>();
+    public virtual ICollection<IrUiView> IrUiViewCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<IrUiViewCustom> IrUiViewCustomCreateUs { get; set; } = new List<IrUiViewCustom>();
+    public virtual ICollection<IrUiViewCustom> IrUiViewCustomCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<IrUiViewCustom> IrUiViewCustomUsers { get; set; } = new List<IrUiViewCustom>();
+    public virtual ICollection<IrUiViewCustom> IrUiViewCustomUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrUiViewCustom> IrUiViewCustomWriteUs { get; set; } = new List<IrUiViewCustom>();
+    public virtual ICollection<IrUiViewCustom> IrUiViewCustomWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<IrUiView> IrUiViewWriteUs { get; set; } = new List<IrUiView>();
+    public virtual ICollection<IrUiView> IrUiViewWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LotLabelLayout> LotLabelLayoutCreateUs { get; set; } = new List<LotLabelLayout>();
+    public virtual ICollection<LotLabelLayout> LotLabelLayoutCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LotLabelLayout> LotLabelLayoutWriteUs { get; set; } = new List<LotLabelLayout>();
+    public virtual ICollection<LotLabelLayout> LotLabelLayoutWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchAlert> LunchAlertCreateUs { get; set; } = new List<LunchAlert>();
+    public virtual ICollection<LunchAlert> LunchAlertCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchAlert> LunchAlertWriteUs { get; set; } = new List<LunchAlert>();
+    public virtual ICollection<LunchAlert> LunchAlertWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchCashmove> LunchCashmoveCreateUs { get; set; } = new List<LunchCashmove>();
+    public virtual ICollection<LunchCashmove> LunchCashmoveCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<LunchCashmove> LunchCashmoveUsers { get; set; } = new List<LunchCashmove>();
+    public virtual ICollection<LunchCashmove> LunchCashmoveUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchCashmove> LunchCashmoveWriteUs { get; set; } = new List<LunchCashmove>();
+    public virtual ICollection<LunchCashmove> LunchCashmoveWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchLocation> LunchLocationCreateUs { get; set; } = new List<LunchLocation>();
+    public virtual ICollection<LunchLocation> LunchLocationCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchLocation> LunchLocationWriteUs { get; set; } = new List<LunchLocation>();
+    public virtual ICollection<LunchLocation> LunchLocationWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrderCreateUs { get; set; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrderCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrderUsers { get; set; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrderUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrderWriteUs { get; set; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchProductCategory> LunchProductCategoryCreateUs { get; set; } = new List<LunchProductCategory>();
+    public virtual ICollection<LunchProductCategory> LunchProductCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchProductCategory> LunchProductCategoryWriteUs { get; set; } = new List<LunchProductCategory>();
+    public virtual ICollection<LunchProductCategory> LunchProductCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchProduct> LunchProductCreateUs { get; set; } = new List<LunchProduct>();
+    public virtual ICollection<LunchProduct> LunchProductCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchProduct> LunchProductWriteUs { get; set; } = new List<LunchProduct>();
+    public virtual ICollection<LunchProduct> LunchProductWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSupplierCreateUs { get; set; } = new List<LunchSupplier>();
+    public virtual ICollection<LunchSupplier> LunchSupplierCreateUs { get; set; } 
 
     //[InverseProperty("Responsible")]
     [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSupplierResponsibles { get; set; } = new List<LunchSupplier>();
+    public virtual ICollection<LunchSupplier> LunchSupplierResponsibles { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSupplierWriteUs { get; set; } = new List<LunchSupplier>();
+    public virtual ICollection<LunchSupplier> LunchSupplierWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<LunchTopping> LunchToppingCreateUs { get; set; } = new List<LunchTopping>();
+    public virtual ICollection<LunchTopping> LunchToppingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<LunchTopping> LunchToppingWriteUs { get; set; } = new List<LunchTopping>();
+    public virtual ICollection<LunchTopping> LunchToppingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityCreateUs { get; set; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivityCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> MailActivityTypeCreateUs { get; set; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> MailActivityTypeCreateUs { get; set; } 
 
     //[InverseProperty("DefaultUser")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> MailActivityTypeDefaultUsers { get; set; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> MailActivityTypeDefaultUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailActivityType> MailActivityTypeWriteUs { get; set; } = new List<MailActivityType>();
+    public virtual ICollection<MailActivityType> MailActivityTypeWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityUsers { get; set; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivityUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityWriteUs { get; set; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivityWriteUs { get; set; } 
 
     //[InverseProperty("AliasUser")]
     [NotMapped]
-    public virtual ICollection<MailAlias> MailAliasAliasUsers { get; set; } = new List<MailAlias>();
+    public virtual ICollection<MailAlias> MailAliasAliasUsers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailAlias> MailAliasCreateUs { get; set; } = new List<MailAlias>();
+    public virtual ICollection<MailAlias> MailAliasCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailAlias> MailAliasWriteUs { get; set; } = new List<MailAlias>();
+    public virtual ICollection<MailAlias> MailAliasWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailBlacklist> MailBlacklistCreateUs { get; set; } = new List<MailBlacklist>();
+    public virtual ICollection<MailBlacklist> MailBlacklistCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailBlacklistRemove> MailBlacklistRemoveCreateUs { get; set; } = new List<MailBlacklistRemove>();
+    public virtual ICollection<MailBlacklistRemove> MailBlacklistRemoveCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailBlacklistRemove> MailBlacklistRemoveWriteUs { get; set; } = new List<MailBlacklistRemove>();
+    public virtual ICollection<MailBlacklistRemove> MailBlacklistRemoveWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailBlacklist> MailBlacklistWriteUs { get; set; } = new List<MailBlacklist>();
+    public virtual ICollection<MailBlacklist> MailBlacklistWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannelCreateUs { get; set; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannelCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMemberCreateUs { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMemberCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMemberWriteUs { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMemberWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessionCreateUs { get; set; } = new List<MailChannelRtcSession>();
+    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessionWriteUs { get; set; } = new List<MailChannelRtcSession>();
+    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessionWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannelWriteUs { get; set; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessageCreateUs { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessageCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessageWriteUs { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailGatewayAllowed> MailGatewayAllowedCreateUs { get; set; } = new List<MailGatewayAllowed>();
+    public virtual ICollection<MailGatewayAllowed> MailGatewayAllowedCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailGatewayAllowed> MailGatewayAllowedWriteUs { get; set; } = new List<MailGatewayAllowed>();
+    public virtual ICollection<MailGatewayAllowed> MailGatewayAllowedWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailGuest> MailGuestCreateUs { get; set; } = new List<MailGuest>();
+    public virtual ICollection<MailGuest> MailGuestCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailGuest> MailGuestWriteUs { get; set; } = new List<MailGuest>();
+    public virtual ICollection<MailGuest> MailGuestWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailIceServer> MailIceServerCreateUs { get; set; } = new List<MailIceServer>();
+    public virtual ICollection<MailIceServer> MailIceServerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailIceServer> MailIceServerWriteUs { get; set; } = new List<MailIceServer>();
+    public virtual ICollection<MailIceServer> MailIceServerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailLinkPreview> MailLinkPreviewCreateUs { get; set; } = new List<MailLinkPreview>();
+    public virtual ICollection<MailLinkPreview> MailLinkPreviewCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailLinkPreview> MailLinkPreviewWriteUs { get; set; } = new List<MailLinkPreview>();
+    public virtual ICollection<MailLinkPreview> MailLinkPreviewWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailMail> MailMailCreateUs { get; set; } = new List<MailMail>();
+    public virtual ICollection<MailMail> MailMailCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailMail> MailMailWriteUs { get; set; } = new List<MailMail>();
+    public virtual ICollection<MailMail> MailMailWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessageCreateUs { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessageCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailMessageSchedule> MailMessageScheduleCreateUs { get; set; } = new List<MailMessageSchedule>();
+    public virtual ICollection<MailMessageSchedule> MailMessageScheduleCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailMessageSchedule> MailMessageScheduleWriteUs { get; set; } = new List<MailMessageSchedule>();
+    public virtual ICollection<MailMessageSchedule> MailMessageScheduleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailMessageSubtype> MailMessageSubtypeCreateUs { get; set; } = new List<MailMessageSubtype>();
+    public virtual ICollection<MailMessageSubtype> MailMessageSubtypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailMessageSubtype> MailMessageSubtypeWriteUs { get; set; } = new List<MailMessageSubtype>();
+    public virtual ICollection<MailMessageSubtype> MailMessageSubtypeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessageWriteUs { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailResendMessage> MailResendMessageCreateUs { get; set; } = new List<MailResendMessage>();
+    public virtual ICollection<MailResendMessage> MailResendMessageCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailResendMessage> MailResendMessageWriteUs { get; set; } = new List<MailResendMessage>();
+    public virtual ICollection<MailResendMessage> MailResendMessageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailResendPartner> MailResendPartnerCreateUs { get; set; } = new List<MailResendPartner>();
+    public virtual ICollection<MailResendPartner> MailResendPartnerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailResendPartner> MailResendPartnerWriteUs { get; set; } = new List<MailResendPartner>();
+    public virtual ICollection<MailResendPartner> MailResendPartnerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailShortcode> MailShortcodeCreateUs { get; set; } = new List<MailShortcode>();
+    public virtual ICollection<MailShortcode> MailShortcodeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailShortcode> MailShortcodeWriteUs { get; set; } = new List<MailShortcode>();
+    public virtual ICollection<MailShortcode> MailShortcodeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplateCreateUs { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplateCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailTemplatePreview> MailTemplatePreviewCreateUs { get; set; } = new List<MailTemplatePreview>();
+    public virtual ICollection<MailTemplatePreview> MailTemplatePreviewCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailTemplatePreview> MailTemplatePreviewWriteUs { get; set; } = new List<MailTemplatePreview>();
+    public virtual ICollection<MailTemplatePreview> MailTemplatePreviewWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailTemplateReset> MailTemplateResetCreateUs { get; set; } = new List<MailTemplateReset>();
+    public virtual ICollection<MailTemplateReset> MailTemplateResetCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailTemplateReset> MailTemplateResetWriteUs { get; set; } = new List<MailTemplateReset>();
+    public virtual ICollection<MailTemplateReset> MailTemplateResetWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplateWriteUs { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailTrackingValue> MailTrackingValueCreateUs { get; set; } = new List<MailTrackingValue>();
+    public virtual ICollection<MailTrackingValue> MailTrackingValueCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailTrackingValue> MailTrackingValueWriteUs { get; set; } = new List<MailTrackingValue>();
+    public virtual ICollection<MailTrackingValue> MailTrackingValueWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MailWizardInvite> MailWizardInviteCreateUs { get; set; } = new List<MailWizardInvite>();
+    public virtual ICollection<MailWizardInvite> MailWizardInviteCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MailWizardInvite> MailWizardInviteWriteUs { get; set; } = new List<MailWizardInvite>();
+    public virtual ICollection<MailWizardInvite> MailWizardInviteWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategoryCreateUs { get; set; } = new List<MaintenanceEquipmentCategory>();
-
-    //[InverseProperty("TechnicianUser")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategoryTechnicianUsers { get; set; } = new List<MaintenanceEquipmentCategory>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategoryWriteUs { get; set; } = new List<MaintenanceEquipmentCategory>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentCreateUs { get; set; } = new List<MaintenanceEquipment>();
-
-    //[InverseProperty("OwnerUser")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentOwnerUsers { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategoryCreateUs { get; set; } 
 
     //[InverseProperty("TechnicianUser")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentTechnicianUsers { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategoryTechnicianUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentWriteUs { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequestCreateUs { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentCreateUs { get; set; } 
 
     //[InverseProperty("OwnerUser")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequestOwnerUsers { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentOwnerUsers { get; set; } 
+
+    //[InverseProperty("TechnicianUser")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentTechnicianUsers { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipmentWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequestCreateUs { get; set; } 
+
+    //[InverseProperty("OwnerUser")]
+    [NotMapped]
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequestOwnerUsers { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequestUsers { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequestUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequestWriteUs { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequestWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceStage> MaintenanceStageCreateUs { get; set; } = new List<MaintenanceStage>();
+    public virtual ICollection<MaintenanceStage> MaintenanceStageCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceStage> MaintenanceStageWriteUs { get; set; } = new List<MaintenanceStage>();
+    public virtual ICollection<MaintenanceStage> MaintenanceStageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceTeam> MaintenanceTeamCreateUs { get; set; } = new List<MaintenanceTeam>();
+    public virtual ICollection<MaintenanceTeam> MaintenanceTeamCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MaintenanceTeam> MaintenanceTeamWriteUs { get; set; } = new List<MaintenanceTeam>();
+    public virtual ICollection<MaintenanceTeam> MaintenanceTeamWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproductCreateUs { get; set; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproductCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproductWriteUs { get; set; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproductWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBomCreateUs { get; set; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBomCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLineCreateUs { get; set; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLineWriteUs { get; set; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBomWriteUs { get; set; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBomWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarningCreateUs { get; set; } = new List<MrpConsumptionWarning>();
+    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarningCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLineCreateUs { get; set; } = new List<MrpConsumptionWarningLine>();
+    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLineWriteUs { get; set; } = new List<MrpConsumptionWarningLine>();
+    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarningWriteUs { get; set; } = new List<MrpConsumptionWarning>();
+    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarningWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpDocument> MrpDocumentCreateUs { get; set; } = new List<MrpDocument>();
+    public virtual ICollection<MrpDocument> MrpDocumentCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpDocument> MrpDocumentWriteUs { get; set; } = new List<MrpDocument>();
+    public virtual ICollection<MrpDocument> MrpDocumentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductionCreateUs { get; set; } = new List<MrpImmediateProduction>();
+    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductionCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLineCreateUs { get; set; } = new List<MrpImmediateProductionLine>();
+    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLineWriteUs { get; set; } = new List<MrpImmediateProductionLine>();
+    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductionWriteUs { get; set; } = new List<MrpImmediateProduction>();
+    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorderCreateUs { get; set; } = new List<MrpProductionBackorder>();
+    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorderCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLineCreateUs { get; set; } = new List<MrpProductionBackorderLine>();
+    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLineWriteUs { get; set; } = new List<MrpProductionBackorderLine>();
+    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLineWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorderWriteUs { get; set; } = new List<MrpProductionBackorder>();
+    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionCreateUs { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductionCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpProductionSplit> MrpProductionSplitCreateUs { get; set; } = new List<MrpProductionSplit>();
+    public virtual ICollection<MrpProductionSplit> MrpProductionSplitCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLineCreateUs { get; set; } = new List<MrpProductionSplitLine>();
-
-    //[InverseProperty("User")]
-    [NotMapped]
-    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLineUsers { get; set; } = new List<MrpProductionSplitLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLineWriteUs { get; set; } = new List<MrpProductionSplitLine>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpProductionSplitMulti> MrpProductionSplitMultiCreateUs { get; set; } = new List<MrpProductionSplitMulti>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpProductionSplitMulti> MrpProductionSplitMultiWriteUs { get; set; } = new List<MrpProductionSplitMulti>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpProductionSplit> MrpProductionSplitWriteUs { get; set; } = new List<MrpProductionSplit>();
+    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLineCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionUsers { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLineUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionWriteUs { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenterCreateUs { get; set; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpProductionSplitMulti> MrpProductionSplitMultiCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenterWriteUs { get; set; } = new List<MrpRoutingWorkcenter>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuildCreateUs { get; set; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpProductionSplitMulti> MrpProductionSplitMultiWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuildWriteUs { get; set; } = new List<MrpUnbuild>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacityCreateUs { get; set; } = new List<MrpWorkcenterCapacity>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacityWriteUs { get; set; } = new List<MrpWorkcenterCapacity>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenterCreateUs { get; set; } = new List<MrpWorkcenter>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivityCreateUs { get; set; } = new List<MrpWorkcenterProductivity>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivityLoss> MrpWorkcenterProductivityLossCreateUs { get; set; } = new List<MrpWorkcenterProductivityLoss>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivityLossType> MrpWorkcenterProductivityLossTypeCreateUs { get; set; } = new List<MrpWorkcenterProductivityLossType>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivityLossType> MrpWorkcenterProductivityLossTypeWriteUs { get; set; } = new List<MrpWorkcenterProductivityLossType>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivityLoss> MrpWorkcenterProductivityLossWriteUs { get; set; } = new List<MrpWorkcenterProductivityLoss>();
+    public virtual ICollection<MrpProductionSplit> MrpProductionSplitWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivityUsers { get; set; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpProduction> MrpProductionUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivityWriteUs { get; set; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpProduction> MrpProductionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTagCreateUs { get; set; } = new List<MrpWorkcenterTag>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenterCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTagWriteUs { get; set; } = new List<MrpWorkcenterTag>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenterWriteUs { get; set; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderCreateUs { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuildCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderWriteUs { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuildWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<NoteNote> NoteNoteCreateUs { get; set; } = new List<NoteNote>();
-
-    //[InverseProperty("User")]
-    [NotMapped]
-    public virtual ICollection<NoteNote> NoteNoteUsers { get; set; } = new List<NoteNote>();
+    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacityCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<NoteNote> NoteNoteWriteUs { get; set; } = new List<NoteNote>();
+    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacityWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<NoteStage> NoteStageCreateUs { get; set; } = new List<NoteStage>();
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenterCreateUs { get; set; } 
 
-    //[InverseProperty("User")]
+    //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<NoteStage> NoteStageUsers { get; set; } = new List<NoteStage>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivityCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<MrpWorkcenterProductivityLoss> MrpWorkcenterProductivityLossCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<MrpWorkcenterProductivityLossType> MrpWorkcenterProductivityLossTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<NoteStage> NoteStageWriteUs { get; set; } = new List<NoteStage>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<NoteTag> NoteTagCreateUs { get; set; } = new List<NoteTag>();
+    public virtual ICollection<MrpWorkcenterProductivityLossType> MrpWorkcenterProductivityLossTypeWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<NoteTag> NoteTagWriteUs { get; set; } = new List<NoteTag>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentIcon> PaymentIconCreateUs { get; set; } = new List<PaymentIcon>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentIcon> PaymentIconWriteUs { get; set; } = new List<PaymentIcon>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizardCreateUs { get; set; } = new List<PaymentLinkWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizardWriteUs { get; set; } = new List<PaymentLinkWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviderCreateUs { get; set; } = new List<PaymentProvider>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentProviderOnboardingWizard> PaymentProviderOnboardingWizardCreateUs { get; set; } = new List<PaymentProviderOnboardingWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentProviderOnboardingWizard> PaymentProviderOnboardingWizardWriteUs { get; set; } = new List<PaymentProviderOnboardingWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviderWriteUs { get; set; } = new List<PaymentProvider>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentRefundWizard> PaymentRefundWizardCreateUs { get; set; } = new List<PaymentRefundWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentRefundWizard> PaymentRefundWizardWriteUs { get; set; } = new List<PaymentRefundWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokenCreateUs { get; set; } = new List<PaymentToken>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokenWriteUs { get; set; } = new List<PaymentToken>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactionCreateUs { get; set; } = new List<PaymentTransaction>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactionWriteUs { get; set; } = new List<PaymentTransaction>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PhoneBlacklist> PhoneBlacklistCreateUs { get; set; } = new List<PhoneBlacklist>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PhoneBlacklistRemove> PhoneBlacklistRemoveCreateUs { get; set; } = new List<PhoneBlacklistRemove>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PhoneBlacklistRemove> PhoneBlacklistRemoveWriteUs { get; set; } = new List<PhoneBlacklistRemove>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PhoneBlacklist> PhoneBlacklistWriteUs { get; set; } = new List<PhoneBlacklist>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PickingLabelType> PickingLabelTypeCreateUs { get; set; } = new List<PickingLabelType>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PickingLabelType> PickingLabelTypeWriteUs { get; set; } = new List<PickingLabelType>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PortalShare> PortalShareCreateUs { get; set; } = new List<PortalShare>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PortalShare> PortalShareWriteUs { get; set; } = new List<PortalShare>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PortalWizard> PortalWizardCreateUs { get; set; } = new List<PortalWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PortalWizardUser> PortalWizardUserCreateUs { get; set; } = new List<PortalWizardUser>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PortalWizardUser> PortalWizardUserWriteUs { get; set; } = new List<PortalWizardUser>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PortalWizard> PortalWizardWriteUs { get; set; } = new List<PortalWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosBill> PosBillCreateUs { get; set; } = new List<PosBill>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosBill> PosBillWriteUs { get; set; } = new List<PosBill>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosCategory> PosCategoryCreateUs { get; set; } = new List<PosCategory>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosCategory> PosCategoryWriteUs { get; set; } = new List<PosCategory>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosCloseSessionWizard> PosCloseSessionWizardCreateUs { get; set; } = new List<PosCloseSessionWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosCloseSessionWizard> PosCloseSessionWizardWriteUs { get; set; } = new List<PosCloseSessionWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigCreateUs { get; set; } = new List<PosConfig>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigWriteUs { get; set; } = new List<PosConfig>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosDetailsWizard> PosDetailsWizardCreateUs { get; set; } = new List<PosDetailsWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosDetailsWizard> PosDetailsWizardWriteUs { get; set; } = new List<PosDetailsWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePaymentCreateUs { get; set; } = new List<PosMakePayment>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePaymentWriteUs { get; set; } = new List<PosMakePayment>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrderCreateUs { get; set; } = new List<PosOrder>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLineCreateUs { get; set; } = new List<PosOrderLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLineWriteUs { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<MrpWorkcenterProductivityLoss> MrpWorkcenterProductivityLossWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrderUsers { get; set; } = new List<PosOrder>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivityUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrderWriteUs { get; set; } = new List<PosOrder>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivityWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<PosPackOperationLot> PosPackOperationLotCreateUs { get; set; } = new List<PosPackOperationLot>();
+    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTagCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PosPackOperationLot> PosPackOperationLotWriteUs { get; set; } = new List<PosPackOperationLot>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosPayment> PosPaymentCreateUs { get; set; } = new List<PosPayment>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PosPaymentMethod> PosPaymentMethodCreateUs { get; set; } = new List<PosPaymentMethod>();
+    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTagWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PosPaymentMethod> PosPaymentMethodWriteUs { get; set; } = new List<PosPaymentMethod>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PosPayment> PosPaymentWriteUs { get; set; } = new List<PosPayment>();
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<PosSessionCheckProductWizard> PosSessionCheckProductWizardCreateUs { get; set; } = new List<PosSessionCheckProductWizard>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorderCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PosSessionCheckProductWizard> PosSessionCheckProductWizardWriteUs { get; set; } = new List<PosSessionCheckProductWizard>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessionCreateUs { get; set; } = new List<PosSession>();
+    public virtual ICollection<NoteNote> NoteNoteCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessionUsers { get; set; } = new List<PosSession>();
+    public virtual ICollection<NoteNote> NoteNoteUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessionWriteUs { get; set; } = new List<PosSession>();
+    public virtual ICollection<NoteNote> NoteNoteWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<PrivacyLog> PrivacyLogCreateUs { get; set; } = new List<PrivacyLog>();
+    public virtual ICollection<NoteStage> NoteStageCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<PrivacyLog> PrivacyLogUsers { get; set; } = new List<PrivacyLog>();
+    public virtual ICollection<NoteStage> NoteStageUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PrivacyLog> PrivacyLogWriteUs { get; set; } = new List<PrivacyLog>();
+    public virtual ICollection<NoteStage> NoteStageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizardCreateUs { get; set; } = new List<PrivacyLookupWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLineCreateUs { get; set; } = new List<PrivacyLookupWizardLine>();
+    public virtual ICollection<NoteTag> NoteTagCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLineWriteUs { get; set; } = new List<PrivacyLookupWizardLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizardWriteUs { get; set; } = new List<PrivacyLookupWizard>();
+    public virtual ICollection<NoteTag> NoteTagWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroupCreateUs { get; set; } = new List<ProcurementGroup>();
+    public virtual ICollection<PaymentIcon> PaymentIconCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroupWriteUs { get; set; } = new List<ProcurementGroup>();
+    public virtual ICollection<PaymentIcon> PaymentIconWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductAttribute> ProductAttributeCreateUs { get; set; } = new List<ProductAttribute>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValueCreateUs { get; set; } = new List<ProductAttributeCustomValue>();
+    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValueWriteUs { get; set; } = new List<ProductAttributeCustomValue>();
+    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValueCreateUs { get; set; } = new List<ProductAttributeValue>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValueWriteUs { get; set; } = new List<ProductAttributeValue>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ProductAttribute> ProductAttributeWriteUs { get; set; } = new List<ProductAttribute>();
+    public virtual ICollection<PaymentProvider> PaymentProviderCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> ProductCategoryCreateUs { get; set; } = new List<ProductCategory>();
+    public virtual ICollection<PaymentProviderOnboardingWizard> PaymentProviderOnboardingWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> ProductCategoryWriteUs { get; set; } = new List<ProductCategory>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProductImage> ProductImageCreateUs { get; set; } = new List<ProductImage>();
+    public virtual ICollection<PaymentProviderOnboardingWizard> PaymentProviderOnboardingWizardWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductImage> ProductImageWriteUs { get; set; } = new List<ProductImage>();
+    public virtual ICollection<PaymentProvider> PaymentProviderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayoutCreateUs { get; set; } = new List<ProductLabelLayout>();
+    public virtual ICollection<PaymentRefundWizard> PaymentRefundWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayoutWriteUs { get; set; } = new List<ProductLabelLayout>();
+    public virtual ICollection<PaymentRefundWizard> PaymentRefundWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductPackaging> ProductPackagingCreateUs { get; set; } = new List<ProductPackaging>();
+    public virtual ICollection<PaymentToken> PaymentTokenCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductPackaging> ProductPackagingWriteUs { get; set; } = new List<ProductPackaging>();
+    public virtual ICollection<PaymentToken> PaymentTokenWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelistCreateUs { get; set; } = new List<ProductPricelist>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItemCreateUs { get; set; } = new List<ProductPricelistItem>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItemWriteUs { get; set; } = new List<ProductPricelistItem>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelistWriteUs { get; set; } = new List<ProductPricelist>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProductCreateUs { get; set; } = new List<ProductProduct>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProductWriteUs { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<PhoneBlacklist> PhoneBlacklistCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductPublicCategory> ProductPublicCategoryCreateUs { get; set; } = new List<ProductPublicCategory>();
+    public virtual ICollection<PhoneBlacklistRemove> PhoneBlacklistRemoveCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductPublicCategory> ProductPublicCategoryWriteUs { get; set; } = new List<ProductPublicCategory>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProductRemoval> ProductRemovalCreateUs { get; set; } = new List<ProductRemoval>();
+    public virtual ICollection<PhoneBlacklistRemove> PhoneBlacklistRemoveWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductRemoval> ProductRemovalWriteUs { get; set; } = new List<ProductRemoval>();
+    public virtual ICollection<PhoneBlacklist> PhoneBlacklistWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishCreateUs { get; set; } = new List<ProductReplenish>();
+    public virtual ICollection<PickingLabelType> PickingLabelTypeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishWriteUs { get; set; } = new List<ProductReplenish>();
+    public virtual ICollection<PickingLabelType> PickingLabelTypeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductRibbon> ProductRibbonCreateUs { get; set; } = new List<ProductRibbon>();
+    public virtual ICollection<PortalShare> PortalShareCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductRibbon> ProductRibbonWriteUs { get; set; } = new List<ProductRibbon>();
+    public virtual ICollection<PortalShare> PortalShareWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfoCreateUs { get; set; } = new List<ProductSupplierinfo>();
+    public virtual ICollection<PortalWizard> PortalWizardCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<PortalWizardUser> PortalWizardUserCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfoWriteUs { get; set; } = new List<ProductSupplierinfo>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProductTag> ProductTagCreateUs { get; set; } = new List<ProductTag>();
+    public virtual ICollection<PortalWizardUser> PortalWizardUserWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTagWriteUs { get; set; } = new List<ProductTag>();
+    public virtual ICollection<PortalWizard> PortalWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionCreateUs { get; set; } = new List<ProductTemplateAttributeExclusion>();
+    public virtual ICollection<PosBill> PosBillCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionWriteUs { get; set; } = new List<ProductTemplateAttributeExclusion>();
+    public virtual ICollection<PosBill> PosBillWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLineCreateUs { get; set; } = new List<ProductTemplateAttributeLine>();
+    public virtual ICollection<PosCategory> PosCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLineWriteUs { get; set; } = new List<ProductTemplateAttributeLine>();
+    public virtual ICollection<PosCategory> PosCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValueCreateUs { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<PosCloseSessionWizard> PosCloseSessionWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValueWriteUs { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<PosCloseSessionWizard> PosCloseSessionWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplateCreateUs { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<PosConfig> PosConfigCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplateWriteUs { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<PosConfig> PosConfigWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectCollaborator> ProjectCollaboratorCreateUs { get; set; } = new List<ProjectCollaborator>();
+    public virtual ICollection<PosDetailsWizard> PosDetailsWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectCollaborator> ProjectCollaboratorWriteUs { get; set; } = new List<ProjectCollaborator>();
+    public virtual ICollection<PosDetailsWizard> PosDetailsWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectMilestone> ProjectMilestoneCreateUs { get; set; } = new List<ProjectMilestone>();
+    public virtual ICollection<PosMakePayment> PosMakePaymentCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectMilestone> ProjectMilestoneWriteUs { get; set; } = new List<ProjectMilestone>();
+    public virtual ICollection<PosMakePayment> PosMakePaymentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectCreateUs { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<PosOrder> PosOrderCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectProjectStage> ProjectProjectStageCreateUs { get; set; } = new List<ProjectProjectStage>();
+    public virtual ICollection<PosOrderLine> PosOrderLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectProjectStage> ProjectProjectStageWriteUs { get; set; } = new List<ProjectProjectStage>();
+    public virtual ICollection<PosOrderLine> PosOrderLineWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectUsers { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<PosOrder> PosOrderUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectWriteUs { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<PosOrder> PosOrderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectShareWizard> ProjectShareWizardCreateUs { get; set; } = new List<ProjectShareWizard>();
+    public virtual ICollection<PosPackOperationLot> PosPackOperationLotCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectShareWizard> ProjectShareWizardWriteUs { get; set; } = new List<ProjectShareWizard>();
+    public virtual ICollection<PosPackOperationLot> PosPackOperationLotWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTagCreateUs { get; set; } = new List<ProjectTag>();
+    public virtual ICollection<PosPayment> PosPaymentCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<PosPaymentMethod> PosPaymentMethodCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTagWriteUs { get; set; } = new List<ProjectTag>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTaskCreateUs { get; set; } = new List<ProjectTask>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProjectTaskRecurrence> ProjectTaskRecurrenceCreateUs { get; set; } = new List<ProjectTaskRecurrence>();
+    public virtual ICollection<PosPaymentMethod> PosPaymentMethodWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskRecurrence> ProjectTaskRecurrenceWriteUs { get; set; } = new List<ProjectTaskRecurrence>();
+    public virtual ICollection<PosPayment> PosPaymentWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypeCreateUs { get; set; } = new List<ProjectTaskType>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizardCreateUs { get; set; } = new List<ProjectTaskTypeDeleteWizard>();
+    public virtual ICollection<PosSessionCheckProductWizard> PosSessionCheckProductWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizardWriteUs { get; set; } = new List<ProjectTaskTypeDeleteWizard>();
+    public virtual ICollection<PosSessionCheckProductWizard> PosSessionCheckProductWizardWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<PosSession> PosSessionCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypeUsers { get; set; } = new List<ProjectTaskType>();
+    public virtual ICollection<PosSession> PosSessionUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypeWriteUs { get; set; } = new List<ProjectTaskType>();
+    public virtual ICollection<PosSession> PosSessionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRelCreateUs { get; set; } = new List<ProjectTaskUserRel>();
+    public virtual ICollection<PrivacyLog> PrivacyLogCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRelUsers { get; set; } = new List<ProjectTaskUserRel>();
+    public virtual ICollection<PrivacyLog> PrivacyLogUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRelWriteUs { get; set; } = new List<ProjectTaskUserRel>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTaskWriteUs { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<PrivacyLog> PrivacyLogWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ProjectUpdate> ProjectUpdateCreateUs { get; set; } = new List<ProjectUpdate>();
+    public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizardCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLineWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizardWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProcurementGroup> ProcurementGroupCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProcurementGroup> ProcurementGroupWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductAttribute> ProductAttributeCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValueCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValueWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValueCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValueWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductAttribute> ProductAttributeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductCategory> ProductCategoryCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductCategory> ProductCategoryWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductImage> ProductImageCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductImage> ProductImageWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayoutCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayoutWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductPackaging> ProductPackagingCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductPackaging> ProductPackagingWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductPricelist> ProductPricelistCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItemCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItemWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductPricelist> ProductPricelistWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductProduct> ProductProductCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductProduct> ProductProductWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductPublicCategory> ProductPublicCategoryCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductPublicCategory> ProductPublicCategoryWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductRemoval> ProductRemovalCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductRemoval> ProductRemovalWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductReplenish> ProductReplenishCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductReplenish> ProductReplenishWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductRibbon> ProductRibbonCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductRibbon> ProductRibbonWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfoCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfoWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductTag> ProductTagCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductTag> ProductTagWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLineWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValueCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValueWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplate> ProductTemplateCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProductTemplate> ProductTemplateWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectCollaborator> ProjectCollaboratorCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProjectCollaborator> ProjectCollaboratorWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectMilestone> ProjectMilestoneCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProjectMilestone> ProjectMilestoneWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectProject> ProjectProjectCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectProjectStage> ProjectProjectStageCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProjectProjectStage> ProjectProjectStageWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ProjectUpdate> ProjectUpdateUsers { get; set; } = new List<ProjectUpdate>();
+    public virtual ICollection<ProjectProject> ProjectProjectUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ProjectUpdate> ProjectUpdateWriteUs { get; set; } = new List<ProjectUpdate>();
+    public virtual ICollection<ProjectProject> ProjectProjectWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderCreateUs { get; set; } = new List<PurchaseOrder>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLineCreateUs { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<ProjectShareWizard> ProjectShareWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLineWriteUs { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<ProjectShareWizard> ProjectShareWizardWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTag> ProjectTagCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTag> ProjectTagWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTask> ProjectTaskCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTaskRecurrence> ProjectTaskRecurrenceCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTaskRecurrence> ProjectTaskRecurrenceWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypeCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizardCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizardWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderUsers { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypeUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderWriteUs { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingCreateUs { get; set; } = new List<RatingRating>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingWriteUs { get; set; } = new List<RatingRating>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RecurringPayment> RecurringPaymentCreateUs { get; set; } = new List<RecurringPayment>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLineCreateUs { get; set; } = new List<RecurringPaymentLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLineWriteUs { get; set; } = new List<RecurringPaymentLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<RecurringPayment> RecurringPaymentWriteUs { get; set; } = new List<RecurringPayment>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RepairFee> RepairFeeCreateUs { get; set; } = new List<RepairFee>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<RepairFee> RepairFeeWriteUs { get; set; } = new List<RepairFee>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLineCreateUs { get; set; } = new List<RepairLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLineWriteUs { get; set; } = new List<RepairLine>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderCreateUs { get; set; } = new List<RepairOrder>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RepairOrderMakeInvoice> RepairOrderMakeInvoiceCreateUs { get; set; } = new List<RepairOrderMakeInvoice>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<RepairOrderMakeInvoice> RepairOrderMakeInvoiceWriteUs { get; set; } = new List<RepairOrderMakeInvoice>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRelCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderUsers { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRelUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderWriteUs { get; set; } = new List<RepairOrder>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<RepairTag> RepairTagCreateUs { get; set; } = new List<RepairTag>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRelWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<RepairTag> RepairTagWriteUs { get; set; } = new List<RepairTag>();
+    public virtual ICollection<ProjectTask> ProjectTaskWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ReportLayout> ReportLayoutCreateUs { get; set; } = new List<ReportLayout>();
+    public virtual ICollection<ProjectUpdate> ProjectUpdateCreateUs { get; set; } 
+
+    //[InverseProperty("User")]
+    [NotMapped]
+    public virtual ICollection<ProjectUpdate> ProjectUpdateUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ReportLayout> ReportLayoutWriteUs { get; set; } = new List<ReportLayout>();
+    public virtual ICollection<ProjectUpdate> ProjectUpdateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ReportPaperformat> ReportPaperformatCreateUs { get; set; } = new List<ReportPaperformat>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrderCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ReportPaperformat> ReportPaperformatWriteUs { get; set; } = new List<ReportPaperformat>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLineWriteUs { get; set; } 
 
-    //[InverseProperty("CreateU")]
+    //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ResBank> ResBankCreateUs { get; set; } = new List<ResBank>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ResBank> ResBankWriteUs { get; set; } = new List<ResBank>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanyCreateUs { get; set; } = new List<ResCompany>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrderUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanyWriteUs { get; set; } = new List<ResCompany>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResConfig> ResConfigCreateUs { get; set; } = new List<ResConfig>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ResConfigInstaller> ResConfigInstallerCreateUs { get; set; } = new List<ResConfigInstaller>();
+    public virtual ICollection<RatingRating> RatingRatingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResConfigInstaller> ResConfigInstallerWriteUs { get; set; } = new List<ResConfigInstaller>();
+    public virtual ICollection<RatingRating> RatingRatingWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RecurringPayment> RecurringPaymentCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLineWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RecurringPayment> RecurringPaymentWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RepairFee> RepairFeeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RepairFee> RepairFeeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RepairLine> RepairLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RepairLine> RepairLineWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RepairOrder> RepairOrderCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RepairOrderMakeInvoice> RepairOrderMakeInvoiceCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RepairOrderMakeInvoice> RepairOrderMakeInvoiceWriteUs { get; set; } 
+
+    //[InverseProperty("User")]
+    [NotMapped]
+    public virtual ICollection<RepairOrder> RepairOrderUsers { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RepairOrder> RepairOrderWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<RepairTag> RepairTagCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<RepairTag> RepairTagWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ReportLayout> ReportLayoutCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ReportLayout> ReportLayoutWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ReportPaperformat> ReportPaperformatCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ReportPaperformat> ReportPaperformatWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ResBank> ResBankCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ResBank> ResBankWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ResCompany> ResCompanyCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ResCompany> ResCompanyWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ResConfig> ResConfigCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ResConfigInstaller> ResConfigInstallerCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ResConfigInstaller> ResConfigInstallerWriteUs { get; set; } 
 
     //[InverseProperty("AuthSignupTemplateUser")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingAuthSignupTemplateUsers { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingAuthSignupTemplateUsers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingCreateUs { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingWriteUs { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResConfig> ResConfigWriteUs { get; set; } = new List<ResConfig>();
+    public virtual ICollection<ResConfig> ResConfigWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountryCreateUs { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> ResCountryCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResCountryGroup> ResCountryGroupCreateUs { get; set; } = new List<ResCountryGroup>();
+    public virtual ICollection<ResCountryGroup> ResCountryGroupCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResCountryGroup> ResCountryGroupWriteUs { get; set; } = new List<ResCountryGroup>();
+    public virtual ICollection<ResCountryGroup> ResCountryGroupWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStateCreateUs { get; set; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> ResCountryStateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStateWriteUs { get; set; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> ResCountryStateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountryWriteUs { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> ResCountryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResCurrency> ResCurrencyCreateUs { get; set; } = new List<ResCurrency>();
+    public virtual ICollection<ResCurrency> ResCurrencyCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResCurrencyRate> ResCurrencyRateCreateUs { get; set; } = new List<ResCurrencyRate>();
+    public virtual ICollection<ResCurrencyRate> ResCurrencyRateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResCurrencyRate> ResCurrencyRateWriteUs { get; set; } = new List<ResCurrencyRate>();
+    public virtual ICollection<ResCurrencyRate> ResCurrencyRateWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResCurrency> ResCurrencyWriteUs { get; set; } = new List<ResCurrency>();
+    public virtual ICollection<ResCurrency> ResCurrencyWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroupCreateUs { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroupCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroupWriteUs { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroupWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResLang> ResLangCreateUs { get; set; } = new List<ResLang>();
+    public virtual ICollection<ResLang> ResLangCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResLang> ResLangWriteUs { get; set; } = new List<ResLang>();
+    public virtual ICollection<ResLang> ResLangWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncCreateUs { get; set; } = new List<ResPartnerAutocompleteSync>();
+    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncWriteUs { get; set; } = new List<ResPartnerAutocompleteSync>();
+    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBankCreateUs { get; set; } = new List<ResPartnerBank>();
+    public virtual ICollection<ResPartnerBank> ResPartnerBankCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBankWriteUs { get; set; } = new List<ResPartnerBank>();
+    public virtual ICollection<ResPartnerBank> ResPartnerBankWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> ResPartnerCategoryCreateUs { get; set; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> ResPartnerCategoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> ResPartnerCategoryWriteUs { get; set; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> ResPartnerCategoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartnerCreateUs { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartnerCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerIndustry> ResPartnerIndustryCreateUs { get; set; } = new List<ResPartnerIndustry>();
+    public virtual ICollection<ResPartnerIndustry> ResPartnerIndustryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerIndustry> ResPartnerIndustryWriteUs { get; set; } = new List<ResPartnerIndustry>();
+    public virtual ICollection<ResPartnerIndustry> ResPartnerIndustryWriteUs { get; set; } 
 
     //[InverseProperty("PaymentResponsible")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartnerPaymentResponsibles { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartnerPaymentResponsibles { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerTitle> ResPartnerTitleCreateUs { get; set; } = new List<ResPartnerTitle>();
+    public virtual ICollection<ResPartnerTitle> ResPartnerTitleCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResPartnerTitle> ResPartnerTitleWriteUs { get; set; } = new List<ResPartnerTitle>();
+    public virtual ICollection<ResPartnerTitle> ResPartnerTitleWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartnerUsers { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartnerUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartnerWriteUs { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartnerWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ResUsersApikey> ResUsersApikeys { get; set; } = new List<ResUsersApikey>();
+    public virtual ICollection<ResUsersApikey> ResUsersApikeys { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUsersApikeysDescription> ResUsersApikeysDescriptionCreateUs { get; set; } = new List<ResUsersApikeysDescription>();
+    public virtual ICollection<ResUsersApikeysDescription> ResUsersApikeysDescriptionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUsersApikeysDescription> ResUsersApikeysDescriptionWriteUs { get; set; } = new List<ResUsersApikeysDescription>();
+    public virtual ICollection<ResUsersApikeysDescription> ResUsersApikeysDescriptionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUsersDeletion> ResUsersDeletionCreateUs { get; set; } = new List<ResUsersDeletion>();
+    public virtual ICollection<ResUsersDeletion> ResUsersDeletionCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ResUsersDeletion> ResUsersDeletionUsers { get; set; } = new List<ResUsersDeletion>();
+    public virtual ICollection<ResUsersDeletion> ResUsersDeletionUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUsersDeletion> ResUsersDeletionWriteUs { get; set; } = new List<ResUsersDeletion>();
+    public virtual ICollection<ResUsersDeletion> ResUsersDeletionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUsersIdentitycheck> ResUsersIdentitycheckCreateUs { get; set; } = new List<ResUsersIdentitycheck>();
+    public virtual ICollection<ResUsersIdentitycheck> ResUsersIdentitycheckCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUsersIdentitycheck> ResUsersIdentitycheckWriteUs { get; set; } = new List<ResUsersIdentitycheck>();
+    public virtual ICollection<ResUsersIdentitycheck> ResUsersIdentitycheckWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUsersLog> ResUsersLogCreateUs { get; set; } = new List<ResUsersLog>();
+    public virtual ICollection<ResUsersLog> ResUsersLogCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUsersLog> ResUsersLogWriteUs { get; set; } = new List<ResUsersLog>();
+    public virtual ICollection<ResUsersLog> ResUsersLogWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUsersSetting> ResUsersSettingCreateUs { get; set; } = new List<ResUsersSetting>();
+    public virtual ICollection<ResUsersSetting> ResUsersSettingCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUsersSetting> ResUsersSettingWriteUs { get; set; } = new List<ResUsersSetting>();
+    public virtual ICollection<ResUsersSetting> ResUsersSettingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeCreateUs { get; set; } = new List<ResUsersSettingsVolume>();
+    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeWriteUs { get; set; } = new List<ResUsersSettingsVolume>();
+    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardCreateUs { get; set; } = new List<ResetViewArchWizard>();
+    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardWriteUs { get; set; } = new List<ResetViewArchWizard>();
+    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendanceCreateUs { get; set; } = new List<ResourceCalendarAttendance>();
+    public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendanceCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendanceWriteUs { get; set; } = new List<ResourceCalendarAttendance>();
+    public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendanceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendar> ResourceCalendarCreateUs { get; set; } = new List<ResourceCalendar>();
+    public virtual ICollection<ResourceCalendar> ResourceCalendarCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeafCreateUs { get; set; } = new List<ResourceCalendarLeaf>();
+    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeafCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeafWriteUs { get; set; } = new List<ResourceCalendarLeaf>();
+    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeafWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendar> ResourceCalendarWriteUs { get; set; } = new List<ResourceCalendar>();
+    public virtual ICollection<ResourceCalendar> ResourceCalendarWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResourceResource> ResourceResourceCreateUs { get; set; } = new List<ResourceResource>();
+    public virtual ICollection<ResourceResource> ResourceResourceCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<ResourceResource> ResourceResourceUsers { get; set; } = new List<ResourceResource>();
+    public virtual ICollection<ResourceResource> ResourceResourceUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResourceResource> ResourceResourceWriteUs { get; set; } = new List<ResourceResource>();
+    public virtual ICollection<ResourceResource> ResourceResourceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvCreateUs { get; set; } = new List<SaleAdvancePaymentInv>();
+    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvWriteUs { get; set; } = new List<SaleAdvancePaymentInv>();
+    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderCancel> SaleOrderCancelCreateUs { get; set; } = new List<SaleOrderCancel>();
+    public virtual ICollection<SaleOrderCancel> SaleOrderCancelCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderCancel> SaleOrderCancelWriteUs { get; set; } = new List<SaleOrderCancel>();
+    public virtual ICollection<SaleOrderCancel> SaleOrderCancelWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderCreateUs { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrderCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLineCreateUs { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLineCreateUs { get; set; } 
 
     //[InverseProperty("Salesman")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLineSalesmen { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLineSalesmen { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLineWriteUs { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptionCreateUs { get; set; } = new List<SaleOrderOption>();
+    public virtual ICollection<SaleOrderOption> SaleOrderOptionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptionWriteUs { get; set; } = new List<SaleOrderOption>();
+    public virtual ICollection<SaleOrderOption> SaleOrderOptionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplateCreateUs { get; set; } = new List<SaleOrderTemplate>();
+    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplateCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLineCreateUs { get; set; } = new List<SaleOrderTemplateLine>();
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLineWriteUs { get; set; } = new List<SaleOrderTemplateLine>();
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLineWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptionCreateUs { get; set; } = new List<SaleOrderTemplateOption>();
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptionWriteUs { get; set; } = new List<SaleOrderTemplateOption>();
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptionWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplateWriteUs { get; set; } = new List<SaleOrderTemplate>();
-
-    //[InverseProperty("User")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderUsers { get; set; } = new List<SaleOrder>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderWriteUs { get; set; } = new List<SaleOrder>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SalePaymentProviderOnboardingWizard> SalePaymentProviderOnboardingWizardCreateUs { get; set; } = new List<SalePaymentProviderOnboardingWizard>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SalePaymentProviderOnboardingWizard> SalePaymentProviderOnboardingWizardWriteUs { get; set; } = new List<SalePaymentProviderOnboardingWizard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposerCreateUs { get; set; } = new List<SmsComposer>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposerWriteUs { get; set; } = new List<SmsComposer>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsResend> SmsResendCreateUs { get; set; } = new List<SmsResend>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsResendRecipient> SmsResendRecipientCreateUs { get; set; } = new List<SmsResendRecipient>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsResendRecipient> SmsResendRecipientWriteUs { get; set; } = new List<SmsResendRecipient>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsResend> SmsResendWriteUs { get; set; } = new List<SmsResend>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsSm> SmsSmCreateUs { get; set; } = new List<SmsSm>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsSm> SmsSmWriteUs { get; set; } = new List<SmsSm>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplateCreateUs { get; set; } = new List<SmsTemplate>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviewCreateUs { get; set; } = new List<SmsTemplatePreview>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviewWriteUs { get; set; } = new List<SmsTemplatePreview>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplateReset> SmsTemplateResetCreateUs { get; set; } = new List<SmsTemplateReset>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplateReset> SmsTemplateResetWriteUs { get; set; } = new List<SmsTemplateReset>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplateWriteUs { get; set; } = new List<SmsTemplate>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailConfirmInvoice> SnailmailConfirmInvoiceCreateUs { get; set; } = new List<SnailmailConfirmInvoice>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailConfirmInvoice> SnailmailConfirmInvoiceWriteUs { get; set; } = new List<SnailmailConfirmInvoice>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetterCreateUs { get; set; } = new List<SnailmailLetter>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatErrorCreateUs { get; set; } = new List<SnailmailLetterFormatError>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatErrorWriteUs { get; set; } = new List<SnailmailLetterFormatError>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFieldCreateUs { get; set; } = new List<SnailmailLetterMissingRequiredField>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFieldWriteUs { get; set; } = new List<SnailmailLetterMissingRequiredField>();
+    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplateWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetterUsers { get; set; } = new List<SnailmailLetter>();
+    public virtual ICollection<SaleOrder> SaleOrderUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetterWriteUs { get; set; } = new List<SnailmailLetter>();
+    public virtual ICollection<SaleOrder> SaleOrderWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboardCreateUs { get; set; } = new List<SpreadsheetDashboard>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<SpreadsheetDashboardGroup> SpreadsheetDashboardGroupCreateUs { get; set; } = new List<SpreadsheetDashboardGroup>();
+    public virtual ICollection<SalePaymentProviderOnboardingWizard> SalePaymentProviderOnboardingWizardCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboardGroup> SpreadsheetDashboardGroupWriteUs { get; set; } = new List<SpreadsheetDashboardGroup>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboardWriteUs { get; set; } = new List<SpreadsheetDashboard>();
+    public virtual ICollection<SalePaymentProviderOnboardingWizard> SalePaymentProviderOnboardingWizardWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerialCreateUs { get; set; } = new List<StockAssignSerial>();
+    public virtual ICollection<SmsComposer> SmsComposerCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerialWriteUs { get; set; } = new List<StockAssignSerial>();
+    public virtual ICollection<SmsComposer> SmsComposerWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmationCreateUs { get; set; } = new List<StockBackorderConfirmation>();
+    public virtual ICollection<SmsResend> SmsResendCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLineCreateUs { get; set; } = new List<StockBackorderConfirmationLine>();
+    public virtual ICollection<SmsResendRecipient> SmsResendRecipientCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLineWriteUs { get; set; } = new List<StockBackorderConfirmationLine>();
+    public virtual ICollection<SmsResendRecipient> SmsResendRecipientWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmationWriteUs { get; set; } = new List<StockBackorderConfirmation>();
+    public virtual ICollection<SmsResend> SmsResendWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockChangeProductQty> StockChangeProductQtyCreateUs { get; set; } = new List<StockChangeProductQty>();
+    public virtual ICollection<SmsSm> SmsSmCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockChangeProductQty> StockChangeProductQtyWriteUs { get; set; } = new List<StockChangeProductQty>();
+    public virtual ICollection<SmsSm> SmsSmWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockImmediateTransfer> StockImmediateTransferCreateUs { get; set; } = new List<StockImmediateTransfer>();
+    public virtual ICollection<SmsTemplate> SmsTemplateCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLineCreateUs { get; set; } = new List<StockImmediateTransferLine>();
+    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviewCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLineWriteUs { get; set; } = new List<StockImmediateTransferLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockImmediateTransfer> StockImmediateTransferWriteUs { get; set; } = new List<StockImmediateTransfer>();
+    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviewWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentNameCreateUs { get; set; } = new List<StockInventoryAdjustmentName>();
+    public virtual ICollection<SmsTemplateReset> SmsTemplateResetCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentNameWriteUs { get; set; } = new List<StockInventoryAdjustmentName>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockInventoryConflict> StockInventoryConflictCreateUs { get; set; } = new List<StockInventoryConflict>();
+    public virtual ICollection<SmsTemplateReset> SmsTemplateResetWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockInventoryConflict> StockInventoryConflictWriteUs { get; set; } = new List<StockInventoryConflict>();
+    public virtual ICollection<SmsTemplate> SmsTemplateWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockInventoryWarning> StockInventoryWarningCreateUs { get; set; } = new List<StockInventoryWarning>();
+    public virtual ICollection<SnailmailConfirmInvoice> SnailmailConfirmInvoiceCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockInventoryWarning> StockInventoryWarningWriteUs { get; set; } = new List<StockInventoryWarning>();
+    public virtual ICollection<SnailmailConfirmInvoice> SnailmailConfirmInvoiceWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockLocation> StockLocationCreateUs { get; set; } = new List<StockLocation>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetterCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatErrorCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockLocation> StockLocationWriteUs { get; set; } = new List<StockLocation>();
+    public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatErrorWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockLot> StockLotCreateUs { get; set; } = new List<StockLot>();
+    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFieldCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockLot> StockLotWriteUs { get; set; } = new List<StockLot>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveCreateUs { get; set; } = new List<StockMove>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineCreateUs { get; set; } = new List<StockMoveLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineWriteUs { get; set; } = new List<StockMoveLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveWriteUs { get; set; } = new List<StockMove>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozeCreateUs { get; set; } = new List<StockOrderpointSnooze>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozeWriteUs { get; set; } = new List<StockOrderpointSnooze>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockPackageDestination> StockPackageDestinationCreateUs { get; set; } = new List<StockPackageDestination>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockPackageDestination> StockPackageDestinationWriteUs { get; set; } = new List<StockPackageDestination>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevelCreateUs { get; set; } = new List<StockPackageLevel>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevelWriteUs { get; set; } = new List<StockPackageLevel>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockPackageType> StockPackageTypeCreateUs { get; set; } = new List<StockPackageType>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockPackageType> StockPackageTypeWriteUs { get; set; } = new List<StockPackageType>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingCreateUs { get; set; } = new List<StockPicking>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypeCreateUs { get; set; } = new List<StockPickingType>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypeWriteUs { get; set; } = new List<StockPickingType>();
+    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFieldWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingUsers { get; set; } = new List<StockPicking>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetterUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingWriteUs { get; set; } = new List<StockPicking>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetterWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRuleCreateUs { get; set; } = new List<StockPutawayRule>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboardCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<SpreadsheetDashboardGroup> SpreadsheetDashboardGroupCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRuleWriteUs { get; set; } = new List<StockPutawayRule>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockQuant> StockQuantCreateUs { get; set; } = new List<StockQuant>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockQuantPackage> StockQuantPackageCreateUs { get; set; } = new List<StockQuantPackage>();
+    public virtual ICollection<SpreadsheetDashboardGroup> SpreadsheetDashboardGroupWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockQuantPackage> StockQuantPackageWriteUs { get; set; } = new List<StockQuantPackage>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboardWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockAssignSerial> StockAssignSerialCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockAssignSerial> StockAssignSerialWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmationCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLineWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmationWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockChangeProductQty> StockChangeProductQtyCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockChangeProductQty> StockChangeProductQtyWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockImmediateTransfer> StockImmediateTransferCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLineWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockImmediateTransfer> StockImmediateTransferWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentNameCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentNameWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockInventoryConflict> StockInventoryConflictCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockInventoryConflict> StockInventoryConflictWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockInventoryWarning> StockInventoryWarningCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockInventoryWarning> StockInventoryWarningWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockLocation> StockLocationCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockLocation> StockLocationWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockLot> StockLotCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockLot> StockLotWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockMove> StockMoveCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockMoveLine> StockMoveLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockMoveLine> StockMoveLineWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockMove> StockMoveWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockPackageDestination> StockPackageDestinationCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockPackageDestination> StockPackageDestinationWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockPackageLevel> StockPackageLevelCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockPackageLevel> StockPackageLevelWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockPackageType> StockPackageTypeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockPackageType> StockPackageTypeWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockPicking> StockPickingCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockPickingType> StockPickingTypeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockPickingType> StockPickingTypeWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuantUsers { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockPicking> StockPickingUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuantWriteUs { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockPicking> StockPickingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockQuantityHistory> StockQuantityHistoryCreateUs { get; set; } = new List<StockQuantityHistory>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRuleCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockQuantityHistory> StockQuantityHistoryWriteUs { get; set; } = new List<StockQuantityHistory>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRuleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfoCreateUs { get; set; } = new List<StockReplenishmentInfo>();
+    public virtual ICollection<StockQuant> StockQuantCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockQuantPackage> StockQuantPackageCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfoWriteUs { get; set; } = new List<StockReplenishmentInfo>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptionCreateUs { get; set; } = new List<StockReplenishmentOption>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptionWriteUs { get; set; } = new List<StockReplenishmentOption>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockRequestCount> StockRequestCountCreateUs { get; set; } = new List<StockRequestCount>();
+    public virtual ICollection<StockQuantPackage> StockQuantPackageWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<StockRequestCount> StockRequestCountUsers { get; set; } = new List<StockRequestCount>();
+    public virtual ICollection<StockQuant> StockQuantUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockRequestCount> StockRequestCountWriteUs { get; set; } = new List<StockRequestCount>();
+    public virtual ICollection<StockQuant> StockQuantWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingCreateUs { get; set; } = new List<StockReturnPicking>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLineCreateUs { get; set; } = new List<StockReturnPickingLine>();
+    public virtual ICollection<StockQuantityHistory> StockQuantityHistoryCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLineWriteUs { get; set; } = new List<StockReturnPickingLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingWriteUs { get; set; } = new List<StockReturnPicking>();
+    public virtual ICollection<StockQuantityHistory> StockQuantityHistoryWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRouteCreateUs { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfoCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRouteWriteUs { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfoWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRuleCreateUs { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptionCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRuleWriteUs { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptionWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReportCreateUs { get; set; } = new List<StockRulesReport>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReportWriteUs { get; set; } = new List<StockRulesReport>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockSchedulerCompute> StockSchedulerComputeCreateUs { get; set; } = new List<StockSchedulerCompute>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockSchedulerCompute> StockSchedulerComputeWriteUs { get; set; } = new List<StockSchedulerCompute>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScrapCreateUs { get; set; } = new List<StockScrap>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScrapWriteUs { get; set; } = new List<StockScrap>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacityCreateUs { get; set; } = new List<StockStorageCategoryCapacity>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacityWriteUs { get; set; } = new List<StockStorageCategoryCapacity>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockStorageCategory> StockStorageCategoryCreateUs { get; set; } = new List<StockStorageCategory>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockStorageCategory> StockStorageCategoryWriteUs { get; set; } = new List<StockStorageCategory>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockTraceabilityReport> StockTraceabilityReportCreateUs { get; set; } = new List<StockTraceabilityReport>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockTraceabilityReport> StockTraceabilityReportWriteUs { get; set; } = new List<StockTraceabilityReport>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmationCreateUs { get; set; } = new List<StockTrackConfirmation>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmationWriteUs { get; set; } = new List<StockTrackConfirmation>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockTrackLine> StockTrackLineCreateUs { get; set; } = new List<StockTrackLine>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockTrackLine> StockTrackLineWriteUs { get; set; } = new List<StockTrackLine>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayerCreateUs { get; set; } = new List<StockValuationLayer>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluationCreateUs { get; set; } = new List<StockValuationLayerRevaluation>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluationWriteUs { get; set; } = new List<StockValuationLayerRevaluation>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayerWriteUs { get; set; } = new List<StockValuationLayer>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseCreateUs { get; set; } = new List<StockWarehouse>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointCreateUs { get; set; } = new List<StockWarehouseOrderpoint>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointWriteUs { get; set; } = new List<StockWarehouseOrderpoint>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWriteUs { get; set; } = new List<StockWarehouse>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairCreateUs { get; set; } = new List<StockWarnInsufficientQtyRepair>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairWriteUs { get; set; } = new List<StockWarnInsufficientQtyRepair>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrapCreateUs { get; set; } = new List<StockWarnInsufficientQtyScrap>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrapWriteUs { get; set; } = new List<StockWarnInsufficientQtyScrap>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuildCreateUs { get; set; } = new List<StockWarnInsufficientQtyUnbuild>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuildWriteUs { get; set; } = new List<StockWarnInsufficientQtyUnbuild>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ThemeIrAsset> ThemeIrAssetCreateUs { get; set; } = new List<ThemeIrAsset>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ThemeIrAsset> ThemeIrAssetWriteUs { get; set; } = new List<ThemeIrAsset>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ThemeIrAttachment> ThemeIrAttachmentCreateUs { get; set; } = new List<ThemeIrAttachment>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ThemeIrAttachment> ThemeIrAttachmentWriteUs { get; set; } = new List<ThemeIrAttachment>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ThemeIrUiView> ThemeIrUiViewCreateUs { get; set; } = new List<ThemeIrUiView>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ThemeIrUiView> ThemeIrUiViewWriteUs { get; set; } = new List<ThemeIrUiView>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenuCreateUs { get; set; } = new List<ThemeWebsiteMenu>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenuWriteUs { get; set; } = new List<ThemeWebsiteMenu>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePageCreateUs { get; set; } = new List<ThemeWebsitePage>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePageWriteUs { get; set; } = new List<ThemeWebsitePage>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<UomCategory> UomCategoryCreateUs { get; set; } = new List<UomCategory>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<UomCategory> UomCategoryWriteUs { get; set; } = new List<UomCategory>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<UomUom> UomUomCreateUs { get; set; } = new List<UomUom>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<UomUom> UomUomWriteUs { get; set; } = new List<UomUom>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<UtmCampaign> UtmCampaignCreateUs { get; set; } = new List<UtmCampaign>();
+    public virtual ICollection<StockRequestCount> StockRequestCountCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<UtmCampaign> UtmCampaignUsers { get; set; } = new List<UtmCampaign>();
+    public virtual ICollection<StockRequestCount> StockRequestCountUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<UtmCampaign> UtmCampaignWriteUs { get; set; } = new List<UtmCampaign>();
+    public virtual ICollection<StockRequestCount> StockRequestCountWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<UtmMedium> UtmMediumCreateUs { get; set; } = new List<UtmMedium>();
-
-    //[InverseProperty("WriteU")]
-    [NotMapped]
-    public virtual ICollection<UtmMedium> UtmMediumWriteUs { get; set; } = new List<UtmMedium>();
+    public virtual ICollection<StockReturnPicking> StockReturnPickingCreateUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<UtmSource> UtmSourceCreateUs { get; set; } = new List<UtmSource>();
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLineCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<UtmSource> UtmSourceWriteUs { get; set; } = new List<UtmSource>();
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLineWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockReturnPicking> StockReturnPickingWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<UtmStage> UtmStageCreateUs { get; set; } = new List<UtmStage>();
+    public virtual ICollection<StockRoute> StockRouteCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<UtmStage> UtmStageWriteUs { get; set; } = new List<UtmStage>();
+    public virtual ICollection<StockRoute> StockRouteWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<UtmTag> UtmTagCreateUs { get; set; } = new List<UtmTag>();
+    public virtual ICollection<StockRule> StockRuleCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<UtmTag> UtmTagWriteUs { get; set; } = new List<UtmTag>();
+    public virtual ICollection<StockRule> StockRuleWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ValidateAccountMove> ValidateAccountMoveCreateUs { get; set; } = new List<ValidateAccountMove>();
+    public virtual ICollection<StockRulesReport> StockRulesReportCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ValidateAccountMove> ValidateAccountMoveWriteUs { get; set; } = new List<ValidateAccountMove>();
+    public virtual ICollection<StockRulesReport> StockRulesReportWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTestCreateUs { get; set; } = new List<WebEditorConverterTest>();
+    public virtual ICollection<StockSchedulerCompute> StockSchedulerComputeCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockSchedulerCompute> StockSchedulerComputeWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebEditorConverterTestSub> WebEditorConverterTestSubCreateUs { get; set; } = new List<WebEditorConverterTestSub>();
+    public virtual ICollection<StockScrap> StockScrapCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebEditorConverterTestSub> WebEditorConverterTestSubWriteUs { get; set; } = new List<WebEditorConverterTestSub>();
+    public virtual ICollection<StockScrap> StockScrapWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacityCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTestWriteUs { get; set; } = new List<WebEditorConverterTest>();
+    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacityWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockStorageCategory> StockStorageCategoryCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockStorageCategory> StockStorageCategoryWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockTraceabilityReport> StockTraceabilityReportCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockTraceabilityReport> StockTraceabilityReportWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmationCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmationWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockTrackLine> StockTrackLineCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockTrackLine> StockTrackLineWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockValuationLayer> StockValuationLayerCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluationCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluationWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockValuationLayer> StockValuationLayerWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockWarehouse> StockWarehouseCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockWarehouse> StockWarehouseWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrapCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrapWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuildCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuildWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ThemeIrAsset> ThemeIrAssetCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ThemeIrAsset> ThemeIrAssetWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ThemeIrAttachment> ThemeIrAttachmentCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ThemeIrAttachment> ThemeIrAttachmentWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ThemeIrUiView> ThemeIrUiViewCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ThemeIrUiView> ThemeIrUiViewWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenuCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenuWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePageCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePageWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<UomCategory> UomCategoryCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<UomCategory> UomCategoryWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<UomUom> UomUomCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<UomUom> UomUomWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<UtmCampaign> UtmCampaignCreateUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<WebTourTour> WebTourTours { get; set; } = new List<WebTourTour>();
-
-    //[InverseProperty("CreateU")]
-    [NotMapped]
-    public virtual ICollection<WebsiteBaseUnit> WebsiteBaseUnitCreateUs { get; set; } = new List<WebsiteBaseUnit>();
+    public virtual ICollection<UtmCampaign> UtmCampaignUsers { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteBaseUnit> WebsiteBaseUnitWriteUs { get; set; } = new List<WebsiteBaseUnit>();
+    public virtual ICollection<UtmCampaign> UtmCampaignWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatureCreateUs { get; set; } = new List<WebsiteConfiguratorFeature>();
+    public virtual ICollection<UtmMedium> UtmMediumCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatureWriteUs { get; set; } = new List<WebsiteConfiguratorFeature>();
+    public virtual ICollection<UtmMedium> UtmMediumWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteCreateUs { get; set; } = new List<Website>();
+    public virtual ICollection<UtmSource> UtmSourceCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<UtmSource> UtmSourceWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<UtmStage> UtmStageCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<UtmStage> UtmStageWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<UtmTag> UtmTagCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<UtmTag> UtmTagWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<ValidateAccountMove> ValidateAccountMoveCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<ValidateAccountMove> ValidateAccountMoveWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTestCreateUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<WebEditorConverterTestSub> WebEditorConverterTestSubCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<WebEditorConverterTestSub> WebEditorConverterTestSubWriteUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<WebEditorConverterTest> WebEditorConverterTestWriteUs { get; set; } 
+
+    //[InverseProperty("User")]
+    [NotMapped]
+    public virtual ICollection<WebTourTour> WebTourTours { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<WebsiteBaseUnit> WebsiteBaseUnitCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<WebsiteBaseUnit> WebsiteBaseUnitWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatureCreateUs { get; set; } 
+
+    //[InverseProperty("WriteU")]
+    [NotMapped]
+    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatureWriteUs { get; set; } 
+
+    //[InverseProperty("CreateU")]
+    [NotMapped]
+    public virtual ICollection<Website> WebsiteCreateUs { get; set; } 
 
     //[InverseProperty("CrmDefaultUser")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteCrmDefaultUsers { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteCrmDefaultUsers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenuCreateUs { get; set; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> WebsiteMenuCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenuWriteUs { get; set; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> WebsiteMenuWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsitePage> WebsitePageCreateUs { get; set; } = new List<WebsitePage>();
+    public virtual ICollection<WebsitePage> WebsitePageCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsitePage> WebsitePageWriteUs { get; set; } = new List<WebsitePage>();
+    public virtual ICollection<WebsitePage> WebsitePageWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteRewrite> WebsiteRewriteCreateUs { get; set; } = new List<WebsiteRewrite>();
+    public virtual ICollection<WebsiteRewrite> WebsiteRewriteCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteRewrite> WebsiteRewriteWriteUs { get; set; } = new List<WebsiteRewrite>();
+    public virtual ICollection<WebsiteRewrite> WebsiteRewriteWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteRobot> WebsiteRobotCreateUs { get; set; } = new List<WebsiteRobot>();
+    public virtual ICollection<WebsiteRobot> WebsiteRobotCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteRobot> WebsiteRobotWriteUs { get; set; } = new List<WebsiteRobot>();
+    public virtual ICollection<WebsiteRobot> WebsiteRobotWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteRoute> WebsiteRouteCreateUs { get; set; } = new List<WebsiteRoute>();
+    public virtual ICollection<WebsiteRoute> WebsiteRouteCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteRoute> WebsiteRouteWriteUs { get; set; } = new List<WebsiteRoute>();
+    public virtual ICollection<WebsiteRoute> WebsiteRouteWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFieldCreateUs { get; set; } = new List<WebsiteSaleExtraField>();
+    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFieldCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFieldWriteUs { get; set; } = new List<WebsiteSaleExtraField>();
+    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFieldWriteUs { get; set; } 
 
     //[InverseProperty("Salesperson")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteSalespeople { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteSalespeople { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilterCreateUs { get; set; } = new List<WebsiteSnippetFilter>();
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilterCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilterWriteUs { get; set; } = new List<WebsiteSnippetFilter>();
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilterWriteUs { get; set; } 
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteUsers { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteUsers { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitorCreateUs { get; set; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitorCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitorWriteUs { get; set; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitorWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteWriteUs { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteWriteUs { get; set; } 
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreateCreateUs { get; set; } = new List<WizardIrModelMenuCreate>();
+    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreateCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreateWriteUs { get; set; } = new List<WizardIrModelMenuCreate>();
+    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreateWriteUs { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("Users")]
     [NotMapped]
-    public virtual ICollection<ResCompany> Cids { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> Cids { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
-    public virtual ICollection<DigestDigest> DigestDigests { get; set; } = new List<DigestDigest>();
+    public virtual ICollection<DigestDigest> DigestDigests { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
-    public virtual ICollection<DigestTip> DigestTips { get; set; } = new List<DigestTip>();
+    public virtual ICollection<DigestTip> DigestTips { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsersNavigation")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobsNavigation { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobsNavigation { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("Users")]
     [NotMapped]
-    public virtual ICollection<HrJob> Jobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> Jobs { get; set; } 
 
     [ForeignKey("ResUsersId")]
     //[InverseProperty("ResUsers")]
     [NotMapped]
-    public virtual ICollection<MaintenanceTeam> MaintenanceTeams { get; set; } = new List<MaintenanceTeam>();
+    public virtual ICollection<MaintenanceTeam> MaintenanceTeams { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("Users")]
     [NotMapped]
-    public virtual ICollection<LunchProduct> Products { get; set; } = new List<LunchProduct>();
+    public virtual ICollection<LunchProduct> Products { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("Users")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> Projects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> Projects { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("Users")]
     [NotMapped]
-    public virtual ICollection<CrmTeam> Teams { get; set; } = new List<CrmTeam>();
+    public virtual ICollection<CrmTeam> Teams { get; set; } 
     */
 }

@@ -74,7 +74,7 @@ public partial class OnboardingOnboardingStep: FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("Step")]
     [NotMapped]
-    public virtual ICollection<OnboardingProgressStep> OnboardingProgressSteps { get; set; } = new List<OnboardingProgressStep>();
+    public virtual ICollection<OnboardingProgressStep> OnboardingProgressSteps { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("OnboardingOnboardingStepWriteUs")]
@@ -84,5 +84,5 @@ public partial class OnboardingOnboardingStep: FullAuditedEntity<Guid>, IEntityD
     [ForeignKey("OnboardingOnboardingStepId")]
     //[InverseProperty("OnboardingOnboardingSteps")]
     [NotMapped]
-    public virtual ICollection<OnboardingOnboarding> OnboardingOnboardings { get; set; } = new List<OnboardingOnboarding>();
+    public virtual ICollection<OnboardingOnboarding> OnboardingOnboardings { get; set; } 
 }

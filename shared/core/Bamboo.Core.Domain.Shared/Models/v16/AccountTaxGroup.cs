@@ -96,14 +96,14 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("TaxGroup")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     //[InverseProperty("TaxGroup")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } 
 
     //[InverseProperty("TaxGroup")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 
 }

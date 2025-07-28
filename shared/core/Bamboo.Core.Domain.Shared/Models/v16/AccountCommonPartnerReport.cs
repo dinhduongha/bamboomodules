@@ -62,10 +62,10 @@ public partial class AccountCommonPartnerReport: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("AccountCommonPartnerReportId")]
     //[InverseProperty("AccountCommonPartnerReports")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 
     [ForeignKey("AccountCommonPartnerReportId")]
     //[InverseProperty("AccountCommonPartnerReports")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

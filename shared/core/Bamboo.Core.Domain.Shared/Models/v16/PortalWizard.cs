@@ -51,10 +51,10 @@ public partial class PortalWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<PortalWizardUser> PortalWizardUsers { get; set; } = new List<PortalWizardUser>();
+    public virtual ICollection<PortalWizardUser> PortalWizardUsers { get; set; } 
 
     [ForeignKey("PortalWizardId")]
     //[InverseProperty("PortalWizards")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

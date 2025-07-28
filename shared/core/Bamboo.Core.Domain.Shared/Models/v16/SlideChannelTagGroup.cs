@@ -51,7 +51,7 @@ public partial class SlideChannelTagGroup: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<SlideChannelTag> SlideChannelTags { get; set; } = new List<SlideChannelTag>();
+    public virtual ICollection<SlideChannelTag> SlideChannelTags { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SlideChannelTagGroupWriteUs")]

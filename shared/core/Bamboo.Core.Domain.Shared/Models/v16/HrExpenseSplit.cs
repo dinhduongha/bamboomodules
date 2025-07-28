@@ -115,5 +115,5 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("HrExpenseSplitId")]
     //[InverseProperty("HrExpenseSplits")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 }

@@ -62,5 +62,5 @@ public partial class MailingListMerge: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("MailingListMergeId")]
     //[InverseProperty("MailingListMerges")]
     [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } = new List<MailingList>();
+    public virtual ICollection<MailingList> MailingLists { get; set; } 
 }

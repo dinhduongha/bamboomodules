@@ -86,7 +86,7 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } = new List<StockReturnPickingLine>();
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("StockReturnPickingWriteUs")]

@@ -174,14 +174,14 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("RefundedOrderline")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; set; } 
 
     //[InverseProperty("PosOrderLine")]
     [NotMapped]
-    public virtual ICollection<PosPackOperationLot> PosPackOperationLots { get; set; } = new List<PosPackOperationLot>();
+    public virtual ICollection<PosPackOperationLot> PosPackOperationLots { get; set; } 
 
     [ForeignKey("PosOrderLineId")]
     //[InverseProperty("PosOrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 }

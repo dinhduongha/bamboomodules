@@ -86,22 +86,22 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; } = new List<SaleOrderTemplateLine>();
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; } 
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; } = new List<SaleOrderTemplateOption>();
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; } 
 
     //[InverseProperty("SaleOrderTemplate")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     [ForeignKey("SaleOrderTemplateId")]
     //[InverseProperty("SaleOrderTemplates")]
     [NotMapped]
-    public virtual ICollection<QuotationDocument> QuotationDocuments { get; set; } = new List<QuotationDocument>();
+    public virtual ICollection<QuotationDocument> QuotationDocuments { get; set; } 
 }

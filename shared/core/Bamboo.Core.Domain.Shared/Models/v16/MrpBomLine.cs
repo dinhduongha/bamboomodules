@@ -99,7 +99,7 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("BomLine")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MrpBomLineWriteUs")]
@@ -109,5 +109,5 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("MrpBomLineId")]
     //[InverseProperty("MrpBomLines")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 }

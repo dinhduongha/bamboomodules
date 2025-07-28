@@ -45,6 +45,6 @@ public partial class BaseImportTestsModelsM2oRelated: FullAuditedEntity<Guid>, I
 
     //[InverseProperty("ValueNavigation")]
     [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2os { get; } = new List<BaseImportTestsModelsM2o>();
+    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2os { get; } 
 
 }

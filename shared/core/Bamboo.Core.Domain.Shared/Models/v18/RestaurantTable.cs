@@ -80,7 +80,7 @@ public partial class RestaurantTable: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<RestaurantTable> InverseParent { get; set; } = new List<RestaurantTable>();
+    public virtual ICollection<RestaurantTable> InverseParent { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -89,7 +89,7 @@ public partial class RestaurantTable: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Table")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("RestaurantTableWriteUs")]

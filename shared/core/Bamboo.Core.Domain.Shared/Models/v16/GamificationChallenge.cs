@@ -118,15 +118,15 @@ public partial class GamificationChallenge : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("Challenge")]
     [NotMapped]
-    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUsers { get; set; } = new List<GamificationBadgeUser>();
+    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUsers { get; set; } 
 
     //[InverseProperty("Challenge")]
     [NotMapped]
-    public virtual ICollection<GamificationChallengeLine> GamificationChallengeLines { get; set; } = new List<GamificationChallengeLine>();
+    public virtual ICollection<GamificationChallengeLine> GamificationChallengeLines { get; set; } 
 
     //[InverseProperty("Challenge")]
     [NotMapped]
-    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } = new List<GamificationGoal>();
+    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } 
 
     [ForeignKey("ManagerId")]
     //[InverseProperty("GamificationChallengeManagers")]
@@ -172,11 +172,11 @@ public partial class GamificationChallenge : FullAuditedEntity<Guid>, IEntityDto
     //[ForeignKey("GamificationChallengeId")]
     //[InverseProperty("GamificationChallenges")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 
     //TODO: multiple navigations
     //[ForeignKey("GamificationChallengeId")]
     //[InverseProperty("GamificationChallengesNavigation")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsersNavigation { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsersNavigation { get; set; } 
 }

@@ -55,7 +55,7 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("InvoiceCashRounding")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]
@@ -69,7 +69,7 @@ public partial class AccountCashRounding : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("RoundingMethodNavigation")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountCashRoundingWriteUs")]

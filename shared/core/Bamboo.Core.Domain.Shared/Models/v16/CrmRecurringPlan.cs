@@ -56,7 +56,7 @@ public partial class CrmRecurringPlan : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("RecurringPlanNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CrmRecurringPlanWriteUs")]

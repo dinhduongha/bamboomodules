@@ -56,5 +56,5 @@ public partial class MrpWorkcenterTag : FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("MrpWorkcenterTagId")]
     //[InverseProperty("MrpWorkcenterTags")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } 
 }

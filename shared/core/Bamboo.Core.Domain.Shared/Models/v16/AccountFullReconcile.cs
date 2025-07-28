@@ -40,11 +40,11 @@ public partial class AccountFullReconcile : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("FullReconcile")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     //[InverseProperty("FullReconcile")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]

@@ -45,5 +45,5 @@ public partial class AccountMoveSendBatchWizard: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("AccountMoveSendBatchWizardId")]
     //[InverseProperty("AccountMoveSendBatchWizards")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 }

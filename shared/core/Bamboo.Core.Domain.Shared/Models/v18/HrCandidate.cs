@@ -94,7 +94,7 @@ public partial class HrCandidate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Candidate")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     [ForeignKey("CompanyId")]
     //[InverseProperty("HrCandidates")]
@@ -113,11 +113,11 @@ public partial class HrCandidate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Candidate")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     //[InverseProperty("Candidate")]
     [NotMapped]
-    public virtual ICollection<HrCandidateSkill> HrCandidateSkills { get; set; } = new List<HrCandidateSkill>();
+    public virtual ICollection<HrCandidateSkill> HrCandidateSkills { get; set; } 
 
     [ForeignKey("MessageMainAttachmentId")]
     //[InverseProperty("HrCandidates")]
@@ -147,15 +147,15 @@ public partial class HrCandidate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("HrCandidateId")]
     //[InverseProperty("HrCandidates")]
     [NotMapped]
-    public virtual ICollection<CandidateSendMail> CandidateSendMails { get; set; } = new List<CandidateSendMail>();
+    public virtual ICollection<CandidateSendMail> CandidateSendMails { get; set; } 
 
     [ForeignKey("HrCandidateId")]
     //[InverseProperty("HrCandidates")]
     [NotMapped]
-    public virtual ICollection<HrApplicantCategory> HrApplicantCategories { get; set; } = new List<HrApplicantCategory>();
+    public virtual ICollection<HrApplicantCategory> HrApplicantCategories { get; set; } 
 
     [ForeignKey("HrCandidateId")]
     //[InverseProperty("HrCandidates")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; set; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkills { get; set; } 
 }

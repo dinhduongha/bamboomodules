@@ -72,11 +72,11 @@ public partial class AccountMoveReversal: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ReversalId")]
     //[InverseProperty("Reversals")]
     [NotMapped]
-    public virtual ICollection<AccountMove> Moves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> Moves { get; set; } 
 
     // v16-Compat
     //[ForeignKey("ReversalId")]
     //[InverseProperty("ReversalsNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountMove> NewMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> NewMoves { get; set; } 
 }

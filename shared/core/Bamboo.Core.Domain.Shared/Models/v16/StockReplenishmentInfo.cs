@@ -51,7 +51,7 @@ public partial class StockReplenishmentInfo : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("ReplenishmentInfo")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } = new List<StockReplenishmentOption>();
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("StockReplenishmentInfoWriteUs")]
@@ -61,5 +61,5 @@ public partial class StockReplenishmentInfo : FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("StockReplenishmentInfoId")]
     //[InverseProperty("StockReplenishmentInfos")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } = new List<ProductSupplierinfo>();
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } 
 }

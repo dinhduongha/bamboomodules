@@ -197,7 +197,7 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Equipment")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } 
 
 
 }

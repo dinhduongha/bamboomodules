@@ -101,5 +101,5 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("StockPutawayRuleId")]
     //[InverseProperty("StockPutawayRules")]
     [NotMapped]
-    public virtual ICollection<StockPackageType> StockPackageTypes { get; set; } = new List<StockPackageType>();
+    public virtual ICollection<StockPackageType> StockPackageTypes { get; set; } 
 }

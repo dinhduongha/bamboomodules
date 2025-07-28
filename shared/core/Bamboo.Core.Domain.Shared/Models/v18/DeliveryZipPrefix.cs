@@ -49,5 +49,5 @@ public partial class DeliveryZipPrefix: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("ZipPrefixId")]
     //[InverseProperty("ZipPrefixes")]
     [NotMapped]
-    public virtual ICollection<DeliveryCarrier> Carriers { get; set; } = new List<DeliveryCarrier>();
+    public virtual ICollection<DeliveryCarrier> Carriers { get; set; } 
 }

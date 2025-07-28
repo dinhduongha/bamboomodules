@@ -199,21 +199,21 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Composer")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } 
 
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } 
     
     [ForeignKey("MailComposeMessageId")]
     //[InverseProperty("MailComposeMessages")]
     [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } = new List<MailingList>();
+    public virtual ICollection<MailingList> MailingLists { get; set; } 
 
 }

@@ -86,5 +86,5 @@ public partial class RecurringPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("RecurringPayment")]
     [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } = new List<RecurringPaymentLine>();
+    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } 
 }

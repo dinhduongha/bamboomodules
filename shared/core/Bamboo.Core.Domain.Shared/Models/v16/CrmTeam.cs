@@ -85,7 +85,7 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Team")]
     // [NotMapped]
-    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     [ForeignKey("AliasId")]
     //[InverseProperty("CrmTeams")]
@@ -119,70 +119,70 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencies { get; set; } = new List<CrmLeadScoringFrequency>();
+    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencies { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunities { get; set; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunities { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<CrmStage> CrmStages { get; set; } = new List<CrmStage>();
+    public virtual ICollection<CrmStage> CrmStages { get; set; } 
 
     //[InverseProperty("CrmTeam")]
     [NotMapped]
-    public virtual ICollection<CrmTeamMember> CrmTeamMembers { get; set; } = new List<CrmTeamMember>();
+    public virtual ICollection<CrmTeamMember> CrmTeamMembers { get; set; } 
 
     //[InverseProperty("CrmTeam")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     //[InverseProperty("CrmTeam")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 
     //[InverseProperty("SaleTeam")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 
     //[InverseProperty("Team")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     //[InverseProperty("CrmDefaultTeam")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteCrmDefaultTeams { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteCrmDefaultTeams { get; set; } 
 
     //[InverseProperty("Salesteam")]
     [NotMapped]
-    public virtual ICollection<Website> WebsiteSalesteams { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsiteSalesteams { get; set; } 
 
     [ForeignKey("TeamId")]
     //[InverseProperty("Teams")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } 
 }

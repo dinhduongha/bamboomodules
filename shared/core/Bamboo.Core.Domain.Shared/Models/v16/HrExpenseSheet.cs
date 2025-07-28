@@ -168,14 +168,14 @@ public partial class HrExpenseSheet: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Sheet")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } 
 
     //[InverseProperty("HrExpenseSheet")]
     [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } = new List<HrExpenseRefuseWizard>();
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } 
 
     [ForeignKey("HrExpenseSheetId")]
     //[InverseProperty("HrExpenseSheets")]
     [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } = new List<HrExpenseApproveDuplicate>();
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } 
 }

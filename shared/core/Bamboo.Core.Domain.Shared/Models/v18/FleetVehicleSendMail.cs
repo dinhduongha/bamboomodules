@@ -70,10 +70,10 @@ public partial class FleetVehicleSendMail: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 
     [ForeignKey("FleetVehicleSendMailId")]
     //[InverseProperty("FleetVehicleSendMails")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } 
 }

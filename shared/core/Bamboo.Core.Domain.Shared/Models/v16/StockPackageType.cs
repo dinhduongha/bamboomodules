@@ -81,18 +81,18 @@ public partial class StockPackageType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("PackageType")]
     [NotMapped]
-    public virtual ICollection<ProductPackaging> ProductPackagings { get; set; } = new List<ProductPackaging>();
+    public virtual ICollection<ProductPackaging> ProductPackagings { get; set; } 
 
     //[InverseProperty("PackageType")]
     [NotMapped]
-    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; set; } = new List<StockQuantPackage>();
+    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; set; } 
 
     //[InverseProperty("PackageType")]
     [NotMapped]
-    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacities { get; set; } = new List<StockStorageCategoryCapacity>();
+    public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacities { get; set; } 
 
     [ForeignKey("StockPackageTypeId")]
     //[InverseProperty("StockPackageTypes")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } 
 }

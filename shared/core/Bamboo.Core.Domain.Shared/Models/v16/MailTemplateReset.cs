@@ -45,5 +45,5 @@ public partial class MailTemplateReset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("MailTemplateResetId")]
     //[InverseProperty("MailTemplateResets")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
 }

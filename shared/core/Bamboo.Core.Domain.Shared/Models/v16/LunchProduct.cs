@@ -82,10 +82,10 @@ public partial class LunchProduct: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Product")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; set; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrders { get; set; } 
 
     [ForeignKey("ProductId")]
     //[InverseProperty("Products")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } 
 }

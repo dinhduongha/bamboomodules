@@ -45,5 +45,5 @@ public partial class ProjectProjectStageDeleteWizard: FullAuditedEntity<Guid>, I
     [ForeignKey("ProjectProjectStageDeleteWizardId")]
     //[InverseProperty("ProjectProjectStageDeleteWizards")]
     [NotMapped]
-    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; set; } = new List<ProjectProjectStage>();
+    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; set; } 
 }

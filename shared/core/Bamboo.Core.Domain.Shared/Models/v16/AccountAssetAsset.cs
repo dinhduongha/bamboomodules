@@ -113,7 +113,7 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Asset")]
     [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } = new List<AccountAssetDepreciationLine>();
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } 
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("AccountAssetAssets")]
@@ -159,6 +159,6 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     // v16-Compat
     //[InverseProperty("Asset")]
     // [NotMapped]
-    // public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } = new List<AccountAssetDepreciationLine>();
+    // public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } 
 
 }

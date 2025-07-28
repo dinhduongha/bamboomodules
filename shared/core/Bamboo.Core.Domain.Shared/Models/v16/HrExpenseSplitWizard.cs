@@ -56,6 +56,6 @@ public partial class HrExpenseSplitWizard : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } 
 
 }

@@ -101,7 +101,7 @@ public partial class DiscussChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("VideocallChannel")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     [ForeignKey("ChatbotCurrentStepId")]
     //[InverseProperty("DiscussChannels")]
@@ -110,7 +110,7 @@ public partial class DiscussChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("DiscussChannel")]
     [NotMapped]
-    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } = new List<ChatbotMessage>();
+    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } 
 
     [ForeignKey("CountryId")]
     //[InverseProperty("DiscussChannels")]
@@ -124,11 +124,11 @@ public partial class DiscussChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<DiscussChannelMember> DiscussChannelMembers { get; set; } = new List<DiscussChannelMember>();
+    public virtual ICollection<DiscussChannelMember> DiscussChannelMembers { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<DiscussChannelRtcSession> DiscussChannelRtcSessions { get; set; } = new List<DiscussChannelRtcSession>();
+    public virtual ICollection<DiscussChannelRtcSession> DiscussChannelRtcSessions { get; set; } 
 
     [ForeignKey("FromMessageId")]
     //[InverseProperty("DiscussChannel")]
@@ -137,7 +137,7 @@ public partial class DiscussChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("ReportMessageGroup")]
     [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallenges { get; set; } = new List<GamificationChallenge>();
+    public virtual ICollection<GamificationChallenge> GamificationChallenges { get; set; } 
 
     [ForeignKey("GroupPublicId")]
     //[InverseProperty("DiscussChannels")]
@@ -146,7 +146,7 @@ public partial class DiscussChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("ParentChannel")]
     [NotMapped]
-    public virtual ICollection<DiscussChannel> InverseParentChannel { get; set; } = new List<DiscussChannel>();
+    public virtual ICollection<DiscussChannel> InverseParentChannel { get; set; } 
 
     [ForeignKey("LivechatChannelId")]
     //[InverseProperty("DiscussChannels")]
@@ -176,10 +176,10 @@ public partial class DiscussChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("DiscussChannelId")]
     //[InverseProperty("DiscussChannels")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartments { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> HrDepartments { get; set; } 
 
     [ForeignKey("DiscussChannelId")]
     //[InverseProperty("DiscussChannelsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 }

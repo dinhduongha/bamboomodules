@@ -76,10 +76,10 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("SlideChannelInviteId")]
     //[InverseProperty("SlideChannelInvites")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
 
     [ForeignKey("SlideChannelInviteId")]
     //[InverseProperty("SlideChannelInvites")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

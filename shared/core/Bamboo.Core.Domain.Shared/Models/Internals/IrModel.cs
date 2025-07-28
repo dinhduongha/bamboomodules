@@ -92,148 +92,148 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<BaseLanguageExport> BaseLanguageExports { get; set; } = new List<BaseLanguageExport>();
+    public virtual ICollection<BaseLanguageExport> BaseLanguageExports { get; set; } 
 
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     //[InverseProperty("ResModel")]
     [NotMapped]
-    public virtual ICollection<DataRecycleModel> DataRecycleModels { get; set; } = new List<DataRecycleModel>();
+    public virtual ICollection<DataRecycleModel> DataRecycleModels { get; set; } 
 
     //[InverseProperty("ResModel")]
     [NotMapped]
-    public virtual ICollection<DataRecycleRecord> DataRecycleRecords { get; set; } = new List<DataRecycleRecord>();
+    public virtual ICollection<DataRecycleRecord> DataRecycleRecords { get; set; } 
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } = new List<GamificationGoalDefinition>();
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } 
 
     //[InverseProperty("Object")]
     [NotMapped]
-    public virtual ICollection<FetchmailServer> FetchmailServers { get; set; } = new List<FetchmailServer>();
+    public virtual ICollection<FetchmailServer> FetchmailServers { get; set; } 
 
     //[InverseProperty("BindingModel")]
     [NotMapped]
-    public virtual ICollection<IrActClient> IrActClients { get; set; } = new List<IrActClient>();
+    public virtual ICollection<IrActClient> IrActClients { get; set; } 
 
     //[InverseProperty("BindingModel")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> IrActReportXmls { get; set; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> IrActReportXmls { get; set; } 
 
     //[InverseProperty("BindingModel")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerBindingModels { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerBindingModels { get; set; } 
 
     //[InverseProperty("CrudModel")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerCrudModels { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerCrudModels { get; set; } 
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerModels { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerModels { get; set; } 
 
     //[InverseProperty("UpdateRelatedModel")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerUpdateRelatedModels { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerUpdateRelatedModels { get; set; } 
 
     //[InverseProperty("BindingModel")]
     [NotMapped]
-    public virtual ICollection<IrActUrl> IrActUrls { get; set; } = new List<IrActUrl>();
+    public virtual ICollection<IrActUrl> IrActUrls { get; set; } 
 
     //[InverseProperty("BindingModel")]
     [NotMapped]
-    public virtual ICollection<IrActWindow> IrActWindows { get; set; } = new List<IrActWindow>();
+    public virtual ICollection<IrActWindow> IrActWindows { get; set; } 
 
     //[InverseProperty("BindingModel")]
     [NotMapped]
-    public virtual ICollection<IrAction> IrActions { get; set; } = new List<IrAction>();
+    public virtual ICollection<IrAction> IrActions { get; set; } 
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<IrModelAccess> IrModelAccesses { get; set; } = new List<IrModelAccess>();
+    public virtual ICollection<IrModelAccess> IrModelAccesses { get; set; } 
 
     //[InverseProperty("ModelNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; set; } = new List<IrModelConstraint>();
+    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; set; } 
 
     //[InverseProperty("ModelNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelField> IrModelFields { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> IrModelFields { get; set; } 
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<IrModelInherit> IrModelInheritModels { get; set; } = new List<IrModelInherit>();
+    public virtual ICollection<IrModelInherit> IrModelInheritModels { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<IrModelInherit> IrModelInheritParents { get; set; } = new List<IrModelInherit>();
+    public virtual ICollection<IrModelInherit> IrModelInheritParents { get; set; } 
 
     //[InverseProperty("ModelNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelRelation> IrModelRelations { get; set; } = new List<IrModelRelation>();
+    public virtual ICollection<IrModelRelation> IrModelRelations { get; set; } 
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<IrRule> IrRules { get; set; } = new List<IrRule>();
+    public virtual ICollection<IrRule> IrRules { get; set; } 
 
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; set; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivities { get; set; } 
 
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<MailActivityPlan> MailActivityPlans { get; set; } = new List<MailActivityPlan>();
+    public virtual ICollection<MailActivityPlan> MailActivityPlans { get; set; } 
 
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<MailActivitySchedule> MailActivitySchedules { get; set; } = new List<MailActivitySchedule>();
+    public virtual ICollection<MailActivitySchedule> MailActivitySchedules { get; set; } 
 
     //[InverseProperty("AliasModel")]
     [NotMapped]
-    public virtual ICollection<MailAlias> MailAliasAliasModels { get; set; } = new List<MailAlias>();
+    public virtual ICollection<MailAlias> MailAliasAliasModels { get; set; } 
 
     //[InverseProperty("AliasParentModel")]
     [NotMapped]
-    public virtual ICollection<MailAlias> MailAliasAliasParentModels { get; set; } = new List<MailAlias>();
+    public virtual ICollection<MailAlias> MailAliasAliasParentModels { get; set; } 
 
     //[InverseProperty("ModelNavigation")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
 
     //[InverseProperty("MailingModel")]
     [NotMapped]
-    public virtual ICollection<MailingFilter> MailingFilters { get; set; } = new List<MailingFilter>();
+    public virtual ICollection<MailingFilter> MailingFilters { get; set; } 
 
     //[InverseProperty("MailingModel")]
     [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
 
     // v16-Compat
     //[InverseProperty("CallbackModel")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLines { get; set; } = new List<PrivacyLookupWizardLine>();
+    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLines { get; set; } 
 
     //[InverseProperty("ParentResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingParentResModelNavigations { get; set; } = new List<RatingRating>();
+    public virtual ICollection<RatingRating> RatingRatingParentResModelNavigations { get; set; } 
 
     //[InverseProperty("ResModelNavigation")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingResModelNavigations { get; set; } = new List<RatingRating>();
+    public virtual ICollection<RatingRating> RatingRatingResModelNavigations { get; set; } 
 
     //[InverseProperty("ModelNavigation")]
     [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
+    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } 
 
 
     [ForeignKey("IrModelId")]
     //[InverseProperty("IrModels")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } = new List<SpreadsheetDashboard>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } 
 }

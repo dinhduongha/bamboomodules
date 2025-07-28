@@ -86,163 +86,163 @@ public partial class ResCurrency : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     /// TODO: DISABLE INVERSE
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountAccruedOrdersWizard> AccountAccruedOrdersWizards { get; set; } = new List<AccountAccruedOrdersWizard>();
+    public virtual ICollection<AccountAccruedOrdersWizard> AccountAccruedOrdersWizards { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineCurrencies { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineCurrencies { get; set; } 
 
     //[InverseProperty("ForeignCurrency")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineForeignCurrencies { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLineForeignCurrencies { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplates { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplates { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 
     //[InverseProperty("CompanyCurrency")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLineCompanyCurrencies { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLineCompanyCurrencies { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLineCurrencies { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLineCurrencies { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("CreditCurrency")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditCurrencies { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditCurrencies { get; set; } 
 
     //[InverseProperty("DebitCurrency")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitCurrencies { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitCurrencies { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterCurrencies { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterCurrencies { get; set; } 
 
     //[InverseProperty("SourceCurrency")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterSourceCurrencies { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisterSourceCurrencies { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexes { get; set; } = new List<BaseImportTestsModelsComplex>();
+    public virtual ICollection<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexes { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsFloat> BaseImportTestsModelsFloats { get; set; } = new List<BaseImportTestsModelsFloat>();
+    public virtual ICollection<BaseImportTestsModelsFloat> BaseImportTestsModelsFloats { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> HrExpenses { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<LunchCashmove> LunchCashmoves { get; set; } = new List<LunchCashmove>();
+    public virtual ICollection<LunchCashmove> LunchCashmoves { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; set; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrders { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } = new List<MailTrackingValue>();
+    public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizards { get; set; } = new List<PaymentLinkWizard>();
+    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizards { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } = new List<ProductSupplierinfo>();
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> ResCountries { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ResCurrencyRate> ResCurrencyRates { get; set; } = new List<ResCurrencyRate>();
+    public virtual ICollection<ResCurrencyRate> ResCurrencyRates { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } = new List<ResPartnerBank>();
+    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; } = new List<SaleAdvancePaymentInv>();
+    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     //[InverseProperty("Currency")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
     
     [ForeignKey("CurrencyId")]
     //[InverseProperty("Currencies")]
     [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } 
 
 }

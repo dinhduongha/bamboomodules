@@ -74,9 +74,9 @@ public partial class StockPackageLevel: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("PackageLevel")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("PackageLevel")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 }

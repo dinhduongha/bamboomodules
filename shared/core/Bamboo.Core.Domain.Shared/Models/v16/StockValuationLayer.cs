@@ -129,6 +129,6 @@ public partial class StockValuationLayer: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("StockValuationLayerNavigation")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> InverseStockValuationLayerNavigation { get; set; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> InverseStockValuationLayerNavigation { get; set; } 
 
 }

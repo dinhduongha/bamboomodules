@@ -60,7 +60,7 @@ public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("SelectionValueNavigation")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServers { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelFieldsSelectionWriteUs")]

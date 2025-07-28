@@ -131,15 +131,15 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Registration")]
     [NotMapped]
-    public virtual ICollection<EventMailRegistration> EventMailRegistrations { get; set; } = new List<EventMailRegistration>();
+    public virtual ICollection<EventMailRegistration> EventMailRegistrations { get; set; } 
 
     //[InverseProperty("LastRegistration")]
     [NotMapped]
-    public virtual ICollection<EventMail> EventMails { get; set; } = new List<EventMail>();
+    public virtual ICollection<EventMail> EventMails { get; set; } 
 
     //[InverseProperty("Registration")]
     [NotMapped]
-    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswers { get; set; } = new List<EventRegistrationAnswer>();
+    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswers { get; set; } 
 
     [ForeignKey("EventTicketId")]
     //[InverseProperty("EventRegistrations")]
@@ -158,7 +158,7 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Registration")]
     [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } = new List<RegistrationEditorLine>();
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
 
     [ForeignKey("SaleOrderId")]
     //[InverseProperty("EventRegistrations")]
@@ -198,5 +198,5 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("EventRegistrationId")]
     //[InverseProperty("EventRegistrations")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 }

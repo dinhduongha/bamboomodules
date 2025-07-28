@@ -168,22 +168,22 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("Orderpoint")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } = new List<StockReplenishmentInfo>();
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } 
 
     [ForeignKey("StockWarehouseOrderpointId")]
     //[InverseProperty("StockWarehouseOrderpoints")]
     [NotMapped]
-    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozes { get; set; } = new List<StockOrderpointSnooze>();
+    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozes { get; set; } 
 }

@@ -64,5 +64,5 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("StockQuantRelocateId")]
     //[InverseProperty("StockQuantRelocates")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } 
 }

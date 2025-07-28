@@ -67,5 +67,5 @@ public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>
     [ForeignKey("ProductTemplateAttributeExclusionId")]
     //[InverseProperty("ProductTemplateAttributeExclusions")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 }

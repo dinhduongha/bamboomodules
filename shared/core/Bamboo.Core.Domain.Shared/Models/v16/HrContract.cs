@@ -113,7 +113,7 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Contract")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     [ForeignKey("HrResponsibleId")]
     //[InverseProperty("HrContractHrResponsibles")]

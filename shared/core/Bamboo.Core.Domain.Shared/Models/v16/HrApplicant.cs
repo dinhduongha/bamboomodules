@@ -167,7 +167,7 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Applicant")]
     // [NotMapped]
-    // public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    // public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     [ForeignKey("CampaignId")]
     //[InverseProperty("HrApplicants")]
@@ -256,34 +256,34 @@ public partial class HrApplicant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Applicant")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     //[InverseProperty("Applicant")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } 
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } = new List<ApplicantGetRefuseReason>();
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } 
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } = new List<ApplicantSendMail>();
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } 
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<HrApplicantCategory> HrApplicantCategories { get; set; } = new List<HrApplicantCategory>();
+    public virtual ICollection<HrApplicantCategory> HrApplicantCategories { get; set; } 
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; set; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkills { get; set; } 
 
     [ForeignKey("HrApplicantId")]
     //[InverseProperty("HrApplicants")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

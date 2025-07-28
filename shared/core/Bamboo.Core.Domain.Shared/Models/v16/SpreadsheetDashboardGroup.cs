@@ -53,6 +53,6 @@ public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("DashboardGroup")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } = new List<SpreadsheetDashboard>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } 
 
 }

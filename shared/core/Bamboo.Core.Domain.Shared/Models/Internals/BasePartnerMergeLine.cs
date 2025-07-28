@@ -44,7 +44,7 @@ public partial class BasePartnerMergeLine: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("CurrentLine")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizards { get; set; } = new List<BasePartnerMergeAutomaticWizard>();
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizards { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("BasePartnerMergeLineCreateUs")]

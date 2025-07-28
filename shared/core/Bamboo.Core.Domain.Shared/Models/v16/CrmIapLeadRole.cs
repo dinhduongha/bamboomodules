@@ -56,7 +56,7 @@ public partial class CrmIapLeadRole : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("PreferredRole")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CrmIapLeadRoleWriteUs")]
@@ -66,5 +66,5 @@ public partial class CrmIapLeadRole : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("CrmIapLeadRoleId")]
     //[InverseProperty("CrmIapLeadRoles")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestsNavigation { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestsNavigation { get; set; } 
 }

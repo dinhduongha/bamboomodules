@@ -81,7 +81,7 @@ public partial class WebsiteControllerPage: FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("ControllerPage")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("WebsiteControllerPageWriteUs")]

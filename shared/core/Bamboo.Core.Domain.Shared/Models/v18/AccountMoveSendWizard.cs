@@ -87,5 +87,5 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     [ForeignKey("AccountMoveSendWizardId")]
     //[InverseProperty("AccountMoveSendWizards")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

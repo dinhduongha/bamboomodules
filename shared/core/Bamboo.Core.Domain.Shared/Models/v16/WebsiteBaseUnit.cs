@@ -48,10 +48,10 @@ public partial class WebsiteBaseUnit: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("BaseUnit")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
 
     //[InverseProperty("BaseUnit")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 
 }

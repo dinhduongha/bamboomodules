@@ -74,7 +74,7 @@ public partial class IrEmbeddedAction: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("EmbeddedAction")]
     [NotMapped]
-    public virtual ICollection<IrFilter> IrFilters { get; set; } = new List<IrFilter>();
+    public virtual ICollection<IrFilter> IrFilters { get; set; } 
 
     [ForeignKey("ParentActionId")]
     //[InverseProperty("IrEmbeddedActions")]
@@ -94,5 +94,5 @@ public partial class IrEmbeddedAction: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("IrEmbeddedActionsId")]
     //[InverseProperty("IrEmbeddedActions")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 }

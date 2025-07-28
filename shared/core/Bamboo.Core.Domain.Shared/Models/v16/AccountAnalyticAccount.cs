@@ -94,97 +94,97 @@ public partial class AccountAnalyticAccount : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAccounts { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAccounts { get; set; } 
 
     //[InverseProperty("XPlan2")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2s { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2s { get; set; } 
 
     //[InverseProperty("XPlan3")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3s { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3s { get; set; } 
 
     //[InverseProperty("AccountAnalytic")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
 
     //[InverseProperty("AccountAnalytic")]
     [NotMapped]
-    public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } = new List<AccountAssetCategory>();
+    public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } 
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
     //[InverseProperty("AccountAnalytic")]
     //[NotMapped]
-    //public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
+    //public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
 
     //[InverseProperty("AccountAnalytic")]
     //[NotMapped]
-    //public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } = new List<AccountAssetCategory>();
+    //public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } 
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } = new List<AccountBalanceReport>();
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } 
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
-    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReports { get; set; } = new List<AccountCommonAccountReport>();
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReports { get; set; } 
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
-    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } = new List<AccountReportGeneralLedger>();
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } 
 
     //[InverseProperty("AnalyticAccount")]
     [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } = new List<CrossoveredBudgetLine>();
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } 
 
 
     //[InverseProperty("AnalyticAccount")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectAccounts { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjectAccounts { get; set; } 
 
     //[InverseProperty("XPlan2")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectXPlan2s { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjectXPlan2s { get; set; } 
 
     //[InverseProperty("XPlan3")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectXPlan3s { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjectXPlan3s { get; set; } 
 
 
     //[InverseProperty("AnalyticAccount")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
 
     //[InverseProperty("AnalyticAccount")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     // RELATIONS BEGIN - MUST HAVE
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     //[InverseProperty("AnalyticAccount")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 
     [ForeignKey("AccountAnalyticAccountId")]
     //[InverseProperty("AccountAnalyticAccounts")]
     //[InverseProperty("CostsHourAccount")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } 
     // RELATIONS END
 }

@@ -52,7 +52,7 @@ public partial class CardTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("CardTemplate")]
     [NotMapped]
-    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } = new List<CardCampaign>();
+    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CardTemplateCreateUs")]

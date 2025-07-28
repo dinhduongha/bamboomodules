@@ -92,32 +92,32 @@ public partial class MrpRoutingWorkcenter : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Operation")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } 
 
     //[InverseProperty("Operation")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
 
     //[InverseProperty("Operation")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
 
     //[InverseProperty("Operation")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     [ForeignKey("OperationId")]
     //[InverseProperty("Operations")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> BlockedBies { get; set; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> BlockedBies { get; set; } 
 
     [ForeignKey("BlockedById")]
     //[InverseProperty("BlockedBies")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> Operations { get; set; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> Operations { get; set; } 
 
     [ForeignKey("MrpRoutingWorkcenterId")]
     //[InverseProperty("MrpRoutingWorkcenters")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 }

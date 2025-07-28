@@ -244,18 +244,18 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("Leave")]
     [NotMapped]
-    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaves { get; set; } = new List<HrHolidaysCancelLeave>();
+    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaves { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<HrLeave> InverseParent { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> InverseParent { get; set; } 
 
     //[InverseProperty("Holiday")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } = new List<ResourceCalendarLeaf>();
+    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } 
 
     [ForeignKey("HrLeaveId")]
     //[InverseProperty("HrLeaves")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 }

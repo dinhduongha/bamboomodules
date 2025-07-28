@@ -139,7 +139,7 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<CardCard> CardCards { get; set; } = new List<CardCard>();
+    public virtual ICollection<CardCard> CardCards { get; set; } 
 
     [ForeignKey("CardTemplateId")]
     //[InverseProperty("CardCampaigns")]
@@ -158,7 +158,7 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("CardCampaign")]
     [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("CardCampaignUsers")]
@@ -173,5 +173,5 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("CardCampaignId")]
     //[InverseProperty("CardCampaigns")]
     [NotMapped]
-    public virtual ICollection<CardCampaignTag> CardCampaignTags { get; set; } = new List<CardCampaignTag>();
+    public virtual ICollection<CardCampaignTag> CardCampaignTags { get; set; } 
 }

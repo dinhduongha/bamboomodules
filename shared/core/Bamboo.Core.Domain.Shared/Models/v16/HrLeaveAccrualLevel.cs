@@ -155,6 +155,6 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     // v16-Compat
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; set; } = new List<HrLeaveAccrualLevel>();
+    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; set; } 
 
 }

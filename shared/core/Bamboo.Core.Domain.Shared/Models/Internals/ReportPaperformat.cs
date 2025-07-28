@@ -90,10 +90,10 @@ public partial class ReportPaperformat : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Paperformat")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> IrActReportXmls { get; set; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> IrActReportXmls { get; set; } 
 
     //[InverseProperty("Paperformat")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
 }

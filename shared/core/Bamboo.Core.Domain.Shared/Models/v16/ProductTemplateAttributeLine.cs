@@ -75,10 +75,10 @@ public partial class ProductTemplateAttributeLine : FullAuditedEntity<Guid>, IEn
 
     //[InverseProperty("AttributeLine")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeLineId")]
     //[InverseProperty("ProductTemplateAttributeLines")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; set; } = new List<ProductAttributeValue>();
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; set; } 
 }

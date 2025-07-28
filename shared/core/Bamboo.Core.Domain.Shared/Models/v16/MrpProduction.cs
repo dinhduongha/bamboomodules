@@ -239,104 +239,104 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Mo")]
     [NotMapped]
-    public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
+    public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } 
 
     //[InverseProperty("Mo")]
     //[NotMapped]
-    //public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } = new List<ChangeProductionQty>();
+    //public virtual ICollection<ChangeProductionQty> ChangeProductionQties { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpBatchProduce> MrpBatchProduces { get; set; } = new List<MrpBatchProduce>();
+    public virtual ICollection<MrpBatchProduce> MrpBatchProduces { get; set; } 
 
     //[InverseProperty("MrpProduction")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; } = new List<MrpConsumptionWarningLine>();
+    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLines { get; set; } = new List<MrpImmediateProductionLine>();
+    public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLines { get; set; } 
 
     //[InverseProperty("MrpProduction")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLines { get; set; } = new List<MrpProductionBackorderLine>();
+    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLines { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpProductionSplit> MrpProductionSplits { get; set; } = new List<MrpProductionSplit>();
+    public virtual ICollection<MrpProductionSplit> MrpProductionSplits { get; set; } 
 
     //[InverseProperty("Mo")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } = new List<StockAssignSerial>();
+    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } 
 
     //[InverseProperty("CreatedProduction")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveCreatedProductions { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveCreatedProductions { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveProductions { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveProductions { get; set; } 
 
     //[InverseProperty("RawMaterialProduction")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveRawMaterialProductions { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveRawMaterialProductions { get; set; } 
 
     //[InverseProperty("Production")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarnings { get; set; } = new List<MrpConsumptionWarning>();
+    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarnings { get; set; } 
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpAccountWipAccounting> MrpAccountWipAccountings { get; set; } = new List<MrpAccountWipAccounting>();
+    public virtual ICollection<MrpAccountWipAccounting> MrpAccountWipAccountings { get; set; } 
 
 
     // RELATIONS BEGIN - MUST HAVE
     //[ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     //[NotMapped]
-    //public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } = new List<AccountAnalyticAccount>();
+    //public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } 
     // RELATIONS END
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductions { get; set; } = new List<MrpImmediateProduction>();
+    public virtual ICollection<MrpImmediateProduction> MrpImmediateProductions { get; set; } 
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorders { get; set; } = new List<MrpProductionBackorder>();
+    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorders { get; set; } 
 
     [ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     [NotMapped]
-    public virtual ICollection<PickingLabelType> PickingLabelTypes { get; set; } = new List<PickingLabelType>();
+    public virtual ICollection<PickingLabelType> PickingLabelTypes { get; set; } 
 
     [ForeignKey("ProductionId")]
     //[InverseProperty("Productions")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } 
 }

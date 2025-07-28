@@ -54,10 +54,10 @@ public partial class HrDepartureReason : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("DepartureReason")]
     [NotMapped]
-    public virtual ICollection<HrDepartureWizard> HrDepartureWizards { get; set; } = new List<HrDepartureWizard>();
+    public virtual ICollection<HrDepartureWizard> HrDepartureWizards { get; set; } 
 
     //[InverseProperty("DepartureReason")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
 }

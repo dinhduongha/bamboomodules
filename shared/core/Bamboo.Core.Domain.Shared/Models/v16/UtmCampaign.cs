@@ -84,7 +84,7 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     [ForeignKey("TenantId")]
     //[InverseProperty("UtmCampaigns")]
@@ -114,50 +114,50 @@ public partial class UtmCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     // v16-Compat
     //[InverseProperty("Campaign")]
     // [NotMapped]
-    // public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    // public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("UtmCampaign")]
     [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } = new List<LinkTrackerClick>();
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } = new List<LinkTracker>();
+    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<MailingTrace> MailingTraces { get; set; } = new List<MailingTrace>();
+    public virtual ICollection<MailingTrace> MailingTraces { get; set; } 
 
     //[InverseProperty("Campaign")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     //[InverseProperty("UtmCampaign")]
     [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposers { get; set; } = new List<SmsComposer>();
+    public virtual ICollection<SmsComposer> SmsComposers { get; set; } 
 
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<UtmTag> Campaigns { get; set; } = new List<UtmTag>();
+    public virtual ICollection<UtmTag> Campaigns { get; set; } 
 }

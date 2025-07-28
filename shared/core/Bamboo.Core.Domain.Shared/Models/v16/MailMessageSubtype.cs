@@ -72,23 +72,23 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("AllocationNotifSubtype")]
     [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtypes { get; set; } = new List<HrLeaveType>();
+    public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtypes { get; set; } 
 
     //[InverseProperty("LeaveNotifSubtype")]
     [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtypes { get; set; } = new List<HrLeaveType>();
+    public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtypes { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<MailMessageSubtype> InverseParent { get; set; } = new List<MailMessageSubtype>();
+    public virtual ICollection<MailMessageSubtype> InverseParent { get; set; } 
 
     //[InverseProperty("Subtype")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("Subtype")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -103,5 +103,5 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("MailMessageSubtypeId")]
     //[InverseProperty("MailMessageSubtypes")]
     [NotMapped]
-    public virtual ICollection<MailFollower> MailFollowers { get; set; } = new List<MailFollower>();
+    public virtual ICollection<MailFollower> MailFollowers { get; set; } 
 }

@@ -91,37 +91,37 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudite
     /// TODO: DISABLE INVERSE
     //[InverseProperty("Lang")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("SelfOrderingDefaultLanguage")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     //[InverseProperty("Lang")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } 
 
     //[InverseProperty("DefaultLang")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } 
 
     [ForeignKey("LangId")]
     //[InverseProperty("Langs")]
     [NotMapped]
-    public virtual ICollection<BaseLanguageInstall> LanguageWizards { get; set; } = new List<BaseLanguageInstall>();
+    public virtual ICollection<BaseLanguageInstall> LanguageWizards { get; set; } 
 
     [ForeignKey("ResLangId")]
     //[InverseProperty("ResLangs")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } 
 
     [ForeignKey("ResLangId")]
     //[InverseProperty("ResLangs")]
     [NotMapped]
-    public virtual ICollection<ResUsersSetting> ResUsersSettings { get; set; } = new List<ResUsersSetting>();
+    public virtual ICollection<ResUsersSetting> ResUsersSettings { get; set; } 
 
     [ForeignKey("LangId")]
     //[InverseProperty("Langs")]
     [NotMapped]
-    public virtual ICollection<Website> WebsitesNavigation { get; set; } = new List<Website>();
+    public virtual ICollection<Website> WebsitesNavigation { get; set; } 
 }

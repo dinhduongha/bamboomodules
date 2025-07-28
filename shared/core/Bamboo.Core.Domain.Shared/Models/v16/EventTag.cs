@@ -79,10 +79,10 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [ForeignKey("EventTagId")]
     //[InverseProperty("EventTags")]
     [NotMapped]
-    public virtual ICollection<EventEvent> EventEvents { get; set; } = new List<EventEvent>();
+    public virtual ICollection<EventEvent> EventEvents { get; set; } 
 
     [ForeignKey("EventTagId")]
     //[InverseProperty("EventTags")]
     [NotMapped]
-    public virtual ICollection<EventType> EventTypes { get; set; } = new List<EventType>();
+    public virtual ICollection<EventType> EventTypes { get; set; } 
 }

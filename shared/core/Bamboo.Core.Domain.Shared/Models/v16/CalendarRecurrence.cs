@@ -106,7 +106,7 @@ public partial class CalendarRecurrence : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Recurrence")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("CalendarRecurrenceCreateUs")]

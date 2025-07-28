@@ -259,56 +259,56 @@ public partial class SaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("SoLineNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
     //[InverseProperty("LinkedLine")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> InverseLinkedLine { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> InverseLinkedLine { get; set; } 
 
     //[InverseProperty("SaleOrderLine")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } 
 
     //[InverseProperty("SaleOrderLine")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; set; } = new List<ProductAttributeCustomValue>();
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; set; } 
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; } = new List<ProjectMilestone>();
+    public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; } 
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     //[InverseProperty("Line")]
     [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; set; } = new List<SaleOrderOption>();
+    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; set; } 
 
     //[InverseProperty("SaleLine")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     [ForeignKey("SaleOrderLineId")]
     //[InverseProperty("SaleOrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 
     [ForeignKey("OrderLineId")]
     //[InverseProperty("OrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> InvoiceLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> InvoiceLines { get; set; } 
 
     [ForeignKey("SaleOrderLineId")]
     //[InverseProperty("SaleOrderLines")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 }

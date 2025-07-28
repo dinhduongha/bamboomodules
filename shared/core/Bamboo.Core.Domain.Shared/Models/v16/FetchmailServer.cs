@@ -101,7 +101,7 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("FetchmailServer")]
     [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } = new List<MailMail>();
+    public virtual ICollection<MailMail> MailMails { get; set; } 
 
     [ForeignKey("ObjectId")]
     //[InverseProperty("FetchmailServers")]

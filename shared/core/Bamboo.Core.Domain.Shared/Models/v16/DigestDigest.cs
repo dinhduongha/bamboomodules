@@ -96,7 +96,7 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Digest")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("DigestDigestWriteUs")]
@@ -106,5 +106,5 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("DigestDigestId")]
     //[InverseProperty("DigestDigests")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

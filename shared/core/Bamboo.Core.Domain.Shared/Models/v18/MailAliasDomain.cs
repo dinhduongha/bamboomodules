@@ -56,19 +56,19 @@ public partial class MailAliasDomain: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("AliasDomain")]
     [NotMapped]
-    public virtual ICollection<MailAlias> MailAliases { get; set; } = new List<MailAlias>();
+    public virtual ICollection<MailAlias> MailAliases { get; set; } 
 
     //[InverseProperty("RecordAliasDomain")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("RecordAliasDomain")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages { get; set; } 
 
     //[InverseProperty("AliasDomain")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MailAliasDomainWriteUs")]

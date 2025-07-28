@@ -234,7 +234,7 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Opportunity")]
     // [NotMapped]
-    // public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    // public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     [ForeignKey("CampaignId")]
     //[InverseProperty("CrmLeads")]
@@ -328,51 +328,51 @@ public partial class CrmLead: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     //[InverseProperty("Opportunity")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     //[InverseProperty("Lead")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassesNavigation { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassesNavigation { get; set; } 
 
     //[InverseProperty("Lead")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } 
 
     //[InverseProperty("Lead")]
     [NotMapped]
-    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; set; } = new List<CrmQuotationPartner>();
+    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; set; } 
 
     //[InverseProperty("Opportunity")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeads")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } 
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeadsNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses1 { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses1 { get; set; } 
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeads")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnersNavigation { get; set; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnersNavigation { get; set; } 
 
     [ForeignKey("OpportunityId")]
     //[InverseProperty("Opportunities")]
     [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> Merges { get; set; } = new List<CrmMergeOpportunity>();
+    public virtual ICollection<CrmMergeOpportunity> Merges { get; set; } 
 
     [ForeignKey("LeadId")]
     //[InverseProperty("Leads")]
     [NotMapped]
-    public virtual ICollection<CrmTag> Tags { get; set; } = new List<CrmTag>();
+    public virtual ICollection<CrmTag> Tags { get; set; } 
 
     [ForeignKey("CrmLeadId")]
     //[InverseProperty("CrmLeads")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } 
 }

@@ -164,5 +164,5 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> Lines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> Lines { get; set; } 
 }

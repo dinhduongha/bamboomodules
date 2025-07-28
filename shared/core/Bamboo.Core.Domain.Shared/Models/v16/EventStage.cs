@@ -68,7 +68,7 @@ public partial class EventStage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<EventEvent> EventEvents { get; set; } = new List<EventEvent>();
+    public virtual ICollection<EventEvent> EventEvents { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("EventStageWriteUs")]

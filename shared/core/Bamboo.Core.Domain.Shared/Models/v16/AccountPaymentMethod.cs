@@ -45,11 +45,11 @@ public partial class AccountPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } = new List<AccountPaymentMethodLine>();
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } 
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]

@@ -70,38 +70,38 @@ public partial class ResourceCalendar: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("ResourceCalendar")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } 
 
     //[InverseProperty("ResourceCalendar")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     //[InverseProperty("ResourceCalendar")]
     [NotMapped]
-    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDays { get; set; } = new List<HrLeaveStressDay>();
+    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDays { get; set; } 
 
     //[InverseProperty("DefaultResourceCalendar")]
     [NotMapped]
-    public virtual ICollection<HrPayrollStructureType> HrPayrollStructureTypes { get; set; } = new List<HrPayrollStructureType>();
+    public virtual ICollection<HrPayrollStructureType> HrPayrollStructureTypes { get; set; } 
 
     //[InverseProperty("ResourceCalendar")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } 
 
     //[InverseProperty("ResourceCalendar")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("Calendar")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendances { get; set; } = new List<ResourceCalendarAttendance>();
+    public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendances { get; set; } 
 
     //[InverseProperty("Calendar")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } = new List<ResourceCalendarLeaf>();
+    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } 
 
     //[InverseProperty("Calendar")]
     [NotMapped]
-    public virtual ICollection<ResourceResource> ResourceResources { get; set; } = new List<ResourceResource>();
+    public virtual ICollection<ResourceResource> ResourceResources { get; set; } 
 
 }

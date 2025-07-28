@@ -62,10 +62,10 @@ public partial class HrContractType : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("ContractType")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } 
 
     //[InverseProperty("ContractType")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } 
 
 }

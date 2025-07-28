@@ -61,6 +61,6 @@ public partial class PrivacyLookupWizard: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLines { get; set; } = new List<PrivacyLookupWizardLine>();
+    public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLines { get; set; } 
 
 }

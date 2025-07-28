@@ -62,20 +62,20 @@ public partial class AccountBalanceReport: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("AccountBalanceReportId")]
     //[InverseProperty("AccountBalanceReports")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
 
     [ForeignKey("AccountBalanceReportId")]
     //[InverseProperty("AccountBalanceReports")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } 
 
     [ForeignKey("AccountId")]
     //[InverseProperty("Accounts")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> Journals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> Journals { get; set; } 
 
     [ForeignKey("AccountBalanceReportId")]
     //[InverseProperty("AccountBalanceReports")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

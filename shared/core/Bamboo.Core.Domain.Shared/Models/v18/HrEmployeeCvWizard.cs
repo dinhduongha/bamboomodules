@@ -60,5 +60,5 @@ public partial class HrEmployeeCvWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("HrEmployeeCvWizardId")]
     //[InverseProperty("HrEmployeeCvWizards")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 }

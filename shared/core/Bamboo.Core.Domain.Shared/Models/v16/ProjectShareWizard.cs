@@ -66,5 +66,5 @@ public partial class ProjectShareWizard : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ProjectShareWizardId")]
     //[InverseProperty("ProjectShareWizards")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

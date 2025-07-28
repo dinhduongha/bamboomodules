@@ -74,10 +74,10 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("ScheduledMessageId")]
     //[InverseProperty("ScheduledMessages")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 
     [ForeignKey("MailScheduledMessageId")]
     //[InverseProperty("MailScheduledMessagesNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

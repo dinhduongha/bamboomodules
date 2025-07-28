@@ -58,5 +58,5 @@ public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("ValidateAccountMoveId")]
     //[InverseProperty("ValidateAccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 }

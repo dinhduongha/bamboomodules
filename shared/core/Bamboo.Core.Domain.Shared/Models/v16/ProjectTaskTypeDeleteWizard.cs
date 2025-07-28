@@ -49,10 +49,10 @@ public partial class ProjectTaskTypeDeleteWizard : FullAuditedEntity<Guid>, IEnt
     [ForeignKey("ProjectTaskTypeDeleteWizardId")]
     //[InverseProperty("ProjectTaskTypeDeleteWizards")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
     [ForeignKey("ProjectTaskTypeDeleteWizardId")]
     //[InverseProperty("ProjectTaskTypeDeleteWizards")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypes { get; set; } = new List<ProjectTaskType>();
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypes { get; set; } 
 }

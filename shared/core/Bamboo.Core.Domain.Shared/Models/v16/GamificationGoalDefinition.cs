@@ -112,11 +112,11 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
 
     //[InverseProperty("Definition")]
     [NotMapped]
-    public virtual ICollection<GamificationChallengeLine> GamificationChallengeLines { get; set; } = new List<GamificationChallengeLine>();
+    public virtual ICollection<GamificationChallengeLine> GamificationChallengeLines { get; set; } 
 
     //[InverseProperty("Definition")]
     [NotMapped]
-    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } = new List<GamificationGoal>();
+    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } 
 
     [ForeignKey("ModelId")]
     //[InverseProperty("GamificationGoalDefinitions")]
@@ -131,5 +131,5 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("GamificationGoalDefinitionId")]
     //[InverseProperty("GamificationGoalDefinitions")]
     [NotMapped]
-    public virtual ICollection<GamificationBadge> GamificationBadges { get; set; } = new List<GamificationBadge>();
+    public virtual ICollection<GamificationBadge> GamificationBadges { get; set; } 
 }

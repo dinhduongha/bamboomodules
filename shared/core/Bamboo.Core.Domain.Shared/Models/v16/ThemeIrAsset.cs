@@ -68,6 +68,6 @@ public partial class ThemeIrAsset : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("ThemeTemplate")]
     [NotMapped]
-    public virtual ICollection<IrAsset> IrAssets { get; set; } = new List<IrAsset>();
+    public virtual ICollection<IrAsset> IrAssets { get; set; } 
 
 }

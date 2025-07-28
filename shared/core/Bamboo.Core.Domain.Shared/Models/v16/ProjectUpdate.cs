@@ -97,6 +97,6 @@ public partial class ProjectUpdate : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("LastUpdate")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
 }

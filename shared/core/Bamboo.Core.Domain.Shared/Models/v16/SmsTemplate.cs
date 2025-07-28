@@ -83,34 +83,34 @@ public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("SmsTemplate")]
     [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; set; } = new List<CalendarAlarm>();
+    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; set; } 
 
     //[InverseProperty("SmsTemplate")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServers { get; set; } 
 
     //[InverseProperty("SmsTemplate")]
     [NotMapped]
-    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; set; } = new List<ProjectProjectStage>();
+    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; set; } 
 
     //[InverseProperty("SmsTemplate")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypes { get; set; } = new List<ProjectTaskType>();
+    public virtual ICollection<ProjectTaskType> ProjectTaskTypes { get; set; } 
 
     //[InverseProperty("StockSmsConfirmationTemplate")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposers { get; set; } = new List<SmsComposer>();
+    public virtual ICollection<SmsComposer> SmsComposers { get; set; } 
 
     //[InverseProperty("SmsTemplate")]
     [NotMapped]
-    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviews { get; set; } = new List<SmsTemplatePreview>();
+    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviews { get; set; } 
 
     [ForeignKey("SmsTemplateId")]
     //[InverseProperty("SmsTemplates")]
     [NotMapped]
-    public virtual ICollection<SmsTemplateReset> SmsTemplateResets { get; set; } = new List<SmsTemplateReset>();
+    public virtual ICollection<SmsTemplateReset> SmsTemplateResets { get; set; } 
 }

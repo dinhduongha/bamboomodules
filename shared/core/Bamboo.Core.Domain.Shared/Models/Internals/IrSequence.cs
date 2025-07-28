@@ -80,28 +80,28 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Sequence")]
     [NotMapped]
-    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRanges { get; set; } = new List<IrSequenceDateRange>();
+    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRanges { get; set; } 
 
     //[InverseProperty("SequenceLine")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigSequenceLines { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigSequenceLines { get; set; } 
 
     //[InverseProperty("Sequence")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigSequences { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigSequences { get; set; } 
 
     //[InverseProperty("BatchPaymentSequence")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     // v16-Compat
     //[InverseProperty("SecureSequence")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; } 
 
 
     //[InverseProperty("SequenceNavigation")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } 
 
 }

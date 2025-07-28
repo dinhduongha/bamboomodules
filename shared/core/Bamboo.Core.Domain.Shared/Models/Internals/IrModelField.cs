@@ -192,87 +192,87 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Field")]
     [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFields { get; set; } = new List<CrmLeadScoringFrequencyField>();
+    public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyFields { get; set; } 
 
     //[InverseProperty("TimeField")]
     [NotMapped]
-    public virtual ICollection<DataRecycleModel> DataRecycleModels { get; set; } = new List<DataRecycleModel>();
+    public virtual ICollection<DataRecycleModel> DataRecycleModels { get; set; } 
 
     //[InverseProperty("BatchDistinctiveFieldNavigation")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionBatchDistinctiveFieldNavigations { get; set; } = new List<GamificationGoalDefinition>();
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionBatchDistinctiveFieldNavigations { get; set; } 
 
     //[InverseProperty("FieldDate")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionFieldDates { get; set; } = new List<GamificationGoalDefinition>();
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionFieldDates { get; set; } 
 
     //[InverseProperty("Field")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionFields { get; set; } = new List<GamificationGoalDefinition>();
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionFields { get; set; } 
 
     //[InverseProperty("RelatedField")]
     [NotMapped]
-    public virtual ICollection<IrModelField> InverseRelatedField { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> InverseRelatedField { get; set; } 
 
     //[InverseProperty("RelationFieldNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelField> InverseRelationFieldNavigation { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> InverseRelationFieldNavigation { get; set; } 
 
     //[InverseProperty("LinkField")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
-    public virtual ICollection<IrActServer> IrActServerLinkFields { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServers { get; set; } 
+    public virtual ICollection<IrActServer> IrActServerLinkFields { get; set; } 
 
     //[InverseProperty("UpdateField")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServerUpdateFields { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServerUpdateFields { get; set; } 
 
     //[InverseProperty("Field")]
     [NotMapped]
-    public virtual ICollection<IrDefault> IrDefaults { get; set; } = new List<IrDefault>();
+    public virtual ICollection<IrDefault> IrDefaults { get; set; } 
 
     //[InverseProperty("Field")]
     [NotMapped]
-    public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelections { get; set; } = new List<IrModelFieldsSelection>();
+    public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelections { get; set; } 
 
     //[InverseProperty("ParentField")]
     [NotMapped]
-    public virtual ICollection<IrModelInherit> IrModelInherits { get; set; } = new List<IrModelInherit>();
+    public virtual ICollection<IrModelInherit> IrModelInherits { get; set; } 
 
     //[InverseProperty("WebsiteFormDefaultField")]
     [NotMapped]
-    public virtual ICollection<IrModel> IrModels { get; set; } = new List<IrModel>();
+    public virtual ICollection<IrModel> IrModels { get; set; } 
 
     // v16-Compat
     //[InverseProperty("Fields")]
     [NotMapped]
-    public virtual ICollection<IrProperty> IrProperties { get; set; } = new List<IrProperty>();
+    public virtual ICollection<IrProperty> IrProperties { get; set; } 
 
     // v16-Compat
     //[InverseProperty("Col1Navigation")]
     [NotMapped]
-    public virtual ICollection<IrServerObjectLine> IrServerObjectLines { get; set; } = new List<IrServerObjectLine>();
+    public virtual ICollection<IrServerObjectLine> IrServerObjectLines { get; set; } 
 
     //[InverseProperty("Field")]
     [NotMapped]
-    public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } = new List<MailTrackingValue>();
+    public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } 
 
     // v16-Compat
     //[InverseProperty("FieldNavigation")]
     //[NotMapped]
-    //public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } = new List<MailTrackingValue>();
+    //public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } 
 
     //[InverseProperty("Field")]
     [NotMapped]
-    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFields { get; set; } = new List<WebsiteSaleExtraField>();
+    public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraFields { get; set; } 
 
     [ForeignKey("FieldId")]
     //[InverseProperty("Fields")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Groups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Groups { get; set; } 
 
     [ForeignKey("FieldId")]
     //[InverseProperty("Fields")]
     [NotMapped]
-    public virtual ICollection<IrActServer> Servers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> Servers { get; set; } 
 }

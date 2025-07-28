@@ -83,15 +83,15 @@ public partial class NoteNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("NoteNavigation")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; set; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivities { get; set; } 
 
     [ForeignKey("NoteId")]
     //[InverseProperty("Notes")]
     [NotMapped]
-    public virtual ICollection<NoteStage> Stages { get; set; } = new List<NoteStage>();
+    public virtual ICollection<NoteStage> Stages { get; set; } 
 
     [ForeignKey("NoteId")]
     //[InverseProperty("Notes")]
     [NotMapped]
-    public virtual ICollection<NoteTag> Tags { get; set; } = new List<NoteTag>();
+    public virtual ICollection<NoteTag> Tags { get; set; } 
 }

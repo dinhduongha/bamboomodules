@@ -51,7 +51,7 @@ public partial class RestaurantFloor: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Floor")]
     [NotMapped]
-    public virtual ICollection<RestaurantTable> RestaurantTables { get; set; } = new List<RestaurantTable>();
+    public virtual ICollection<RestaurantTable> RestaurantTables { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("RestaurantFloorWriteUs")]
@@ -61,5 +61,5 @@ public partial class RestaurantFloor: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("RestaurantFloorId")]
     //[InverseProperty("RestaurantFloors")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 }

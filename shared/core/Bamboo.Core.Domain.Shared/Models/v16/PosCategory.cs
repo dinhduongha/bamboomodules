@@ -64,7 +64,7 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Parent")]
     // [NotMapped]
-    // public virtual ICollection<PosCategory> InverseParent { get; set; } = new List<PosCategory>();
+    // public virtual ICollection<PosCategory> InverseParent { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -78,27 +78,27 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<PosCategory> InverseParent { get; set; } = new List<PosCategory>();
+    public virtual ICollection<PosCategory> InverseParent { get; set; } 
 
     //[InverseProperty("IfaceStartCateg")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } 
 
     //[InverseProperty("PosCateg")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 
     //[InverseProperty("PosIfaceStartCateg")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } 
 
     [ForeignKey("PosCategoryId")]
     //[InverseProperty("PosCategories")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     [ForeignKey("PosCategoryId")]
     //[InverseProperty("PosCategories")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
 }

@@ -127,7 +127,7 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("UserInput")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } = new List<SurveyUserInputLine>();
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SurveyUserInputWriteUs")]
@@ -143,5 +143,5 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("SurveyUserInputId")]
     //[InverseProperty("SurveyUserInputs")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } = new List<SurveyQuestion>();
+    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } 
 }

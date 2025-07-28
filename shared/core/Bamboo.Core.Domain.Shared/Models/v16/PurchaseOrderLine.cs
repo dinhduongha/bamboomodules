@@ -196,18 +196,18 @@ public partial class PurchaseOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("PurchaseLine")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     //[InverseProperty("CreatedPurchaseLine")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveCreatedPurchaseLines { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveCreatedPurchaseLines { get; set; } 
 
     //[InverseProperty("PurchaseLine")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMovePurchaseLines { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMovePurchaseLines { get; set; } 
 
     [ForeignKey("PurchaseOrderLineId")]
     //[InverseProperty("PurchaseOrderLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 }

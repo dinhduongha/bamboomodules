@@ -120,25 +120,25 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("BankAccount")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 
     //[InverseProperty("PartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("PartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } 
 
     //[InverseProperty("PartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("ResPartnerBank")]
     [NotMapped]
-    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigs { get; set; } = new List<AccountSetupBankManualConfig>();
+    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigs { get; set; } 
 
     //[InverseProperty("BankAccount")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 }

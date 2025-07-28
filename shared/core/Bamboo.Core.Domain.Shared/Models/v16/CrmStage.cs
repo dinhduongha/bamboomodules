@@ -58,7 +58,7 @@ public partial class CrmStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     [ForeignKey("TeamId")]
     //[InverseProperty("CrmStages")]

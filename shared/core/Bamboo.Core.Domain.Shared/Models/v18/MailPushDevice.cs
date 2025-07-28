@@ -53,7 +53,7 @@ public partial class MailPushDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("MailPushDevice")]
     [NotMapped]
-    public virtual ICollection<MailPush> MailPushes { get; set; } = new List<MailPush>();
+    public virtual ICollection<MailPush> MailPushes { get; set; } 
 
     [ForeignKey("PartnerId")]
     //[InverseProperty("MailPushDevices")]

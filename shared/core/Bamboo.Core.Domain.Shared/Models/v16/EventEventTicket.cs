@@ -82,11 +82,11 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("EventTicket")]
     [NotMapped]
-    public virtual ICollection<EventEventConfigurator> EventEventConfigurators { get; set; } = new List<EventEventConfigurator>();
+    public virtual ICollection<EventEventConfigurator> EventEventConfigurators { get; set; } 
 
     //[InverseProperty("EventTicket")]
     [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
 
     [ForeignKey("EventTypeId")]
     //[InverseProperty("EventEventTickets")]
@@ -95,7 +95,7 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("EventTicket")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } 
 
     [ForeignKey("ProductId")]
     //[InverseProperty("EventEventTickets")]
@@ -104,11 +104,11 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("EventTicket")]
     [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } = new List<RegistrationEditorLine>();
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
 
     //[InverseProperty("EventTicket")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("EventEventTicketWriteUs")]

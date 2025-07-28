@@ -92,11 +92,11 @@ public partial class MaintenanceEquipmentCategory: FullAuditedEntity<Guid>, IEnt
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } 
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } 
 
 
 }

@@ -113,28 +113,28 @@ public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("PdfReport")]
     [NotMapped]
-    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizards { get; set; } = new List<AccountMoveSendWizard>();
+    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizards { get; set; } 
 
     //[InverseProperty("InvoiceTemplatePdfReport")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 
     //[InverseProperty("ReportTemplateNavigation")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } 
 
     [ForeignKey("Uid")]
     //[InverseProperty("Uids")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } 
 
     // TODO: v16-Compat
     //[InverseProperty("ReportTemplateNavigation")]
     //[NotMapped]
-    //public virtual ICollection<MailTemplate> MailTemplates { get; } = new List<MailTemplate>();
+    //public virtual ICollection<MailTemplate> MailTemplates { get; } 
 
     [ForeignKey("IrActionsReportId")]
     //[InverseProperty("IrActionsReports")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
 }

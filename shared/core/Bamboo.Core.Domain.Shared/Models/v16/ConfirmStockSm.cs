@@ -49,5 +49,5 @@ public partial class ConfirmStockSm : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("ConfirmStockSmsId")]
     //[InverseProperty("ConfirmStockSms")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } 
 }

@@ -99,5 +99,5 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [ForeignKey("AccountReconcileModelLineId")]
     //[InverseProperty("AccountReconcileModelLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 }

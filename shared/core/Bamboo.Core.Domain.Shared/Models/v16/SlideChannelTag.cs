@@ -69,5 +69,5 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<SlideChannel> Channels { get; set; } = new List<SlideChannel>();
+    public virtual ICollection<SlideChannel> Channels { get; set; } 
 }

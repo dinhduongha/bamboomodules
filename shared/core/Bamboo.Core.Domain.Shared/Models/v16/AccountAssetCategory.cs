@@ -108,7 +108,7 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
 
     [ForeignKey("AccountDepreciationId")]
     //[InverseProperty("AccountAssetCategoryAccountDepreciations")]
@@ -122,7 +122,7 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("AssetCategory")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountAssetCategories")]

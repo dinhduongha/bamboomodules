@@ -45,5 +45,5 @@ public partial class SaleMassCancelOrder: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("SaleMassCancelOrdersId")]
     //[InverseProperty("SaleMassCancelOrders")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 }

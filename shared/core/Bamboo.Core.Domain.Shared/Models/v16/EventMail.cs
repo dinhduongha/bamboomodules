@@ -77,7 +77,7 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Scheduler")]
     [NotMapped]
-    public virtual ICollection<EventMailRegistration> EventMailRegistrations { get; set; } = new List<EventMailRegistration>();
+    public virtual ICollection<EventMailRegistration> EventMailRegistrations { get; set; } 
 
     [ForeignKey("LastRegistrationId")]
     //[InverseProperty("EventMails")]

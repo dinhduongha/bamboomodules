@@ -100,7 +100,7 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Supplier")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
 
     [ForeignKey("ProductTmplId")]
     //[InverseProperty("ProductSupplierinfos")]
@@ -114,10 +114,10 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Supplier")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 
     [ForeignKey("ProductSupplierinfoId")]
     //[InverseProperty("ProductSupplierinfos")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } = new List<StockReplenishmentInfo>();
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } 
 }

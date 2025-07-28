@@ -61,7 +61,7 @@ public partial class GamificationChallengeLine: FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("Line")]
     [NotMapped]
-    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } = new List<GamificationGoal>();
+    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("GamificationChallengeLineWriteUs")]

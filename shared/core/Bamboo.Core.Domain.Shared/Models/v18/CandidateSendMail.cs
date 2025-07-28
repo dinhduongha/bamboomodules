@@ -70,10 +70,10 @@ public partial class CandidateSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("CandidateSendMailId")]
     //[InverseProperty("CandidateSendMails")]
     [NotMapped]
-    public virtual ICollection<HrCandidate> HrCandidates { get; set; } = new List<HrCandidate>();
+    public virtual ICollection<HrCandidate> HrCandidates { get; set; } 
 
     [ForeignKey("CandidateSendMailId")]
     //[InverseProperty("CandidateSendMails")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
 }

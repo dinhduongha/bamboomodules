@@ -80,26 +80,26 @@ public partial class StockQuantPackage: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Package")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLinePackages { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLinePackages { get; set; } 
 
     //[InverseProperty("ResultPackage")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineResultPackages { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLineResultPackages { get; set; } 
 
     //[InverseProperty("Package")]
     [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } = new List<StockPackageLevel>();
+    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } 
 
     //[InverseProperty("DestPackage")]
     [NotMapped]
-    public virtual ICollection<StockQuantRelocate> StockQuantRelocates { get; set; } = new List<StockQuantRelocate>();
+    public virtual ICollection<StockQuantRelocate> StockQuantRelocates { get; set; } 
 
     //[InverseProperty("Package")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } 
 
     //[InverseProperty("Package")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
 }

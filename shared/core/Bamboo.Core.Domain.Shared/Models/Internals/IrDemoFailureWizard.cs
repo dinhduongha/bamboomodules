@@ -40,7 +40,7 @@ public partial class IrDemoFailureWizard: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } = new List<IrDemoFailure>();
+    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrDemoFailureWizardWriteUs")]

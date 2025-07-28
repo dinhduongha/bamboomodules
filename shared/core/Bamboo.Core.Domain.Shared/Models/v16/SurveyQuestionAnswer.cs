@@ -71,11 +71,11 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("MatrixRow")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineMatrixRows { get; set; } = new List<SurveyUserInputLine>();
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineMatrixRows { get; set; } 
 
     //[InverseProperty("SuggestedAnswer")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineSuggestedAnswers { get; set; } = new List<SurveyUserInputLine>();
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineSuggestedAnswers { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SurveyQuestionAnswerWriteUs")]
@@ -85,5 +85,5 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("SurveyQuestionAnswerId")]
     //[InverseProperty("SurveyQuestionAnswers")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } = new List<SurveyQuestion>();
+    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } 
 }

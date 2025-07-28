@@ -75,11 +75,11 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("ReportLine")]
     [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } = new List<AccountReportExpression>();
+    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } 
 
     //[InverseProperty("CarryoverOriginReportLine")]
     [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } = new List<AccountReportExternalValue>();
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]
@@ -93,7 +93,7 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<AccountReportLine> InverseParent { get; set; } = new List<AccountReportLine>();
+    public virtual ICollection<AccountReportLine> InverseParent { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]

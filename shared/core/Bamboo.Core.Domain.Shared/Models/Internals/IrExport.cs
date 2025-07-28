@@ -47,7 +47,7 @@ public partial class IrExport: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Export")]
     [NotMapped]
-    public virtual ICollection<IrExportsLine> IrExportsLines { get; set; } = new List<IrExportsLine>();
+    public virtual ICollection<IrExportsLine> IrExportsLines { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrExportWriteUs")]

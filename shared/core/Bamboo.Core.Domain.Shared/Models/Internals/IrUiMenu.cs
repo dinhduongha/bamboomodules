@@ -74,14 +74,14 @@ public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<IrUiMenu> InverseParent { get; set; } = new List<IrUiMenu>();
+    public virtual ICollection<IrUiMenu> InverseParent { get; set; } 
 
     //[InverseProperty("Menu")]
     [NotMapped]
-    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreates { get; set; } = new List<WizardIrModelMenuCreate>();
+    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreates { get; set; } 
 
     [ForeignKey("MenuId")]
     //[InverseProperty("Menus")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } 
 }

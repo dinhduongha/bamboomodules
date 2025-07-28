@@ -60,5 +60,5 @@ public partial class AccountJournalGroup: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("AccountJournalGroupId")]
     //[InverseProperty("AccountJournalGroups")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 }

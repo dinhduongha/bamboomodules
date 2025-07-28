@@ -72,15 +72,15 @@ public partial class SpreadsheetDashboard: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Dashboard")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboardShare> SpreadsheetDashboardShares { get; set; } = new List<SpreadsheetDashboardShare>();
+    public virtual ICollection<SpreadsheetDashboardShare> SpreadsheetDashboardShares { get; set; } 
 
     [ForeignKey("SpreadsheetDashboardId")]
     //[InverseProperty("SpreadsheetDashboards")]
     [NotMapped]
-    public virtual ICollection<IrModel> IrModels { get; set; } = new List<IrModel>();
+    public virtual ICollection<IrModel> IrModels { get; set; } 
 
     [ForeignKey("SpreadsheetDashboardId")]
     //[InverseProperty("SpreadsheetDashboards")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 }

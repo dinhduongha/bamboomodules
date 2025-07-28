@@ -70,5 +70,5 @@ public partial class HrLeaveMandatoryDay: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("HrLeaveMandatoryDayId")]
     //[InverseProperty("HrLeaveMandatoryDays")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartments { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> HrDepartments { get; set; } 
 }

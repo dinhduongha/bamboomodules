@@ -216,15 +216,15 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     [ForeignKey("PurchaseOrderId")]
     //[InverseProperty("PurchaseOrders")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     [ForeignKey("PurchaseOrderId")]
     //[InverseProperty("PurchaseOrders")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } 
 }

@@ -47,7 +47,7 @@ public partial class ChatbotScript: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("ChatbotScript")]
     [NotMapped]
-    public virtual ICollection<ChatbotScriptStep> ChatbotScriptSteps { get; set; } = new List<ChatbotScriptStep>();
+    public virtual ICollection<ChatbotScriptStep> ChatbotScriptSteps { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ChatbotScriptCreateUs")]
@@ -56,7 +56,7 @@ public partial class ChatbotScript: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("ChatbotScript")]
     [NotMapped]
-    public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRules { get; set; } = new List<ImLivechatChannelRule>();
+    public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRules { get; set; } 
 
     [ForeignKey("OperatorPartnerId")]
     //[InverseProperty("ChatbotScripts")]

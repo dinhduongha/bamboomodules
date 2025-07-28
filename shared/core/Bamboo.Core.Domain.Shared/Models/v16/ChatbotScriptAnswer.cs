@@ -47,7 +47,7 @@ public partial class ChatbotScriptAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("UserScriptAnswer")]
     [NotMapped]
-    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } = new List<ChatbotMessage>();
+    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ChatbotScriptAnswerCreateUs")]
@@ -67,5 +67,5 @@ public partial class ChatbotScriptAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ChatbotScriptAnswerId")]
     //[InverseProperty("ChatbotScriptAnswersNavigation")]
     [NotMapped]
-    public virtual ICollection<ChatbotScriptStep> ChatbotScriptSteps { get; set; } = new List<ChatbotScriptStep>();
+    public virtual ICollection<ChatbotScriptStep> ChatbotScriptSteps { get; set; } 
 }

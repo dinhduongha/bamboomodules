@@ -50,5 +50,5 @@ public partial class SlideTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<SlideSlide> Slides { get; set; } = new List<SlideSlide>();
+    public virtual ICollection<SlideSlide> Slides { get; set; } 
 }

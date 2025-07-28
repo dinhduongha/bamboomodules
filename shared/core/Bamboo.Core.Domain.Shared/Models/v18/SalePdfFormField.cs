@@ -55,10 +55,10 @@ public partial class SalePdfFormField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("SalePdfFormFieldId")]
     //[InverseProperty("SalePdfFormFields")]
     [NotMapped]
-    public virtual ICollection<ProductDocument> ProductDocuments { get; set; } = new List<ProductDocument>();
+    public virtual ICollection<ProductDocument> ProductDocuments { get; set; } 
 
     [ForeignKey("SalePdfFormFieldId")]
     //[InverseProperty("SalePdfFormFields")]
     [NotMapped]
-    public virtual ICollection<QuotationDocument> QuotationDocuments { get; set; } = new List<QuotationDocument>();
+    public virtual ICollection<QuotationDocument> QuotationDocuments { get; set; } 
 }

@@ -227,39 +227,39 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     // v16-Compat
     //[InverseProperty("IrActionsServer")]
     [NotMapped]
-    public virtual ICollection<IrCron> IrCrons { get; set; } = new List<IrCron>();
+    public virtual ICollection<IrCron> IrCrons { get; set; } 
 
     // v16-Compat
     //[InverseProperty("Server")]
     [NotMapped]
-    public virtual ICollection<IrServerObjectLine> IrServerObjectLines { get; } = new List<IrServerObjectLine>();
+    public virtual ICollection<IrServerObjectLine> IrServerObjectLines { get; } 
 
     //[InverseProperty("ActionServer")]
     [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } = new List<WebsiteSnippetFilter>();
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } 
 
     [ForeignKey("ServerId")]
     //[InverseProperty("Servers")]
     [NotMapped]
-    public virtual ICollection<IrActServer> Actions { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> Actions { get; set; } 
 
     [ForeignKey("ServerId")]
     //[InverseProperty("Servers")]
     [NotMapped]
-    public virtual ICollection<IrModelField> Fields { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> Fields { get; set; } 
 
     [ForeignKey("ActId")]
     //[InverseProperty("Acts")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } 
 
     [ForeignKey("IrActServerId")]
     //[InverseProperty("IrActServers")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 
     [ForeignKey("ActionId")]
     //[InverseProperty("Actions")]
     [NotMapped]
-    public virtual ICollection<IrActServer> Servers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> Servers { get; set; } 
 }

@@ -188,27 +188,27 @@ public partial class SlideSlide: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<SlideSlide> InverseCategory { get; set; } = new List<SlideSlide>();
+    public virtual ICollection<SlideSlide> InverseCategory { get; set; } 
 
     //[InverseProperty("PromotedSlide")]
     [NotMapped]
-    public virtual ICollection<SlideChannel> SlideChannels { get; set; } = new List<SlideChannel>();
+    public virtual ICollection<SlideChannel> SlideChannels { get; set; } 
 
     //[InverseProperty("Slide")]
     [NotMapped]
-    public virtual ICollection<SlideEmbed> SlideEmbeds { get; set; } = new List<SlideEmbed>();
+    public virtual ICollection<SlideEmbed> SlideEmbeds { get; set; } 
 
     //[InverseProperty("Slide")]
     [NotMapped]
-    public virtual ICollection<SlideQuestion> SlideQuestions { get; set; } = new List<SlideQuestion>();
+    public virtual ICollection<SlideQuestion> SlideQuestions { get; set; } 
 
     //[InverseProperty("Slide")]
     [NotMapped]
-    public virtual ICollection<SlideSlidePartner> SlideSlidePartners { get; set; } = new List<SlideSlidePartner>();
+    public virtual ICollection<SlideSlidePartner> SlideSlidePartners { get; set; } 
 
     //[InverseProperty("Slide")]
     [NotMapped]
-    public virtual ICollection<SlideSlideResource> SlideSlideResources { get; set; } = new List<SlideSlideResource>();
+    public virtual ICollection<SlideSlideResource> SlideSlideResources { get; set; } 
 
     [ForeignKey("SurveyId")]
     //[InverseProperty("SlideSlides")]
@@ -217,7 +217,7 @@ public partial class SlideSlide: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Slide")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } = new List<SurveyUserInput>();
+    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("SlideSlideUsers")]
@@ -232,5 +232,5 @@ public partial class SlideSlide: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("SlideId")]
     //[InverseProperty("Slides")]
     [NotMapped]
-    public virtual ICollection<SlideTag> Tags { get; set; } = new List<SlideTag>();
+    public virtual ICollection<SlideTag> Tags { get; set; } 
 }

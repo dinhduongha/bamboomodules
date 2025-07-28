@@ -103,34 +103,34 @@ public partial class StockLot: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("LotProducing")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } 
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } 
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("OrderFinishedLot")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } 
 
     //[InverseProperty("Lot")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
 }

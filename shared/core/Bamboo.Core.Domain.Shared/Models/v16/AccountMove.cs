@@ -428,123 +428,123 @@ public partial class AccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Invoice")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } = new List<AccountAssetDepreciationLine>();
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountEdiDocument> AccountEdiDocuments { get; set; } = new List<AccountEdiDocument>();
+    public virtual ICollection<AccountEdiDocument> AccountEdiDocuments { get; set; } 
 
     //[InverseProperty("ExchangeMove")]
     [NotMapped]
-    public virtual ICollection<AccountFullReconcile> AccountFullReconciles { get; set; } = new List<AccountFullReconcile>();
+    public virtual ICollection<AccountFullReconcile> AccountFullReconciles { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 
     [ForeignKey("RefundAccountMove")]
     //[InverseProperty("RefundAccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountMove> OriginalAccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> OriginalAccountMoves { get; set; } 
 
     [ForeignKey("InvoiceId")]
     //[InverseProperty("Invoices")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> Payments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> Payments { get; set; } 
 
     [ForeignKey("OriginalAccountMove")]
     //[InverseProperty("OriginalAccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountMove> RefundAccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> RefundAccountMoves { get; set; } 
 
     //[InverseProperty("ExchangeMove")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconciles { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("AccountMove")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
 
     //[InverseProperty("AutoPostOrigin")]
     [NotMapped]
-    public virtual ICollection<AccountMove> InverseAutoPostOrigin { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> InverseAutoPostOrigin { get; set; } 
 
     //[InverseProperty("ReversedEntry")]
     [NotMapped]
-    public virtual ICollection<AccountMove> InverseReversedEntry { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> InverseReversedEntry { get; set; } 
 
     //[InverseProperty("TaxCashBasisOriginMove")]
     [NotMapped]
-    public virtual ICollection<AccountMove> InverseTaxCashBasisOriginMove { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> InverseTaxCashBasisOriginMove { get; set; } 
 
     //[InverseProperty("AccountMoveNavigation")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     //[InverseProperty("AccountMove")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessions { get; set; } = new List<PosSession>();
+    public virtual ICollection<PosSession> PosSessions { get; set; } 
 
     //[InverseProperty("Invoice")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
 
     //[InverseProperty("AccountOpeningMove")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("AccountMove")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } = new List<AccountInvoiceSend>();
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } 
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizards { get; set; } = new List<AccountResequenceWizard>();
+    public virtual ICollection<AccountResequenceWizard> AccountResequenceWizards { get; set; } 
 
     [ForeignKey("AccountMoveId")]
     //[InverseProperty("AccountMoves")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     [ForeignKey("MoveId")]
     //[InverseProperty("Moves")]
     [NotMapped]
-    public virtual ICollection<AccountMoveReversal> Reversals { get; set; } = new List<AccountMoveReversal>();
+    public virtual ICollection<AccountMoveReversal> Reversals { get; set; } 
 
     [ForeignKey("NewMoveId")]
     //[InverseProperty("NewMoves")]
     [NotMapped]
-    public virtual ICollection<AccountMoveReversal> ReversalsNavigation { get; set; } = new List<AccountMoveReversal>();
+    public virtual ICollection<AccountMoveReversal> ReversalsNavigation { get; set; } 
 
     [ForeignKey("InvoiceId")]
     //[InverseProperty("Invoices")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> Transactions { get; set; } 
 }

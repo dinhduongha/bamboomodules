@@ -87,6 +87,9 @@ Edit your `pgloader-odoo18-data-full-uuid.conf` with correct database/user/passw
 
 Voila, after this step, your `bamboo_core` database has updated (or clone) data with `Id` type is `GUID`, many extra columns added, and full compatible with ABP.
 
+Then, start service:
+`dotnet run --project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj`
+
 ## C. HARD WAY
 
 Just do this in case you want to `scaffold` from your odoo18 database.

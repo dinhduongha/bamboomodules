@@ -510,480 +510,480 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     /// TODO: DISABLE INVERSE
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } = new List<AccountAssetAsset>();
+    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
 
     //[InverseProperty("CommercialPartner")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoveCommercialPartners { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoveCommercialPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     //[InverseProperty("PartnerShipping")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMovePartnerShippings { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMovePartnerShippings { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMovePartners { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMovePartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; set; } = new List<AccountReconcileModelPartnerMapping>();
+    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; set; } 
 
     //[InverseProperty("Author")]
     [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } = new List<ApplicantSendMail>();
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } 
 
     //[InverseProperty("DstPartner")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizards { get; set; } = new List<BasePartnerMergeAutomaticWizard>();
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizards { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CalendarAttendee> CalendarAttendees { get; set; } = new List<CalendarAttendee>();
+    public virtual ICollection<CalendarAttendee> CalendarAttendees { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CalendarFilter> CalendarFilters { get; set; } = new List<CalendarFilter>();
+    public virtual ICollection<CalendarFilter> CalendarFilters { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } = new List<CrmLead2opportunityPartnerMass>();
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } = new List<CrmLead2opportunityPartner>();
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; set; } = new List<CrmQuotationPartner>();
+    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; set; } 
 
     //[InverseProperty("Driver")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } = new List<FleetVehicleAssignationLog>();
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } 
 
     //[InverseProperty("Driver")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleDrivers { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicleDrivers { get; set; } 
 
     //[InverseProperty("FutureDriver")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleFutureDrivers { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicleFutureDrivers { get; set; } 
 
     //[InverseProperty("Insurer")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } 
 
     //[InverseProperty("Purchaser")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServicePurchasers { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServicePurchasers { get; set; } 
 
     //[InverseProperty("Vendor")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceVendors { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceVendors { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     //[InverseProperty("AddressHome")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeAddressHomes { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeAddressHomes { get; set; } 
 
     //[InverseProperty("Address")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeAddresses { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeAddresses { get; set; } 
 
     //[InverseProperty("WorkContact")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeWorkContacts { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployeeWorkContacts { get; set; } 
 
     //[InverseProperty("Address")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
 
     //[InverseProperty("Address")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } 
 
     //[InverseProperty("Address")]
     [NotMapped]
-    public virtual ICollection<HrWorkLocation> HrWorkLocations { get; set; } = new List<HrWorkLocation>();
+    public virtual ICollection<HrWorkLocation> HrWorkLocations { get; set; } 
 
     //[InverseProperty("CommercialPartner")]
     [NotMapped]
-    public virtual ICollection<ResPartner> InverseCommercialPartner { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> InverseCommercialPartner { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ResPartner> InverseParent { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> InverseParent { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } = new List<LunchSupplier>();
+    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } 
 
     //[InverseProperty("RequestPartner")]
     [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; set; } = new List<MailActivity>();
+    public virtual ICollection<MailActivity> MailActivities { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } 
 
     //[InverseProperty("Author")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<MailFollower> MailFollowers { get; set; } = new List<MailFollower>();
+    public virtual ICollection<MailFollower> MailFollowers { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } = new List<MailMessageReaction>();
+    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } 
 
     //[InverseProperty("Author")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages { get; set; } 
 
     //[InverseProperty("Author")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotificationAuthors { get; set; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotificationAuthors { get; set; } 
 
     //[InverseProperty("ResPartner")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotificationResPartners { get; set; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotificationResPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<MailResendPartner> MailResendPartners { get; set; } = new List<MailResendPartner>();
+    public virtual ICollection<MailResendPartner> MailResendPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizards { get; set; } = new List<PaymentLinkWizard>();
+    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizards { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } = new List<PaymentToken>();
+    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PortalWizardUser> PortalWizardUsers { get; set; } = new List<PortalWizardUser>();
+    public virtual ICollection<PortalWizardUser> PortalWizardUsers { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } = new List<ProcurementGroup>();
+    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } = new List<ProductSupplierinfo>();
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ProjectCollaborator> ProjectCollaborators { get; set; } = new List<ProjectCollaborator>();
+    public virtual ICollection<ProjectCollaborator> ProjectCollaborators { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
 
     //[InverseProperty("DestAddress")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderDestAddresses { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrderDestAddresses { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderPartners { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrderPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingPartners { get; set; } = new List<RatingRating>();
+    public virtual ICollection<RatingRating> RatingRatingPartners { get; set; } 
 
     //[InverseProperty("Publisher")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingPublishers { get; set; } = new List<RatingRating>();
+    public virtual ICollection<RatingRating> RatingRatingPublishers { get; set; } 
 
     //[InverseProperty("RatedPartner")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingRatedPartners { get; set; } = new List<RatingRating>();
+    public virtual ICollection<RatingRating> RatingRatingRatedPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } = new List<RecurringPaymentLine>();
+    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<RecurringPayment> RecurringPayments { get; set; } = new List<RecurringPayment>();
+    public virtual ICollection<RecurringPayment> RecurringPayments { get; set; } 
 
     //[InverseProperty("Address")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderAddresses { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrderAddresses { get; set; } 
 
     //[InverseProperty("PartnerInvoice")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderPartnerInvoices { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrderPartnerInvoices { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderPartners { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrderPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncs { get; set; } = new List<ResPartnerAutocompleteSync>();
+    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncs { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } = new List<ResPartnerBank>();
+    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 
     //[InverseProperty("Guest")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeGuests { get; set; } = new List<ResUsersSettingsVolume>();
+    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeGuests { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumePartners { get; set; } = new List<ResUsersSettingsVolume>();
+    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumePartners { get; set; } 
 
     //[InverseProperty("Author")]
     [NotMapped]
-    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; set; } = new List<SaleOrderCancel>();
+    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; set; } 
 
     //[InverseProperty("OrderPartner")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     //[InverseProperty("PartnerInvoice")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderPartnerInvoices { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrderPartnerInvoices { get; set; } 
 
     //[InverseProperty("PartnerShipping")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderPartnerShippings { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrderPartnerShippings { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderPartners { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrderPartners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<SmsSm> SmsSms { get; set; } = new List<SmsSm>();
+    public virtual ICollection<SmsSm> SmsSms { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } = new List<SnailmailLetterMissingRequiredField>();
+    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } 
 
     //[InverseProperty("Owner")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMovePartners { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMovePartners { get; set; } 
 
     //[InverseProperty("RestrictPartner")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveRestrictPartners { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveRestrictPartners { get; set; } 
 
     //[InverseProperty("Owner")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingOwners { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickingOwners { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingPartners { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickingPartners { get; set; } 
 
     //[InverseProperty("Owner")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } 
 
     //[InverseProperty("PartnerAddress")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRules { get; set; } 
 
     //[InverseProperty("Owner")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
     //[InverseProperty("Vendor")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouses { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouses { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } = new List<WebsiteVisitor>();
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalances { get; set; } = new List<AccountAgedTrialBalance>();
+    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalances { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } = new List<AccountBalanceReport>();
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReports { get; set; } = new List<AccountCommonAccountReport>();
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReports { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReports { get; set; } = new List<AccountCommonPartnerReport>();
+    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReports { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } = new List<AccountReconcileModelTemplate>();
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } = new List<AccountReconcileModel>();
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } = new List<AccountReportGeneralLedger>();
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgers { get; set; } = new List<AccountReportPartnerLedger>();
+    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgers { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardsNavigation { get; set; } = new List<BasePartnerMergeAutomaticWizard>();
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardsNavigation { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     [ForeignKey("PartnerId")]
     //[InverseProperty("Partners")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> Categories { get; set; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> Categories { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> IrActServers { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } = new List<MailMail>();
+    public virtual ICollection<MailMail> MailMails { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartnersNavigation")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages1 { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages1 { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessagesNavigation { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessagesNavigation { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<MailWizardInvite> MailWizardInvites { get; set; } = new List<MailWizardInvite>();
+    public virtual ICollection<MailWizardInvite> MailWizardInvites { get; set; } 
 
     [ForeignKey("PartnerId")]
     //[InverseProperty("Partners")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleModel> Models { get; set; } = new List<FleetVehicleModel>();
+    public virtual ICollection<FleetVehicleModel> Models { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<PortalShare> PortalShares { get; set; } = new List<PortalShare>();
+    public virtual ICollection<PortalShare> PortalShares { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<PortalWizard> PortalWizards { get; set; } = new List<PortalWizard>();
+    public virtual ICollection<PortalWizard> PortalWizards { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
 
     [ForeignKey("ResPartnerId")]
     //[InverseProperty("ResPartners")]
     [NotMapped]
-    public virtual ICollection<ProjectShareWizard> ProjectShareWizards { get; set; } = new List<ProjectShareWizard>();
+    public virtual ICollection<ProjectShareWizard> ProjectShareWizards { get; set; } 
 
     [ForeignKey("PartnerId")]
     //[InverseProperty("Partners")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> Wizards { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> Wizards { get; set; } 
    
 }

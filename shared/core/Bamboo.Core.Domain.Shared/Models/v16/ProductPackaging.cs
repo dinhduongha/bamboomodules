@@ -85,18 +85,18 @@ public partial class ProductPackaging: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("ProductPackaging")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     //[InverseProperty("ProductPackaging")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     //[InverseProperty("ProductPackaging")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     [ForeignKey("PackagingId")]
     //[InverseProperty("Packagings")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } 
 }

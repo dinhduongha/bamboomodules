@@ -68,10 +68,10 @@ public partial class StockRulesReport : FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("StockRulesReportId")]
     //[InverseProperty("StockRulesReports")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRoutes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> StockRoutes { get; set; } 
 
     [ForeignKey("StockRulesReportId")]
     //[InverseProperty("StockRulesReports")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouses { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouses { get; set; } 
 }

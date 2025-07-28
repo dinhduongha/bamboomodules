@@ -168,19 +168,19 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("MassMailing")]
     [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } = new List<LinkTrackerClick>();
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
 
     //[InverseProperty("MassMailing")]
     [NotMapped]
-    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } = new List<LinkTracker>();
+    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } 
 
     //[InverseProperty("MassMailing")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("Mailing")]
     [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } = new List<MailMail>();
+    public virtual ICollection<MailMail> MailMails { get; set; } 
 
     [ForeignKey("MailServerId")]
     //[InverseProperty("MailingMailings")]
@@ -194,11 +194,11 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("MassMailing")]
     [NotMapped]
-    public virtual ICollection<MailingMailingScheduleDate> MailingMailingScheduleDates { get; set; } = new List<MailingMailingScheduleDate>();
+    public virtual ICollection<MailingMailingScheduleDate> MailingMailingScheduleDates { get; set; } 
 
     //[InverseProperty("MassMailing")]
     [NotMapped]
-    public virtual ICollection<MailingMailingTest> MailingMailingTests { get; set; } = new List<MailingMailingTest>();
+    public virtual ICollection<MailingMailingTest> MailingMailingTests { get; set; } 
 
     [ForeignKey("MailingModelId")]
     //[InverseProperty("MailingMailings")]
@@ -207,11 +207,11 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Mailing")]
     [NotMapped]
-    public virtual ICollection<MailingSmsTest> MailingSmsTests { get; set; } = new List<MailingSmsTest>();
+    public virtual ICollection<MailingSmsTest> MailingSmsTests { get; set; } 
 
     //[InverseProperty("MassMailing")]
     [NotMapped]
-    public virtual ICollection<MailingTrace> MailingTraces { get; set; } = new List<MailingTrace>();
+    public virtual ICollection<MailingTrace> MailingTraces { get; set; } 
 
     [ForeignKey("MediumId")]
     //[InverseProperty("MailingMailings")]
@@ -220,11 +220,11 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Mailing")]
     [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposers { get; set; } = new List<SmsComposer>();
+    public virtual ICollection<SmsComposer> SmsComposers { get; set; } 
 
     //[InverseProperty("Mailing")]
     [NotMapped]
-    public virtual ICollection<SmsSm> SmsSms { get; set; } = new List<SmsSm>();
+    public virtual ICollection<SmsSm> SmsSms { get; set; } 
 
     [ForeignKey("SmsTemplateId")]
     //[InverseProperty("MailingMailings")]
@@ -243,7 +243,7 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("AbTestingWinnerMailing")]
     [NotMapped]
-    public virtual ICollection<UtmCampaign> UtmCampaigns { get; set; } = new List<UtmCampaign>();
+    public virtual ICollection<UtmCampaign> UtmCampaigns { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MailingMailingWriteUs")]
@@ -253,10 +253,10 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("MassMailingId")]
     //[InverseProperty("MassMailings")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 
     [ForeignKey("MailingMailingId")]
     //[InverseProperty("MailingMailings")]
     [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } = new List<MailingList>();
+    public virtual ICollection<MailingList> MailingLists { get; set; } 
 }

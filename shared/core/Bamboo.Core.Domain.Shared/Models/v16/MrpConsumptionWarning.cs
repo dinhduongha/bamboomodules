@@ -48,10 +48,10 @@ public partial class MrpConsumptionWarning : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("MrpConsumptionWarning")]
     [NotMapped]
-    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; } = new List<MrpConsumptionWarningLine>();
+    public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; } 
 
     [ForeignKey("MrpConsumptionWarningId")]
     //[InverseProperty("MrpConsumptionWarnings")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 }

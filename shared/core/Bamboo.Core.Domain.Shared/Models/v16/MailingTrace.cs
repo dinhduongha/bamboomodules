@@ -105,7 +105,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("MailingTrace")]
     [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } = new List<LinkTrackerClick>();
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
 
     [ForeignKey("MailMailId")]
     //[InverseProperty("MailingTraces")]
@@ -124,7 +124,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("MailingTrace")]
     [NotMapped]
-    public virtual ICollection<SmsTracker> SmsTrackers { get; set; } = new List<SmsTracker>();
+    public virtual ICollection<SmsTracker> SmsTrackers { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MailingTraceWriteUs")]

@@ -50,11 +50,11 @@ public partial class FleetServiceType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("CostSubtype")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractsNavigation { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractsNavigation { get; set; } 
 
     //[InverseProperty("ServiceType")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FleetServiceTypeWriteUs")]
@@ -64,5 +64,5 @@ public partial class FleetServiceType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("FleetServiceTypeId")]
     //[InverseProperty("FleetServiceTypes")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } 
 }

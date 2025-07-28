@@ -34,7 +34,7 @@ public partial class ChangePasswordWizard: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<ChangePasswordUser> ChangePasswordUsers { get; set; } = new List<ChangePasswordUser>();
+    public virtual ICollection<ChangePasswordUser> ChangePasswordUsers { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ChangePasswordWizardCreateUs")]

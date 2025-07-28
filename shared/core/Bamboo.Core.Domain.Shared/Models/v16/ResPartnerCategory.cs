@@ -74,31 +74,31 @@ public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("PartnerCategory")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> InverseParent { get; set; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> InverseParent { get; set; } 
 
     // v16-Compat
     [ForeignKey("ResPartnerCategoryId")]
     //[InverseProperty("ResPartnerCategories")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } = new List<AccountReconcileModelTemplate>();
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } 
 
     [ForeignKey("ResPartnerCategoryId")]
     //[InverseProperty("ResPartnerCategories")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } = new List<AccountReconcileModel>();
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } 
 
     [ForeignKey("ResPartnerCategoryId")]
     //[InverseProperty("ResPartnerCategories")]
     [NotMapped]
-    public virtual ICollection<MailingContact> MailingContacts { get; set; } = new List<MailingContact>();
+    public virtual ICollection<MailingContact> MailingContacts { get; set; } 
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("Categories")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } 
 
 }

@@ -54,19 +54,19 @@ public partial class ResCountryGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>
     /// TODO: DISABLE INVERSE
     //[InverseProperty("CountryGroup")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } = new List<AccountFiscalPositionTemplate>();
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } 
 
     //[InverseProperty("CountryGroup")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } 
 
     [ForeignKey("ResCountryGroupId")]
     //[InverseProperty("ResCountryGroups")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> Pricelists { get; set; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> Pricelists { get; set; } 
 
     [ForeignKey("ResCountryGroupId")]
     //[InverseProperty("ResCountryGroups")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> ResCountries { get; set; } 
 }

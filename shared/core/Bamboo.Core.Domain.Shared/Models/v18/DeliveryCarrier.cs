@@ -107,7 +107,7 @@ public partial class DeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Carrier")]
     [NotMapped]
-    public virtual ICollection<ChooseDeliveryCarrier> ChooseDeliveryCarriers { get; set; } = new List<ChooseDeliveryCarrier>();
+    public virtual ICollection<ChooseDeliveryCarrier> ChooseDeliveryCarriers { get; set; } 
 
     [ForeignKey("CompanyId")]
     //[InverseProperty("DeliveryCarriers")]
@@ -121,7 +121,7 @@ public partial class DeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Carrier")]
     [NotMapped]
-    public virtual ICollection<DeliveryPriceRule> DeliveryPriceRules { get; set; } = new List<DeliveryPriceRule>();
+    public virtual ICollection<DeliveryPriceRule> DeliveryPriceRules { get; set; } 
 
     [ForeignKey("ProductId")]
     //[InverseProperty("DeliveryCarriers")]
@@ -130,15 +130,15 @@ public partial class DeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Carrier")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     //[InverseProperty("Carrier")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("Carrier")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } 
 
     [ForeignKey("WebsiteId")]
     //[InverseProperty("DeliveryCarriers")]
@@ -153,30 +153,30 @@ public partial class DeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("CarrierId")]
     //[InverseProperty("Carriers")]
     [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> Countries { get; set; } 
 
     //[ForeignKey("DeliveryCarrierId")]
     //[InverseProperty("DeliveryCarriers")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+    public virtual ICollection<ProductTag> ProductTags { get; set; } 
 
     //[ForeignKey("DeliveryCarrierId")]
     //[InverseProperty("DeliveryCarriersNavigation")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTagsNavigation { get; set; } = new List<ProductTag>();
+    public virtual ICollection<ProductTag> ProductTagsNavigation { get; set; } 
 
     [ForeignKey("ShippingId")]
     //[InverseProperty("Shippings")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } 
 
     [ForeignKey("CarrierId")]
     //[InverseProperty("Carriers")]
     [NotMapped]
-    public virtual ICollection<ResCountryState> States { get; set; } = new List<ResCountryState>();
+    public virtual ICollection<ResCountryState> States { get; set; } 
 
     [ForeignKey("CarrierId")]
     //[InverseProperty("Carriers")]
     [NotMapped]
-    public virtual ICollection<DeliveryZipPrefix> ZipPrefixes { get; set; } = new List<DeliveryZipPrefix>();
+    public virtual ICollection<DeliveryZipPrefix> ZipPrefixes { get; set; } 
 }

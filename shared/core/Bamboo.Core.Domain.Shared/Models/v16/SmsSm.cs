@@ -92,6 +92,6 @@ public partial class SmsSm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     // v16-Compat
     //[InverseProperty("Sms")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } 
 
 }

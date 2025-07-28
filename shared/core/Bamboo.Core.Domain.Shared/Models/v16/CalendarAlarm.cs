@@ -87,5 +87,5 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("CalendarAlarmId")]
     //[InverseProperty("CalendarAlarms")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 }

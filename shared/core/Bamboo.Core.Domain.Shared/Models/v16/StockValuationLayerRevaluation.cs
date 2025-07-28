@@ -91,5 +91,5 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     [ForeignKey("StockValuationLayerRevaluationId")]
     //[InverseProperty("StockValuationLayerRevaluations")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
 }

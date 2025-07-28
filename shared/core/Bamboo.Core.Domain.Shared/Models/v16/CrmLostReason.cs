@@ -50,11 +50,11 @@ public partial class CrmLostReason : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("LostReason")]
     [NotMapped]
-    public virtual ICollection<CrmLeadLost> CrmLeadLosts { get; set; } = new List<CrmLeadLost>();
+    public virtual ICollection<CrmLeadLost> CrmLeadLosts { get; set; } 
 
     //[InverseProperty("LostReason")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CrmLostReasonWriteUs")]

@@ -67,7 +67,7 @@ public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("TargetReportExpression")]
     [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } = new List<AccountReportExternalValue>();
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]
@@ -93,11 +93,11 @@ public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityD
     [ForeignKey("AccountReportExpressionId")]
     //[InverseProperty("AccountReportExpressions")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } 
 
     // v16-Compat
     [ForeignKey("AccountReportExpressionId")]
     //[InverseProperty("AccountReportExpressionsNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplatesNavigation { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplatesNavigation { get; set; } 
 }

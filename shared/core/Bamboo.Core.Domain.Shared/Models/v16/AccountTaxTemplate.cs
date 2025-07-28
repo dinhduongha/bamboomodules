@@ -117,37 +117,37 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("TaxDest")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxDests { get; set; } = new List<AccountFiscalPositionTaxTemplate>();
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxDests { get; set; } 
 
     //[InverseProperty("TaxSrc")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxSrcs { get; set; } = new List<AccountFiscalPositionTaxTemplate>();
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxSrcs { get; set; } 
 
     //[InverseProperty("InvoiceTax")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateInvoiceTaxes { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateInvoiceTaxes { get; set; } 
 
     //[InverseProperty("RefundTax")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateRefundTaxes { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateRefundTaxes { get; set; } 
 
     [ForeignKey("AccountTaxTemplateId")]
     //[InverseProperty("AccountTaxTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } = new List<AccountReconcileModelLineTemplate>();
+    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } 
 
     [ForeignKey("TaxId")]
     //[InverseProperty("Taxes")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> Accounts { get; set; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> Accounts { get; set; } 
 
     [ForeignKey("ParentTax")]
     //[InverseProperty("ParentTaxes")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> ChildTaxes { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> ChildTaxes { get; set; } 
 
     [ForeignKey("ChildTax")]
     //[InverseProperty("ChildTaxes")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> ParentTaxes { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> ParentTaxes { get; set; } 
 }

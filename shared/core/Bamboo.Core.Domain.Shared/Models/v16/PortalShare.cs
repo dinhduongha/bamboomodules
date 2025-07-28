@@ -58,5 +58,5 @@ public partial class PortalShare : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("PortalShareId")]
     //[InverseProperty("PortalShares")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

@@ -109,6 +109,6 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<WebsiteMenu> InverseParent { get; set; } = new List<WebsiteMenu>();
+    public virtual ICollection<WebsiteMenu> InverseParent { get; set; } 
 
 }

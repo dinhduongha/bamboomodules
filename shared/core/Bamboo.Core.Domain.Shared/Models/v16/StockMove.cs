@@ -408,64 +408,64 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("StockMove")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     //[InverseProperty("OriginReturnedMove")]
     [NotMapped]
-    public virtual ICollection<StockMove> InverseOriginReturnedMove { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> InverseOriginReturnedMove { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } = new List<StockAssignSerial>();
+    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } = new List<StockReturnPickingLine>();
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } 
 
     //[InverseProperty("Move")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
     //[InverseProperty("StockMove")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
 
     [ForeignKey("MoveOrigId")]
     //[InverseProperty("MoveOrigs")]
     [NotMapped]
-    public virtual ICollection<StockMove> MoveDests { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> MoveDests { get; set; } 
 
     [ForeignKey("MoveDestId")]
     //[InverseProperty("MoveDests")]
     [NotMapped]
-    public virtual ICollection<StockMove> MoveOrigs { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> MoveOrigs { get; set; } 
 
     [ForeignKey("MoveId")]
     //[InverseProperty("Moves")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } 
 
     [ForeignKey("StockMoveId")]
     //[InverseProperty("StockMoves")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
 
     [ForeignKey("MoveId")]
     //[InverseProperty("Moves")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } 
 
 }

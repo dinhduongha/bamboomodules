@@ -76,5 +76,5 @@ public partial class ImLivechatChannelRule: FullAuditedEntity<Guid>, IEntityDto<
     [ForeignKey("ChannelId")]
     //[InverseProperty("Channels")]
     [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> Countries { get; set; } 
 }

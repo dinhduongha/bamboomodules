@@ -91,123 +91,123 @@ public partial class AccountAccountTemplate : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("AccountJournalEarlyPayDiscountGainAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalEarlyPayDiscountGainAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalEarlyPayDiscountGainAccounts { get; set; } 
 
     //[InverseProperty("AccountJournalEarlyPayDiscountLossAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalEarlyPayDiscountLossAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalEarlyPayDiscountLossAccounts { get; set; } 
 
     //[InverseProperty("AccountJournalPaymentCreditAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalPaymentCreditAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalPaymentCreditAccounts { get; set; } 
 
     //[InverseProperty("AccountJournalPaymentDebitAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalPaymentDebitAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalPaymentDebitAccounts { get; set; } 
 
     //[InverseProperty("AccountJournalSuspenseAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalSuspenseAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateAccountJournalSuspenseAccounts { get; set; } 
 
     //[InverseProperty("DefaultCashDifferenceExpenseAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateDefaultCashDifferenceExpenseAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateDefaultCashDifferenceExpenseAccounts { get; set; } 
 
     //[InverseProperty("DefaultCashDifferenceIncomeAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateDefaultCashDifferenceIncomeAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateDefaultCashDifferenceIncomeAccounts { get; set; } 
 
     //[InverseProperty("DefaultPosReceivableAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateDefaultPosReceivableAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateDefaultPosReceivableAccounts { get; set; } 
 
     //[InverseProperty("ExpenseCurrencyExchangeAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateExpenseCurrencyExchangeAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateExpenseCurrencyExchangeAccounts { get; set; } 
 
     //[InverseProperty("IncomeCurrencyExchangeAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplateIncomeCurrencyExchangeAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplateIncomeCurrencyExchangeAccounts { get; set; } 
 
     //[InverseProperty("PropertyAccountExpenseCateg")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountExpenseCategs { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountExpenseCategs { get; set; } 
 
     //[InverseProperty("PropertyAccountExpense")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountExpenses { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountExpenses { get; set; } 
 
     //[InverseProperty("PropertyAccountIncomeCateg")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountIncomeCategs { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountIncomeCategs { get; set; } 
 
     //[InverseProperty("PropertyAccountIncome")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountIncomes { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountIncomes { get; set; } 
 
     //[InverseProperty("PropertyAccountPayable")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountPayables { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountPayables { get; set; } 
 
     //[InverseProperty("PropertyAccountReceivable")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountReceivables { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAccountReceivables { get; set; } 
 
     //[InverseProperty("PropertyAdvanceTaxPaymentAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAdvanceTaxPaymentAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyAdvanceTaxPaymentAccounts { get; set; } 
 
     //[InverseProperty("PropertyCashBasisBaseAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyCashBasisBaseAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyCashBasisBaseAccounts { get; set; } 
 
     //[InverseProperty("PropertyStockAccountInputCateg")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyStockAccountInputCategs { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyStockAccountInputCategs { get; set; } 
 
     //[InverseProperty("PropertyStockAccountOutputCateg")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyStockAccountOutputCategs { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyStockAccountOutputCategs { get; set; } 
 
     //[InverseProperty("PropertyStockValuationAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyStockValuationAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyStockValuationAccounts { get; set; } 
 
     //[InverseProperty("PropertyTaxPayableAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyTaxPayableAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyTaxPayableAccounts { get; set; } 
 
     //[InverseProperty("PropertyTaxReceivableAccount")]
     [NotMapped]
-    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyTaxReceivableAccounts { get; set; } = new List<AccountChartTemplate>();
+    public virtual ICollection<AccountChartTemplate> AccountChartTemplatePropertyTaxReceivableAccounts { get; set; } 
 
     //[InverseProperty("AccountDest")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateAccountDests { get; set; } = new List<AccountFiscalPositionAccountTemplate>();
+    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateAccountDests { get; set; } 
 
     //[InverseProperty("AccountSrc")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateAccountSrcs { get; set; } = new List<AccountFiscalPositionAccountTemplate>();
+    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplateAccountSrcs { get; set; } 
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } = new List<AccountReconcileModelLineTemplate>();
+    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } 
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } 
 
     //[InverseProperty("CashBasisTransitionAccount")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } 
 
     [ForeignKey("AccountAccountTemplateId")]
     //[InverseProperty("AccountAccountTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
 
     [ForeignKey("AccountId")]
     //[InverseProperty("Accounts")]
     [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> Taxes { get; set; } = new List<AccountTaxTemplate>();
+    public virtual ICollection<AccountTaxTemplate> Taxes { get; set; } 
 }

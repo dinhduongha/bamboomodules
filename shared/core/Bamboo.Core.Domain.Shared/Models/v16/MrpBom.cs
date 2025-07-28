@@ -126,26 +126,26 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } 
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } 
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } = new List<MrpUnbuild>();
+    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } 
 
     //[InverseProperty("Bom")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 
 }

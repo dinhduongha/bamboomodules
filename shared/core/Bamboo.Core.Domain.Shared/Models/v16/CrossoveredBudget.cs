@@ -64,7 +64,7 @@ public partial class CrossoveredBudget: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("CrossoveredBudget")]
     [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } = new List<CrossoveredBudgetLine>();
+    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } 
 
     // v16-Compat
     [ForeignKey("MessageMainAttachmentId")]

@@ -72,7 +72,7 @@ public partial class EventLeadRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("EventLeadRule")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     [ForeignKey("EventId")]
     //[InverseProperty("EventLeadRules")]
@@ -97,10 +97,10 @@ public partial class EventLeadRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("EventLeadRuleId")]
     //[InverseProperty("EventLeadRules")]
     [NotMapped]
-    public virtual ICollection<CrmTag> CrmTags { get; set; } = new List<CrmTag>();
+    public virtual ICollection<CrmTag> CrmTags { get; set; } 
 
     [ForeignKey("EventLeadRuleId")]
     //[InverseProperty("EventLeadRules")]
     [NotMapped]
-    public virtual ICollection<EventType> EventTypes { get; set; } = new List<EventType>();
+    public virtual ICollection<EventType> EventTypes { get; set; } 
 }

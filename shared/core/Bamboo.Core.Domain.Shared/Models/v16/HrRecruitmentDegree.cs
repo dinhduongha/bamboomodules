@@ -52,6 +52,6 @@ public partial class HrRecruitmentDegree : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Type")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
 }

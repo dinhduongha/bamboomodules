@@ -82,15 +82,15 @@ public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>
     [ForeignKey("AccountTaxRepartitionLineTemplateId")]
     //[InverseProperty("AccountTaxRepartitionLineTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
 
     [ForeignKey("AccountTaxRepartitionLineTemplateId")]
     //[InverseProperty("AccountTaxRepartitionLineTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } = new List<AccountReportExpression>();
+    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } 
 
     //[ForeignKey("AccountTaxRepartitionLineTemplateId")]
     //[InverseProperty("AccountTaxRepartitionLineTemplatesNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressionsNavigation { get; set; } = new List<AccountReportExpression>();
+    public virtual ICollection<AccountReportExpression> AccountReportExpressionsNavigation { get; set; } 
 }

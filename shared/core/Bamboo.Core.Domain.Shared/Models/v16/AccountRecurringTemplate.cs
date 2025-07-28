@@ -75,6 +75,6 @@ public partial class AccountRecurringTemplate: FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("Template")]
     [NotMapped]
-    public virtual ICollection<RecurringPayment> RecurringPayments { get; set; } = new List<RecurringPayment>();
+    public virtual ICollection<RecurringPayment> RecurringPayments { get; set; } 
 
 }

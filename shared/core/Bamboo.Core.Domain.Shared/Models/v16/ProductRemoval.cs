@@ -60,10 +60,10 @@ public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("RemovalStrategy")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+    public virtual ICollection<ProductCategory> ProductCategories { get; set; } 
 
     //[InverseProperty("RemovalStrategy")]
     [NotMapped]
-    public virtual ICollection<StockLocation> StockLocations { get; set; } = new List<StockLocation>();
+    public virtual ICollection<StockLocation> StockLocations { get; set; } 
 
 }

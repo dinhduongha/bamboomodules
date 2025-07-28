@@ -124,14 +124,14 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("ConsumeUnbuild")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveConsumeUnbuilds { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveConsumeUnbuilds { get; set; } 
 
     //[InverseProperty("Unbuild")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoveUnbuilds { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoveUnbuilds { get; set; } 
 
     //[InverseProperty("Unbuild")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; set; } = new List<StockWarnInsufficientQtyUnbuild>();
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; set; } 
 
 }

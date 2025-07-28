@@ -149,80 +149,80 @@ public partial class MailMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<MailMessage> InverseParent { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> InverseParent { get; set; } 
 
     //[InverseProperty("FetchedMessage")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMemberFetchedMessages { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMemberFetchedMessages { get; set; } 
 
     //[InverseProperty("SeenMessage")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMemberSeenMessages { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMemberSeenMessages { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("Message")]
     [NotMapped]
-    public virtual ICollection<MailLinkPreview> MailLinkPreviews { get; set; } = new List<MailLinkPreview>();
+    public virtual ICollection<MailLinkPreview> MailLinkPreviews { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } = new List<MailMail>();
+    public virtual ICollection<MailMail> MailMails { get; set; } 
 
     //[InverseProperty("Message")]
     [NotMapped]
-    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } = new List<MailMessageReaction>();
+    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<MailMessageSchedule> MailMessageSchedules { get; set; } = new List<MailMessageSchedule>();
+    public virtual ICollection<MailMessageSchedule> MailMessageSchedules { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<MailResendMessage> MailResendMessages { get; set; } = new List<MailResendMessage>();
+    public virtual ICollection<MailResendMessage> MailResendMessages { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } = new List<MailTrackingValue>();
+    public virtual ICollection<MailTrackingValue> MailTrackingValues { get; set; } 
 
     //[InverseProperty("Message")]
     [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatings { get; set; } = new List<RatingRating>();
+    public virtual ICollection<RatingRating> RatingRatings { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<SmsResend> SmsResends { get; set; } = new List<SmsResend>();
+    public virtual ICollection<SmsResend> SmsResends { get; set; } 
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<SmsSm> SmsSms { get; set; } = new List<SmsSm>();
+    public virtual ICollection<SmsSm> SmsSms { get; set; } 
 
     //[InverseProperty("Message")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatErrors { get; set; } = new List<SnailmailLetterFormatError>();
+    public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatErrors { get; set; } 
 
     //[InverseProperty("Message")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } 
 
     [ForeignKey("MessageId")]
     //[InverseProperty("Messages")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 
     //[ForeignKey("MailMessageId")]
     //[InverseProperty("MailMessagesNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 
     //[ForeignKey("MailMessageId")]
     //[InverseProperty("MailMessages1")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartnersNavigation { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartnersNavigation { get; set; } 
 }

@@ -85,44 +85,44 @@ public partial class ProductPricelist: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     //[InverseProperty("BasePricelist")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItemBasePricelists { get; set; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItemBasePricelists { get; set; } 
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItemPricelists { get; set; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItemPricelists { get; set; } 
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
 
     //[InverseProperty("PosPricelist")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } 
 
     //[InverseProperty("Pricelist")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     [ForeignKey("ProductPricelistId")]
     //[InverseProperty("ProductPricelists")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } 
 
     [ForeignKey("ProductPricelistId")]
     //[InverseProperty("ProductPricelists")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
 
     [ForeignKey("PricelistId")]
     //[InverseProperty("Pricelists")]
     [NotMapped]
-    public virtual ICollection<ResCountryGroup> ResCountryGroups { get; set; } = new List<ResCountryGroup>();
+    public virtual ICollection<ResCountryGroup> ResCountryGroups { get; set; } 
 }

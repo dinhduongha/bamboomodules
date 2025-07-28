@@ -87,7 +87,7 @@ public partial class MailingContact: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Contact")]
     [NotMapped]
-    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } = new List<MailingSubscription>();
+    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } 
 
     [ForeignKey("TitleId")]
     //[InverseProperty("MailingContacts")]
@@ -102,10 +102,10 @@ public partial class MailingContact: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("MailingContactId")]
     //[InverseProperty("MailingContacts")]
     [NotMapped]
-    public virtual ICollection<MailingContactToList> MailingContactToLists { get; set; } = new List<MailingContactToList>();
+    public virtual ICollection<MailingContactToList> MailingContactToLists { get; set; } 
 
     [ForeignKey("MailingContactId")]
     //[InverseProperty("MailingContacts")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; set; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; set; } 
 }

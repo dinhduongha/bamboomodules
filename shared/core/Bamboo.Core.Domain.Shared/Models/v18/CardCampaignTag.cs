@@ -52,5 +52,5 @@ public partial class CardCampaignTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("CardCampaignTagId")]
     //[InverseProperty("CardCampaignTags")]
     [NotMapped]
-    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } = new List<CardCampaign>();
+    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } 
 }

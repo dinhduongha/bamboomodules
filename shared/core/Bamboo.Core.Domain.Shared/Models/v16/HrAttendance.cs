@@ -120,6 +120,6 @@ public partial class HrAttendance : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("LastAttendance")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
 }

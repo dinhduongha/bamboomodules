@@ -87,7 +87,7 @@ public partial class MrpBomByproduct: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Byproduct")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MrpBomByproductWriteUs")]
@@ -97,5 +97,5 @@ public partial class MrpBomByproduct: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("MrpBomByproductId")]
     //[InverseProperty("MrpBomByproducts")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 }

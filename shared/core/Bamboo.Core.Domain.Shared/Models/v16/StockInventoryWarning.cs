@@ -49,5 +49,5 @@ public partial class StockInventoryWarning : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("StockInventoryWarningId")]
     //[InverseProperty("StockInventoryWarnings")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } 
 }

@@ -102,10 +102,10 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Notification")]
     [NotMapped]
-    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; set; } = new List<SmsResendRecipient>();
+    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; set; } 
 
     [ForeignKey("MailNotificationId")]
     //[InverseProperty("MailNotifications")]
     [NotMapped]
-    public virtual ICollection<MailResendMessage> MailResendMessages { get; set; } = new List<MailResendMessage>();
+    public virtual ICollection<MailResendMessage> MailResendMessages { get; set; } 
 }

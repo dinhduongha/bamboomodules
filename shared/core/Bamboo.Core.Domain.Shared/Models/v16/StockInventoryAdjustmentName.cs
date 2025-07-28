@@ -56,5 +56,5 @@ public partial class StockInventoryAdjustmentName : FullAuditedEntity<Guid>, IEn
     [ForeignKey("StockInventoryAdjustmentNameId")]
     //[InverseProperty("StockInventoryAdjustmentNames")]
     [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } = new List<StockQuant>();
+    public virtual ICollection<StockQuant> StockQuants { get; set; } 
 }

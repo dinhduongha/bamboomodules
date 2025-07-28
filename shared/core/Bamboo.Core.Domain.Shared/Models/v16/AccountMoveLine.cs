@@ -368,50 +368,50 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("MoveLine")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
     //[InverseProperty("CreditMove")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditMoves { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditMoves { get; set; } 
 
     //[InverseProperty("DebitMove")]
     [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitMoves { get; set; } = new List<AccountPartialReconcile>();
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitMoves { get; set; } 
 
     //[InverseProperty("InvoiceLine")]
     [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; set; } = new List<RepairFee>();
+    public virtual ICollection<RepairFee> RepairFees { get; set; } 
 
     //[InverseProperty("InvoiceLine")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } 
 
     //[InverseProperty("AccountMoveLine")]
     [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } = new List<StockValuationLayer>();
+    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
 
     [ForeignKey("AccountMoveLineId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
 
     [ForeignKey("AccountMoveLineId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]
-    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizards { get; set; } = new List<AccountAutomaticEntryWizard>();
+    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizards { get; set; } 
 
     [ForeignKey("AccountMoveLineId")]
     //[InverseProperty("AccountMoveLines")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 
     [ForeignKey("InvoiceLineId")]
     //[InverseProperty("InvoiceLines")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> OrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> OrderLines { get; set; } 
 
     [ForeignKey("LineId")]
     //[InverseProperty("Lines")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> Wizards { get; set; } = new List<AccountPaymentRegister>();
+    public virtual ICollection<AccountPaymentRegister> Wizards { get; set; } 
 }

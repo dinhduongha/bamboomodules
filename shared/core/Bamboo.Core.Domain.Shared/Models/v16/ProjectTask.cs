@@ -285,32 +285,32 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Ancestor")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> InverseAncestor { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> InverseAncestor { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> InverseParent { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> InverseParent { get; set; } 
 
     //[InverseProperty("Task")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } = new List<ProjectTaskUserRel>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } 
 
     //[InverseProperty("Task")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     [ForeignKey("TaskId")]
     //[InverseProperty("Tasks")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> DependsOns { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> DependsOns { get; set; } 
 
     [ForeignKey("ProjectTaskId")]
     //[InverseProperty("ProjectTasks")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTags { get; set; } = new List<ProjectTag>();
+    public virtual ICollection<ProjectTag> ProjectTags { get; set; } 
 
     [ForeignKey("DependsOnId")]
     //[InverseProperty("DependsOns")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> Tasks { get; set; } 
 }

@@ -93,6 +93,6 @@ public partial class ResUsersSetting: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("UserSetting")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumes { get; set; } = new List<ResUsersSettingsVolume>();
+    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumes { get; set; } 
 
 }

@@ -63,10 +63,10 @@ public partial class HrPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     
     //[InverseProperty("Plan")]
     [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypes { get; set; } = new List<HrPlanActivityType>();
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypes { get; set; } 
 
     //[InverseProperty("Plan")]
     [NotMapped]
-    public virtual ICollection<HrPlanWizard> HrPlanWizards { get; set; } = new List<HrPlanWizard>();
+    public virtual ICollection<HrPlanWizard> HrPlanWizards { get; set; } 
 
 }

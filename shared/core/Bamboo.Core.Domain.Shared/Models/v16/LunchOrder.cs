@@ -130,5 +130,5 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("OrderId")]
     //[InverseProperty("Orders")]
     [NotMapped]
-    public virtual ICollection<LunchTopping> Toppings { get; set; } = new List<LunchTopping>();
+    public virtual ICollection<LunchTopping> Toppings { get; set; } 
 }

@@ -56,7 +56,7 @@ public partial class MrpAccountWipAccounting: FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("WipAccounting")]
     [NotMapped]
-    public virtual ICollection<MrpAccountWipAccountingLine> MrpAccountWipAccountingLines { get; set; } = new List<MrpAccountWipAccountingLine>();
+    public virtual ICollection<MrpAccountWipAccountingLine> MrpAccountWipAccountingLines { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MrpAccountWipAccountingWriteUs")]
@@ -66,5 +66,5 @@ public partial class MrpAccountWipAccounting: FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("MrpAccountWipAccountingId")]
     //[InverseProperty("MrpAccountWipAccountings")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 }

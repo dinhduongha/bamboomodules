@@ -78,81 +78,81 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [ForeignKey("Gid")]
     [InverseProperty("Gids")]
-    public virtual ICollection<ResUser> UidsNavigation { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> UidsNavigation { get; set; } 
 
     [ForeignKey("GroupId")]
     [InverseProperty("Groups")]
     //[NotMapped]
-    public virtual ICollection<IrRule> RuleGroups { get; set; } = new List<IrRule>();
+    public virtual ICollection<IrRule> RuleGroups { get; set; } 
 
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<DigestTip> DigestTips { get; set; } = new List<DigestTip>();
+    public virtual ICollection<DigestTip> DigestTips { get; set; } 
 
     //[InverseProperty("GroupPublic")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannels { get; set; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannels { get; set; } 
 
     //[InverseProperty("Group")]
     [NotMapped]
-    public virtual ICollection<IrModelAccess> IrModelAccesses { get; set; } = new List<IrModelAccess>();
+    public virtual ICollection<IrModelAccess> IrModelAccesses { get; set; } 
 
     //[InverseProperty("GroupPosManager")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigGroupPosManagers { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigGroupPosManagers { get; set; } 
 
     //[InverseProperty("GroupPosUser")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigGroupPosUsers { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigGroupPosUsers { get; set; } 
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrActServer> Acts { get; set; } = new List<IrActServer>();
+    public virtual ICollection<IrActServer> Acts { get; set; } 
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrActWindow> ActsNavigation { get; set; } = new List<IrActWindow>();
+    public virtual ICollection<IrActWindow> ActsNavigation { get; set; } 
 
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]
     [NotMapped]
-    public virtual ICollection<IrModelField> Fields { get; set; } = new List<IrModelField>();
+    public virtual ICollection<IrModelField> Fields { get; set; } 
 
     [ForeignKey("Hid")]
     //[InverseProperty("Hids")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } 
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Hids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Hids { get; set; } 
 
     [ForeignKey("ResGroupsId")]
     //[InverseProperty("ResGroups")]
     [NotMapped]
-    public virtual ICollection<MailChannel> MailChannelsNavigation { get; set; } = new List<MailChannel>();
+    public virtual ICollection<MailChannel> MailChannelsNavigation { get; set; } 
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrUiMenu> Menus { get; set; } = new List<IrUiMenu>();
+    public virtual ICollection<IrUiMenu> Menus { get; set; } 
 
     [ForeignKey("ResGroupsId")]
     //[InverseProperty("ResGroups")]
     [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } = new List<SpreadsheetDashboard>();
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } 
 
     [ForeignKey("Gid")]
     //[InverseProperty("Gids")]
     [NotMapped]
-    public virtual ICollection<IrActReportXml> Uids { get; set; } = new List<IrActReportXml>();
+    public virtual ICollection<IrActReportXml> Uids { get; set; } 
 
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]
     [NotMapped]
-    public virtual ICollection<IrUiView> Views { get; set; } = new List<IrUiView>();
+    public virtual ICollection<IrUiView> Views { get; set; } 
 }

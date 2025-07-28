@@ -103,18 +103,18 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("LivechatVisitor")]
     [NotMapped]
-    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } = new List<DiscussChannel>();
+    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } 
 
     //[InverseProperty("Visitor")]
     [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
 
     //[InverseProperty("Visitor")]
     [NotMapped]
-    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; set; } = new List<WebsiteTrack>();
+    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; set; } 
 
     [ForeignKey("WebsiteVisitorId")]
     //[InverseProperty("WebsiteVisitors")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 }

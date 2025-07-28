@@ -180,7 +180,7 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Page")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestion> InversePage { get; set; } = new List<SurveyQuestion>();
+    public virtual ICollection<SurveyQuestion> InversePage { get; set; } 
 
     [ForeignKey("PageId")]
     //[InverseProperty("InversePage")]
@@ -206,23 +206,23 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("MatrixQuestion")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerMatrixQuestions { get; set; } = new List<SurveyQuestionAnswer>();
+    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerMatrixQuestions { get; set; } 
 
     //[InverseProperty("Question")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerQuestions { get; set; } = new List<SurveyQuestionAnswer>();
+    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerQuestions { get; set; } 
 
     //[InverseProperty("SessionQuestion")]
     [NotMapped]
-    public virtual ICollection<SurveySurvey> SurveySurveys { get; set; } = new List<SurveySurvey>();
+    public virtual ICollection<SurveySurvey> SurveySurveys { get; set; } 
 
     //[InverseProperty("Question")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } = new List<SurveyUserInputLine>();
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } 
 
     //[InverseProperty("LastDisplayedPage")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInput> SurveyUserInputsNavigation { get; set; } = new List<SurveyUserInput>();
+    public virtual ICollection<SurveyUserInput> SurveyUserInputsNavigation { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SurveyQuestionWriteUs")]
@@ -232,10 +232,10 @@ public partial class SurveyQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("SurveyQuestionId")]
     //[InverseProperty("SurveyQuestions")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswers { get; set; } = new List<SurveyQuestionAnswer>();
+    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswers { get; set; } 
 
     [ForeignKey("SurveyQuestionId")]
     //[InverseProperty("SurveyQuestions")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } = new List<SurveyUserInput>();
+    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } 
 }

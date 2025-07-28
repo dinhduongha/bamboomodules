@@ -57,5 +57,5 @@ public partial class NoteTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudit
     [ForeignKey("TagId")]
     //[InverseProperty("Tags")]
     [NotMapped]
-    public virtual ICollection<NoteNote> Notes { get; set; } = new List<NoteNote>();
+    public virtual ICollection<NoteNote> Notes { get; set; } 
 }

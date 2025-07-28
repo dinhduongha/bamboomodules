@@ -165,11 +165,11 @@ public partial class SurveySurvey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<GamificationBadge> GamificationBadges { get; set; } = new List<GamificationBadge>();
+    public virtual ICollection<GamificationBadge> GamificationBadges { get; set; } 
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } = new List<HrResumeLine>();
+    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } 
 
     [ForeignKey("SessionQuestionId")]
     //[InverseProperty("SurveySurveys")]
@@ -178,23 +178,23 @@ public partial class SurveySurvey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<SlideSlide> SlideSlides { get; set; } = new List<SlideSlide>();
+    public virtual ICollection<SlideSlide> SlideSlides { get; set; } 
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<SurveyInvite> SurveyInvites { get; set; } = new List<SurveyInvite>();
+    public virtual ICollection<SurveyInvite> SurveyInvites { get; set; } 
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } = new List<SurveyQuestion>();
+    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } 
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } = new List<SurveyUserInputLine>();
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } 
 
     //[InverseProperty("Survey")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } = new List<SurveyUserInput>();
+    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("SurveySurveyUsers")]
@@ -209,5 +209,5 @@ public partial class SurveySurvey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("SurveySurveyId")]
     //[InverseProperty("SurveySurveys")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

@@ -61,5 +61,5 @@ public partial class AccountResequenceWizard : FullAuditedEntity<Guid>, IEntityD
     [ForeignKey("AccountResequenceWizardId")]
     //[InverseProperty("AccountResequenceWizards")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 }

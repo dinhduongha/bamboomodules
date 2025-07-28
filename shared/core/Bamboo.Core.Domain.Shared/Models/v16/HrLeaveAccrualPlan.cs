@@ -83,10 +83,10 @@ public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("AccrualPlan")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevels { get; set; } = new List<HrLeaveAccrualLevel>();
+    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevels { get; set; } 
 
     //[InverseProperty("AccrualPlan")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
 
 }

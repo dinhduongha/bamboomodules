@@ -89,7 +89,7 @@ public partial class GamificationGoal: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Goal")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalWizard> GamificationGoalWizards { get; set; } = new List<GamificationGoalWizard>();
+    public virtual ICollection<GamificationGoalWizard> GamificationGoalWizards { get; set; } 
 
     [ForeignKey("LineId")]
     //[InverseProperty("GamificationGoals")]

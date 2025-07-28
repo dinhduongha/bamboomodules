@@ -59,5 +59,5 @@ public partial class PosBill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [ForeignKey("PosBillId")]
     //[InverseProperty("PosBills")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 }

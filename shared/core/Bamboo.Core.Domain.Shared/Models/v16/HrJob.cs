@@ -214,42 +214,42 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; set; } = new List<HrContract>();
+    public virtual ICollection<HrContract> HrContracts { get; set; } 
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     //[InverseProperty("Job")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } 
 
     [ForeignKey("HrJobId")]
     //[InverseProperty("HrJobs")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; set; } = new List<HrRecruitmentStage>();
+    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; set; } 
 
     [ForeignKey("HrJobId")]
     //[InverseProperty("HrJobs")]
     [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; set; } = new List<HrSkill>();
+    public virtual ICollection<HrSkill> HrSkills { get; set; } 
 
     //[ForeignKey("HrJobId")]
     //[InverseProperty("HrJobs")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 
     //[ForeignKey("HrJobId")]
     //[InverseProperty("HrJobsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsersNavigation { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsersNavigation { get; set; } 
 
     [ForeignKey("JobId")]
     //[InverseProperty("Jobs")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } 
 }

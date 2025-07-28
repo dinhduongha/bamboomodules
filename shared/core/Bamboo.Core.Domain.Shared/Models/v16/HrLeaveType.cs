@@ -142,21 +142,21 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     // ForeignKey???
     //[InverseProperty("TimeOffType")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlans { get; set; } = new List<HrLeaveAccrualPlan>();
+    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlans { get; set; } 
 
     // ForeignKey???
     //[InverseProperty("HolidayStatus")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
 
     // ForeignKey???
     //[InverseProperty("HolidayStatus")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } 
 
     [ForeignKey("HrLeaveTypeId")]
     //[InverseProperty("HrLeaveTypes")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 
 }

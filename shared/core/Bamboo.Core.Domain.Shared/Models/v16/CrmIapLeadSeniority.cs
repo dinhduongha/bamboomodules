@@ -53,7 +53,7 @@ public partial class CrmIapLeadSeniority : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Seniority")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CrmIapLeadSeniorityWriteUs")]

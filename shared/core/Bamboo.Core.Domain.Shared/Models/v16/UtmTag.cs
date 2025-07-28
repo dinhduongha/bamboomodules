@@ -53,5 +53,5 @@ public partial class UtmTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [ForeignKey("CampaignId")]
     //[InverseProperty("Campaigns")]
     [NotMapped]
-    public virtual ICollection<UtmCampaign> Tags { get; set; } = new List<UtmCampaign>();
+    public virtual ICollection<UtmCampaign> Tags { get; set; } 
 }

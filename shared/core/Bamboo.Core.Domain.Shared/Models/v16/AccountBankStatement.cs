@@ -65,11 +65,11 @@ public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Statement")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
 
     //[InverseProperty("Statement")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountBankStatements")]
@@ -94,5 +94,5 @@ public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("AccountBankStatementId")]
     //[InverseProperty("AccountBankStatements")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
 }

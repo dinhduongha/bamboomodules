@@ -356,69 +356,69 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<StockLocation> StockLocations { get; set; } = new List<StockLocation>();
+    public virtual ICollection<StockLocation> StockLocations { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } 
 
     //[InverseProperty("SuppliedWh")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRouteSuppliedWhs { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> StockRouteSuppliedWhs { get; set; } 
 
     //[InverseProperty("SupplierWh")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRouteSupplierWhs { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> StockRouteSupplierWhs { get; set; } 
 
     //[InverseProperty("PropagateWarehouse")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRulePropagateWarehouses { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRulePropagateWarehouses { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRuleWarehouses { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRuleWarehouses { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 
     //[InverseProperty("Warehouse")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } 
 
     [ForeignKey("WarehouseId")]
     //[InverseProperty("Warehouses")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } 
 
     [ForeignKey("StockWarehouseId")]
     //[InverseProperty("StockWarehouses")]
     [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } = new List<StockRulesReport>();
+    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } 
 
     [ForeignKey("SupplierWhId")]
     //[InverseProperty("SupplierWhs")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> SuppliedWhs { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> SuppliedWhs { get; set; } 
 
     [ForeignKey("SuppliedWhId")]
     //[InverseProperty("SuppliedWhs")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> SupplierWhs { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> SupplierWhs { get; set; } 
 }

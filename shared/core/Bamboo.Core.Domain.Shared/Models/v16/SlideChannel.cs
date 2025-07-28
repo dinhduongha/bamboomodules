@@ -204,7 +204,7 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } = new List<HrResumeLine>();
+    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } 
 
     [ForeignKey("PromotedSlideId")]
     //[InverseProperty("SlideChannels")]
@@ -228,19 +228,19 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<SlideChannelInvite> SlideChannelInvites { get; set; } = new List<SlideChannelInvite>();
+    public virtual ICollection<SlideChannelInvite> SlideChannelInvites { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<SlideChannelPartner> SlideChannelPartners { get; set; } = new List<SlideChannelPartner>();
+    public virtual ICollection<SlideChannelPartner> SlideChannelPartners { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<SlideSlidePartner> SlideSlidePartners { get; set; } = new List<SlideSlidePartner>();
+    public virtual ICollection<SlideSlidePartner> SlideSlidePartners { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<SlideSlide> SlideSlides { get; set; } = new List<SlideSlide>();
+    public virtual ICollection<SlideSlide> SlideSlides { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("SlideChannelUsers")]
@@ -260,25 +260,25 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("PrerequisiteChannelId")]
     //[InverseProperty("PrerequisiteChannels")]
     [NotMapped]
-    public virtual ICollection<SlideChannel> Channels { get; set; } = new List<SlideChannel>();
+    public virtual ICollection<SlideChannel> Channels { get; set; } 
 
     [ForeignKey("ChannelId")]
     //[InverseProperty("Channels")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Groups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Groups { get; set; } 
 
     [ForeignKey("ChannelId")]
     //[InverseProperty("Channels")]
     [NotMapped]
-    public virtual ICollection<SlideChannel> PrerequisiteChannels { get; set; } = new List<SlideChannel>();
+    public virtual ICollection<SlideChannel> PrerequisiteChannels { get; set; } 
 
     [ForeignKey("SlideChannelId")]
     //[InverseProperty("SlideChannels")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 
     [ForeignKey("ChannelId")]
     //[InverseProperty("Channels")]
     [NotMapped]
-    public virtual ICollection<SlideChannelTag> Tags { get; set; } = new List<SlideChannelTag>();
+    public virtual ICollection<SlideChannelTag> Tags { get; set; } 
 }

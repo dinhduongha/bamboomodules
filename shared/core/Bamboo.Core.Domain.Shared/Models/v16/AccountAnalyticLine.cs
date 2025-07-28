@@ -159,12 +159,12 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public virtual SaleOrderLine? SoLineNavigation { get; set; }
 
     //[InverseProperty("AnalyticAccountLine")]
-    //public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    //public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     // [ForeignKey("AccountAnalyticLineId")]
     // //[InverseProperty("AnalyticAccountLine")]
     // [NotMapped]
-    // public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    // public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("AccountAnalyticLineUsers")]
@@ -189,20 +189,20 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     // v16-Compat
     //[InverseProperty("MoAnalyticAccountLine")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLines { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLines { get; set; } 
 
     // v16-Compat
     //[InverseProperty("WcAnalyticAccountLine")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLines { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLines { get; set; } 
 
     [ForeignKey("AccountAnalyticLineId")]
     //[InverseProperty("AccountAnalyticLines")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
 
     [ForeignKey("AccountAnalyticLineId")]
     //[InverseProperty("AccountAnalyticLinesNavigation")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkordersNavigation { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkordersNavigation { get; set; } 
 }

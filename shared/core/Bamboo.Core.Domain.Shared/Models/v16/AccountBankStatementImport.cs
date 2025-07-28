@@ -49,5 +49,5 @@ public partial class AccountBankStatementImport : FullAuditedEntity<Guid>, IEnti
     [ForeignKey("AccountBankStatementImportId")]
     //[InverseProperty("AccountBankStatementImports")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
 }

@@ -169,37 +169,37 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     //[ForeignKey("MrpWorkorderId")]
     //[InverseProperty("MrpWorkorders")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
 
     //[ForeignKey("MrpWorkorderId")]
     //[InverseProperty("MrpWorkordersNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLinesNavigation { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLinesNavigation { get; set; } 
 
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } 
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("Workorder")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
     [ForeignKey("WorkorderId")]
     //[InverseProperty("Workorders")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> BlockedBies { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> BlockedBies { get; set; } 
 
     [ForeignKey("BlockedById")]
     //[InverseProperty("BlockedBies")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> Workorders { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> Workorders { get; set; } 
 }

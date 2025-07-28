@@ -56,5 +56,5 @@ public partial class StockScrapReasonTag: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("StockScrapReasonTagId")]
     //[InverseProperty("StockScrapReasonTags")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 }

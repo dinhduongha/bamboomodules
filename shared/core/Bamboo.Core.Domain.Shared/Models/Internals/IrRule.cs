@@ -79,5 +79,5 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [ForeignKey("RuleGroupId")]
     [InverseProperty("RuleGroups")]
-    public virtual ICollection<ResGroup> Groups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Groups { get; set; } 
 }

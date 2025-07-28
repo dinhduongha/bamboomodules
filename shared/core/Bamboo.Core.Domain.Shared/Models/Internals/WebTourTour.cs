@@ -61,7 +61,7 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
 
     //[InverseProperty("Tour")]
     [NotMapped]
-    public virtual ICollection<WebTourTourStep> WebTourTourSteps { get; set; } = new List<WebTourTourStep>();
+    public virtual ICollection<WebTourTourStep> WebTourTourSteps { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("WebTourTourWriteUs")]
@@ -82,5 +82,5 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [ForeignKey("WebTourTourId")]
     //[InverseProperty("WebTourTours")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

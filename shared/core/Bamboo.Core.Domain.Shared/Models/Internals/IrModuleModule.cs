@@ -119,15 +119,15 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequests { get; set; } = new List<BaseModuleInstallRequest>();
+    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequests { get; set; } 
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviews { get; set; } = new List<BaseModuleInstallReview>();
+    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviews { get; set; } 
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstalls { get; set; } = new List<BaseModuleUninstall>();
+    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstalls { get; set; } 
 
     [ForeignKey("CategoryId")]
     //[InverseProperty("IrModuleModules")]
@@ -146,43 +146,43 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } = new List<IrDemoFailure>();
+    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } 
 
     //[InverseProperty("ModuleNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; set; } = new List<IrModelConstraint>();
+    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; set; } 
 
     //[InverseProperty("ModuleNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelRelation> IrModelRelations { get; set; } = new List<IrModelRelation>();
+    public virtual ICollection<IrModelRelation> IrModelRelations { get; set; } 
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependencies { get; set; } = new List<IrModuleModuleDependency>();
+    public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependencies { get; set; } 
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusions { get; set; } = new List<IrModuleModuleExclusion>();
+    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusions { get; set; } 
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } 
 
     //[InverseProperty("Module")]
     [NotMapped]
-    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; set; } = new List<WebsiteConfiguratorFeature>();
+    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; set; } 
 
     //[InverseProperty("Theme")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } 
 
     [ForeignKey("ModuleId")]
     //[InverseProperty("Modules")]
     [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> Countries { get; set; } 
 
     [ForeignKey("ModuleId")]
     //[InverseProperty("Modules")]
     [NotMapped]
-    public virtual ICollection<BaseLanguageExport> Wizs { get; set; } = new List<BaseLanguageExport>();
+    public virtual ICollection<BaseLanguageExport> Wizs { get; set; } 
 }

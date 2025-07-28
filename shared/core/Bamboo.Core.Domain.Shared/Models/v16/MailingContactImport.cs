@@ -48,5 +48,5 @@ public partial class MailingContactImport: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("MailingContactImportId")]
     //[InverseProperty("MailingContactImports")]
     [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } = new List<MailingList>();
+    public virtual ICollection<MailingList> MailingLists { get; set; } 
 }

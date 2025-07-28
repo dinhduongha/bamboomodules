@@ -131,20 +131,20 @@ public partial class AccountReconcileModelTemplate : FullAuditedEntity<Guid>, IE
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } = new List<AccountReconcileModelLineTemplate>();
+    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } 
 
     [ForeignKey("AccountReconcileModelTemplateId")]
     //[InverseProperty("AccountReconcileModelTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 
     [ForeignKey("AccountReconcileModelTemplateId")]
     //[InverseProperty("AccountReconcileModelTemplates")]
     [NotMapped]
-    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; set; } = new List<ResPartnerCategory>();
+    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; set; } 
 
     [ForeignKey("AccountReconcileModelTemplateId")]
     //[InverseProperty("AccountReconcileModelTemplates")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

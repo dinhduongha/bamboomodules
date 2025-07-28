@@ -70,6 +70,6 @@ public partial class PrivacyLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Log")]
     [NotMapped]
-    public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizards { get; set; } = new List<PrivacyLookupWizard>();
+    public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizards { get; set; } 
 
 }

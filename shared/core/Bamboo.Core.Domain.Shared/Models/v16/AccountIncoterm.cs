@@ -44,7 +44,7 @@ public partial class AccountIncoterm : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("InvoiceIncoterm")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]
@@ -58,15 +58,15 @@ public partial class AccountIncoterm : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Incoterm")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     //[InverseProperty("Incoterm")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
 
     //[InverseProperty("IncotermNavigation")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("AccountIncotermWriteUs")]

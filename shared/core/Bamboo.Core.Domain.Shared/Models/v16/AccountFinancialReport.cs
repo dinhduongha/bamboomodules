@@ -75,7 +75,7 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("AccountReport")]
     [NotMapped]
-    public virtual ICollection<AccountingReport> AccountingReports { get; set; } = new List<AccountingReport>();
+    public virtual ICollection<AccountingReport> AccountingReports { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("AccountFinancialReportCreateUs")]
@@ -84,11 +84,11 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("AccountReport")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialReport> InverseAccountReport { get; set; } = new List<AccountFinancialReport>();
+    public virtual ICollection<AccountFinancialReport> InverseAccountReport { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialReport> InverseParent { get; set; } = new List<AccountFinancialReport>();
+    public virtual ICollection<AccountFinancialReport> InverseParent { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -103,10 +103,10 @@ public partial class AccountFinancialReport : FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("ReportId")]
     //[InverseProperty("Reports")]
     [NotMapped]
-    public virtual ICollection<AccountAccountType> AccountTypes { get; set; } = new List<AccountAccountType>();
+    public virtual ICollection<AccountAccountType> AccountTypes { get; set; } 
 
     [ForeignKey("ReportLineId")]
     //[InverseProperty("ReportLines2")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> Accounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> Accounts { get; set; } 
 }

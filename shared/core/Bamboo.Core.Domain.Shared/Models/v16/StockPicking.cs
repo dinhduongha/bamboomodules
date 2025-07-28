@@ -242,71 +242,71 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Backorder")]
     [NotMapped]
-    public virtual ICollection<StockPicking> InverseBackorder { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> InverseBackorder { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
+    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLines { get; set; } = new List<StockBackorderConfirmationLine>();
+    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLines { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLines { get; set; } = new List<StockImmediateTransferLine>();
+    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLines { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockPackageDestination> StockPackageDestinations { get; set; } = new List<StockPackageDestination>();
+    public virtual ICollection<StockPackageDestination> StockPackageDestinations { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } = new List<StockPackageLevel>();
+    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickings { get; set; } = new List<StockReturnPicking>();
+    public virtual ICollection<StockReturnPicking> StockReturnPickings { get; set; } 
 
     //[InverseProperty("Picking")]
     [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } = new List<StockScrap>();
+    public virtual ICollection<StockScrap> StockScraps { get; set; } 
 
     [ForeignKey("StockPickingId")]
     //[InverseProperty("StockPickings")]
     [NotMapped]
-    public virtual ICollection<ConfirmStockSm> ConfirmStockSms { get; set; } = new List<ConfirmStockSm>();
+    public virtual ICollection<ConfirmStockSm> ConfirmStockSms { get; set; } 
 
     [ForeignKey("StockPickingId")]
     //[InverseProperty("StockPickings")]
     [NotMapped]
-    public virtual ICollection<LotLabelLayout> LotLabelLayouts { get; set; } = new List<LotLabelLayout>();
+    public virtual ICollection<LotLabelLayout> LotLabelLayouts { get; set; } 
 
     [ForeignKey("StockPickingId")]
     //[InverseProperty("StockPickings")]
     [NotMapped]
-    public virtual ICollection<PickingLabelType> PickingLabelTypes { get; set; } = new List<PickingLabelType>();
+    public virtual ICollection<PickingLabelType> PickingLabelTypes { get; set; } 
 
     [ForeignKey("StockPickingId")]
     //[InverseProperty("StockPickings")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     [ForeignKey("StockPickingId")]
     //[InverseProperty("StockPickings")]
     [NotMapped]
-    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmations { get; set; } = new List<StockBackorderConfirmation>();
+    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmations { get; set; } 
 
     [ForeignKey("StockPickingId")]
     //[InverseProperty("StockPickings")]
     [NotMapped]
-    public virtual ICollection<StockImmediateTransfer> StockImmediateTransfers { get; set; } = new List<StockImmediateTransfer>();
+    public virtual ICollection<StockImmediateTransfer> StockImmediateTransfers { get; set; } 
 }

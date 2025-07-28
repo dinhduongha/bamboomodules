@@ -58,7 +58,7 @@ public partial class IapService: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Service")]
     [NotMapped]
-    public virtual ICollection<IapAccount> IapAccounts { get; set; } = new List<IapAccount>();
+    public virtual ICollection<IapAccount> IapAccounts { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IapServiceWriteUs")]

@@ -78,31 +78,31 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } = new List<AccountAccountTemplate>();
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } 
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     // v16-Compat
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } = new List<AccountTaxRepartitionLineTemplate>();
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } 
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; } = new List<AccountTaxRepartitionLine>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; } 
 
     [ForeignKey("AccountAccountTagId")]
     //[InverseProperty("AccountAccountTags")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 }

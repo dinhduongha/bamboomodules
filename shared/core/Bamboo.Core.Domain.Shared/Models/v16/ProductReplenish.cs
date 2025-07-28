@@ -115,5 +115,5 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("ProductReplenishId")]
     //[InverseProperty("ProductReplenishes")]
     [NotMapped]
-    public virtual ICollection<StockRoute> StockRoutes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> StockRoutes { get; set; } 
 }

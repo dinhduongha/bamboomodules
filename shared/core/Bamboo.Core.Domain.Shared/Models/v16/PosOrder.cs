@@ -239,18 +239,18 @@ public partial class PosOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     
     //[InverseProperty("Order")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } 
 
     //[InverseProperty("PosOrder")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } 
 
     //[InverseProperty("PosOrder")]
     [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } = new List<ProcurementGroup>();
+    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } 
 
     //[InverseProperty("PosOrder")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } 
 
 }

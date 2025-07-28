@@ -49,7 +49,7 @@ public partial class EventQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     //[InverseProperty("ValueAnswer")]
     [NotMapped]
-    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswers { get; set; } = new List<EventRegistrationAnswer>();
+    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswers { get; set; } 
 
     [ForeignKey("QuestionId")]
     //[InverseProperty("EventQuestionAnswers")]

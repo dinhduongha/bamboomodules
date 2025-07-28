@@ -52,5 +52,5 @@ public partial class PosNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [ForeignKey("PosNoteId")]
     //[InverseProperty("PosNotes")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 }

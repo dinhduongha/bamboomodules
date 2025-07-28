@@ -45,6 +45,6 @@ public partial class BaseImportTestsModelsO2m: FullAuditedEntity<Guid>, IEntityD
     
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildren { get; } = new List<BaseImportTestsModelsO2mChild>();
+    public virtual ICollection<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildren { get; } 
 
 }

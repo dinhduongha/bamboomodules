@@ -73,6 +73,6 @@ public partial class ProjectProjectStage : FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
 }

@@ -111,25 +111,25 @@ public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
     // v16-Compat
     //[InverseProperty("CustomAuditAction")]
     [NotMapped]
-    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } = new List<AccountReportColumn>();
+    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } 
 
     //[InverseProperty("Action")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } = new List<GamificationGoalDefinition>();
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } 
 
     // v16-Compat
     //[InverseProperty("ActWindow")]
     [NotMapped]
-    public virtual ICollection<IrActWindowView> IrActWindowViews { get; set; } = new List<IrActWindowView>();
+    public virtual ICollection<IrActWindowView> IrActWindowViews { get; set; } 
 
     //[InverseProperty("ParentAction")]
     [NotMapped]
-    public virtual ICollection<IrEmbeddedAction> IrEmbeddedActions { get; set; } = new List<IrEmbeddedAction>();
+    public virtual ICollection<IrEmbeddedAction> IrEmbeddedActions { get; set; } 
 
     // v16-Compat
     //[InverseProperty("RefIrActWindowNavigation")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
 
     [ForeignKey("SearchViewId")]
     //[InverseProperty("IrActWindowSearchViews")]
@@ -139,7 +139,7 @@ public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
     // v16-Compat
     //[InverseProperty("SidebarAction")]
     [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } = new List<SmsTemplate>();
+    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } 
 
     [ForeignKey("ViewId")]
     //[InverseProperty("IrActWindowViews")]
@@ -154,5 +154,5 @@ public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("ActId")]
     //[InverseProperty("ActsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> Gids { get; set; } 
 }

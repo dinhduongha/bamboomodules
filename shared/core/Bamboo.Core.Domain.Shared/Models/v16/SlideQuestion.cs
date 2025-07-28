@@ -54,7 +54,7 @@ public partial class SlideQuestion: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("Question")]
     [NotMapped]
-    public virtual ICollection<SlideAnswer> SlideAnswers { get; set; } = new List<SlideAnswer>();
+    public virtual ICollection<SlideAnswer> SlideAnswers { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SlideQuestionWriteUs")]

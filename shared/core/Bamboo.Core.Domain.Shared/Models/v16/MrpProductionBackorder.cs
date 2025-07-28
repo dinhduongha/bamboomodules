@@ -48,10 +48,10 @@ public partial class MrpProductionBackorder : FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("MrpProductionBackorder")]
     [NotMapped]
-    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLines { get; set; } = new List<MrpProductionBackorderLine>();
+    public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLines { get; set; } 
 
     [ForeignKey("MrpProductionBackorderId")]
     //[InverseProperty("MrpProductionBackorders")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 }

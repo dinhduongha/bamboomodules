@@ -115,23 +115,23 @@ public partial class MailChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("VideocallChannel")]
     [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessions { get; set; } = new List<MailChannelRtcSession>();
+    public virtual ICollection<MailChannelRtcSession> MailChannelRtcSessions { get; set; } 
 
     [ForeignKey("MailChannelId")]
     //[InverseProperty("MailChannels")]
     [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartments { get; set; } = new List<HrDepartment>();
+    public virtual ICollection<HrDepartment> HrDepartments { get; set; } 
 
     [ForeignKey("MailChannelId")]
     //[InverseProperty("MailChannelsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 }

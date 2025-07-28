@@ -50,10 +50,10 @@ public partial class FollowupFollowup: FullAuditedEntity<Guid>, IEntityDto<Guid>
     
     //[InverseProperty("Followup")]
     [NotMapped]
-    public virtual ICollection<FollowupLine> FollowupLines { get; set; } = new List<FollowupLine>();
+    public virtual ICollection<FollowupLine> FollowupLines { get; set; } 
 
     //[InverseProperty("Followup")]
     [NotMapped]
-    public virtual ICollection<FollowupPrint> FollowupPrints { get; set; } = new List<FollowupPrint>();
+    public virtual ICollection<FollowupPrint> FollowupPrints { get; set; } 
 
 }

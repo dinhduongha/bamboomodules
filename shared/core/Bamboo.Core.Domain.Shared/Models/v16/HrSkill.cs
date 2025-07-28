@@ -65,28 +65,28 @@ public partial class HrSkill : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("Skill")]
     [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } = new List<HrApplicantSkill>();
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } 
 
     //[InverseProperty("Skill")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } = new List<HrEmployeeSkillLog>();
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } 
 
     //[InverseProperty("Skill")]
     [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; set; } = new List<HrEmployeeSkill>();
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; set; } 
 
     [ForeignKey("HrSkillId")]
     //[InverseProperty("HrSkills")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     [ForeignKey("HrSkillId")]
     //[InverseProperty("HrSkills")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     [ForeignKey("HrSkillId")]
     //[InverseProperty("HrSkills")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } 
 }

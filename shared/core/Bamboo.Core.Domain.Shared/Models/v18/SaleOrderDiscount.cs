@@ -62,5 +62,5 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("SaleOrderDiscountId")]
     //[InverseProperty("SaleOrderDiscounts")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 }

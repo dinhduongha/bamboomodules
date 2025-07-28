@@ -90,6 +90,6 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudit
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Bank")]
     [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } = new List<ResPartnerBank>();
+    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } 
 
 }

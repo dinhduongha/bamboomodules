@@ -94,72 +94,72 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } = new List<StockReplenishmentOption>();
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } 
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRules { get; set; } 
 
     //[InverseProperty("CrossdockRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoutes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoutes { get; set; } 
 
     //[InverseProperty("DeliveryRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoutes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoutes { get; set; } 
 
     //[InverseProperty("Route")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 
     //[InverseProperty("PbmRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmRoutes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmRoutes { get; set; } 
 
     //[InverseProperty("ReceptionRoute")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoutes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoutes { get; set; } 
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> Categs { get; set; } = new List<ProductCategory>();
+    public virtual ICollection<ProductCategory> Categs { get; set; } 
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<StockMove> Moves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> Moves { get; set; } 
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<ProductPackaging> Packagings { get; set; } = new List<ProductPackaging>();
+    public virtual ICollection<ProductPackaging> Packagings { get; set; } 
 
     [ForeignKey("StockRouteId")]
     //[InverseProperty("StockRoutes")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> Products { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> Products { get; set; } 
 
     [ForeignKey("StockRouteId")]
     //[InverseProperty("StockRoutes")]
     [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } = new List<StockRulesReport>();
+    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } 
 
     [ForeignKey("RouteId")]
     //[InverseProperty("Routes")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> Warehouses { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> Warehouses { get; set; } 
 }

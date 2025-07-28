@@ -94,44 +94,44 @@ public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IE
 
     //[InverseProperty("CustomProductTemplateAttributeValue")]
     [NotMapped]
-    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; set; } = new List<ProductAttributeCustomValue>();
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; set; } 
 
     //[InverseProperty("ProductTemplateAttributeValue")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionsNavigation { get; set; } = new List<ProductTemplateAttributeExclusion>();
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionsNavigation { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } = new List<MrpBomByproduct>();
+    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } 
 
     [ForeignKey("TemplateAttributeValueId")]
     //[InverseProperty("TemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<StockMove> Moves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> Moves { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusions { get; set; } = new List<ProductTemplateAttributeExclusion>();
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusions { get; set; } 
 
     [ForeignKey("ProductTemplateAttributeValueId")]
     //[InverseProperty("ProductTemplateAttributeValues")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 }

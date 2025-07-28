@@ -126,34 +126,34 @@ public partial class ProductCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("ProductCateg")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilities { get; set; } = new List<AccountAnalyticApplicability>();
+    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilities { get; set; } 
 
     //[InverseProperty("ProductCateg")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } = new List<AccountAnalyticDistributionModel>();
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } 
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ProductCategory> InverseParent { get; set; } = new List<ProductCategory>();
+    public virtual ICollection<ProductCategory> InverseParent { get; set; } 
 
     //[InverseProperty("Categ")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } 
 
     //[InverseProperty("Categ")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } = new List<StockPutawayRule>();
+    public virtual ICollection<StockPutawayRule> StockPutawayRules { get; set; } 
 
     //[InverseProperty("ProductCategory")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 
     [ForeignKey("CategId")]
     //[InverseProperty("Categs")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } 
 }

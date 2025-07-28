@@ -101,10 +101,10 @@ public partial class MailMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("MailMail")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } 
 
     [ForeignKey("MailMailId")]
     //[InverseProperty("MailMails")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

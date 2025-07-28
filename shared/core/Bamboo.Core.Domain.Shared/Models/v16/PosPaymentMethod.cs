@@ -71,7 +71,7 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("PosPaymentMethod")]
     // [NotMapped]
-    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     [ForeignKey("TenantId")]
     //[InverseProperty("PosPaymentMethods")]
@@ -105,18 +105,18 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("PosPaymentMethod")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } = new List<PosMakePayment>();
+    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } 
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } 
 
     [ForeignKey("PosPaymentMethodId")]
     //[InverseProperty("PosPaymentMethods")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 }

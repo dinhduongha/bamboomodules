@@ -55,5 +55,5 @@ public partial class StockOrderpointSnooze : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("StockOrderpointSnoozeId")]
     //[InverseProperty("StockOrderpointSnoozes")]
     [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } = new List<StockWarehouseOrderpoint>();
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
 }

@@ -94,10 +94,10 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
     [ForeignKey("SaleAdvancePaymentInvId")]
     //[InverseProperty("SaleAdvancePaymentInvs")]
     [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
 
     [ForeignKey("SaleAdvancePaymentInvId")]
     //[InverseProperty("SaleAdvancePaymentInvs")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 }

@@ -64,11 +64,11 @@ public partial class MailActivityPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Plan")]
     [NotMapped]
-    public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplates { get; set; } = new List<MailActivityPlanTemplate>();
+    public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplates { get; set; } 
 
     //[InverseProperty("Plan")]
     [NotMapped]
-    public virtual ICollection<MailActivitySchedule> MailActivitySchedulesNavigation { get; set; } = new List<MailActivitySchedule>();
+    public virtual ICollection<MailActivitySchedule> MailActivitySchedulesNavigation { get; set; } 
 
     [ForeignKey("ResModelId")]
     //[InverseProperty("MailActivityPlans")]
@@ -83,5 +83,5 @@ public partial class MailActivityPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("MailActivityPlanId")]
     //[InverseProperty("MailActivityPlans")]
     [NotMapped]
-    public virtual ICollection<MailActivitySchedule> MailActivitySchedules { get; set; } = new List<MailActivitySchedule>();
+    public virtual ICollection<MailActivitySchedule> MailActivitySchedules { get; set; } 
 }

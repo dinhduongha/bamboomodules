@@ -270,22 +270,22 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; set; } = new List<RepairFee>();
+    public virtual ICollection<RepairFee> RepairFees { get; set; } 
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairLines { get; set; } 
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("Repair")]
     [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; set; } = new List<StockWarnInsufficientQtyRepair>();
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; set; } 
 
     [ForeignKey("RepairOrderId")]
     //[InverseProperty("RepairOrders")]
     [NotMapped]
-    public virtual ICollection<RepairTag> RepairTags { get; set; } = new List<RepairTag>();
+    public virtual ICollection<RepairTag> RepairTags { get; set; } 
 }

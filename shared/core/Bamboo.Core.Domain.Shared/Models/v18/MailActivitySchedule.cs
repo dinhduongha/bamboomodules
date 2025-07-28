@@ -103,5 +103,5 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("MailActivityScheduleId")]
     //[InverseProperty("MailActivitySchedules")]
     [NotMapped]
-    public virtual ICollection<MailActivityPlan> MailActivityPlans { get; set; } = new List<MailActivityPlan>();
+    public virtual ICollection<MailActivityPlan> MailActivityPlans { get; set; } 
 }

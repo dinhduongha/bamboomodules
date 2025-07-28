@@ -184,28 +184,28 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Expense")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     //[InverseProperty("Expense")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizards { get; set; } = new List<HrExpenseSplitWizard>();
+    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizards { get; set; } 
 
     //[InverseProperty("Expense")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } 
 
     [ForeignKey("HrExpenseId")]
     //[InverseProperty("HrExpenses")]
     [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } = new List<HrExpenseApproveDuplicate>();
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } 
 
     [ForeignKey("HrExpenseId")]
     //[InverseProperty("HrExpenses")]
     [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } = new List<HrExpenseRefuseWizard>();
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } 
 
     [ForeignKey("ExpenseId")]
     //[InverseProperty("Expenses")]
     [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> Taxes { get; set; } 
 }

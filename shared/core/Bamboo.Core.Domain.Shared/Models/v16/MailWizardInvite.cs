@@ -61,5 +61,5 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("MailWizardInviteId")]
     //[InverseProperty("MailWizardInvites")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 }

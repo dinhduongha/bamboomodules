@@ -206,19 +206,19 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("PaymentTransaction")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("SourceTransaction")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> InverseSourceTransaction { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> InverseSourceTransaction { get; set; } 
 
     [ForeignKey("TransactionId")]
     //[InverseProperty("Transactions")]
     [NotMapped]
-    public virtual ICollection<AccountMove> Invoices { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> Invoices { get; set; } 
 
     [ForeignKey("TransactionId")]
     //[InverseProperty("Transactions")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 }

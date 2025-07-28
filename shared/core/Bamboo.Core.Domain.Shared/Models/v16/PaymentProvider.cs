@@ -181,28 +181,28 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("PaymentProvider")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } = new List<AccountPaymentMethodLine>();
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } 
 
     //[InverseProperty("Provider")]
     [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } = new List<PaymentToken>();
+    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } 
 
     //[InverseProperty("Provider")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 
     [ForeignKey("PaymentId")]
     //[InverseProperty("Payments")]
     [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> Countries { get; set; } 
 
     [ForeignKey("PaymentProviderId")]
     //[InverseProperty("PaymentProviders")]
     [NotMapped]
-    public virtual ICollection<ResCurrency> Currencies { get; set; } = new List<ResCurrency>();
+    public virtual ICollection<ResCurrency> Currencies { get; set; } 
 
     [ForeignKey("PaymentProviderId")]
     //[InverseProperty("PaymentProviders")]
     [NotMapped]
-    public virtual ICollection<PaymentIcon> PaymentIcons { get; set; } = new List<PaymentIcon>();
+    public virtual ICollection<PaymentIcon> PaymentIcons { get; set; } 
 }

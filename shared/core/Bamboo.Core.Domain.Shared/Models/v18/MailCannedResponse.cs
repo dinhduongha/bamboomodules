@@ -60,5 +60,5 @@ public partial class MailCannedResponse: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("MailCannedResponseId")]
     //[InverseProperty("MailCannedResponses")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 }

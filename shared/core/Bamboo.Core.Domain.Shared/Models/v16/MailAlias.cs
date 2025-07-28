@@ -76,7 +76,7 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Alias")]
     // [NotMapped]
-    // public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    // public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 
     [ForeignKey("AliasDomainId")]
     //[InverseProperty("MailAliases")]
@@ -110,26 +110,26 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } = new List<AccountJournal>();
+    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<CrmTeam> CrmTeams { get; set; } = new List<CrmTeam>();
+    public virtual ICollection<CrmTeam> CrmTeams { get; set; } 
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } = new List<HrJob>();
+    public virtual ICollection<HrJob> HrJobs { get; set; } 
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } = new List<HrRecruitmentSource>();
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } 
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategories { get; set; } = new List<MaintenanceEquipmentCategory>();
+    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategories { get; set; } 
 
     //[InverseProperty("Alias")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
 
 }

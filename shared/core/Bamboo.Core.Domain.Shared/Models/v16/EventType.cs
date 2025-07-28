@@ -74,23 +74,23 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("EventType")]
     [NotMapped]
-    public virtual ICollection<EventEventTicket> EventEventTickets { get; set; } = new List<EventEventTicket>();
+    public virtual ICollection<EventEventTicket> EventEventTickets { get; set; } 
 
     //[InverseProperty("EventType")]
     [NotMapped]
-    public virtual ICollection<EventEvent> EventEvents { get; set; } = new List<EventEvent>();
+    public virtual ICollection<EventEvent> EventEvents { get; set; } 
 
     //[InverseProperty("EventType")]
     [NotMapped]
-    public virtual ICollection<EventQuestion> EventQuestions { get; set; } = new List<EventQuestion>();
+    public virtual ICollection<EventQuestion> EventQuestions { get; set; } 
 
     //[InverseProperty("EventType")]
     [NotMapped]
-    public virtual ICollection<EventTypeMail> EventTypeMails { get; set; } = new List<EventTypeMail>();
+    public virtual ICollection<EventTypeMail> EventTypeMails { get; set; } 
 
     //[InverseProperty("EventType")]
     [NotMapped]
-    public virtual ICollection<EventTypeTicket> EventTypeTickets { get; set; } = new List<EventTypeTicket>();
+    public virtual ICollection<EventTypeTicket> EventTypeTickets { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("EventTypeWriteUs")]
@@ -100,10 +100,10 @@ public partial class EventType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [ForeignKey("EventTypeId")]
     //[InverseProperty("EventTypes")]
     [NotMapped]
-    public virtual ICollection<EventLeadRule> EventLeadRules { get; set; } = new List<EventLeadRule>();
+    public virtual ICollection<EventLeadRule> EventLeadRules { get; set; } 
 
     [ForeignKey("EventTypeId")]
     //[InverseProperty("EventTypes")]
     [NotMapped]
-    public virtual ICollection<EventTag> EventTags { get; set; } = new List<EventTag>();
+    public virtual ICollection<EventTag> EventTags { get; set; } 
 }

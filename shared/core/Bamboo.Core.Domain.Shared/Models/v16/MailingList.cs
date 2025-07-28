@@ -48,19 +48,19 @@ public partial class MailingList: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("MailingList")]
     [NotMapped]
-    public virtual ICollection<MailingContactToList> MailingContactToLists { get; set; } = new List<MailingContactToList>();
+    public virtual ICollection<MailingContactToList> MailingContactToLists { get; set; } 
 
     //[InverseProperty("DestList")]
     [NotMapped]
-    public virtual ICollection<MailingListMerge> MailingListMergesNavigation { get; set; } = new List<MailingListMerge>();
+    public virtual ICollection<MailingListMerge> MailingListMergesNavigation { get; set; } 
 
     //[InverseProperty("List")]
     [NotMapped]
-    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } = new List<MailingSubscription>();
+    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } 
 
     //[InverseProperty("Newsletter")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MailingListWriteUs")]
@@ -70,20 +70,20 @@ public partial class MailingList: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("MailingListId")]
     //[InverseProperty("MailingLists")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     [ForeignKey("MailingListId")]
     //[InverseProperty("MailingLists")]
     [NotMapped]
-    public virtual ICollection<MailingContactImport> MailingContactImports { get; set; } = new List<MailingContactImport>();
+    public virtual ICollection<MailingContactImport> MailingContactImports { get; set; } 
 
     [ForeignKey("MailingListId")]
     //[InverseProperty("MailingLists")]
     [NotMapped]
-    public virtual ICollection<MailingListMerge> MailingListMerges { get; set; } = new List<MailingListMerge>();
+    public virtual ICollection<MailingListMerge> MailingListMerges { get; set; } 
 
     [ForeignKey("MailingListId")]
     //[InverseProperty("MailingLists")]
     [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
 }

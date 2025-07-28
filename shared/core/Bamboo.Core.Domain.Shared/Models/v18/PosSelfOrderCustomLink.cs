@@ -61,5 +61,5 @@ public partial class PosSelfOrderCustomLink: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("PosSelfOrderCustomLinkId")]
     //[InverseProperty("PosSelfOrderCustomLinks")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 }

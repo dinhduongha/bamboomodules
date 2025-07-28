@@ -263,74 +263,74 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     /// TODO: DISABLE INVERSE
     //[InverseProperty("ReturnPickingType")]
     [NotMapped]
-    public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; } = new List<StockPickingType>();
+    public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } = new List<MrpProduction>();
+    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } 
 
     //[InverseProperty("PickingType")]
     [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } = new List<StockRule>();
+    public virtual ICollection<StockRule> StockRules { get; set; } 
 
     //[InverseProperty("InType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseInTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseInTypes { get; set; } 
 
     //[InverseProperty("IntType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseIntTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseIntTypes { get; set; } 
 
     //[InverseProperty("ManuType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManuTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseManuTypes { get; set; } 
 
     //[InverseProperty("OutType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseOutTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseOutTypes { get; set; } 
 
     //[InverseProperty("PackType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePackTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePackTypes { get; set; } 
 
     //[InverseProperty("PbmType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmTypes { get; set; } 
 
     //[InverseProperty("PickType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePickTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePickTypes { get; set; } 
 
     //[InverseProperty("PosType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePosTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePosTypes { get; set; } 
 
     //[InverseProperty("ReturnType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseReturnTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseReturnTypes { get; set; } 
 
     //[InverseProperty("SamType")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamTypes { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseSamTypes { get; set; } 
 
 }

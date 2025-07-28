@@ -124,6 +124,6 @@ public partial class ProjectTaskRecurrence : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("Recurrence")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
 
 }

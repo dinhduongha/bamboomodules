@@ -58,5 +58,5 @@ public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("AccountTypeId")]
     //[InverseProperty("AccountTypes")]
     [NotMapped]
-    public virtual ICollection<AccountFinancialReport> Reports { get; set; } = new List<AccountFinancialReport>();
+    public virtual ICollection<AccountFinancialReport> Reports { get; set; } 
 }

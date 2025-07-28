@@ -43,7 +43,7 @@ public partial class IrCronTrigger: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Trigger")]
     [NotMapped]
-    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; set; } = new List<CalendarRecurrence>();
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrCronTriggerCreateUs")]

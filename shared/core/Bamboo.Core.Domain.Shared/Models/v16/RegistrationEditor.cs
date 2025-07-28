@@ -42,7 +42,7 @@ public partial class RegistrationEditor: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Editor")]
     [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } = new List<RegistrationEditorLine>();
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
 
     [ForeignKey("SaleOrderId")]
     //[InverseProperty("RegistrationEditors")]

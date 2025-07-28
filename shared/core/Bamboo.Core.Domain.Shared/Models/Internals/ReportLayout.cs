@@ -50,7 +50,7 @@ public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("ReportLayout")]
     [NotMapped]
-    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayouts { get; set; } = new List<BaseDocumentLayout>();
+    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayouts { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("ReportLayoutCreateUs")]

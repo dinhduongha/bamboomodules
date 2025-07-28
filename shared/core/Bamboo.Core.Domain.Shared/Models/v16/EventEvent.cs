@@ -192,15 +192,15 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<EventEventConfigurator> EventEventConfigurators { get; set; } = new List<EventEventConfigurator>();
+    public virtual ICollection<EventEventConfigurator> EventEventConfigurators { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<EventEventTicket> EventEventTickets { get; set; } = new List<EventEventTicket>();
+    public virtual ICollection<EventEventTicket> EventEventTickets { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
@@ -208,19 +208,19 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<EventLeadRule> EventLeadRules { get; set; } = new List<EventLeadRule>();
+    public virtual ICollection<EventLeadRule> EventLeadRules { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<EventMail> EventMails { get; set; } = new List<EventMail>();
+    public virtual ICollection<EventMail> EventMails { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<EventQuestion> EventQuestions { get; set; } = new List<EventQuestion>();
+    public virtual ICollection<EventQuestion> EventQuestions { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
+    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
 
     [ForeignKey("EventTypeId")]
     //[InverseProperty("EventEvents")]
@@ -239,11 +239,11 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } = new List<RegistrationEditorLine>();
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 
     [ForeignKey("StageId")]
     //[InverseProperty("EventEvents")]
@@ -262,7 +262,7 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Event")]
     [NotMapped]
-    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenus { get; set; } = new List<WebsiteEventMenu>();
+    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenus { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("EventEventWriteUs")]
@@ -272,5 +272,5 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("EventEventId")]
     //[InverseProperty("EventEvents")]
     [NotMapped]
-    public virtual ICollection<EventTag> EventTags { get; set; } = new List<EventTag>();
+    public virtual ICollection<EventTag> EventTags { get; set; } 
 }

@@ -85,23 +85,23 @@ public partial class AccountAnalyticPlan: FullAuditedEntity<Guid>, IEntityDto<Gu
     public virtual ResUser? WriteU { get; set; }
     //[InverseProperty("Plan")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountPlans { get; set; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountPlans { get; set; } 
 
     //[InverseProperty("RootPlan")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountRootPlans { get; set; } = new List<AccountAnalyticAccount>();
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountRootPlans { get; set; } 
 
     //[InverseProperty("AnalyticPlan")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilities { get; set; } = new List<AccountAnalyticApplicability>();
+    public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicabilities { get; set; } 
 
     // v16-Compat
     //[InverseProperty("Plan")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } = new List<AccountAnalyticLine>();
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
   
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<AccountAnalyticPlan> InverseParent { get; set; } = new List<AccountAnalyticPlan>();
+    public virtual ICollection<AccountAnalyticPlan> InverseParent { get; set; } 
 
 }

@@ -64,15 +64,15 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("PrimaryPaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PaymentMethod> InversePrimaryPaymentMethod { get; set; } = new List<PaymentMethod>();
+    public virtual ICollection<PaymentMethod> InversePrimaryPaymentMethod { get; set; } 
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } = new List<PaymentToken>();
+    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } 
 
     //[InverseProperty("PaymentMethod")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 
     [ForeignKey("PrimaryPaymentMethodId")]
     //[InverseProperty("InversePrimaryPaymentMethod")]
@@ -87,15 +87,15 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("PaymentMethodId")]
     //[InverseProperty("PaymentMethods")]
     [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } = new List<PaymentProvider>();
+    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } 
 
     [ForeignKey("PaymentMethodId")]
     //[InverseProperty("PaymentMethods")]
     [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } = new List<ResCountry>();
+    public virtual ICollection<ResCountry> ResCountries { get; set; } 
 
     [ForeignKey("PaymentMethodId")]
     //[InverseProperty("PaymentMethods")]
     [NotMapped]
-    public virtual ICollection<ResCurrency> ResCurrencies { get; set; } = new List<ResCurrency>();
+    public virtual ICollection<ResCurrency> ResCurrencies { get; set; } 
 }

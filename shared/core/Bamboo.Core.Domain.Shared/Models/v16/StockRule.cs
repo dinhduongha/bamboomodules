@@ -158,34 +158,34 @@ public partial class StockRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Rule")]
     [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } = new List<StockMove>();
+    public virtual ICollection<StockMove> StockMoves { get; set; } 
 
     //[InverseProperty("BuyPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseBuyPulls { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseBuyPulls { get; set; } 
 
     //[InverseProperty("ManufactureMtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManufactureMtoPulls { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseManufactureMtoPulls { get; set; } 
 
     //[InverseProperty("ManufacturePull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManufacturePulls { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseManufacturePulls { get; set; } 
 
     //[InverseProperty("MtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseMtoPulls { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseMtoPulls { get; set; } 
 
     //[InverseProperty("PbmMtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPulls { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPulls { get; set; } 
 
     //[InverseProperty("RepairMtoPull")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseRepairMtoPulls { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseRepairMtoPulls { get; set; } 
 
     //[InverseProperty("SamRule")]
     [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamRules { get; set; } = new List<StockWarehouse>();
+    public virtual ICollection<StockWarehouse> StockWarehouseSamRules { get; set; } 
 
 }

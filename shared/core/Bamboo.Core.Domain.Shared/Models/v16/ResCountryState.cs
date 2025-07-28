@@ -61,50 +61,50 @@ public partial class ResCountryState: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     /// TODO: DISABLE INVERSE
     //[InverseProperty("State")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[InverseProperty("PrivateState")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     //[InverseProperty("PartnerState")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 
     //[InverseProperty("StateNavigation")]
     [NotMapped]
-    public virtual ICollection<ResBank> ResBanks { get; set; } = new List<ResBank>();
+    public virtual ICollection<ResBank> ResBanks { get; set; } 
 
     //[InverseProperty("State")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 
     //[InverseProperty("State")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } = new List<SnailmailLetterMissingRequiredField>();
+    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } 
 
     //[InverseProperty("StateNavigation")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } = new List<SnailmailLetter>();
+    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } 
 
     [ForeignKey("ResCountryStateId")]
     //[InverseProperty("ResCountryStates")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } 
 
     [ForeignKey("StateId")]
     //[InverseProperty("States")]
     [NotMapped]
-    public virtual ICollection<DeliveryCarrier> Carriers { get; set; } = new List<DeliveryCarrier>();
+    public virtual ICollection<DeliveryCarrier> Carriers { get; set; } 
 
     [ForeignKey("ResCountryStateId")]
     //[InverseProperty("ResCountryStates")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } = new List<AccountFiscalPositionTemplate>();
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } 
 
 
     [ForeignKey("ResCountryStateId")]
     //[InverseProperty("ResCountryStates")]
     [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } = new List<CrmIapLeadMiningRequest>();
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } 
 }

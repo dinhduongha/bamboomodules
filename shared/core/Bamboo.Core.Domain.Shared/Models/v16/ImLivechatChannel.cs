@@ -77,15 +77,15 @@ public partial class ImLivechatChannel: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("LivechatChannel")]
     [NotMapped]
-    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } = new List<DiscussChannel>();
+    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRules { get; set; } = new List<ImLivechatChannelRule>();
+    public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRules { get; set; } 
 
     //[InverseProperty("Channel")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("ImLivechatChannelWriteUs")]
@@ -95,5 +95,5 @@ public partial class ImLivechatChannel: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("ChannelId")]
     //[InverseProperty("Channels")]
     [NotMapped]
-    public virtual ICollection<ResUser> Users { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> Users { get; set; } 
 }

@@ -74,6 +74,6 @@ public partial class AccountGroupTemplate : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<AccountGroupTemplate> InverseParent { get; set; } = new List<AccountGroupTemplate>();
+    public virtual ICollection<AccountGroupTemplate> InverseParent { get; set; } 
 
 }

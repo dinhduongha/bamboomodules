@@ -60,5 +60,5 @@ public partial class CrmLeadLost : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("CrmLeadLostId")]
     //[InverseProperty("CrmLeadLosts")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 }

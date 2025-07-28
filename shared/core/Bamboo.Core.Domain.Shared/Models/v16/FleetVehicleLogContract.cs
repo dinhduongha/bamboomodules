@@ -126,5 +126,5 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("FleetVehicleLogContractId")]
     //[InverseProperty("FleetVehicleLogContracts")]
     [NotMapped]
-    public virtual ICollection<FleetServiceType> FleetServiceTypes { get; set; } = new List<FleetServiceType>();
+    public virtual ICollection<FleetServiceType> FleetServiceTypes { get; set; } 
 }

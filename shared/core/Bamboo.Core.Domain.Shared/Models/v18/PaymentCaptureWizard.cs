@@ -51,5 +51,5 @@ public partial class PaymentCaptureWizard: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("PaymentCaptureWizardId")]
     //[InverseProperty("PaymentCaptureWizards")]
     [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
 }

@@ -82,7 +82,7 @@ public partial class ResourceCalendarLeaf: FullAuditedEntity<Guid>, IEntityDto<G
 
     //[InverseProperty("Leave")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
 
     [ForeignKey("ResourceId")]
     //[InverseProperty("ResourceCalendarLeaves")]

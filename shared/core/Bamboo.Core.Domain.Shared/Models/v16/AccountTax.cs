@@ -112,33 +112,33 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("TaxDest")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxTaxDests { get; set; } = new List<AccountFiscalPositionTax>();
+    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxTaxDests { get; set; } 
 
     //[InverseProperty("TaxSrc")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxTaxSrcs { get; set; } = new List<AccountFiscalPositionTax>();
+    public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxTaxSrcs { get; set; } 
 
     //[InverseProperty("GroupTax")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLineGroupTaxes { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLineGroupTaxes { get; set; } 
 
     //[InverseProperty("TaxLine")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLineTaxLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLineTaxLines { get; set; } 
 
     //[InverseProperty("Tax")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; } = new List<AccountTaxRepartitionLine>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; } 
 
     // v16-Compat
     //[InverseProperty("InvoiceTax")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineInvoiceTaxes { get; set; } = new List<AccountTaxRepartitionLine>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineInvoiceTaxes { get; set; } 
 
     // v16-Compat
     //[InverseProperty("RefundTax")]
     [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineRefundTaxes { get; set; } = new List<AccountTaxRepartitionLine>();
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLineRefundTaxes { get; set; } 
 
 
     [ForeignKey("CashBasisTransitionAccountId")]
@@ -163,11 +163,11 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("AccountPurchaseTax")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanyAccountPurchaseTaxes { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanyAccountPurchaseTaxes { get; set; } 
 
     //[InverseProperty("AccountSaleTax")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanyAccountSaleTaxes { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanyAccountSaleTaxes { get; set; } 
 
     [ForeignKey("TaxGroupId")]
     //[InverseProperty("AccountTaxes")]
@@ -182,83 +182,83 @@ public partial class AccountTax: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLines { get; set; } = new List<AccountReconcileModelLine>();
+    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLines { get; set; } 
 
     [ForeignKey("TaxId")]
     //[InverseProperty("Taxes")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> Accounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> Accounts { get; set; } 
 
     [ForeignKey("ParentTax")]
     //[InverseProperty("ParentTaxes")]
     [NotMapped]
-    public virtual ICollection<AccountTax> ChildTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> ChildTaxes { get; set; } 
 
     [ForeignKey("TaxId")]
     //[InverseProperty("Taxes")]
     [NotMapped]
-    public virtual ICollection<HrExpense> Expenses { get; set; } = new List<HrExpense>();
+    public virtual ICollection<HrExpense> Expenses { get; set; } 
 
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } = new List<HrExpenseSplit>();
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } 
 
     [ForeignKey("ChildTax")]
     //[InverseProperty("ChildTaxes")]
     [NotMapped]
-    public virtual ICollection<AccountTax> ParentTaxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> ParentTaxes { get; set; } 
 
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } 
 
     [ForeignKey("TaxId")]
     //[InverseProperty("Taxes")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> Prods { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> Prods { get; set; } 
 
     [ForeignKey("TaxId")]
     //[InverseProperty("TaxesNavigation")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProdsNavigation { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProdsNavigation { get; set; } 
 
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
 
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<SaleOrderDiscount> SaleOrderDiscounts { get; set; } = new List<SaleOrderDiscount>();
+    public virtual ICollection<SaleOrderDiscount> SaleOrderDiscounts { get; set; } 
 
     // v16-Compat
     [ForeignKey("TaxId")]
     //[InverseProperty("Taxes")]
     [NotMapped]
-    public virtual ICollection<RepairFee> RepairFeeLines { get; set; } = new List<RepairFee>();
+    public virtual ICollection<RepairFee> RepairFeeLines { get; set; } 
 
     // v16-Compat
     [ForeignKey("TaxId")]
     //[InverseProperty("Taxes")]
     [NotMapped]
-    public virtual ICollection<RepairLine> RepairOperationLines { get; set; } = new List<RepairLine>();
+    public virtual ICollection<RepairLine> RepairOperationLines { get; set; } 
 
     // v16-Compat
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; } = new List<SaleAdvancePaymentInv>();
+    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; } 
 
     [ForeignKey("AccountTaxId")]
     //[InverseProperty("AccountTaxes")]
     [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
 }

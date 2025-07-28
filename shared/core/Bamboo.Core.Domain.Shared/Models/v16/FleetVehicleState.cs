@@ -50,7 +50,7 @@ public partial class FleetVehicleState : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("State")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FleetVehicleStateWriteUs")]

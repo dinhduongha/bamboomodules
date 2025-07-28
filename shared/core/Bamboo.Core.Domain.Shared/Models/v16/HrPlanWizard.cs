@@ -57,5 +57,5 @@ public partial class HrPlanWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("EmployeeId")]
     //[InverseProperty("Employees")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> PlanWizards { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> PlanWizards { get; set; } 
 }

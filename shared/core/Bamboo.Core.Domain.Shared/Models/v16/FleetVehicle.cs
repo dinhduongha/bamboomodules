@@ -174,7 +174,7 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Vehicle")]
     // [NotMapped]
-    // public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    // public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     [ForeignKey("BrandId")]
     //[InverseProperty("FleetVehicles")]
@@ -244,26 +244,26 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } = new List<FleetVehicleAssignationLog>();
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } 
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } = new List<FleetVehicleLogContract>();
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } 
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } = new List<FleetVehicleLogService>();
+    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometers { get; set; } = new List<FleetVehicleOdometer>();
+    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometers { get; set; } 
 
     [ForeignKey("VehicleTagId")]
     //[InverseProperty("VehicleTags")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleTag> Tags { get; set; } = new List<FleetVehicleTag>();
+    public virtual ICollection<FleetVehicleTag> Tags { get; set; } 
 }

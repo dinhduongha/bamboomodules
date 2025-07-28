@@ -69,7 +69,7 @@ public partial class DiscussChannelRtcSession: FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("RtcInvitingSession")]
     [NotMapped]
-    public virtual ICollection<DiscussChannelMember> DiscussChannelMembers { get; set; } = new List<DiscussChannelMember>();
+    public virtual ICollection<DiscussChannelMember> DiscussChannelMembers { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("DiscussChannelRtcSessionWriteUs")]

@@ -62,10 +62,10 @@ public partial class PosPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("PrinterId")]
     //[InverseProperty("Printers")]
     [NotMapped]
-    public virtual ICollection<PosCategory> Categories { get; set; } = new List<PosCategory>();
+    public virtual ICollection<PosCategory> Categories { get; set; } 
 
     [ForeignKey("PrinterId")]
     //[InverseProperty("Printers")]
     [NotMapped]
-    public virtual ICollection<PosConfig> Configs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> Configs { get; set; } 
 }

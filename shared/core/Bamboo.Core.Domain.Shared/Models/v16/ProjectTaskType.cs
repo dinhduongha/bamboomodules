@@ -117,19 +117,19 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } = new List<ProjectTaskUserRel>();
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } 
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
 
     [ForeignKey("ProjectTaskTypeId")]
     //[InverseProperty("ProjectTaskTypes")]
     [NotMapped]
-    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; set; } = new List<ProjectTaskTypeDeleteWizard>();
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; set; } 
 
     [ForeignKey("TypeId")]
     //[InverseProperty("Types")]
     [NotMapped]
-    public virtual ICollection<ProjectProject> Projects { get; set; } = new List<ProjectProject>();
+    public virtual ICollection<ProjectProject> Projects { get; set; } 
 }

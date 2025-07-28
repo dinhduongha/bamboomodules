@@ -206,15 +206,15 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("ProduceLineId")]
     //[InverseProperty("ProduceLines")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> ConsumeLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> ConsumeLines { get; set; } 
 
     [ForeignKey("ConsumeLineId")]
     //[InverseProperty("ConsumeLines")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> ProduceLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> ProduceLines { get; set; } 
 
     [ForeignKey("StockMoveLineId")]
     //[InverseProperty("StockMoveLines")]
     [NotMapped]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; set; } = new List<ProductLabelLayout>();
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; set; } 
 }

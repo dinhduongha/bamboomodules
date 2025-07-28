@@ -56,6 +56,6 @@ public partial class SmsResend : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("SmsResend")]
     [NotMapped]
-    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; set; } = new List<SmsResendRecipient>();
+    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; set; } 
 
 }

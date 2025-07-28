@@ -1195,16 +1195,16 @@ public partial class ResConfigSetting: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("ResConfigSettingsId")]
     //[InverseProperty("ResConfigSettings")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } 
 
     [ForeignKey("ResConfigSettingsId")]
     //[InverseProperty("ResConfigSettings")]
     [NotMapped]
-    public virtual ICollection<PosCategory> PosCategories { get; set; } = new List<PosCategory>();
+    public virtual ICollection<PosCategory> PosCategories { get; set; } 
 
     [ForeignKey("ResConfigSettingsId")]
     //[InverseProperty("ResConfigSettings")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } 
     
 }

@@ -47,7 +47,7 @@ public partial class HrApplicantRefuseReason : FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("RefuseReason")]
     [NotMapped]
-    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } = new List<ApplicantGetRefuseReason>();
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReasons { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]
@@ -61,7 +61,7 @@ public partial class HrApplicantRefuseReason : FullAuditedEntity<Guid>, IEntityD
 
     //[InverseProperty("RefuseReason")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 
     [ForeignKey("TemplateId")]
     //[InverseProperty("HrApplicantRefuseReasons")]

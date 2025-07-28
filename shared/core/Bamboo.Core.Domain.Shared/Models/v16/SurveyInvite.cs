@@ -99,10 +99,10 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("WizardId")]
     //[InverseProperty("Wizards1")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 
     [ForeignKey("InviteId")]
     //[InverseProperty("Invites")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } 
 }

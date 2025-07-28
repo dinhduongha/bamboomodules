@@ -54,11 +54,11 @@ public partial class MaintenanceTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("MaintenanceTeam")]
     [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } = new List<MaintenanceEquipment>();
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } 
 
     //[InverseProperty("MaintenanceTeam")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MaintenanceTeamWriteUs")]
@@ -68,5 +68,5 @@ public partial class MaintenanceTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("MaintenanceTeamId")]
     //[InverseProperty("MaintenanceTeams")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

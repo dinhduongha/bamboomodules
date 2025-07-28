@@ -49,10 +49,10 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("LanguageWizardId")]
     //[InverseProperty("LanguageWizards")]
     [NotMapped]
-    public virtual ICollection<ResLang> Langs { get; set; } = new List<ResLang>();
+    public virtual ICollection<ResLang> Langs { get; set; } 
 
     [ForeignKey("BaseLanguageInstallId")]
     //[InverseProperty("BaseLanguageInstalls")]
     [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
+    public virtual ICollection<Website> Websites { get; set; } 
 }

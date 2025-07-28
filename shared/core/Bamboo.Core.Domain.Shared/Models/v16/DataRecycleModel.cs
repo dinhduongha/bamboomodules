@@ -81,7 +81,7 @@ public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("RecycleModel")]
     [NotMapped]
-    public virtual ICollection<DataRecycleRecord> DataRecycleRecords { get; set; } = new List<DataRecycleRecord>();
+    public virtual ICollection<DataRecycleRecord> DataRecycleRecords { get; set; } 
 
     [ForeignKey("ResModelId")]
     //[InverseProperty("DataRecycleModels")]
@@ -101,5 +101,5 @@ public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("DataRecycleModelId")]
     //[InverseProperty("DataRecycleModels")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

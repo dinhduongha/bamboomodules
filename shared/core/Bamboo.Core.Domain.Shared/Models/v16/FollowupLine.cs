@@ -66,7 +66,7 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("FollowupLine")]
     [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } = new List<AccountMoveLine>();
+    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
 
     // v16-Compat
     [ForeignKey("TenantId")]
@@ -101,6 +101,6 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
    // v16-Compat
     //[InverseProperty("LatestFollowupLevelIdWithoutLitNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
 
 }

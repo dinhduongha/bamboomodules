@@ -90,5 +90,5 @@ public partial class CrmLead2opportunityPartner : FullAuditedEntity<Guid>, IEnti
     [ForeignKey("CrmLead2opportunityPartnerId")]
     //[InverseProperty("CrmLead2opportunityPartnersNavigation")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 }

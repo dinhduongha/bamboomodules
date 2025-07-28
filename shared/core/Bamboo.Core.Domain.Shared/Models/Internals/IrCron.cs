@@ -92,19 +92,19 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Cron")]
     [NotMapped]
-    public virtual ICollection<IrCronProgress> IrCronProgresses { get; set; } = new List<IrCronProgress>();
+    public virtual ICollection<IrCronProgress> IrCronProgresses { get; set; } 
 
     //[InverseProperty("Cron")]
     [NotMapped]
-    public virtual ICollection<IrCronTrigger> IrCronTriggers { get; set; } = new List<IrCronTrigger>();
+    public virtual ICollection<IrCronTrigger> IrCronTriggers { get; set; } 
 
     //[InverseProperty("Cron")]
     [NotMapped]
-    public virtual ICollection<LunchAlert> LunchAlerts { get; set; } = new List<LunchAlert>();
+    public virtual ICollection<LunchAlert> LunchAlerts { get; set; } 
 
     //[InverseProperty("Cron")]
     [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } = new List<LunchSupplier>();
+    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } 
 
     [ForeignKey("UserId")]
     //[InverseProperty("IrCronUsers")]

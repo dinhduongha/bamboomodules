@@ -122,10 +122,10 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Model")]
     [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
+    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } 
 
     [ForeignKey("ModelId")]
     //[InverseProperty("Models")]
     [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> Partners { get; set; } 
 }

@@ -75,10 +75,10 @@ public partial class ThemeIrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("ThemeTemplate")]
     [NotMapped]
-    public virtual ICollection<IrUiView> IrUiViews { get; set; } = new List<IrUiView>();
+    public virtual ICollection<IrUiView> IrUiViews { get; set; } 
 
     //[InverseProperty("View")]
     [NotMapped]
-    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePages { get; set; } = new List<ThemeWebsitePage>();
+    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePages { get; set; } 
 
 }

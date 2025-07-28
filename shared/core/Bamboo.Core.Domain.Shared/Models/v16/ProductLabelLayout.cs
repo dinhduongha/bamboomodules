@@ -74,15 +74,15 @@ public partial class ProductLabelLayout : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("ProductLabelLayoutId")]
     //[InverseProperty("ProductLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
 
     [ForeignKey("ProductLabelLayoutId")]
     //[InverseProperty("ProductLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 
     [ForeignKey("ProductLabelLayoutId")]
     //[InverseProperty("ProductLabelLayouts")]
     [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } = new List<StockMoveLine>();
+    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
 }

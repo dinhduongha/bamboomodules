@@ -93,15 +93,15 @@ public partial class CrmLead2opportunityPartnerMass : FullAuditedEntity<Guid>, I
     //[ForeignKey("CrmLead2opportunityPartnerMassId")]
     //[InverseProperty("CrmLead2opportunityPartnerMasses")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
 
     //[ForeignKey("CrmLead2opportunityPartnerMassId")]
     //[InverseProperty("CrmLead2opportunityPartnerMasses1")]
     [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeadsNavigation { get; set; } = new List<CrmLead>();
+    public virtual ICollection<CrmLead> CrmLeadsNavigation { get; set; } 
 
     [ForeignKey("CrmLead2opportunityPartnerMassId")]
     //[InverseProperty("CrmLead2opportunityPartnerMasses")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

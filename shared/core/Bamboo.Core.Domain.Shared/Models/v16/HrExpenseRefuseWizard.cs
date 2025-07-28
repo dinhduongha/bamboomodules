@@ -64,10 +64,10 @@ public partial class HrExpenseRefuseWizard : FullAuditedEntity<Guid>, IEntityDto
     // v16-Compat
     //[ForeignKey("HrExpenseRefuseWizardId")]
     //[InverseProperty("HrExpenseRefuseWizards")]
-    //public virtual ICollection<HrExpense> HrExpenses { get; set; } = new List<HrExpense>();
+    //public virtual ICollection<HrExpense> HrExpenses { get; set; } 
 
     [ForeignKey("HrExpenseRefuseWizardId")]
     //[InverseProperty("HrExpenseRefuseWizards")]
     [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } = new List<HrExpenseSheet>();
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
 }

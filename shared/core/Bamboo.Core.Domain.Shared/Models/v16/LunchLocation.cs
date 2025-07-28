@@ -50,11 +50,11 @@ public partial class LunchLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     //[InverseProperty("LunchLocation")]
     [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; set; } = new List<LunchOrder>();
+    public virtual ICollection<LunchOrder> LunchOrders { get; set; } 
 
     //[InverseProperty("LastLunchLocation")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("LunchLocationWriteUs")]
@@ -64,10 +64,10 @@ public partial class LunchLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("LunchLocationId")]
     //[InverseProperty("LunchLocations")]
     [NotMapped]
-    public virtual ICollection<LunchAlert> LunchAlerts { get; set; } = new List<LunchAlert>();
+    public virtual ICollection<LunchAlert> LunchAlerts { get; set; } 
 
     [ForeignKey("LunchLocationId")]
     //[InverseProperty("LunchLocations")]
     [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } = new List<LunchSupplier>();
+    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } 
 }

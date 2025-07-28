@@ -52,21 +52,21 @@ public partial class HrEmployeeCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     // v16-Compat
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } = new List<HrLeaveAllocation>();
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
 
     // v16-Compat
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; set; } = new List<HrLeave>();
+    public virtual ICollection<HrLeave> HrLeaves { get; set; } 
 
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizards { get; set; } = new List<HrLeaveAllocationGenerateMultiWizard>();
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizards { get; set; } 
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizards { get; set; } = new List<HrLeaveGenerateMultiWizard>();
+    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizards { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("HrEmployeeCategoryWriteUs")]
@@ -76,5 +76,5 @@ public partial class HrEmployeeCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("CategoryId")]
     //[InverseProperty("Categories")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> Employees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> Employees { get; set; } 
 }

@@ -61,11 +61,11 @@ public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<IrModuleCategory> InverseParent { get; set; } = new List<IrModuleCategory>();
+    public virtual ICollection<IrModuleCategory> InverseParent { get; set; } 
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<IrModuleModule> IrModuleModules { get; set; } = new List<IrModuleModule>();
+    public virtual ICollection<IrModuleModule> IrModuleModules { get; set; } 
 
     [ForeignKey("ParentId")]
     //[InverseProperty("InverseParent")]
@@ -74,7 +74,7 @@ public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } = new List<ResGroup>();
+    public virtual ICollection<ResGroup> ResGroups { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModuleCategoryWriteUs")]

@@ -125,37 +125,37 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     //[ForeignKey("MrpWorkcenterId")]
     //[InverseProperty("MrpWorkcenters")]
     //[NotMapped]
-    //public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } = new List<AccountAnalyticAccount>();
+    //public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } 
     // RELATIONS END
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } = new List<MrpRoutingWorkcenter>();
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } 
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacities { get; set; } = new List<MrpWorkcenterCapacity>();
+    public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacities { get; set; } 
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } = new List<MrpWorkcenterProductivity>();
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivities { get; set; } 
 
     //[InverseProperty("Workcenter")]
     [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } = new List<MrpWorkorder>();
+    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
 
     [ForeignKey("WorkcenterId")]
     //[InverseProperty("Workcenters")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> AlternativeWorkcenters { get; set; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> AlternativeWorkcenters { get; set; } 
 
     [ForeignKey("MrpWorkcenterId")]
     //[InverseProperty("MrpWorkcenters")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTags { get; set; } = new List<MrpWorkcenterTag>();
+    public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTags { get; set; } 
 
     [ForeignKey("AlternativeWorkcenterId")]
     //[InverseProperty("AlternativeWorkcenters")]
     [NotMapped]
-    public virtual ICollection<MrpWorkcenter> Workcenters { get; set; } = new List<MrpWorkcenter>();
+    public virtual ICollection<MrpWorkcenter> Workcenters { get; set; } 
 }

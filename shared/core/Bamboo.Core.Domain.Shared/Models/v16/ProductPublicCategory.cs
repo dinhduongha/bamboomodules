@@ -106,10 +106,10 @@ public partial class ProductPublicCategory : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("Parent")]
     [NotMapped]
-    public virtual ICollection<ProductPublicCategory> InverseParent { get; set; } = new List<ProductPublicCategory>();
+    public virtual ICollection<ProductPublicCategory> InverseParent { get; set; } 
 
     [ForeignKey("ProductPublicCategoryId")]
     //[InverseProperty("ProductPublicCategories")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 }

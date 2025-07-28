@@ -100,26 +100,26 @@ public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("MailServer")]
     [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } = new List<MailComposeMessage>();
+    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
 
     //[InverseProperty("MailServer")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages { get; set; } 
 
     //[InverseProperty("MailServer")]
     [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } = new List<MailTemplate>();
+    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
 
     //[InverseProperty("MailServer")]
     [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } = new List<MailingMailing>();
+    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
 
     //[InverseProperty("MassMailingMailServer")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
 
     //[InverseProperty("MailServer")]
     [NotMapped]
-    public virtual ICollection<SurveyInvite> SurveyInvites { get; set; } = new List<SurveyInvite>();
+    public virtual ICollection<SurveyInvite> SurveyInvites { get; set; } 
 
 }

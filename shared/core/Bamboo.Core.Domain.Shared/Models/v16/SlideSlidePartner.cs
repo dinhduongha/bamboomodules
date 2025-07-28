@@ -79,7 +79,7 @@ public partial class SlideSlidePartner: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("SlidePartner")]
     [NotMapped]
-    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } = new List<SurveyUserInput>();
+    public virtual ICollection<SurveyUserInput> SurveyUserInputs { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("SlideSlidePartnerWriteUs")]

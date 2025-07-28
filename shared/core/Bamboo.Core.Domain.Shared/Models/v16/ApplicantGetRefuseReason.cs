@@ -71,5 +71,5 @@ public partial class ApplicantGetRefuseReason: FullAuditedEntity<Guid>, IEntityD
     [ForeignKey("ApplicantGetRefuseReasonId")]
     //[InverseProperty("ApplicantGetRefuseReasons")]
     [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } = new List<HrApplicant>();
+    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
 }

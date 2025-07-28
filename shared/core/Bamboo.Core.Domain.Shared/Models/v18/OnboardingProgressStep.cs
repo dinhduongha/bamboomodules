@@ -61,5 +61,5 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("OnboardingProgressStepId")]
     //[InverseProperty("OnboardingProgressSteps")]
     [NotMapped]
-    public virtual ICollection<OnboardingProgress> OnboardingProgresses { get; set; } = new List<OnboardingProgress>();
+    public virtual ICollection<OnboardingProgress> OnboardingProgresses { get; set; } 
 }

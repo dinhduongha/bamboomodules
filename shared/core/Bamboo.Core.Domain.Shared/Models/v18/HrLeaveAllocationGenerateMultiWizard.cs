@@ -103,5 +103,5 @@ public partial class HrLeaveAllocationGenerateMultiWizard: FullAuditedEntity<Gui
     [ForeignKey("HrLeaveAllocationGenerateMultiWizardId")]
     //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Bamboo.Core.Models;
 
@@ -79,4 +80,3 @@ public class StringDictionary : Dictionary<string, string?>, IComparable<StringD
         return 0;
     }
 }
-

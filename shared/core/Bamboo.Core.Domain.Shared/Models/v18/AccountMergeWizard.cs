@@ -37,7 +37,7 @@ public partial class AccountMergeWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<AccountMergeWizardLine> AccountMergeWizardLines { get; set; } = new List<AccountMergeWizardLine>();
+    public virtual ICollection<AccountMergeWizardLine> AccountMergeWizardLines { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("AccountMergeWizardCreateUs")]
@@ -52,5 +52,5 @@ public partial class AccountMergeWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("AccountMergeWizardId")]
     //[InverseProperty("AccountMergeWizards")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } = new List<AccountAccount>();
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
 }

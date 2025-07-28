@@ -92,10 +92,10 @@ public partial class BasePartnerMergeAutomaticWizard : FullAuditedEntity<Guid>, 
     [ForeignKey("BasePartnerMergeAutomaticWizardId")]
     //[InverseProperty("BasePartnerMergeAutomaticWizardsNavigation")]
     [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = new List<ResPartner>();
+    public virtual ICollection<ResPartner> ResPartners { get; set; } 
     
     //[InverseProperty("Wizard")]
     [NotMapped]
-    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; set; } = new List<BasePartnerMergeLine>();
+    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; set; } 
 
 }

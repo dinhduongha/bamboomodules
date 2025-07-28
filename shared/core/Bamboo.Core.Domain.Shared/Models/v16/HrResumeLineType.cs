@@ -48,7 +48,7 @@ public partial class HrResumeLineType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("LineType")]
     [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } = new List<HrResumeLine>();
+    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("HrResumeLineTypeWriteUs")]

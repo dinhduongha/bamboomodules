@@ -63,7 +63,7 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("LinkTracker")]
     [NotMapped]
-    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } = new List<CardCampaign>();
+    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } 
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("LinkTrackerCreateUs")]
@@ -72,11 +72,11 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("Link")]
     [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } = new List<LinkTrackerClick>();
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
 
     //[InverseProperty("Link")]
     [NotMapped]
-    public virtual ICollection<LinkTrackerCode> LinkTrackerCodes { get; set; } = new List<LinkTrackerCode>();
+    public virtual ICollection<LinkTrackerCode> LinkTrackerCodes { get; set; } 
 
     [ForeignKey("MassMailingId")]
     //[InverseProperty("LinkTrackers")]

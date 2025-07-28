@@ -52,7 +52,7 @@ public partial class MaintenanceStage : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Stage")]
     [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MaintenanceStageWriteUs")]

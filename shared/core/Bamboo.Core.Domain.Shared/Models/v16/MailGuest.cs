@@ -68,14 +68,14 @@ public partial class MailGuest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Guest")]
     [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } = new List<MailChannelMember>();
+    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } 
 
     //[InverseProperty("Guest")]
     [NotMapped]
-    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } = new List<MailMessageReaction>();
+    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } 
 
     //[InverseProperty("AuthorGuest")]
     [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } = new List<MailMessage>();
+    public virtual ICollection<MailMessage> MailMessages { get; set; } 
 
 }

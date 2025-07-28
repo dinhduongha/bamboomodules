@@ -83,10 +83,10 @@ public partial class ProductTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("ProductTagId")]
     //[InverseProperty("ProductTags")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
 
     [ForeignKey("ProductTagId")]
     //[InverseProperty("ProductTags")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 }

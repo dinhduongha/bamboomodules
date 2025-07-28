@@ -55,5 +55,5 @@ public partial class PosDetailsWizard : FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("PosDetailsWizardId")]
     //[InverseProperty("PosDetailsWizards")]
     [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
 }

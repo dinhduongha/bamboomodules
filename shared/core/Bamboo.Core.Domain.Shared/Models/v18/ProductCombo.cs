@@ -51,11 +51,11 @@ public partial class ProductCombo: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Combo")]
     [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } = new List<PosOrderLine>();
+    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } 
 
     //[InverseProperty("Combo")]
     [NotMapped]
-    public virtual ICollection<ProductComboItem> ProductComboItems { get; set; } = new List<ProductComboItem>();
+    public virtual ICollection<ProductComboItem> ProductComboItems { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("ProductComboWriteUs")]
@@ -65,5 +65,5 @@ public partial class ProductCombo: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("ProductComboId")]
     //[InverseProperty("ProductCombos")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
 }

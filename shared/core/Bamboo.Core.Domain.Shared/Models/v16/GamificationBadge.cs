@@ -79,27 +79,27 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("Badge")]
     [NotMapped]
-    public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizards { get; set; } = new List<GamificationBadgeUserWizard>();
+    public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizards { get; set; } 
 
     //[InverseProperty("Badge")]
     [NotMapped]
-    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUsers { get; set; } = new List<GamificationBadgeUser>();
+    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUsers { get; set; } 
 
     //[InverseProperty("RewardFirst")]
     [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardFirsts { get; set; } = new List<GamificationChallenge>();
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardFirsts { get; set; } 
 
     //[InverseProperty("RewardSecond")]
     [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardSeconds { get; set; } = new List<GamificationChallenge>();
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardSeconds { get; set; } 
 
     //[InverseProperty("RewardThird")]
     [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardThirds { get; set; } = new List<GamificationChallenge>();
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardThirds { get; set; } 
 
     //[InverseProperty("Reward")]
     [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewards { get; set; } = new List<GamificationChallenge>();
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewards { get; set; } 
 
     [ForeignKey("SurveyId")]
     //[InverseProperty("GamificationBadges")]
@@ -118,20 +118,20 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("Badge2Id")]
     //[InverseProperty("Badge2s")]
     [NotMapped]
-    public virtual ICollection<GamificationBadge> Badge1s { get; set; } = new List<GamificationBadge>();
+    public virtual ICollection<GamificationBadge> Badge1s { get; set; } 
 
     [ForeignKey("Badge1Id")]
     //[InverseProperty("Badge1s")]
     [NotMapped]
-    public virtual ICollection<GamificationBadge> Badge2s { get; set; } = new List<GamificationBadge>();
+    public virtual ICollection<GamificationBadge> Badge2s { get; set; } 
 
     [ForeignKey("GamificationBadgeId")]
     //[InverseProperty("GamificationBadges")]
     [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } = new List<GamificationGoalDefinition>();
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } 
 
     [ForeignKey("GamificationBadgeId")]
     //[InverseProperty("GamificationBadges")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

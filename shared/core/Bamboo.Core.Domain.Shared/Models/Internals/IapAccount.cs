@@ -73,15 +73,15 @@ public partial class IapAccount : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<SmsAccountCode> SmsAccountCodes { get; set; } = new List<SmsAccountCode>();
+    public virtual ICollection<SmsAccountCode> SmsAccountCodes { get; set; } 
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<SmsAccountPhone> SmsAccountPhones { get; set; } = new List<SmsAccountPhone>();
+    public virtual ICollection<SmsAccountPhone> SmsAccountPhones { get; set; } 
 
     //[InverseProperty("Account")]
     [NotMapped]
-    public virtual ICollection<SmsAccountSender> SmsAccountSenders { get; set; } = new List<SmsAccountSender>();
+    public virtual ICollection<SmsAccountSender> SmsAccountSenders { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IapAccountWriteUs")]
@@ -91,10 +91,10 @@ public partial class IapAccount : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("IapAccountId")]
     //[InverseProperty("IapAccounts")]
     [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } = new List<ResCompany>();
+    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
     
     [ForeignKey("IapAccountId")]
     //[InverseProperty("IapAccounts")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUsers { get; set; } 
 }

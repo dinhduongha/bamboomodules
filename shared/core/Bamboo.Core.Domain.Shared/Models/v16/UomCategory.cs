@@ -51,6 +51,6 @@ public partial class UomCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<UomUom> UomUoms { get; set; } = new List<UomUom>();
+    public virtual ICollection<UomUom> UomUoms { get; set; } 
 
 }

@@ -62,15 +62,15 @@ public partial class QuotationDocument: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("QuotationDocumentId")]
     //[InverseProperty("QuotationDocuments")]
     [NotMapped]
-    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplates { get; set; } = new List<SaleOrderTemplate>();
+    public virtual ICollection<SaleOrderTemplate> SaleOrderTemplates { get; set; } 
 
     [ForeignKey("QuotationDocumentId")]
     //[InverseProperty("QuotationDocuments")]
     [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
 
     [ForeignKey("QuotationDocumentId")]
     //[InverseProperty("QuotationDocuments")]
     [NotMapped]
-    public virtual ICollection<SalePdfFormField> SalePdfFormFields { get; set; } = new List<SalePdfFormField>();
+    public virtual ICollection<SalePdfFormField> SalePdfFormFields { get; set; } 
 }

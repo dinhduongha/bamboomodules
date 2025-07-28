@@ -81,10 +81,10 @@ public partial class ProductAttributeValue : FullAuditedEntity<Guid>, IEntityDto
 
     //[InverseProperty("ProductAttributeValue")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 
     [ForeignKey("ProductAttributeValueId")]
     //[InverseProperty("ProductAttributeValues")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } = new List<ProductTemplateAttributeLine>();
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } 
 }

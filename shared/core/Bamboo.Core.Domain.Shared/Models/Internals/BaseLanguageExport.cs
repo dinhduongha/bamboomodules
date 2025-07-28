@@ -75,5 +75,5 @@ public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("WizId")]
     //[InverseProperty("Wizs")]
     [NotMapped]
-    public virtual ICollection<IrModuleModule> Modules { get; set; } = new List<IrModuleModule>();
+    public virtual ICollection<IrModuleModule> Modules { get; set; } 
 }

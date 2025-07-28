@@ -100,11 +100,11 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("PosSession")]
     // [NotMapped]
-    // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+    // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
 
     //[InverseProperty("PosSession")]
     // [NotMapped]
-    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     [ForeignKey("TenantId")]
     [NotMapped]
@@ -147,22 +147,22 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("PosSession")]
     [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } = new List<AccountBankStatementLine>();
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
 
     //[InverseProperty("PosSession")]
     [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } = new List<AccountPayment>();
+    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
 
     //[InverseProperty("Session")]
     [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } = new List<PosOrder>();
+    public virtual ICollection<PosOrder> PosOrders { get; set; } 
 
     //[InverseProperty("Session")]
     [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; set; } = new List<PosPayment>();
+    public virtual ICollection<PosPayment> PosPayments { get; set; } 
 
     //[InverseProperty("PosSession")]
     [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } = new List<StockPicking>();
+    public virtual ICollection<StockPicking> StockPickings { get; set; } 
 
 }

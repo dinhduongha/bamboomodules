@@ -49,11 +49,11 @@ public partial class MailingSubscriptionOptout: FullAuditedEntity<Guid>, IEntity
 
     //[InverseProperty("OptOutReason")]
     [NotMapped]
-    public virtual ICollection<MailBlacklist> MailBlacklists { get; set; } = new List<MailBlacklist>();
+    public virtual ICollection<MailBlacklist> MailBlacklists { get; set; } 
 
     //[InverseProperty("OptOutReason")]
     [NotMapped]
-    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } = new List<MailingSubscription>();
+    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("MailingSubscriptionOptoutWriteUs")]

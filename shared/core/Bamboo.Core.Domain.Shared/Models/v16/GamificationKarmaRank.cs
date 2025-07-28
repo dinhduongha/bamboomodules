@@ -54,11 +54,11 @@ public partial class GamificationKarmaRank: FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("NextRank")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUserNextRanks { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUserNextRanks { get; set; } 
 
     //[InverseProperty("Rank")]
     [NotMapped]
-    public virtual ICollection<ResUser> ResUserRanks { get; set; } = new List<ResUser>();
+    public virtual ICollection<ResUser> ResUserRanks { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("GamificationKarmaRankWriteUs")]

@@ -382,114 +382,114 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } = new List<MrpBomLine>();
+    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } = new List<MrpBom>();
+    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public virtual ICollection<ProductImage> ProductImages { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } = new List<ProductPricelistItem>();
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } = new List<ProductReplenish>();
+    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } = new List<ProductSupplierinfo>();
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusions { get; set; } = new List<ProductTemplateAttributeExclusion>();
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusions { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } = new List<ProductTemplateAttributeLine>();
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } = new List<ProductTemplateAttributeValue>();
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<StockChangeProductQty> StockChangeProductQties { get; set; } = new List<StockChangeProductQty>();
+    public virtual ICollection<StockChangeProductQty> StockChangeProductQties { get; set; } 
 
     //[InverseProperty("ProductTmpl")]
     [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } = new List<StockRulesReport>();
+    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } 
 
     [ForeignKey("ProductTemplateId")]
     //[InverseProperty("ProductTemplates")]
     [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } = new List<AccountAccountTag>();
+    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
 
     //[ForeignKey("SrcId")]
     //[InverseProperty("Srcs")]
     [NotMapped]
-    public virtual ICollection<ProductProduct> Dests { get; set; } = new List<ProductProduct>();
+    public virtual ICollection<ProductProduct> Dests { get; set; } 
 
     //[ForeignKey("SrcId")]
     //[InverseProperty("SrcsNavigation")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> Dests1 { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> Dests1 { get; set; } 
 
     //[ForeignKey("SrcId")]
     //[InverseProperty("Srcs")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> DestsNavigation { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> DestsNavigation { get; set; } 
 
     [ForeignKey("ProductTemplateId")]
     //[InverseProperty("ProductTemplates")]
     [NotMapped]
-    public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } = new List<ProductAttribute>();
+    public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } 
 
     [ForeignKey("ProductTemplateId")]
     //[InverseProperty("ProductTemplates")]
     [NotMapped]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; set; } = new List<ProductLabelLayout>();
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; set; } 
 
     [ForeignKey("ProductTemplateId")]
     //[InverseProperty("ProductTemplates")]
     [NotMapped]
-    public virtual ICollection<ProductPublicCategory> ProductPublicCategories { get; set; } = new List<ProductPublicCategory>();
+    public virtual ICollection<ProductPublicCategory> ProductPublicCategories { get; set; } 
 
     [ForeignKey("ProductTemplateId")]
     //[InverseProperty("ProductTemplates")]
     [NotMapped]
-    public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+    public virtual ICollection<ProductTag> ProductTags { get; set; } 
 
     [ForeignKey("ProductId")]
     //[InverseProperty("Products")]
     [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } = new List<StockRoute>();
+    public virtual ICollection<StockRoute> Routes { get; set; } 
 
     //[ForeignKey("DestId")]
     //[InverseProperty("DestsNavigation")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> Srcs { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> Srcs { get; set; } 
 
     //[ForeignKey("DestId")]
     //[InverseProperty("Dests1")]
     [NotMapped]
-    public virtual ICollection<ProductTemplate> SrcsNavigation { get; set; } = new List<ProductTemplate>();
+    public virtual ICollection<ProductTemplate> SrcsNavigation { get; set; } 
 
     //[ForeignKey("ProdId")]
     //[InverseProperty("Prods")]
     [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> Taxes { get; set; } 
 
     //[ForeignKey("ProdId")]
     //[InverseProperty("ProdsNavigation")]
     [NotMapped]
-    public virtual ICollection<AccountTax> TaxesNavigation { get; set; } = new List<AccountTax>();
+    public virtual ICollection<AccountTax> TaxesNavigation { get; set; } 
 }

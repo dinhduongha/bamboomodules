@@ -54,7 +54,7 @@ public partial class EventTagCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Category")]
     [NotMapped]
-    public virtual ICollection<EventTag> EventTags { get; set; } = new List<EventTag>();
+    public virtual ICollection<EventTag> EventTags { get; set; } 
 
     [ForeignKey("WebsiteId")]
     //[InverseProperty("EventTagCategories")]

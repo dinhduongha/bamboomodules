@@ -66,7 +66,7 @@ public partial class AccountPartialReconcile: FullAuditedEntity<Guid>, IEntityDt
 
     //[InverseProperty("TaxCashBasisRec")]
     [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } = new List<AccountMove>();
+    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
 
     [ForeignKey("TenantId")]
     //[InverseProperty("AccountPartialReconciles")]

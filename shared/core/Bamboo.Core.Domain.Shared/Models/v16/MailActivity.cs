@@ -146,5 +146,5 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("ActivityId")]
     //[InverseProperty("Activities")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> Attachments { get; set; } 
 }

@@ -404,64 +404,64 @@ public partial class PosConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     //[InverseProperty("Config")]
     [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } = new List<PosMakePayment>();
+    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } 
 
     //[InverseProperty("Config")]
     [NotMapped]
-    public virtual ICollection<PosSession> PosSessions { get; set; } = new List<PosSession>();
+    public virtual ICollection<PosSession> PosSessions { get; set; } 
 
     //[InverseProperty("PosConfig")]
     [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } = new List<ResConfigSetting>();
+    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
 
     [ForeignKey("IsTrusting")]
     //[InverseProperty("IsTrustings")]
     [NotMapped]
-    public virtual ICollection<PosConfig> IsTrusteds { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> IsTrusteds { get; set; } 
 
     [ForeignKey("IsTrusted")]
     //[InverseProperty("IsTrusteds")]
     [NotMapped]
-    public virtual ICollection<PosConfig> IsTrustings { get; set; } = new List<PosConfig>();
+    public virtual ICollection<PosConfig> IsTrustings { get; set; } 
 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } = new List<AccountFiscalPosition>();
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = new List<HrEmployee>();
+    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosBill> PosBills { get; set; } = new List<PosBill>();
+    public virtual ICollection<PosBill> PosBills { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosCategory> PosCategories { get; set; } = new List<PosCategory>();
+    public virtual ICollection<PosCategory> PosCategories { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosDetailsWizard> PosDetailsWizards { get; set; } = new List<PosDetailsWizard>();
+    public virtual ICollection<PosDetailsWizard> PosDetailsWizards { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigs")]
     [NotMapped]
-    public virtual ICollection<PosPaymentMethod> PosPaymentMethods { get; set; } = new List<PosPaymentMethod>();
+    public virtual ICollection<PosPaymentMethod> PosPaymentMethods { get; set; } 
 
     [ForeignKey("PosConfigId")]
     //[InverseProperty("PosConfigsNavigation")]
     [NotMapped]
-    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } = new List<ProductPricelist>();
+    public virtual ICollection<ProductPricelist> ProductPricelists { get; set; } 
 }

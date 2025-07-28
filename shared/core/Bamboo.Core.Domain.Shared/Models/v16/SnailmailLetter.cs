@@ -141,10 +141,10 @@ public partial class SnailmailLetter: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("Letter")]
     [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; set; } = new List<MailNotification>();
+    public virtual ICollection<MailNotification> MailNotifications { get; set; } 
 
     //[InverseProperty("Letter")]
     [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } = new List<SnailmailLetterMissingRequiredField>();
+    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } 
 
 }
