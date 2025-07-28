@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace YourNamespace
+namespace Bamboo.Core.HttpApi
 {
     [Route("api/generic-model")]
     public class GenericModelController : AbpController

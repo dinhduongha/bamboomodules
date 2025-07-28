@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +45,8 @@ using Bamboo.MultiTenancy;
 using Volo.Abp.Auditing;
 using Npgsql;
 using Bamboo.Core.Application;
+using Volo.Abp.Json;
+using Volo.Abp.Json.SystemTextJson;
 
 namespace Bamboo.Core;
 [DependsOn(
@@ -83,6 +88,16 @@ public class CoreHttpApiHostModule : AbpModule
         // USE FOR SEED DATA 
         context.Services.AddTransient<IDataSeedService, DataSeedService>();
         context.Services.AddTransient<IJunctionTableService, JunctionTableService>();
+        Configure<AbpSystemTextJsonSerializerOptions>(options =>
+        {
+            // Bỏ qua các thuộc tính có giá trị null khi serialize
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            
+            // Tùy chọn: Thêm các cấu hình phổ biến khác nếu cần
+            // options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            // options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+        
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;

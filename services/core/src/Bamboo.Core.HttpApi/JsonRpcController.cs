@@ -11,7 +11,7 @@ using Volo.Abp.AspNetCore.Mvc;
 using Bamboo.Core;
 using Bamboo.Core.Application;
 
-namespace YourNamespace
+namespace Bamboo.Core.HttpApi
 {
     [Route("/api/jsonrpc")]
     public class JsonRpcController : AbpController
