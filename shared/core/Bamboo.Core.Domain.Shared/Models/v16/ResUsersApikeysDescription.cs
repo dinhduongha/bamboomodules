@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_users_apikeys_description")]
 public partial class ResUsersApikeysDescription : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_model_fields_selection")]
 //[Index("FieldId", Name = "ir_model_fields_selection_field_id_index")]
 //[Index("FieldId", "Value", Name = "ir_model_fields_selection_selection_field_uniq", IsUnique = true)]

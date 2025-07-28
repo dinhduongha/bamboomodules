@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_mail_server")]
 //[Index("Name", Name = "ir_mail_server_name_index")]
 public partial class IrMailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_users_settings_volumes")]
 //[Index("GuestId", Name = "res_users_settings_volumes_guest_id_index")]
 //[Index("PartnerId", Name = "res_users_settings_volumes_partner_id_index")]

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("auth_totp_device")]
 //[Index("UserId", "Index", Name = "auth_totp_device_user_id_index_idx")]
 public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject

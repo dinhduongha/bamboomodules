@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_enable_profiling_wizard")]
 public partial class BaseEnableProfilingWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {

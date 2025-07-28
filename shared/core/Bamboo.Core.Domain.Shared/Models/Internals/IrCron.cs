@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_cron")]
 public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {

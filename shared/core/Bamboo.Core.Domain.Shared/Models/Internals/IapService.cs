@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("iap_service")]
 //[Index("TechnicalName", Name = "iap_service_unique_technical_name", IsUnique = true)]
 public partial class IapService: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject

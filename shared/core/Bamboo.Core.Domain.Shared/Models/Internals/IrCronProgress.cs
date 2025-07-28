@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_cron_progress")]
 //[Index("CronId", Name = "ir_cron_progress__cron_id_index")]
 public partial class IrCronProgress: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject

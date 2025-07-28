@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("web_tour_tour")]
 //[Index("Name", Name = "web_tour_tour_uniq_name", IsUnique = true)]
 public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject

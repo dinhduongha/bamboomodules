@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_users_deletion")]
 public partial class ResUsersDeletion : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

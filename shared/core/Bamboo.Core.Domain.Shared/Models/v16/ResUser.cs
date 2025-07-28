@@ -13,10 +13,11 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
+[Model("res.user")]
 [Table("res_users")]
 //[Index("PartnerId", Name = "res_users_partner_id_index")]
 //[Index("Login", "WebsiteId", Name = "res_users_login_key", IsUnique = true)]
-[ModelName("res.user")]
 public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

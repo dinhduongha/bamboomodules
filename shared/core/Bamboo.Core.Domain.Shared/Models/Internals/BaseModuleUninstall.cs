@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_module_uninstall")]
 public partial class BaseModuleUninstall: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_default")]
 //[Index("TenantId", Name = "ir_default_company_id_index")]
 //[Index("FieldId", Name = "ir_default_field_id_index")]

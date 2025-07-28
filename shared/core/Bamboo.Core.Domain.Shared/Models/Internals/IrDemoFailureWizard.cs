@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_demo_failure_wizard")]
 public partial class IrDemoFailureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {

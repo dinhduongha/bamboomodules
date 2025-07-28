@@ -172,7 +172,7 @@ namespace Bamboo.Core.Application
                     // Kiểm tra bản ghi tồn tại
                     var xmlIds = records.Select(r => r.Record.Attribute("id")?.Value ?? _guidGenerator.Create().ToString()).ToList();
                     var existingRecords = (await _irModelDataRepository.GetQueryableAsync())
-                        .Where(r => r.Model == model && r.TenantId == tenantId && xmlIds.Contains(r.Name))
+                        .Where(r => r.Model == model && r.Module == moduleName && xmlIds.Contains(r.Name))
                         .ToList();
                     foreach (var r in existingRecords)
                     {
@@ -200,7 +200,6 @@ namespace Bamboo.Core.Application
                                 Model = model,
                                 Name = xmlId,
                                 ResId = (Guid)entityType.GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetValue(entity),
-                                TenantId = tenantId,
                                 Noupdate = isNoUpdate,
                                 CreationTime = DateTime.UtcNow,
                                 CreatorId = CurrentUser.Id
@@ -553,7 +552,6 @@ namespace Bamboo.Core.Application
                             Model = model,
                             Name = relation.XmlId,
                             ResId = (Guid)entityType.GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetValue(entity),
-                            TenantId = tenantId,
                             Noupdate = relation.IsNoUpdate,
                             CreationTime = DateTime.UtcNow,
                             CreatorId = CurrentUser.Id
@@ -727,7 +725,7 @@ namespace Bamboo.Core.Application
             string moduleName = parts.Length == 2 ? parts[0] : "base";
             string name = parts.Length == 2 ? parts[1] : xmlId;
             var irModelDatum = await _irModelDataRepository
-                .FirstOrDefaultAsync(r => r.Module == moduleName && r.Name == name && r.TenantId == tenantId);
+                .FirstOrDefaultAsync(r => r.Module == moduleName && r.Name == name);
 
             if (irModelDatum == null)
             {

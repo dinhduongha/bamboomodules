@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_model_data")]
 //[Index("Model", "ResId", Name = "ir_model_data_model_res_id_index")]
 //[Index("Module", "Name", Name = "ir_model_data_module_name_uniq_index", IsUnique = true)]
@@ -19,8 +20,9 @@ public partial class IrModelDatum: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
+    // Init data must be seed to 00000000-0000-0000-0000-000000000001
+    //[Column("company_id")]
+    //public Guid? TenantId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get; set; }

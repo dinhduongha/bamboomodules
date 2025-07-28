@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_act_window_view")]
 //[Index("ActWindowId", "ViewMode", Name = "act_window_view_unique_mode_per_action", IsUnique = true)]
 public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_module_module_exclusion")]
 //[Index("Name", Name = "ir_module_module_exclusion_name_index")]
 public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>

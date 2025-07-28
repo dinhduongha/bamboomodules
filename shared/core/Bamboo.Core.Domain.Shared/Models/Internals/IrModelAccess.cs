@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_model_access")]
 //[Index("GroupId", Name = "ir_model_access_group_id_index")]
 //[Index("ModelId", Name = "ir_model_access_model_id_index")]

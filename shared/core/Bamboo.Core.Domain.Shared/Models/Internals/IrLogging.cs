@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_logging")]
 //[Index("Dbname", Name = "ir_logging_dbname_index")]
 //[Index("Level", Name = "ir_logging_level_index")]

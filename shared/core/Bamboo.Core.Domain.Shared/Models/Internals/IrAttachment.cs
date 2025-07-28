@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_attachment")]
 //[Index("StoreFname", Name = "ir_attachment__store_fname_index")]
 //[Index("Checksum", Name = "ir_attachment_checksum_index")]

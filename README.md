@@ -2,12 +2,11 @@
 
 **Bamboo** is a porting of **Odoo ERP** to C# using ABP Framework.
 
-# What's News (2025-07-14)
+# Features (2025-07-28)
 
-- **ABP** version v8.2.0
+- **ABP** version v8.3.4
 - **Microservices**.
 - **Scipts and config to migrate data from odoo to bamboo**.
-- **Migration Document**.
 - **Odoo 18 porting**:
 
   - **Entities**: **> 500 entities** converted from Odoo database, with near full modules.
@@ -16,6 +15,8 @@
   - **ResUser**: mapped to **IdentityUser**
 
 - Use same model objects for entities and dtos. **All models/entities** were placed in folder **Bamboo.Core.Domain.Shared/Models**
+- **Basic Generic API**
+- **JsonRpc**
 
 # No more support
 
@@ -36,8 +37,6 @@ I create a migration guide in [docs/migrate-odoo-uuid.md](docs/migrate-odoo-uuid
 
 # TODO - Working in progress
 
-- **Generic API**
-- **JsonRpc**
 - **UI Generation from odoo xml/database**
 - **Report Generation from odoo xml/database**
 - **Bussiness Logic**.

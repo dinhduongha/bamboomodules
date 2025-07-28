@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("web_tour_tour_step")]
 public partial class WebTourTourStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

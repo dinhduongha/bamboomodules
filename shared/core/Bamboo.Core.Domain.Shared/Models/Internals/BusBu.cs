@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("bus_bus")]
 public partial class BusBu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

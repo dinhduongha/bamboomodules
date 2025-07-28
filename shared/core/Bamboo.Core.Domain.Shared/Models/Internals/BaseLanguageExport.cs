@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_language_export")]
 public partial class BaseLanguageExport: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

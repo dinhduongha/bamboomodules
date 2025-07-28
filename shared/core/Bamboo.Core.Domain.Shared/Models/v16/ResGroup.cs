@@ -10,10 +10,11 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_groups")]
 //[Index("CategoryId", Name = "res_groups_category_id_index")]
 //[Index("CategoryId", "Name", Name = "res_groups_name_uniq", IsUnique = true)]
-[ModelName("res_group")]
+[Model("res_group")]
 public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

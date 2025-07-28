@@ -10,9 +10,11 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
+[Model("ir.actions.act_window")]
+
 [Table("ir_act_window")]
 //[Index("Path", Name = "ir_act_window_path_unique", IsUnique = true)]
-[ModelName("ir.actions.act_window")]
 public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
@@ -100,6 +102,7 @@ public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual IrModel? BindingModel { get; set; }
 
+    [RelationField(RelationType: "many2one", RelatedModel: "ResUser", RelatedField: "Id")]
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrActWindowCreateUs")]
     [NotMapped]

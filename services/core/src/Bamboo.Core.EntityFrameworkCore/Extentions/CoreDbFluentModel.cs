@@ -21565,7 +21565,7 @@ public static class CoreDbModelFluentCreatingExtensions
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("next_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+            //entity.Property(e => e.TenantId).HasColumnName("company_id");
             entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
                 .HasDefaultValueSql("(now() AT TIME ZONE 'UTC'::text)")
                 .HasColumnType("timestamp without time zone")

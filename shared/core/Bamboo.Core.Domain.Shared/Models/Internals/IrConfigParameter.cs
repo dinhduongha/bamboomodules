@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_config_parameter")]
 //[Index("Key", Name = "ir_config_parameter_key_uniq", IsUnique = true)]
 public partial class IrConfigParameter: FullAuditedEntity<Guid>, IEntityDto<Guid>

@@ -1,6 +1,6 @@
 \c postgres
 -- Change dbname and owner then run from shell: 
--- sudo -u postgres psql -p 5432 -f create-generic-16-18.sql
+-- sudo -u postgres psql -p 5432 -f create-db-core-generic.sql
 \set dbname 'bamboo_core'
 \set dbowner 'bamboo'
 -- \set dbpassword 'db_password'

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_module_upgrade")]
 public partial class BaseModuleUpgrade: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

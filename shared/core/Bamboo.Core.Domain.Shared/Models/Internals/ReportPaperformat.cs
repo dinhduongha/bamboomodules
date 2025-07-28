@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("report_paperformat")]
 public partial class ReportPaperformat : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

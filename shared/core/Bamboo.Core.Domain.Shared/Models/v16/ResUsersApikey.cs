@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_users_apikeys")]
 //[Index("UserId", "Index", Name = "res_users_apikeys_user_id_index_idx")]
 public partial class ResUsersApikey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject

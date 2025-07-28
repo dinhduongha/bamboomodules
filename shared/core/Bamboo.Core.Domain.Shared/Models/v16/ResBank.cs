@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_bank")]
 //[Index("Bic", Name = "res_bank_bic_index")]
 public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject

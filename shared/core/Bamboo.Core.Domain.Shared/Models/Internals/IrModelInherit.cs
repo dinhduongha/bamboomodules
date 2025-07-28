@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_model_inherit")]
 //[Index("ModelId", "ParentId", Name = "ir_model_inherit_uniq", IsUnique = true)]
 public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject

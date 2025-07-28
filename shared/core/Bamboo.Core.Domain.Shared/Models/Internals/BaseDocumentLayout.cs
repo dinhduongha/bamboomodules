@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_document_layout")]
 public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

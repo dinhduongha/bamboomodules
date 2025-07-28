@@ -11,6 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 // Must-Copy-To-Tenants
+[Module("base")]
 [Table("res_partner_title")]
 public partial class ResPartnerTitle : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

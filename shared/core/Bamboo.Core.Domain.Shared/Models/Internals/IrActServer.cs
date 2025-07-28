@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_act_server")]
 //[Index("ModelId", Name = "ir_act_server__model_id_index")]
 //[Index("Path", Name = "ir_act_server_path_unique", IsUnique = true)]

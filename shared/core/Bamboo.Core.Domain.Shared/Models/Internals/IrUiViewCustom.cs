@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_ui_view_custom")]
 //[Index("RefId", Name = "ir_ui_view_custom_ref_id_index")]
 //[Index("UserId", Name = "ir_ui_view_custom_user_id_index")]

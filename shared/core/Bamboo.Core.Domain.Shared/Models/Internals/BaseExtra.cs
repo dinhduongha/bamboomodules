@@ -80,28 +80,3 @@ public class StringDictionary : Dictionary<string, string?>, IComparable<StringD
     }
 }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class JsonFieldAttribute : Attribute { }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class RelationFieldAttribute : Attribute
-    {
-        public string RelatedModel { get; }
-        public string RelationType { get; }
-
-        public RelationFieldAttribute(string relatedModel, string relationType)
-        {
-            RelatedModel = relatedModel;
-            RelationType = relationType;
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ModelNameAttribute : Attribute
-    {
-        public string[] Names { get; }
-        public ModelNameAttribute(params string[] names)
-        {
-            Names = names;    
-        }
-    }

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_sequence_date_range")]
 public partial class IrSequenceDateRange: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {

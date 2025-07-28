@@ -16,9 +16,9 @@ For compatible with ABP, and use GUID for primary key, we need:
 
 - Ubuntu 24.04
 - PostgreSQL 17
-- `pgloader` with small patch (has `int-to-uuid` function)
+- `pgloader` with [small patch](https://github.com/piconnectdev/pgloader) (has `int-to-uuid` function)
 - Customer file `pgloader-odoo18-data-full-uuid.conf`
-- File `create-generic.sql` for create database with custom function `next_uuid()`
+- File `create-*-generic.sql` to create databases with custom function `next_uuid()`
 
 ## A. Prepare
 
@@ -48,46 +48,63 @@ To migrate from odoo, at database source, we must ensure:
 
 ### 1. Prepare Destination Database
 
-Run command:
-`psql -p 5432 -h 127.0.0.1 -U postgres -f create-generic`
+-Create AdminDB:
+`psql -p 5432 -h 127.0.0.1 -U postgres -f create-db-admin-generic.sql`
 
-After this step, `bamboo_core` database with custom `next_uuid` created.
+-Create CoreDB:
+`psql -p 5432 -h 127.0.0.1 -U postgres -f create-db-core-generic.sql`
 
-### 2. Create migrations and update database with C# Bamboo.Admin project (Optional)
+After this step, these databases with custom `next_uuid` created.
 
-Run command:
-`./scripts/db-migrate-admin.sh`
+### 2. Create migrations and update database Bamboo.Admin project (Optional)
 
-### 3. Create migrations and update database with C# Bamboo.Core project
+- Option 1:
+  `cd services/admin/Bamboo.Admin/src && abp create-migration-and-run-migrator Bamboo.Admin.EntityFrameworkCore && cd -
+`
+- Option 2:
+  `./scripts/db-migrate-admin.sh`
 
-Run command:
-`./scripts/db-migrate-core.sh`
+### 3. Create migrations and update database Bamboo.Core project
 
-### 4. Migrate data from old odoo18 database
+- Option 1:
+  - Init migrations
+    `dotnet ef migrations add Initial --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context "CoreDbContext"
+`
+  - Update database
+    `dotnet ef database update --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
+`
+- Option 2:
+  `./scripts/db-migrate-core.sh`
 
-Edit your `pgloader-odoo18-data-full-uuid.sh` with correct database/user/password then run command:
-`./scripts/pgloader-odoo18-data-full-uuid.sh`
+### 4. Migrate data from odoo18 database
+
+Edit your `pgloader-odoo18-data-full-uuid.conf` with correct database/user/password then run command:
+
+- Option 1:
+  `pgloader --verbose --dynamic-space-size 4096 scripts/conf/pgloader-odoo18-data-full-uuid.conf`
+- Option 2:
+  `./scripts/pgloader-odoo18-data-full-uuid.sh`
 
 Voila, after this step, your `bamboo_core` database has updated (or clone) data with `Id` type is `GUID`, many extra columns added, and full compatible with ABP.
 
 ## C. HARD WAY
 
-Just do this in case you want to `scaffold` from your database.
+Just do this in case you want to `scaffold` from your odoo18 database.
 
 ### 1. Create new database for entities
 
     Run command:
-    `psql -p 5432 -h 127.0.0.1 -U postgres -f create-generic`
+    `psql -p 5432 -h 127.0.0.1 -U postgres -f create-core-generic.sql`
 
 ### 2. Migrate old database to new database with UUID compatible
 
 #### 2.1 Odoo 16:
 
-    pgloader --verbose pgloader-odoo16-18-schema-full-uuid.conf
+    pgloader --verbose --dynamic-space-size 4096 pgloader-odoo16-18-schema-full-uuid.conf
 
 #### 2.2 Odoo 18:
 
-    pgloader --verbose pgloader-odoo16-18-schema-full-uuid.conf
+    pgloader --verbose --dynamic-space-size 4096 pgloader-odoo16-18-schema-full-uuid.conf
 
 After this step, we have a new database with `same` table/column/data similar origin, but all primary key and foreign key is GUID.
 
@@ -188,7 +205,16 @@ Replace with:
 
 `[ForeignKey("TenantId")]`
 
-### 9. Replace/Disable InverseProperty
+### 9. JSON Fields
+
+Search:
+`\[Column(.*), TypeName = "jsonb"\)\]$`
+
+Replace with:
+
+`[JsonField]\n    $0`
+
+### 10. Replace/Disable InverseProperty
 
 Search:
 `\[InverseProperty.*$`
@@ -197,7 +223,7 @@ Replace with:
 
 `//$0\n    [NotMapped]`
 
-### 10. Disable Index
+### 11. Disable Index
 
 Search:
 `\[Index.*$`
@@ -206,7 +232,7 @@ Replace with:
 
 `//$0`
 
-### 11. Remove using Microsoft.EntityFrameworkCore;
+### 12. Remove using Microsoft.EntityFrameworkCore;
 
 Search:
 `using Microsoft.EntityFrameworkCore;`
@@ -219,12 +245,28 @@ using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;```
 
-### 12. Note
+### 14. Class Annotation
+
+We can annotate an entity like this:
+**[Module("base")]**
+**[Model("ir.actions.act_window")]**
+
+**public partial class IrActWindow**
+...
+
+### 15. Relation Annotation
+
+We can annotate a relation property like this:
+**[RelationField(RelationType: "many2one", RelatedModel: "ResUser", RelatedField: "Id")]**
+**public virtual ResUser? CreateU { get; set; }**
+...
+
+### 16. Note
 
 Search files not contains IMultiTenant
 `^public\s+partial\s+class\b(?!.*\bIMultiTenant\b).*`
 
-### 13. Find file not contains TenantId
+### 17. Find file not contains TenantId
 
 `grep -L -R --include="*.cs" 'public Guid? TenantId { get; set; }' . | sort`
 
@@ -307,9 +349,9 @@ Search
 Replace with:
 `entity.HasOne<ResCurrency>().WithMany()`
 
-### 6. ResLang and more
+### 6. ResLang and more ..
 
-## V. Migrations DB Schema and Data
+## V. Migrations DB Schema and Data for Bamboo.Core project
 
 Run command as follow:
 `./scripts/db-migrate-core.sh`

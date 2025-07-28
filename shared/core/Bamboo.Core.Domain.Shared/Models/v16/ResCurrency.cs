@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_currency")]
 //[Index("Name", Name = "res_currency_unique_name", IsUnique = true)]
 public partial class ResCurrency : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject

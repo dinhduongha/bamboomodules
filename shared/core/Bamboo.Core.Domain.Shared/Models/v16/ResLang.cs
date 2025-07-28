@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_lang")]
 //[Index("Code", Name = "res_lang_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_lang_name_uniq", IsUnique = true)]

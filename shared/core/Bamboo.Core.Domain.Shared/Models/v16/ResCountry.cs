@@ -10,10 +10,11 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_country")]
 //[Index("Code", Name = "res_country_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_country_name_uniq", IsUnique = true)]
-public partial class ResCountry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResCountry : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]

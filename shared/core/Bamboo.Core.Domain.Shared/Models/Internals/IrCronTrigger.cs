@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_cron_trigger")]
 //[Index("CallAt", Name = "ir_cron_trigger__call_at_index")]
 //[Index("CronId", Name = "ir_cron_trigger_cron_id_index")]

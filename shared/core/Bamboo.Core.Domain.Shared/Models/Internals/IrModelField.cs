@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_model_fields")]
 //[Index("CompleteName", Name = "ir_model_fields_complete_name_index")]
 //[Index("ModelId", Name = "ir_model_fields_model_id_index")]

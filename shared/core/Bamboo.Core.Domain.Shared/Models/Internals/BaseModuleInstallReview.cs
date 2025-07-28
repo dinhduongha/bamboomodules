@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_module_install_review")]
 public partial class BaseModuleInstallReview: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

@@ -13,6 +13,7 @@ namespace Bamboo.Core.Models;
 [Table("res_company")]
 //[Index("Name", Name = "res_company_name_uniq", IsUnique = true)]
 //[Index("ParentId", Name = "res_company_parent_id_index")]
+[Module("base")]
 public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]

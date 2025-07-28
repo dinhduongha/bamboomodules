@@ -30,7 +30,7 @@ public class CoreApplicationModule : AbpModule
         });
         context.Services.AddTransient(typeof(IRepositoryService<>), typeof(RepositoryService<>));
 
-        //context.Services.AddTransient(typeof(IGenericApplicationService<>), typeof(GenericApplicationService<>));
+        context.Services.AddTransient(typeof(IGenericApplicationService<>), typeof(GenericApplicationService<>));
         
     }
 }

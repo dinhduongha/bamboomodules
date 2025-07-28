@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_exports")]
 //[Index("Resource", Name = "ir_exports_resource_index")]
 public partial class IrExport: FullAuditedEntity<Guid>, IEntityDto<Guid>

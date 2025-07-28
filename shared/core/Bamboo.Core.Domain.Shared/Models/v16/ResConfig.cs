@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_config")]
 public partial class ResConfig: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

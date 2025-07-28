@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_act_report_xml")]
 //[Index("Path", Name = "ir_act_report_xml_path_unique", IsUnique = true)]
 public partial class IrActReportXml: FullAuditedEntity<Guid>, IEntityDto<Guid>

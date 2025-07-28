@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_profile")]
 //[Index("Session", Name = "ir_profile_session_index")]
 public partial class IrProfile: FullAuditedEntity<Guid>, IEntityDto<Guid>

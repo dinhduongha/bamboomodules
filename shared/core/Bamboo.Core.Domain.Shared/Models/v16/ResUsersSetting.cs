@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_users_settings")]
 //[Index("MuteUntilDt", Name = "res_users_settings__mute_until_dt_index")]
 //[Index("UserId", Name = "res_users_settings_unique_user_id", IsUnique = true)]

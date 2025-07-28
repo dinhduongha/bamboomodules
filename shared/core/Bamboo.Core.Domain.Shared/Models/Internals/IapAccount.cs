@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("iap_account")]
 public partial class IapAccount : FullAuditedEntity<Guid>, IEntityDto<Guid>
 {

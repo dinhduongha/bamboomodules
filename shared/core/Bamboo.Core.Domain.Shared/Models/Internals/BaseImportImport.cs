@@ -10,7 +10,9 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_import_import")]
+
 public partial class BaseImportImport: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]

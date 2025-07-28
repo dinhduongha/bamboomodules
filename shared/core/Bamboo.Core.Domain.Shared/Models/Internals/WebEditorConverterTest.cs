@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("web_editor_converter_test")]
 public partial class WebEditorConverterTest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

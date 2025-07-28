@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("reset_view_arch_wizard")]
 public partial class ResetViewArchWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

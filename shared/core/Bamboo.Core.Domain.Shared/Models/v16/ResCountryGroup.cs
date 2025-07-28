@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_country_group")]
 public partial class ResCountryGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

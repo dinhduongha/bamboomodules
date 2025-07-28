@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("auth_totp_wizard")]
 public partial class AuthTotpWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

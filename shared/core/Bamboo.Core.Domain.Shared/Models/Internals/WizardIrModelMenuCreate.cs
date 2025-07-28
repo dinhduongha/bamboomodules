@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("wizard_ir_model_menu_create")]
 public partial class WizardIrModelMenuCreate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {

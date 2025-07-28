@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("decimal_precision")]
 //[Index("Name", Name = "decimal_precision_name_uniq", IsUnique = true)]
 public partial class DecimalPrecision : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject

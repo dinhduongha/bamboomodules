@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_ui_menu")]
 //[Index("ParentId", Name = "ir_ui_menu_parent_id_index")]
 //[Index("ParentPath", Name = "ir_ui_menu_parent_path_index")]

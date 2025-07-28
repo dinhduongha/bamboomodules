@@ -11,16 +11,16 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.Guids" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.Identity.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.AuditLogging.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Domain.Shared" Version="8.2.0" />
-    <PackageReference Include="Volo.Abp.OpenIddict.Domain.Shared" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.Guids" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.Identity.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.AuditLogging.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain.Shared" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain.Shared" Version="8.3.4" />
   </ItemGroup>
 
   <ItemGroup>

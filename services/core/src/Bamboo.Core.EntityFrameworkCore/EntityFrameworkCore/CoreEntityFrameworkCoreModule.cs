@@ -26,6 +26,6 @@ public class CoreEntityFrameworkCoreModule : AbpModule
              */
             options.AddDefaultRepositories(includeAllEntities: true);
         });
-        context.Services.AddTransient<IJunctionTableMetadataProvider, JunctionTableMetadataProvider>();
+        context.Services.AddTransient<IEntityMetadataProvider, EntityMetadataProvider>();
     }
 }

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("base_import_mapping")]
 //[Index("ResModel", Name = "base_import_mapping_res_model_index")]
 public partial class BaseImportMapping: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_module_module_dependency")]
 //[Index("Name", Name = "ir_module_module_dependency_name_index")]
 public partial class IrModuleModuleDependency: FullAuditedEntity<Guid>, IEntityDto<Guid>

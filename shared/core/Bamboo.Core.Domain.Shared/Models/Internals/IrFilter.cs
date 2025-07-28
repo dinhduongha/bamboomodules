@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_filters")]
 //[Index("ModelId", "UserId", "ActionId", "EmbeddedActionId", "EmbeddedParentResId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
 //[Index("ModelId", "UserId", "ActionId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]

@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("ir_server_object_lines")]
 public partial class IrServerObjectLine: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {

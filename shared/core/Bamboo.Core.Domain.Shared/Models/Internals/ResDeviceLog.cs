@@ -10,6 +10,7 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
+[Module("base")]
 [Table("res_device_log")]
 //[Index("LastActivity", Name = "res_device_log__last_activity_index")]
 //[Index("SessionIdentifier", Name = "res_device_log__session_identifier_index")]
