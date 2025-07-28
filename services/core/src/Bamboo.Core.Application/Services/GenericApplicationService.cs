@@ -15,6 +15,8 @@ using Volo.Abp.ObjectMapping;
 using Volo.Abp.ObjectExtending;
 
 using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Application
 {
@@ -29,7 +31,7 @@ namespace Bamboo.Core.Application
         private readonly IModelTypeRegistry _modelTypeRegistry;
         private readonly IMemoryCache _memoryCache;
         private readonly bool _filterFieldAccess = false;
-
+        private readonly IDataFilter _dataFilter;
         public GenericApplicationService(
             IRepository<TEntity, Guid> repository,
             AuthorizationService authorizationService,
@@ -37,6 +39,7 @@ namespace Bamboo.Core.Application
             DomainParser domainParser,
             IServiceProvider serviceProvider,
             IModelTypeRegistry modelTypeRegistry,
+            IDataFilter dataFilter,
             IMemoryCache memoryCache)
         {
             _repository = repository;
@@ -45,7 +48,9 @@ namespace Bamboo.Core.Application
             _domainParser = domainParser;
             _serviceProvider = serviceProvider;
             _modelTypeRegistry = modelTypeRegistry;
+            _dataFilter = dataFilter;
             _memoryCache = memoryCache;
+            _dataFilter.Disable<IMultiTenant>();
         }
 
         private async Task<List<string>> GetAllowedFieldsAsync(string modelName, string operation, List<string> fields)

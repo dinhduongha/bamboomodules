@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
@@ -12,6 +14,14 @@ namespace Bamboo.Core.Application
         private readonly IServiceProvider _serviceProvider;
         private readonly IModelTypeRegistry _modelTypeRegistry;
 
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        };
+        
         public GenericModelService(
             IServiceProvider serviceProvider,
             IModelTypeRegistry modelTypeRegistry)
@@ -20,10 +30,14 @@ namespace Bamboo.Core.Application
             _modelTypeRegistry = modelTypeRegistry;
         }
 
-        public async Task<List<object>> ReadAsync(string modelName, List<Guid> ids, List<string> fields)
+        public async Task<List<JsonElement>> ReadAsync(string modelName, List<Guid> ids, List<string> fields)
         {
             var service = GetGenericService(modelName);
-            return await CallServiceMethodAsync<List<object>>(service, "ReadAsync", ids, fields);
+            var results = await CallServiceMethodAsync<List<object>>(service, "ReadAsync", ids, fields);
+            List<JsonElement> jsonElementList = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .ToList();
+            return jsonElementList;
         }
 
         public async Task<List<Guid>> SearchAsync(string modelName, string domain, long offset = 0, int limit = 100, string order = null)
@@ -32,32 +46,41 @@ namespace Bamboo.Core.Application
             return await CallServiceMethodAsync<List<Guid>>(service, "SearchAsync", domain, offset, limit, order);
         }
 
-        public async Task<List<object>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, int limit = 100, string order = null)
+        public async Task<List<JsonElement>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, int limit = 100, string order = null)
         {
             var service = GetGenericService(modelName);
-            return await CallServiceMethodAsync<List<object>>(service, "SearchReadAsync", domain, fields, offset, limit, order);
+            var results = await CallServiceMethodAsync<List<object>>(service, "SearchReadAsync", domain, fields, offset, limit, order);
+            List<JsonElement> jsonElementList = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .ToList();
+            return jsonElementList;
         }
 
-        public async Task<object> CreateAsync(string modelName, object entity, List<string> fields)
+        public async Task<JsonElement> CreateAsync(string modelName, object entity, List<string> fields)
         {
             var service = GetGenericService(modelName);
             var entityType = _modelTypeRegistry.GetType(modelName);
-            var jsonElement = (entity is JsonElement element) 
-                ? element 
+            var jsonElement = (entity is JsonElement element)
+                ? element
                 : JsonSerializer.SerializeToElement(entity);
             var typedEntity = JsonSerializer.Deserialize(jsonElement, entityType);
-            return await CallServiceMethodAsync<object>(service, "CreateAsync", typedEntity, fields);
+            var result = await CallServiceMethodAsync<object>(service, "CreateAsync", typedEntity, fields);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
-        public async Task<List<object>> WriteAsync(string modelName, List<Guid> ids, object entity, List<string> fields)
+        public async Task<List<JsonElement>> WriteAsync(string modelName, List<Guid> ids, object entity, List<string> fields)
         {
             var service = GetGenericService(modelName);
             var entityType = _modelTypeRegistry.GetType(modelName);
-                        var jsonElement = (entity is JsonElement element) 
-                ? element 
-                : JsonSerializer.SerializeToElement(entity);
+            var jsonElement = (entity is JsonElement element)
+    ? element
+    : JsonSerializer.SerializeToElement(entity);
             var typedEntity = JsonSerializer.Deserialize(jsonElement, entityType);
-            return await CallServiceMethodAsync<List<object>>(service, "WriteAsync", ids, typedEntity, fields);
+            var results = await CallServiceMethodAsync<List<object>>(service, "WriteAsync", ids, typedEntity, fields);
+            List<JsonElement> jsonElementList = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .ToList();
+            return jsonElementList;
         }
 
         public async Task DeleteAsync(string modelName, List<Guid> ids)
@@ -78,12 +101,13 @@ namespace Bamboo.Core.Application
             return await CallServiceMethodAsync<List<(Guid Id, string Name)>>(service, "NameSearchAsync", name, domain, @operator, limit);
         }
 
-        public async Task<object> CopyAsync(string modelName, Guid id, List<string> fields, object defaultValues = null)
+        public async Task<JsonElement> CopyAsync(string modelName, Guid id, List<string> fields, object defaultValues = null)
         {
             var service = GetGenericService(modelName);
             var entityType = _modelTypeRegistry.GetType(modelName);
             var typedDefaultValues = defaultValues != null ? Convert.ChangeType(defaultValues, entityType) : null;
-            return await CallServiceMethodAsync<object>(service, "CopyAsync", id, fields, typedDefaultValues);
+            var result = await CallServiceMethodAsync<object>(service, "CopyAsync", id, fields, typedDefaultValues);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
         public async Task<OnchangeResult> OnchangeAsync(string modelName, List<string> changedFields, object values, Dictionary<string, object> fieldInfo)
@@ -94,10 +118,11 @@ namespace Bamboo.Core.Application
             return await CallServiceMethodAsync<OnchangeResult>(service, "OnchangeAsync", changedFields, typedValues, fieldInfo);
         }
 
-        public async Task<Dictionary<string, object>> DefaultGetAsync(string modelName, List<string> fields)
+        public async Task<JsonElement> DefaultGetAsync(string modelName, List<string> fields)
         {
             var service = GetGenericService(modelName);
-            return await CallServiceMethodAsync<Dictionary<string, object>>(service, "DefaultGetAsync", fields);
+            var result = await CallServiceMethodAsync<Dictionary<string, object>>(service, "DefaultGetAsync", fields);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
         public async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(string modelName, List<string> fields = null, Dictionary<string, List<string>> attributes = null)
