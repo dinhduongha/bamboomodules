@@ -22,9 +22,9 @@ namespace Bamboo.Core.Application
         where TEntity : class, IEntity<Guid>
     {
         private readonly IRepository<TEntity, Guid> _repository;
-        private readonly OdooAuthorizationService _authorizationService;
+        private readonly AuthorizationService _authorizationService;
         private readonly IObjectMapper _objectMapper;
-        private readonly OdooDomainParser _domainParser;
+        private readonly DomainParser _domainParser;
         private readonly IServiceProvider _serviceProvider;
         private readonly IModelTypeRegistry _modelTypeRegistry;
         private readonly IMemoryCache _memoryCache;
@@ -32,9 +32,9 @@ namespace Bamboo.Core.Application
 
         public GenericApplicationService(
             IRepository<TEntity, Guid> repository,
-            OdooAuthorizationService authorizationService,
+            AuthorizationService authorizationService,
             IObjectMapper objectMapper,
-            OdooDomainParser domainParser,
+            DomainParser domainParser,
             IServiceProvider serviceProvider,
             IModelTypeRegistry modelTypeRegistry,
             IMemoryCache memoryCache)
