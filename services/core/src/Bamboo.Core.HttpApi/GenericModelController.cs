@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Bamboo.Core.Application;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.Json;
+using Volo.Abp.Json.SystemTextJson;
 
 namespace Bamboo.Core.HttpApi
 {
@@ -13,16 +17,22 @@ namespace Bamboo.Core.HttpApi
     public class GenericModelController : AbpController
     {
         private readonly IGenericModelService _genericModelService;
+            private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public GenericModelController(IGenericModelService genericModelService)
+        public GenericModelController(IOptions<JsonSerializerOptions> jsonSerializerOptions, IGenericModelService genericModelService)
         {
             _genericModelService = genericModelService;
+            _jsonSerializerOptions = jsonSerializerOptions.Value;
         }
 
         [HttpPost("{modelName}/read")]
-        public async Task<List<object>> ReadAsync(string modelName, [FromBody] ReadRequestDto request)
+        public async Task<List<JsonElement>> ReadAsync(string modelName, [FromBody] ReadRequestDto request)
         {
-            return await _genericModelService.ReadAsync(modelName, request.Ids, request.Fields);
+            var results = await _genericModelService.ReadAsync(modelName, request.Ids, request.Fields);
+            List<JsonElement> jsonElementList = results
+            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+            .ToList();
+            return jsonElementList;
         }
 
         [HttpPost("{modelName}/search")]
@@ -32,21 +42,30 @@ namespace Bamboo.Core.HttpApi
         }
 
         [HttpPost("{modelName}/search_read")]
-        public async Task<List<object>> SearchReadAsync(string modelName, [FromBody] SearchReadRequestDto request)
+        public async Task<List<JsonElement>> SearchReadAsync(string modelName, [FromBody] SearchReadRequestDto request)
         {
-            return await _genericModelService.SearchReadAsync(modelName, request.Domain, request.Fields, request.Offset, request.Limit, request.Order);
+            var results = await _genericModelService.SearchReadAsync(modelName, request.Domain, request.Fields, request.Offset, request.Limit, request.Order);
+            List<JsonElement> jsonElementList = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .ToList();
+                return jsonElementList;
         }
 
         [HttpPost("{modelName}/create")]
-        public async Task<object> CreateAsync(string modelName, [FromBody] CreateRequestDto request)
+        public async Task<JsonElement> CreateAsync(string modelName, [FromBody] CreateRequestDto request)
         {
-            return await _genericModelService.CreateAsync(modelName, request.Entity, request.Fields);
+            var result = await _genericModelService.CreateAsync(modelName, request.Entity, request.Fields);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
         [HttpPut("{modelName}/write")]
-        public async Task<object> WriteAsync(string modelName, List<Guid> ids, [FromBody] UpdateRequestDto request)
+        public async Task<List<JsonElement>> WriteAsync(string modelName, List<Guid> ids, [FromBody] UpdateRequestDto request)
         {
-            return await _genericModelService.WriteAsync(modelName, ids, request.Entity, request.Fields);
+            var results = await _genericModelService.WriteAsync(modelName, ids, request.Entity, request.Fields);
+            List<JsonElement> jsonElementList = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+                .ToList();
+            return jsonElementList;
         }
 
         [HttpDelete("{modelName}/unlink")]
@@ -63,9 +82,10 @@ namespace Bamboo.Core.HttpApi
         }
 
         [HttpPost("{modelName}/fields_get")]
-        public async Task<object> FieldsGetAsync(string modelName)
+        public async Task<JsonElement> FieldsGetAsync(string modelName)
         {
-            return await _genericModelService.FieldsGetAsync(modelName);
+            var result = await _genericModelService.FieldsGetAsync(modelName);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
         [HttpPost("{modelName}/name_get")]
@@ -81,15 +101,17 @@ namespace Bamboo.Core.HttpApi
         }
 
         [HttpPost("{modelName}/copy/{id}")]
-        public async Task<object> CopyAsync(string modelName, Guid id, [FromBody] CopyRequestDto request)
+        public async Task<JsonElement> CopyAsync(string modelName, Guid id, [FromBody] CopyRequestDto request)
         {
-            return await _genericModelService.CopyAsync(modelName, id, request.Fields, request.DefaultValues);
+            var result = await _genericModelService.CopyAsync(modelName, id, request.Fields, request.DefaultValues);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
         [HttpPost("{modelName}/default")]
-        public async Task<object> DefaultAsync(string modelName, List<string> fields)
+        public async Task<JsonElement> DefaultAsync(string modelName, List<string> fields)
         {
-            return await _genericModelService.DefaultGetAsync(modelName, fields);
+            var result = await _genericModelService.DefaultGetAsync(modelName, fields);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
     }
 
