@@ -1,0 +1,217 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+// TODO: Hãy chắc chắn rằng bạn đã thêm using cho namespace chứa Models của mình ở đây
+// Ví dụ: using YourProject.Models;
+using Bamboo.Core.Models;
+namespace Bamboo.Core.EntityFrameworkCore
+{
+    public static partial class ModelBuilderExtensions
+    {
+        public static void ConfigureHrApplicant(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<HrApplicant>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("hr_applicant_pkey");
+
+                entity.ToTable("hr_applicant");
+
+                entity.HasIndex(e => e.DateLastStageUpdate, "hr_applicant_date_last_stage_update_index");
+
+                entity.HasIndex(e => e.JobId, "hr_applicant_job_id_index");
+
+                entity.HasIndex(e => e.Name, "hr_applicant_name_index")
+                    .HasMethod("gin")
+                    .HasOperators(new[] { "gin_trgm_ops" });
+
+                entity.HasIndex(e => e.StageId, "hr_applicant_stage_id_index");
+
+                entity.Property(e => e.Id)
+                    .HasDefaultValueSql("next_uuid()")
+                    .HasColumnName("id");
+                entity.Property(e => e.TenantId).HasColumnName("company_id");
+                entity.Property(e => e.Active).HasColumnName("active");
+                entity.Property(e => e.Availability).HasColumnName("availability");
+                entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
+                entity.Property(e => e.Color).HasColumnName("color");
+                entity.Property(e => e.TenantId).HasColumnName("company_id");
+                entity.Property(e => e.CreationTime).HasDefaultValueSql("now()")
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("create_date");
+                entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                entity.Property(e => e.DateClosed)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("date_closed");
+                entity.Property(e => e.DateLastStageUpdate)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("date_last_stage_update");
+                entity.Property(e => e.DateOpen)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("date_open");
+                entity.Property(e => e.DelayClose).HasColumnName("delay_close");
+                entity.Property(e => e.DepartmentId).HasColumnName("department_id");
+                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.EmailCc).HasColumnName("email_cc");
+                entity.Property(e => e.EmailFrom).HasColumnName("email_from");
+                entity.Property(e => e.EmpId).HasColumnName("emp_id");
+                entity.Property(e => e.JobId).HasColumnName("job_id");
+                entity.Property(e => e.KanbanState).HasColumnName("kanban_state");
+                entity.Property(e => e.LastStageId).HasColumnName("last_stage_id");
+                entity.Property(e => e.LinkedinProfile).HasColumnName("linkedin_profile");
+                entity.Property(e => e.MediumId).HasColumnName("medium_id");
+                entity.Property(e => e.MessageMainAttachmentId).HasColumnName("message_main_attachment_id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+                entity.Property(e => e.PartnerMobile).HasColumnName("partner_mobile");
+                entity.Property(e => e.PartnerName).HasColumnName("partner_name");
+                entity.Property(e => e.PartnerPhone).HasColumnName("partner_phone");
+                entity.Property(e => e.Priority).HasColumnName("priority");
+                entity.Property(e => e.Probability).HasColumnName("probability");
+                entity.Property(e => e.RefuseReasonId).HasColumnName("refuse_reason_id");
+                entity.Property(e => e.SalaryExpected).HasColumnName("salary_expected");
+                entity.Property(e => e.SalaryExpectedExtra).HasColumnName("salary_expected_extra");
+                entity.Property(e => e.SalaryProposed).HasColumnName("salary_proposed");
+                entity.Property(e => e.SalaryProposedExtra).HasColumnName("salary_proposed_extra");
+                entity.Property(e => e.SourceId).HasColumnName("source_id");
+                entity.Property(e => e.StageId).HasColumnName("stage_id");
+                entity.Property(e => e.TypeId).HasColumnName("type_id");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.LastModificationTime)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("write_date");
+                entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+                entity.HasOne(d => d.Campaign).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.CampaignId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_campaign_id_fkey");
+
+                entity.HasOne<ResCompany>().WithMany()
+                    .HasForeignKey(d => d.TenantId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_company_id_fkey");
+
+                entity.HasOne<ResUser>().WithMany()
+                    .HasForeignKey(d => d.CreatorId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_create_uid_fkey");
+
+                entity.HasOne(d => d.Department).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.DepartmentId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_department_id_fkey");
+
+                entity.HasOne(d => d.Emp).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.EmpId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_emp_id_fkey");
+
+                entity.HasOne(d => d.Job).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.JobId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_job_id_fkey");
+
+                entity.HasOne(d => d.LastStage).WithMany(p => p.HrApplicantLastStages)
+                    .HasForeignKey(d => d.LastStageId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_last_stage_id_fkey");
+
+                entity.HasOne(d => d.Medium).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.MediumId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_medium_id_fkey");
+
+                entity.HasOne(d => d.MessageMainAttachment).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.MessageMainAttachmentId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_message_main_attachment_id_fkey");
+
+                entity.HasOne<ResPartner>().WithMany()
+                    .HasForeignKey(d => d.PartnerId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_partner_id_fkey");
+
+                entity.HasOne(d => d.RefuseReason).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.RefuseReasonId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_refuse_reason_id_fkey");
+
+                entity.HasOne(d => d.Source).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.SourceId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_source_id_fkey");
+
+                entity.HasOne(d => d.Stage).WithMany(p => p.HrApplicantStages)
+                    .HasForeignKey(d => d.StageId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("hr_applicant_stage_id_fkey");
+
+                entity.HasOne(d => d.Type).WithMany(p => p.HrApplicants)
+                    .HasForeignKey(d => d.TypeId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_type_id_fkey");
+
+                entity.HasOne<ResUser>().WithMany()
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_user_id_fkey");
+
+                entity.HasOne<ResUser>().WithMany()
+                    .HasForeignKey(d => d.LastModifierId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_applicant_write_uid_fkey");
+
+                //entity.HasMany(d => d.HrApplicantCategories).WithMany(p => p.HrApplicants)
+                entity.HasMany<HrApplicantCategory>().WithMany()
+                    .UsingEntity<Dictionary<string, object>>(
+                        "HrApplicantHrApplicantCategoryRel",
+                        r => r.HasOne<HrApplicantCategory>().WithMany()
+                            .HasForeignKey("HrApplicantCategoryId")
+                            .HasConstraintName("hr_applicant_hr_applicant_categor_hr_applicant_category_id_fkey"),
+                        l => l.HasOne<HrApplicant>().WithMany()
+                            .HasForeignKey("HrApplicantId")
+                            .HasConstraintName("hr_applicant_hr_applicant_category_rel_hr_applicant_id_fkey"),
+                        j =>
+                        {
+                            j.HasKey("HrApplicantId", "HrApplicantCategoryId").HasName("hr_applicant_hr_applicant_category_rel_pkey");
+                            j.ToTable("hr_applicant_hr_applicant_category_rel");
+                            j.HasIndex(new[] { "HrApplicantCategoryId", "HrApplicantId" }, "hr_applicant_hr_applicant_cat_hr_applicant_category_id_hr_a_idx");
+                        });
+
+                //entity.HasMany(d => d.HrSkills).WithMany(p => p.HrApplicants)
+                entity.HasMany<HrSkill>().WithMany()
+                    .UsingEntity<Dictionary<string, object>>(
+                        "HrApplicantHrSkillRel",
+                        r => r.HasOne<HrSkill>().WithMany()
+                            .HasForeignKey("HrSkillId")
+                            .HasConstraintName("hr_applicant_hr_skill_rel_hr_skill_id_fkey"),
+                        l => l.HasOne<HrApplicant>().WithMany()
+                            .HasForeignKey("HrApplicantId")
+                            .HasConstraintName("hr_applicant_hr_skill_rel_hr_applicant_id_fkey"),
+                        j =>
+                        {
+                            j.HasKey("HrApplicantId", "HrSkillId").HasName("hr_applicant_hr_skill_rel_pkey");
+                            j.ToTable("hr_applicant_hr_skill_rel");
+                            j.HasIndex(new[] { "HrSkillId", "HrApplicantId" }, "hr_applicant_hr_skill_rel_hr_skill_id_hr_applicant_id_idx");
+                        });
+
+                //entity.HasMany(d => d.ResUsers).WithMany(p => p.HrApplicants)
+                entity.HasMany<ResUser>().WithMany()
+                    .UsingEntity<Dictionary<string, object>>(
+                        "HrApplicantResUsersInterviewersRel",
+                        r => r.HasOne<ResUser>().WithMany()
+                            .HasForeignKey("ResUsersId")
+                            .HasConstraintName("hr_applicant_res_users_interviewers_rel_res_users_id_fkey"),
+                        l => l.HasOne<HrApplicant>().WithMany()
+                            .HasForeignKey("HrApplicantId")
+                            .HasConstraintName("hr_applicant_res_users_interviewers_rel_hr_applicant_id_fkey"),
+                        j =>
+                        {
+                            j.HasKey("HrApplicantId", "ResUsersId").HasName("hr_applicant_res_users_interviewers_rel_pkey");
+                            j.ToTable("hr_applicant_res_users_interviewers_rel");
+                            j.HasIndex(new[] { "ResUsersId", "HrApplicantId" }, "hr_applicant_res_users_intervi_res_users_id_hr_applicant_id_idx");
+                        });
+            });
+        }
+    }
+}
