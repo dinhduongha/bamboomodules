@@ -415,7 +415,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(BaseModuleUpgrade));
         lstTypes.Add(typeof(BasePartnerMergeAutomaticWizard));
         lstTypes.Add(typeof(BasePartnerMergeLine));
-        lstTypes.Add(typeof(BusBu));
+        lstTypes.Add(typeof(BusBus));
         lstTypes.Add(typeof(BusPresence));
         lstTypes.Add(typeof(CalendarAlarm));
         lstTypes.Add(typeof(CalendarAttendee));
@@ -743,7 +743,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(SmsComposer));
         lstTypes.Add(typeof(SmsResend));
         lstTypes.Add(typeof(SmsResendRecipient));
-        lstTypes.Add(typeof(SmsSm));
+        lstTypes.Add(typeof(SmsSms));
         lstTypes.Add(typeof(SmsTemplate));
         lstTypes.Add(typeof(SmsTemplatePreview));
         lstTypes.Add(typeof(SmsTemplateReset));

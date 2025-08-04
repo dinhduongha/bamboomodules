@@ -16,12 +16,14 @@ namespace Bamboo.Core.Application
         Task<JsonElement> CreateAsync(string modelName, object entity, List<string> fields);
         Task<List<JsonElement>> WriteAsync(string modelName, List<Guid> ids, object entity, List<string> fields);
         Task DeleteAsync(string modelName, List<Guid> id);
+        Task<JsonElement> NameCreateAsync(string modelName, string name);
         Task<List<(Guid Id, string Name)>> NameGetAsync(string modelName, List<Guid> ids);
         Task<List<(Guid Id, string Name)>> NameSearchAsync(string modelName, string name, string domain = null, string @operator = "ilike", int limit = 100);
         Task<JsonElement> CopyAsync(string modelName, Guid id, List<string> fields, object defaultValues = null);
-        Task<OnchangeResult> OnchangeAsync(string modelName, List<string> changedFields, object values, Dictionary<string, object> fieldInfo);
+        Task<JsonElement> OnchangeAsync(string modelName, List<string> changedFields, object values, Dictionary<string, object> fieldInfo);
         Task<JsonElement> DefaultGetAsync(string modelName, List<string> fields);
         Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(string modelName, List<string> fields = null, Dictionary<string, List<string>> attributes = null);
+        Task<object> CallServiceAsync(string modelName, string methodName, params object[] args);
     }
 
 }

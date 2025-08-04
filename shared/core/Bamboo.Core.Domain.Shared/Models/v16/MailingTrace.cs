@@ -120,7 +120,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("SmsSmsId")] 
     //[InverseProperty("MailingTraces")]
     [NotMapped]
-    public virtual SmsSm? SmsSms { get; set; }
+    public virtual SmsSms? SmsSms { get; set; }
 
     //[InverseProperty("MailingTrace")]
     [NotMapped]

@@ -3,6 +3,7 @@ using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
 using Volo.Abp.Application;
 using Bamboo.Core.Application;
+using Bamboo.Core.Application.Contracts.Interfaces;
 
 namespace Bamboo.Core;
 
@@ -26,6 +27,7 @@ public class CoreApplicationModule : AbpModule
         {
             var registry = new ModelTypeRegistry();
             registry.RegisterTypes(typeof(CoreDomainSharedModule).Assembly);
+            registry.RegisterServiceTypes([typeof(CoreApplicationModule).Assembly]);
             return registry;
         });
         context.Services.AddTransient(typeof(IRepositoryService<>), typeof(RepositoryService<>));

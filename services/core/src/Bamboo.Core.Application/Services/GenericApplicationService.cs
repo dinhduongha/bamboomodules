@@ -17,43 +17,44 @@ using Volo.Abp.ObjectExtending;
 using Bamboo.Core.Models;
 using Volo.Abp.Data;
 using Volo.Abp.MultiTenancy;
+using Bamboo.Core.Application.Contracts.Interfaces;
 
 namespace Bamboo.Core.Application
 {
     public class GenericApplicationService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
         where TEntity : class, IEntity<Guid>
     {
-        private readonly IRepository<TEntity, Guid> _repository;
-        private readonly AuthorizationService _authorizationService;
-        private readonly IObjectMapper _objectMapper;
-        private readonly DomainParser _domainParser;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IModelTypeRegistry _modelTypeRegistry;
-        private readonly IMemoryCache _memoryCache;
+        protected readonly IRepository<TEntity, Guid> _repository;
+        protected readonly AuthorizationService _authorizationService;
+        protected readonly DomainParser _domainParser;
+        protected readonly IServiceProvider _serviceProvider;
+        protected readonly IModelTypeRegistry _modelTypeRegistry;
+        protected readonly IDataFilter _dataFilter;
+        protected readonly IObjectMapper _objectMapper;
+        protected readonly IMemoryCache _memoryCache;
         private readonly bool _filterFieldAccess = false;
-        private readonly IDataFilter _dataFilter;
         public GenericApplicationService(
             IRepository<TEntity, Guid> repository,
-            AuthorizationService authorizationService,
-            IObjectMapper objectMapper,
-            DomainParser domainParser,
             IServiceProvider serviceProvider,
+            AuthorizationService authorizationService,
+            DomainParser domainParser,
             IModelTypeRegistry modelTypeRegistry,
             IDataFilter dataFilter,
+            IObjectMapper objectMapper,
             IMemoryCache memoryCache)
         {
             _repository = repository;
-            _authorizationService = authorizationService;
-            _objectMapper = objectMapper;
-            _domainParser = domainParser;
             _serviceProvider = serviceProvider;
+            _authorizationService = authorizationService;
+            _domainParser = domainParser;
             _modelTypeRegistry = modelTypeRegistry;
             _dataFilter = dataFilter;
+            _objectMapper = objectMapper;
             _memoryCache = memoryCache;
             _dataFilter.Disable<IMultiTenant>();
         }
 
-        private async Task<List<string>> GetAllowedFieldsAsync(string modelName, string operation, List<string> fields)
+        private async Task<List<string>> GetAllowedFieldsAsync(string modelName, string operation, List<string>? fields = null)
         {
             if (!_filterFieldAccess)
             {
@@ -352,6 +353,29 @@ namespace Bamboo.Core.Application
             if (entity == null)
                 throw new UserFriendlyException("Entity not found or access denied");
             _repository.DeleteManyAsync(ids);
+        }
+
+        public async Task<object> NameCreateAsync(string name)
+        {
+            var modelName = typeof(TEntity).Name;
+            await _authorizationService.CheckAccessAsync(modelName, "read");
+            var allowedFields = await GetAllowedFieldsAsync(modelName, "write", null);
+            if (!allowedFields.Contains("Name"))
+            {
+                throw new UserFriendlyException("Entity not found or access denied");
+            }
+            var entityType = typeof(TEntity);
+            var newEntity = Activator.CreateInstance<TEntity>();
+            var property = entityType.GetProperty("Name");
+            if (property.PropertyType == typeof(StringDictionary))
+            {
+                var value = new StringDictionary
+                {
+                    { "en_US", name }
+                };
+                property.SetValue(newEntity, value);
+            }
+            return await _repository.InsertAsync(newEntity);
         }
 
         public async Task<List<(Guid Id, string Name)>> NameGetAsync(List<Guid> ids)

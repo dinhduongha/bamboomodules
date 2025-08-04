@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Module("base")]
 [Table("bus_bus")]
-public partial class BusBu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class BusBus: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]

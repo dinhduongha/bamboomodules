@@ -822,7 +822,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<SmsSm> SmsSms { get; set; } 
+    public virtual ICollection<SmsSms> SmsSms { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]

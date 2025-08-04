@@ -98,7 +98,7 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("SmsId")]
     //[InverseProperty("MailNotifications")]
     [NotMapped]
-    public virtual SmsSm? Sms { get; set; }
+    public virtual SmsSms? Sms { get; set; }
 
     //[InverseProperty("Notification")]
     [NotMapped]

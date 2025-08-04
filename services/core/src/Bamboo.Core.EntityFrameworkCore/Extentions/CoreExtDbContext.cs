@@ -278,7 +278,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<BillToPoWizard> BillToPoWizards { get; set; }
 
-    public virtual DbSet<BusBu> BusBus { get; set; }
+    public virtual DbSet<BusBus> BusBus { get; set; }
 
     public virtual DbSet<BusPresence> BusPresences { get; set; }
 
@@ -1198,7 +1198,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<SmsResendRecipient> SmsResendRecipients { get; set; }
 
-    public virtual DbSet<SmsSm> SmsSms { get; set; }
+    public virtual DbSet<SmsSms> SmsSms { get; set; }
 
     public virtual DbSet<SmsTemplate> SmsTemplates { get; set; }
 

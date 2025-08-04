@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 
-namespace Bamboo.Core.Application
+//namespace Bamboo.Core.Application
+namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IGenericApplicationService<TEntity> : IApplicationService
         where TEntity : class, IEntity<Guid>
@@ -15,6 +16,7 @@ namespace Bamboo.Core.Application
         Task<object> CreateAsync(TEntity entity, List<string> fields);
         Task<List<object>> WriteAsync(List<Guid> ids, TEntity entity, List<string> fields);
         Task DeleteAsync(List<Guid> ids);
+        Task<object> NameCreateAsync(string name);
         Task<List<(Guid Id, string Name)>> NameGetAsync(List<Guid> ids);
         Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string domain = null, string @operator = "ilike", int limit = 100);
         Task<object> CopyAsync(Guid id, List<string> fields, TEntity defaultValues = null);

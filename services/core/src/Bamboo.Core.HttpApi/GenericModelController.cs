@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Bamboo.Core.Application;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Json;
 using Volo.Abp.Json.SystemTextJson;
-
+using Bamboo.Core.Application;
+using Bamboo.Core.Application.Dtos;
 namespace Bamboo.Core.HttpApi
 {
     [Route("api/generic-model")]
@@ -23,6 +23,16 @@ namespace Bamboo.Core.HttpApi
         {
             _genericModelService = genericModelService;
             _jsonSerializerOptions = jsonSerializerOptions.Value;
+        }
+
+        [HttpGet("{modelName}/read/{id}")]
+        public async Task<JsonElement> ReadAsync(string modelName, Guid id, List<string> fields = null)
+        {
+            var results = await _genericModelService.ReadAsync(modelName, [id], fields);
+            JsonElement jsonElement = results
+            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
+            .FirstOrDefault();
+            return jsonElement;
         }
 
         [HttpPost("{modelName}/read")]
@@ -113,71 +123,13 @@ namespace Bamboo.Core.HttpApi
             var result = await _genericModelService.DefaultGetAsync(modelName, fields);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
+
+        [HttpPost("{modelName}/call")]
+        public async Task<JsonElement> CallServiceAsync(string modelName, string method, [FromBody] List<object> args)
+        {
+            var result = await _genericModelService.CallServiceAsync(modelName, method, args);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
     }
 
-    public class ReadRequestDto
-    {
-        public List<Guid> Ids { get; set; }
-        public List<string> Fields { get; set; }
-        public JsonElement? context { get; set; } = null;
-    }
-
-    public class SearchRequestDto
-    {
-        public string Domain { get; set; }
-        public long Offset { get; set; } = 0;
-        public int Limit { get; set; } = 10;
-        public string Order { get; set; } = null;
-        public bool Count { get; set; } = false;
-    }
-
-    public class SearchReadRequestDto
-    {
-        public string Domain { get; set; }
-        public List<string> Fields { get; set; }
-        public long Offset { get; set; } = 0;
-        public int Limit { get; set; } = 100;
-        public string Order { get; set; } = null;
-        bool Count { get; set; } = false;
-    }
-
-    public class CreateRequestDto
-    {
-        public JsonElement Entity { get; set; }
-        public List<string> Fields { get; set; }
-    }
-
-    public class UpdateRequestDto
-    {
-        public List<Guid> Ids { get; set; }
-        public JsonElement Entity { get; set; }
-        public List<string> Fields { get; set; }
-    }
-
-    public class UpdateJsonRequestDto
-    {
-        public List<Guid> Ids { get; set; }
-        public string Field { get; set; }
-        public string Action { get; set; }
-        public JsonElement? Values { get; set; }
-    }
-
-    public class NameGetRequestDto
-    {
-        public List<Guid> Ids { get; set; }
-    }
-
-    public class NameSearchRequestDto
-    {
-        public string Name { get; set; }
-        public string Domain { get; set; }
-        public string Operator { get; set; } = "ilike";
-        public int Limit { get; set; } = 100;
-    }
-
-    public class CopyRequestDto
-    {
-        public List<string> Fields { get; set; }
-        public object DefaultValues { get; set; }
-    }
 }

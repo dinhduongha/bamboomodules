@@ -224,7 +224,7 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     //[InverseProperty("Mailing")]
     [NotMapped]
-    public virtual ICollection<SmsSm> SmsSms { get; set; } 
+    public virtual ICollection<SmsSms> SmsSms { get; set; } 
 
     [ForeignKey("SmsTemplateId")]
     //[InverseProperty("MailingMailings")]

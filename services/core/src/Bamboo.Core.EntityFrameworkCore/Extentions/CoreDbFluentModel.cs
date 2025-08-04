@@ -8848,7 +8848,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("bill_to_po_wizard_write_uid_fkey");
         });
 
-        modelBuilder.Entity<BusBu>(entity =>
+        modelBuilder.Entity<BusBus>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("bus_bus_pkey");
 
@@ -41059,7 +41059,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .HasConstraintName("sms_resend_recipient_write_uid_fkey");
         });
 
-        modelBuilder.Entity<SmsSm>(entity =>
+        modelBuilder.Entity<SmsSms>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("sms_sms_pkey");
 

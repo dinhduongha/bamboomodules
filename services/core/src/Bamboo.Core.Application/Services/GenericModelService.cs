@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
 
+using Bamboo.Core.Application.Contracts.Interfaces;
 namespace Bamboo.Core.Application
 {
     public class GenericModelService : IGenericModelService
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application
             //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = false
         };
-        
+
         public GenericModelService(
             IServiceProvider serviceProvider,
             IModelTypeRegistry modelTypeRegistry)
@@ -49,7 +50,7 @@ namespace Bamboo.Core.Application
         public async Task<List<JsonElement>> SearchReadAsync(string modelName, string domain, List<string> fields, long offset = 0, int limit = 100, string order = null)
         {
             var service = GetGenericService(modelName);
-            var results = await CallServiceMethodAsync<List<object>>(service, "SearchReadAsync", domain, fields, offset, limit, order);
+            var results = await CallServiceMethodAsync<List<object>>(service, "SearchReadAsync", domain, fields ?? [], offset, limit, order);
             List<JsonElement> jsonElementList = results
                 .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
                 .ToList();
@@ -89,6 +90,13 @@ namespace Bamboo.Core.Application
             await CallServiceMethodAsync<object>(service, "DeleteAsync", ids);
         }
 
+        public async Task<JsonElement> NameCreateAsync(string modelName, string name)
+        {
+            var service = GetGenericService(modelName);
+            var result =  await CallServiceMethodAsync<object>(service, "NameCreateAsync", modelName, name);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+
         public async Task<List<(Guid Id, string Name)>> NameGetAsync(string modelName, List<Guid> ids)
         {
             var service = GetGenericService(modelName);
@@ -110,12 +118,12 @@ namespace Bamboo.Core.Application
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
 
-        public async Task<OnchangeResult> OnchangeAsync(string modelName, List<string> changedFields, object values, Dictionary<string, object> fieldInfo)
+        public async Task<JsonElement> OnchangeAsync(string modelName, List<string> changedFields, object values, Dictionary<string, object> fieldInfo)
         {
             var service = GetGenericService(modelName);
             var entityType = _modelTypeRegistry.GetType(modelName);
             var typedValues = Convert.ChangeType(values, entityType);
-            return await CallServiceMethodAsync<OnchangeResult>(service, "OnchangeAsync", changedFields, typedValues, fieldInfo);
+            return await CallServiceMethodAsync<JsonElement>(service, "OnchangeAsync", changedFields, typedValues, fieldInfo);
         }
 
         public async Task<JsonElement> DefaultGetAsync(string modelName, List<string> fields)
@@ -131,10 +139,19 @@ namespace Bamboo.Core.Application
             return await CallServiceMethodAsync<Dictionary<string, Dictionary<string, object>>>(service, "FieldsGetAsync", fields, attributes);
         }
 
+        public async Task<object> CallServiceAsync(string modelName, string methodName, params object[] args)
+        {
+            var service = GetGenericService(modelName);
+            return await CallServiceMethodAsync<object>(service, methodName, args);
+        }
+
         private object GetGenericService(string modelName)
         {
-            var entityType = _modelTypeRegistry.GetType(modelName);
-            var serviceType = typeof(IGenericApplicationService<>).MakeGenericType(entityType);
+            var entityType = _modelTypeRegistry.GetType(modelName);            
+            var serviceType = _modelTypeRegistry.GetServiceInterfaceType(modelName);
+            if (serviceType == null) {
+                serviceType = typeof(IGenericApplicationService<>).MakeGenericType(entityType);
+            }
             return _serviceProvider.GetService(serviceType)
                 ?? throw new UserFriendlyException($"Service for {modelName} not found");
         }

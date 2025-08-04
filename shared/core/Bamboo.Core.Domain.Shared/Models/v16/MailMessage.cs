@@ -201,7 +201,7 @@ public partial class MailMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     //[InverseProperty("MailMessage")]
     [NotMapped]
-    public virtual ICollection<SmsSm> SmsSms { get; set; } 
+    public virtual ICollection<SmsSms> SmsSms { get; set; } 
 
     //[InverseProperty("Message")]
     [NotMapped]
