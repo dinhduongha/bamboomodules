@@ -76,6 +76,7 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // RELATIONS BEGIN - MUST HAVE ?
     [ForeignKey("Gid")]
     [InverseProperty("Gids")]
     public virtual ICollection<ResUser> UidsNavigation { get; set; } 
@@ -83,8 +84,9 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [ForeignKey("GroupId")]
     [InverseProperty("Groups")]
     //[NotMapped]
-    public virtual ICollection<IrRule> RuleGroups { get; set; } 
-
+    public virtual ICollection<IrRule> RuleGroups { get; set; }
+    // RELATIONS END
+    
     /// TODO: DISABLE INVERSE COLLECTIONS
     //[InverseProperty("Group")]
     [NotMapped]

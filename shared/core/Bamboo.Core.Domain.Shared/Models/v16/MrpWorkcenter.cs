@@ -121,7 +121,7 @@ public partial class MrpWorkcenter: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
-    // RELATIONS BEGIN - MUST HAVE
+    // RELATIONS BEGIN - MUST HAVE ?
     //[ForeignKey("MrpWorkcenterId")]
     //[InverseProperty("MrpWorkcenters")]
     //[NotMapped]

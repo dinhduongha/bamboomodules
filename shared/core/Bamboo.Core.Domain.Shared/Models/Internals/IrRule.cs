@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("ir_rule")]
 //[Index("ModelId", Name = "ir_rule_model_id_index")]
 //[Index("Name", Name = "ir_rule_name_index")]
-public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrRule : FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -77,7 +77,9 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // RELATIONS BEGIN - MUST HAVE ?
     [ForeignKey("RuleGroupId")]
     [InverseProperty("RuleGroups")]
     public virtual ICollection<ResGroup> Groups { get; set; } 
+    // RELATIONS END
 }

@@ -157,9 +157,12 @@ public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [NotMapped]
     public virtual ResUser? WriteU { get; set; }
 
+    // RELATIONS BEGIN - MUST HAVE ?
     [ForeignKey("Uid")]
     [InverseProperty("UidsNavigation")]
-    public virtual ICollection<ResGroup> Gids { get; set; } 
+    public virtual ICollection<ResGroup> Gids { get; set; }
+
+    // RELATIONS END
 
     /// TODO: DISABLE INVERSE COLLECTIONS
 

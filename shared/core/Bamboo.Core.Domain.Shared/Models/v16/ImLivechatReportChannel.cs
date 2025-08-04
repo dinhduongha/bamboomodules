@@ -9,6 +9,9 @@ public partial class ImLivechatReportChannel
 {
     [Column("id")]
     public Guid? Id { get; set; }
+    
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
 
     [Column("uuid")]
     [StringLength(50)]

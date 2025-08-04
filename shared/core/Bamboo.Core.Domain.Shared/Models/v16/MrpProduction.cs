@@ -313,7 +313,7 @@ public partial class MrpProduction: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public virtual ICollection<MrpAccountWipAccounting> MrpAccountWipAccountings { get; set; } 
 
 
-    // RELATIONS BEGIN - MUST HAVE
+    // RELATIONS BEGIN - MUST HAVE ?
     //[ForeignKey("MrpProductionId")]
     //[InverseProperty("MrpProductions")]
     //[NotMapped]

@@ -860,19 +860,21 @@ public partial class ResCompany : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [ForeignKey("TenantId")]
     //[InverseProperty("ResCompanies")]
     [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
+    public virtual ICollection<AccountAccount> AccountAccounts { get; set; }
 
+
+    // RELATIONS BEGIN ?
+    [ForeignKey("TenantId")]
+    //[InverseProperty("ResCompanies")]
+    [NotMapped]
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; }
 
     [ForeignKey("TenantId")]
     //[InverseProperty("ResCompanies")]
     [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } 
-
-    [ForeignKey("TenantId")]
-    //[InverseProperty("ResCompanies")]
-    [NotMapped]
-    public virtual ICollection<IapAccount> IapAccounts { get; set; } 
-
+    public virtual ICollection<IapAccount> IapAccounts { get; set; }
+    // RELATIONS END
+    
     /// TODO: DISABLE INVERSE
     //[InverseProperty("Company")]
     /*

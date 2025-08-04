@@ -10,6 +10,9 @@ public partial class ImLivechatReportOperator
     [Column("id")]
     public Guid? Id { get; set; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+    
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 

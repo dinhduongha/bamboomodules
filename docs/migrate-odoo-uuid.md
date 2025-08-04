@@ -217,14 +217,32 @@ Replace with:
 
 `[JsonField]\n    $0`
 
-### 10. Replace/Disable InverseProperty
+### 10.a Replace/Disable InverseProperty Many2Many
 
 Search:
-`\[InverseProperty.*$`
+`^\s*\n\s*\[InverseProperty(.*)$`
 
 Replace with:
 
-`//$0\n    [NotMapped]`
+`\n    [NotMapped]//Many2many\n    //[InverseProperty$1`
+
+### 10.b Replace/Disable InverseProperty
+
+Search:
+`    \[InverseProperty(.*)\n    public virtual ICollection(.*)$`
+
+Replace with:
+
+`    [NotMapped]//One2Many\n    //[InverseProperty$1 //One2Many\n    public virtual ICollection$2`
+
+### 10.c Null ICollection
+
+Search:
+`    public virtual ICollection<(.*)=(.*)();$`
+
+Replace with:
+
+`    public virtual ICollection<$1= null;`
 
 ### 11. Disable Index
 
