@@ -6,11 +6,11 @@ import logging
 from pathlib import Path
 import re
 
-#<editor-fold desc="Configuration and Helper Functions">
+# --- Configuration and Helper Functions ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 CSHARP_KEYWORDS = { "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "virtual", "void", "volatile", "while", "add", "alias", "ascending", "async", "await", "by", "descending", "dynamic", "equals", "from", "get", "global", "group", "into", "join", "let", "nameof", "on", "orderby", "partial", "remove", "select", "set", "value", "var", "when", "where", "yield" }
-ODOO_COMMON_API_METHODS = {'create', 'write', 'read', 'unlink', 'search', 'search_read', 'name_get', 'name_search', 'copy', 'default_get', 'fields_get', 'onchange', 'name_create'}
-PYTHON_TO_CSHARP_TYPE_MAP = { 'str': 'string', 'int': 'int', 'float': 'float', 'bool': 'bool', 'dict': 'Dictionary<string, object>', 'list': 'List<object>', 'tuple': 'object', 'datetime': 'DateTime', 'date': 'DateTime', 'any': 'object' }
+ODOO_COMMON_API_METHODS = {'create', 'write', 'read', 'unlink', 'search', 'search_read', 'name_get', 'name_search', 'copy', 'default_get', 'fields_get', 'onchange', 'name_create', 'read_group', 'check_access_rights', 'check_access_rule', 'check_field_access_rights'}
+PYTHON_TO_CSHARP_TYPE_MAP = { 'str': 'string', 'int': 'int', 'float': 'float', 'bool': 'bool', 'dict': 'Dictionary<string, object>', 'list': 'List<object>', 'tuple': 'object', 'datetime': 'DateTime', 'date': 'DateTime', 'any': 'object', 'object': 'object' }
 ODOO_TO_CSHARP_TYPE = { 'char': 'string', 'text': 'string', 'html': 'string', 'integer': 'int', 'float': 'double', 'monetary': 'decimal', 'boolean': 'bool', 'date': 'DateTime', 'datetime': 'DateTime', 'binary': 'byte[]' }
 
 def sanitize_csharp_identifier(name):
@@ -23,9 +23,22 @@ def to_pascal_case(snake_str):
     if not isinstance(snake_str, (str, int, float)):
         logging.warning(f"to_pascal_case received non-string/numeric input: {snake_str}. Skipping.")
         return "InvalidValue"
-    clean_str = sanitize_csharp_identifier(str(snake_str).replace('.', '_'))
+    
+    original_str = str(snake_str)
+    starts_with_ = original_str.startswith('_')
+    ends_with_ = original_str.endswith('_')
+    
+    clean_str = sanitize_csharp_identifier(original_str.replace('.', '_').strip('_'))
+    if not clean_str: return "_" if starts_with_ or ends_with_ else ""
+        
     components = clean_str.split('_')
-    return "".join(c[0].upper() + c[1:] for c in components if c)
+    pascal_body = "".join(c[0].upper() + c[1:] for c in components if c)
+    
+    result = pascal_body
+    if starts_with_: result = '_' + result
+    if ends_with_: result = result + '_'
+    
+    return result
 
 def format_csharp_code(code):
     formatted_code, indent_level = [], 0
@@ -46,30 +59,38 @@ def cleanup_empty_dirs(path):
             except OSError as e:
                 logging.error(f"Error removing directory {dirpath}: {e}")
 
-def map_python_type_to_csharp(py_type_str, param_name=""):
+def map_python_type_to_csharp(py_type_str, all_csharp_entity_names, param_name=""):
     if not py_type_str: return "object"
     if param_name.endswith("_ids"): return "List<Guid>"
     if param_name.endswith("_id"): return "Guid"
     py_type_str = py_type_str.strip("'\"")
     py_type_lower = py_type_str.lower()
-    if py_type_lower in PYTHON_TO_CSHARP_TYPE_MAP: return PYTHON_TO_CSHARP_TYPE_MAP[py_type_lower]
+    if py_type_lower in PYTHON_TO_CSHARP_TYPE_MAP:
+        return PYTHON_TO_CSHARP_TYPE_MAP[py_type_lower]
     match = re.match(r"list\[(.+)\]", py_type_lower)
     if match:
         inner_type_str = match.group(1).strip("'\"")
-        inner_csharp_type = map_python_type_to_csharp(inner_type_str)
+        inner_csharp_type = map_python_type_to_csharp(inner_type_str, all_csharp_entity_names)
         return f"List<{inner_csharp_type}>"
-    if '.' in py_type_str: return to_pascal_case(py_type_str)
-    return to_pascal_case(py_type_str)
-#</editor-fold>
+    potential_entity_name = to_pascal_case(py_type_str)
+    if potential_entity_name in all_csharp_entity_names:
+        return potential_entity_name
+    logging.warning(f"Unrecognized type hint '{py_type_str}' for parameter '{param_name}'. Falling back to 'object'.")
+    return "object"
 
-#<editor-fold desc="C# Content Generation Functions">
-def create_model_entity_content(project_name, module_name, model_name, model_data, dependencies, flat_structure, implemented_interfaces):
-    pascal_model, pascal_module, table_name = to_pascal_case(model_name), to_pascal_case(module_name), model_name.replace('.', '_')
-    depends_str, is_transient = ", ".join(f'"{dep}"' for dep in dependencies), model_data.get('is_transient', False)
-    attributes = [f'[Module("{module_name}", Depends({depends_str}))]', f'[Model("{model_name}", IsTransient = {str(is_transient).lower()})]', f'[Table("{table_name}")]']
-    namespace = f"{project_name}.Domain.Entities" + ("" if flat_structure else f".{pascal_module}")
-    inheritance = f": IEntity<Guid>{', ' + ', '.join(sorted(implemented_interfaces)) if implemented_interfaces else ''}"
+# --- C# Content Generation Functions ---
+def create_model_entity_content(project_name, module_name, model_name, model_data, dependencies, flat_structure, implemented_interfaces, property_order):
+    pascal_model_original = to_pascal_case(model_name)
+    pascal_module_original = to_pascal_case(module_name)
+    pascal_module = f"{pascal_module_original}Module" if pascal_model_original == pascal_module_original and not flat_structure else pascal_module_original
     
+    pascal_model = pascal_model_original
+    table_name = model_name.replace('.', '_')
+    depends_str = f"Depends = new[] {{ {', '.join(f'\"{dep}\"' for dep in dependencies)} }}" if dependencies else ""
+    is_transient = model_data.get('is_transient', False)
+    attributes = [f'[Module("{module_name}"{(", " + depends_str) if depends_str else ""})]', f'[Model("{model_name}", IsTransient = {str(is_transient).lower()})]', f'[Table("{table_name}")]']
+    namespace = f"{project_name}.Models" if flat_structure else f"{project_name}.Domain.Entities.{pascal_module}"
+    inheritance = f": IEntity<Guid>{', ' + ', '.join(sorted(implemented_interfaces)) if implemented_interfaces else ''}"
     content = f"""
     // Auto-generated by Odoo C# Code Generator
     using System; using System.Collections.Generic; using System.ComponentModel.DataAnnotations;
@@ -82,87 +103,107 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
         {{
             [Key] public Guid Id {{ get; set; }}
     """
-    
-    # --- Vòng lặp 1: Các thuộc tính giá trị đơn ---
-    content += "\n            //<editor-fold desc=\"PRIMITIVE PROPERTIES\">\n"
-    for field_name, field_info in model_data['fields'].items():
-        if field_info.get('type').lower() in ODOO_TO_CSHARP_TYPE:
-            pascal_field = to_pascal_case(field_name)
-            csharp_type = ODOO_TO_CSHARP_TYPE[field_info['type'].lower()]
-            is_required = field_info.get('is_required', False)
-            
-            if not is_required and '?' not in csharp_type:
-                csharp_type += '?'
 
-            attr_lines = []
-            if is_required:
-                attr_lines.append(f'[Required]')
+    def generate_property(field_name, field_info):
+        prop_content = ""
+        field_type = field_info.get('type', '').lower()
+        if field_type in ODOO_TO_CSHARP_TYPE:
+            pascal_field = to_pascal_case(field_name)
+            csharp_type = ODOO_TO_CSHARP_TYPE[field_type]
+            is_required = field_info.get('is_required', False)
+            if not is_required and '?' not in csharp_type: csharp_type += '?'
+            attr_lines = ['[Required]' if is_required else '']
             if field_info.get('is_translatable'):
                 attr_lines.append(f'[JsonField]')
                 attr_lines.append(f'[Column("{field_name}", TypeName = "jsonb")]')
             else:
                 attr_lines.append(f'[Column("{field_name}")]')
-            
-            content += f'            ' + '\n            '.join(attr_lines)
-            content += f'\n            public {csharp_type} {pascal_field} {{ get; set; }}\n'
-    content += "            //</editor-fold>\n"
-
-    # --- Vòng lặp 2: Các thuộc tính tham chiếu Many2one ---
-    content += "\n            //<editor-fold desc=\"NAVIGATION PROPERTIES (MANY-TO-ONE)\">\n"
-    for field_name, field_info in model_data['fields'].items():
-        if field_info.get('type').lower() == 'many2one' and 'related_model' in field_info:
+            prop_content += '\n            ' + '\n            '.join(filter(None, attr_lines))
+            prop_content += f'\n            public {csharp_type} {pascal_field} {{ get; set; }}\n'
+        elif field_type == 'many2one' and 'related_model' in field_info:
             fk_property_name, nav_property_name = to_pascal_case(field_name), to_pascal_case(field_name.removesuffix('_id'))
             related_model_pascal = to_pascal_case(field_info['related_model'])
-            content += f"""
+            prop_content += f"""
             [Column("{field_name}")] public Guid? {fk_property_name} {{ get; set; }}
             [Many2one(RelatedModel = "{field_info['related_model']}")]
             [ForeignKey(nameof({fk_property_name}))]
             public virtual {related_model_pascal}? {nav_property_name} {{ get; set; }}
             """
-    content += "            //</editor-fold>\n"
-
-    # --- Vòng lặp 3: Kế thừa ủy quyền (_inherits) ---
-    if 'delegated_inherits' in model_data and model_data['delegated_inherits']:
-        content += "\n            //<editor-fold desc=\"DELEGATION INHERITANCE (ONE-TO-ONE)\">\n"
-        for delegated_model, fk_field in model_data['delegated_inherits']:
-            fk_property_name, nav_property_name = to_pascal_case(fk_field), to_pascal_case(delegated_model)
-            content += f"""
-            [Column("{fk_field}")]
-            public Guid? {fk_property_name} {{ get; set; }}
-            [ForeignKey(nameof({fk_property_name}))]
-            public virtual {nav_property_name}? {nav_property_name}_Proxy {{ get; set; }}
-            """
-        content += "            //</editor-fold>\n"
-
-    # --- Vòng lặp 4: Các thuộc tính collection One2many ---
-    content += "\n            //<editor-fold desc=\"NAVIGATION PROPERTIES (ONE-TO-MANY)\">\n"
-    for field_name, field_info in model_data['fields'].items():
-        if field_info.get('type').lower() == 'one2many' and 'related_model' in field_info and 'inverse_field' in field_info:
+        elif field_type == 'one2many' and 'related_model' in field_info and 'inverse_field' in field_info:
             pascal_field, related_model_pascal = to_pascal_case(field_name), to_pascal_case(field_info['related_model'])
-            content += f"""
+            prop_content += f"""
             [One2many(RelatedModel = "{field_info['related_model']}", InverseField = "{field_info['inverse_field']}")]
             public virtual ICollection<{related_model_pascal}>? {pascal_field} {{ get; set; }}
             """
-    content += "            //</editor-fold>\n"
-
-    # --- Vòng lặp 5: Các thuộc tính collection Many2many ---
-    content += "\n            //<editor-fold desc=\"NAVIGATION PROPERTIES (MANY-TO-MANY)\">\n"
-    for field_name, field_info in model_data['fields'].items():
-        if field_info.get('type').lower() == 'many2many' and 'related_model' in field_info:
+        elif field_type == 'many2many' and 'related_model' in field_info:
             pascal_field, related_model_pascal = to_pascal_case(field_name), to_pascal_case(field_info['related_model'])
-            content += f"""
+            prop_content += f"""
             [Many2many(RelatedModel = "{field_info['related_model']}")]
             public virtual ICollection<{related_model_pascal}>? {pascal_field} {{ get; set; }}
             """
-    content += "            //</editor-fold>\n"
+        return prop_content
+
+    if property_order == 'abc':
+        content += "\n            //<editor-fold desc=\"PROPERTIES (Sorted alphabetically)\">\n"
+        all_fields_sorted = sorted(model_data['fields'].items())
+        all_delegates_sorted = sorted(model_data.get('delegated_inherits', []))
+        for field_name, field_info in all_fields_sorted:
+            if field_info.get('type') == 'Computed': continue
+            content += generate_property(field_name, field_info)
+        if all_delegates_sorted:
+            for delegated_model, fk_field in all_delegates_sorted:
+                fk_property_name, nav_property_name = to_pascal_case(fk_field), to_pascal_case(delegated_model)
+                content += f"""
+                [Column("{fk_field}")]
+                public Guid? {fk_property_name} {{ get; set; }}
+                [ForeignKey(nameof({fk_property_name}))]
+                public virtual {nav_property_name}? {nav_property_name}_Proxy {{ get; set; }}
+                """
+        content += "            //</editor-fold>\n"
+    else:
+        content += "\n            //<editor-fold desc=\"PRIMITIVE PROPERTIES\">\n"
+        for field_name, field_info in sorted(model_data['fields'].items()):
+            if field_info.get('type').lower() in ODOO_TO_CSHARP_TYPE:
+                content += generate_property(field_name, field_info)
+        content += "            //</editor-fold>\n"
+        if 'delegated_inherits' in model_data and model_data['delegated_inherits']:
+            content += "\n            //<editor-fold desc=\"DELEGATION INHERITANCE (ONE-TO-ONE)\">\n"
+            for delegated_model, fk_field in sorted(model_data['delegated_inherits']):
+                fk_property_name, nav_property_name = to_pascal_case(fk_field), to_pascal_case(delegated_model)
+                content += f"""
+                [Column("{fk_field}")]
+                public Guid? {fk_property_name} {{ get; set; }}
+                [ForeignKey(nameof({fk_property_name}))]
+                public virtual {nav_property_name}? {nav_property_name}_Proxy {{ get; set; }}
+                """
+            content += "            //</editor-fold>\n"
+        content += "\n            //<editor-fold desc=\"NAVIGATION PROPERTIES (MANY-TO-ONE)\">\n"
+        for field_name, field_info in sorted(model_data['fields'].items()):
+            if field_info.get('type').lower() == 'many2one':
+                content += generate_property(field_name, field_info)
+        content += "            //</editor-fold>\n"
+        content += "\n            //<editor-fold desc=\"NAVIGATION PROPERTIES (ONE-TO-MANY)\">\n"
+        for field_name, field_info in sorted(model_data['fields'].items()):
+            if field_info.get('type').lower() == 'one2many':
+                content += generate_property(field_name, field_info)
+        content += "            //</editor-fold>\n"
+        content += "\n            //<editor-fold desc=\"NAVIGATION PROPERTIES (MANY-TO-MANY)\">\n"
+        for field_name, field_info in sorted(model_data['fields'].items()):
+            if field_info.get('type').lower() == 'many2many':
+                content += generate_property(field_name, field_info)
+        content += "            //</editor-fold>\n"
     
     content += "        }\n    }"
     return format_csharp_code(content)
 
 def create_enum_content(project_base_name, module_name, model_name, field_name, selection_list, flat_structure):
-    model_alias = to_pascal_case(model_name.split('.')[-1]); pascal_field = to_pascal_case(field_name); pascal_module = to_pascal_case(module_name)
+    pascal_model_original = to_pascal_case(model_name)
+    pascal_module_original = to_pascal_case(module_name)
+    pascal_module = f"{pascal_module_original}Module" if pascal_model_original == pascal_module_original and not flat_structure else pascal_module_original
+    
+    model_alias = to_pascal_case(model_name.split('.')[-1]); pascal_field = to_pascal_case(field_name)
     enum_name = f"{model_alias}{pascal_field}Enum"
-    namespace = f"{project_base_name}.Domain.Enums" + ("" if flat_structure else f".{pascal_module}")
+    namespace = f"{project_base_name}.Models.Enums" if flat_structure else f"{project_base_name}.Domain.Enums.{pascal_module}"
     content = f"namespace {namespace}\n{{\n    public enum {enum_name}\n    {{\n"
     for value, _ in selection_list:
         clean_value = str(value)
@@ -173,8 +214,13 @@ def create_enum_content(project_base_name, module_name, model_name, field_name, 
     return format_csharp_code(content)
 
 def create_partial_model_content(project_base_name, module_name, model_name, computed_fields, all_methods_source, flat_structure):
-    pascal_model, pascal_module = to_pascal_case(model_name), to_pascal_case(module_name)
-    namespace = f"{project_base_name}.Domain.Entities" + ("" if flat_structure else f".{pascal_module}")
+    pascal_model_original = to_pascal_case(model_name)
+    pascal_module_original = to_pascal_case(module_name)
+    
+    pascal_model = pascal_model_original
+    pascal_module = f"{pascal_module_original}Module" if pascal_model_original == pascal_module_original and not flat_structure else pascal_module_original
+    
+    namespace = f"{project_base_name}.Models" if flat_structure else f"{project_base_name}.Domain.Entities.{pascal_module}"
     content = f"""
     using System; using System.ComponentModel.DataAnnotations.Schema; using {project_base_name}.Domain.Shared.Attributes;
     namespace {namespace}
@@ -182,7 +228,7 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
         public partial class {pascal_model}
         {{
     """
-    for field_name, compute_method_name in computed_fields.items():
+    for field_name, compute_method_name in sorted(computed_fields.items()):
         pascal_field = to_pascal_case(field_name)
         compute_source = all_methods_source.get(compute_method_name, f"# Source for '{compute_method_name}' not found.")
         content += f"""
@@ -202,80 +248,101 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_interface_content(project_base_name, module_name, model_name, methods, flat_structure, is_mixin=False):
+def create_service_interface_content(project_base_name, module_name, model_name, methods, flat_structure, flat_namespace, all_csharp_entity_names, is_mixin=False):
     pascal_model = to_pascal_case(model_name)
-    pascal_module = to_pascal_case(module_name)
+    pascal_module_original = to_pascal_case(module_name)
+    pascal_module = f"{pascal_module_original}Module" if pascal_model == pascal_module_original and not flat_structure and not is_mixin else pascal_module_original
+    
     interface_name = f"I{pascal_model}AppService"
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
-    interface_namespace = contracts_namespace + ".Mixins" if is_mixin else contracts_namespace + f".{pascal_module}"
+    interface_namespace = contracts_namespace + (".Mixins" if is_mixin else ("" if flat_namespace else f".{pascal_module}"))
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Volo.Abp.Application.Services;"]
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Volo.Abp.Application.Services;", "using Volo.Abp.Domain.Entities;"]
     
     if is_mixin:
         base_interface = "IMixinAppService"
-        using_statements.append(f"using {contracts_namespace}.Mixins;")
+        using_statements.extend([f"using {contracts_namespace}.Mixins;", f"using {project_base_name}.Domain.Shared.Interfaces;"])
     else:
-        entity_namespace = f"{project_base_name}.Domain.Entities" + ("" if flat_structure else f".{pascal_module}")
+        entity_namespace = f"{project_base_name}.Models" if flat_structure else f"{project_base_name}.Domain.Entities.{pascal_module}"
         base_interface = f"IGenericApplicationService<{pascal_model}>"
-        using_statements.extend([f"using {entity_namespace};", f"using {contracts_namespace}.Commons;"])
+        using_statements.extend([f"using {entity_namespace};", f"using {project_base_name}.Application.Contracts;"])
     
     content = f"""
+    // Auto-generated by Odoo C# Code Generator
     {'\n'.join(sorted(list(set(using_statements))))}
     namespace {interface_namespace}
     {{
         public interface {interface_name} : {base_interface}
         {{
     """
-    methods_to_generate = methods if is_mixin else {k: v for k, v in methods.items() if k.lower() not in ODOO_COMMON_API_METHODS}
+    methods_to_generate = {k: v for k, v in methods.items() if not k.startswith('_') and (is_mixin or k.lower() not in ODOO_COMMON_API_METHODS)}
+    
+    sorted_method_info = []
     for method_name, implementations in methods_to_generate.items():
+        csharp_name = to_pascal_case(method_name.replace("action_", "")) + "Async"
+        sorted_method_info.append({'csharp_name': csharp_name, 'method_name': method_name, 'implementations': implementations})
+    sorted_method_info.sort(key=lambda x: x['csharp_name'])
+
+    for item in sorted_method_info:
+        service_method_name, implementations = item['csharp_name'], item['implementations']
         last_impl = implementations[-1]; params = last_impl.get('params', []); return_type_str = last_impl.get('return_type', pascal_model if not is_mixin else "object")
-        service_method_name = to_pascal_case(method_name.replace("action_", "")) + "Async"
-        param_parts = [f"{map_python_type_to_csharp(p_type, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, p_name)} {p_name}" for p_name, p_type in params]
+        param_parts = [f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} {p_name}" for p_name, p_type in params]
         
-        id_param_str = "Guid id" if not is_mixin else "string modelName, Guid id"
+        generic_param = ""
+        generic_constraint = ""
+        if is_mixin:
+            generic_param = "<TEntity>"
+            id_param_str = "TEntity entity"
+            # SỬA LỖI: Dùng I...able cho generic constraint
+            generic_constraint = f" where TEntity : IEntity<Guid>, I{pascal_model}able"
+        else:
+            id_param_str = "Guid id"
+
         final_param_list = [id_param_str] + param_parts if param_parts else [id_param_str]
         final_param_str = ", ".join(filter(None, final_param_list))
         
-        return_type = f"Task<{map_python_type_to_csharp(return_type_str)}>"
+        return_type = f"Task<{map_python_type_to_csharp(return_type_str, all_csharp_entity_names)}>"
 
-        content += f"        {return_type} {service_method_name}({final_param_str});\n"
+        content += f"        {return_type} {service_method_name}{generic_param}({final_param_str}){generic_constraint};\n"
+        
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_implementation_content(project_base_name, module_name, model_name, methods, dependencies, flat_structure, include_private, is_mixin, inherited_mixins, final_exclude_set):
-    pascal_model, pascal_module = to_pascal_case(model_name), to_pascal_case(module_name)
+def create_service_implementation_content(project_base_name, module_name, model_name, methods, dependencies, flat_structure, flat_namespace, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set):
+    pascal_model_original = to_pascal_case(model_name)
+    pascal_module_original = to_pascal_case(module_name)
+    pascal_module = f"{pascal_module_original}Module" if pascal_model_original == pascal_module_original and not flat_structure and not is_mixin else pascal_module_original
+
+    pascal_model = pascal_model_original
     service_name, interface_name = f"{pascal_model}AppService", f"I{pascal_model}AppService"
-    depends_str = ", ".join(f'"{dep}"' for dep in dependencies)
+    depends_list_str = ', '.join(f'\"{dep}\"' for dep in dependencies)
+    depends_str = f"Depends = new[] {{ {depends_list_str} }}" if dependencies else ""
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
-    interface_namespace = contracts_namespace + (".Mixins" if is_mixin else f".{pascal_module}")
-    service_namespace = f"{project_base_name}.Application.Services" + (".Mixins" if is_mixin else f".{pascal_module}")
+    interface_namespace = contracts_namespace + (".Mixins" if is_mixin else ("" if flat_namespace else f".{pascal_module}"))
+    service_namespace = f"{project_base_name}.Application.Services" + (".Mixins" if is_mixin else ("" if flat_namespace else f".{pascal_module}"))
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};"]
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};", "using Volo.Abp.Domain.Entities;"]
     
-    private_fields = []
-    constructor_assignments = []
+    private_fields, constructor_assignments = [], []
 
     if is_mixin:
-        base_class = "ApplicationService"
-        constructor_params = []
-        base_call = ""
-        using_statements.append("using Volo.Abp.Application.Services;")
+        base_class, constructor_params, base_call = "ApplicationService", [], ""
+        using_statements.extend(["using Volo.Abp.Application.Services;", f"using {project_base_name}.Domain.Shared.Interfaces;"])
     else:
         base_class = f"GenericApplicationService<{pascal_model}>"
         base_constructor_params_str = "repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache"
         constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "AuthorizationService authorizationService", "DomainParser domainParser", "IModelTypeRegistry modelTypeRegistry", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IMemoryCache memoryCache"]
         base_call = f": base({base_constructor_params_str})"
-        entity_namespace = f"{project_base_name}.Domain.Entities" + ("" if flat_structure else f".{pascal_module}")
+        entity_namespace = f"{project_base_name}.Models" if flat_structure else f"{project_base_name}.Domain.Entities.{pascal_module}"
         using_statements.extend([
             f"using Microsoft.Extensions.Caching.Memory;", f"using Volo.Abp.Domain.Repositories;", f"using Volo.Abp.ObjectMapping;", f"using Volo.Abp.Data;",
-            f"using {project_base_name}.Application.Services.Commons;", f"using {entity_namespace};",
-            f"using {project_base_name}.Domain.Shared.Authorization;", f"using {project_base_name}.Domain.Shared.Hosting;"
+            f"using {project_base_name}.Application.Services.Commons;", f"using {entity_namespace};"
         ])
     
     if not is_mixin and inherited_mixins:
         mixin_interface_namespace = f"{contracts_namespace}.Mixins"
         using_statements.append(f"using {mixin_interface_namespace};")
-        for mixin_name in inherited_mixins:
+        for mixin_name in sorted(inherited_mixins):
             if mixin_name in (final_exclude_set or set()):
                 pascal_mixin = to_pascal_case(mixin_name)
                 mixin_interface = f"I{pascal_mixin}AppService"
@@ -285,12 +352,10 @@ def create_service_implementation_content(project_base_name, module_name, model_
                 constructor_params.append(f"{mixin_interface} {mixin_var_name_camel}")
                 constructor_assignments.append(f"_{mixin_var_name_camel} = {mixin_var_name_camel};")
     
-    all_methods_to_generate = methods if include_private else {k: v for k, v in methods.items() if not k.startswith('_')}
-    
     content_parts = [
         f"{'\n'.join(sorted(list(set(using_statements))))}",
         f"\nnamespace {service_namespace}", f"{{",
-        f"    [Module(\"{module_name}\", Depends({depends_str}))]",
+        f"    [Module(\"{module_name}\"{(', ' + depends_str) if depends_str else ''})]",
         f"    public class {service_name} : {base_class}, {interface_name}", f"    {{",
         '\n'.join([f"        {field}" for field in private_fields]),
         f"        public {service_name}({', '.join(constructor_params)}) {base_call}",
@@ -299,64 +364,181 @@ def create_service_implementation_content(project_base_name, module_name, model_
         f"        }}",
     ]
     
-    for method_name, implementations in all_methods_to_generate.items():
-        # SỬA LỖI: Tách việc gán biến ra nhiều dòng
-        last_impl = implementations[-1]
-        params = last_impl.get('params', [])
-        return_type_str = last_impl.get('return_type', None)
-
-        is_public, is_common_method = not method_name.startswith('_'), method_name.lower() in ODOO_COMMON_API_METHODS
-        base_call_params = ""
-        if is_public:
+    sorted_methods_info = []
+    for method_name, implementations in methods.items():
+        if not include_private and method_name.startswith('_'): continue
+        csharp_name, visibility = "", ""
+        if method_name.startswith('__'):
+            visibility = "private "
+            csharp_name = "_" + to_pascal_case(method_name.strip('_')) + "InternalAsync"
+        elif method_name.startswith('_'):
+            visibility = "protected "
+            csharp_name = to_pascal_case(method_name.strip('_')) + "InternalAsync"
+        else:
+            visibility = "public "
+            is_common_method = method_name.lower() in ODOO_COMMON_API_METHODS
             if is_common_method:
                 base_module = master_models.get(model_name, {}).get('base_module')
                 is_override = len(implementations) > 1 or (implementations and implementations[0]['module'] != base_module)
                 if not is_override and not is_mixin: continue
-            override_keyword, visibility = ("override ", "public ") if is_common_method and not is_mixin else ("", "public ")
-            if is_common_method:
-                if method_name.lower() == 'write': service_method_name, param_str, return_type, base_call_params = "WriteAsync", f"List<Guid> ids, {pascal_model} entity, List<string> fields", "Task<List<object>>", "ids, entity, fields"
-                elif method_name.lower() == 'create': service_method_name, param_str, return_type, base_call_params = "CreateAsync", f"{pascal_model} entity, List<string> fields", "Task<object>", "entity, fields"
-                elif method_name.lower() == 'copy': service_method_name, param_str, return_type, base_call_params = "CopyAsync", f"Guid id, List<string> fields, {pascal_model} defaultValues = null", "Task<object>", "id, fields, defaultValues"
-                else: continue
+                visibility += "override "
+                csharp_name = to_pascal_case(method_name) + "Async"
             else:
-                service_method_name = to_pascal_case(method_name.replace("action_", "")) + "Async"
-                param_parts = [f"{map_python_type_to_csharp(p_type, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, p_name)} {p_name}" for p_name, p_type in params]
-                id_param_str = "Guid id" if not is_mixin else "string modelName, Guid id"
-                final_param_list = [id_param_str] + param_parts if param_parts else [id_param_str]
-                param_str = ", ".join(filter(None, final_param_list))
-                final_return_type = return_type_str or (pascal_model if not is_mixin else "object"); return_type = f"Task<{map_python_type_to_csharp(final_return_type)}>"
-        else: # private methods
-            visibility, override_keyword = "private ", ""
-            service_method_name = to_pascal_case(method_name) + "Async"
-            param_parts = [f"{map_python_type_to_csharp(p_type, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, p_name)} {p_name}" for p_name, p_type in params]
-            param_str = ", ".join(param_parts)
-            final_return_type = return_type_str or "void"
-            return_type = f"Task<{map_python_type_to_csharp(final_return_type)}>" if final_return_type != "void" else "Task"
+                csharp_name = to_pascal_case(method_name.replace("action_", "")) + "Async"
+        if csharp_name:
+            sorted_methods_info.append({'csharp_name': csharp_name, 'visibility': visibility, 'python_name': method_name, 'implementations': implementations})
+    sorted_methods_info.sort(key=lambda x: x['csharp_name'])
 
-        if not service_method_name: continue
-        id_param_for_public_task = "id" if not is_mixin and is_public else ""
+    for item in sorted_methods_info:
+        service_method_name, visibility, method_name, implementations = item['csharp_name'], item['visibility'], item['python_name'], item['implementations']
+        last_impl = implementations[-1]
+        params, return_type_str = last_impl.get('params', []), last_impl.get('return_type', None)
+        is_common_method = method_name.lower() in ODOO_COMMON_API_METHODS
+        base_call_params = ""
+        param_parts = [f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} {p_name}" for p_name, p_type in params]
         
-        method_body = [f"\n        {visibility}{override_keyword}async {return_type} {service_method_name}({param_str})", "        {", "            /*"]
+        generic_param, generic_constraint = "", ""
+        if 'public' in visibility and is_common_method and not is_mixin:
+            if method_name.lower() == 'write': param_str, return_type, base_call_params = f"List<Guid> ids, {pascal_model} entity, List<string> fields", "Task<List<object>>", "ids, entity, fields"
+            elif method_name.lower() == 'create': param_str, return_type, base_call_params = f"{pascal_model} entity, List<string> fields", "Task<object>", "entity, fields"
+            elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"Guid id, List<string> fields, {pascal_model} defaultValues = null", "Task<object>", "id, fields, defaultValues"
+            else: continue
+        else:
+            if is_mixin and 'public' in visibility:
+                generic_param = "<TEntity>"
+                id_param_str = "TEntity entity"
+                generic_constraint = f" where TEntity : IEntity<Guid>, I{pascal_model}able"
+            elif 'public' in visibility:
+                id_param_str = "Guid id"
+            else: # private/protected
+                id_param_str = ""
+            
+            final_param_list = [id_param_str] + param_parts if param_parts else [id_param_str]
+            param_str = ", ".join(filter(None, final_param_list))
+            final_return_type = return_type_str or (pascal_model if 'public' in visibility and not is_mixin else "object" if 'public' in visibility else "void")
+            return_type = f"Task<{map_python_type_to_csharp(final_return_type, all_csharp_entity_names)}>" if final_return_type != "void" else "Task"
+            service_method_name = f"{service_method_name}{generic_param}"
+            
+        if not service_method_name: continue
+        id_param_for_public_task = "id" if not is_mixin and 'public' in visibility else ""
+        
+        comment_wrapper = ("/*", "*/")
+        source_code_combined = "\n".join(impl['source'] for impl in implementations)
+        if "/*" in source_code_combined or "*/" in source_code_combined:
+            comment_wrapper = ("#if PYTHON_CODE", "#endif")
+        
+        # SỬA LỖI: Đặt `generic_constraint` sau dấu `)`
+        method_signature = f"{visibility}async {return_type} {service_method_name}({param_str}){generic_constraint}"
+        
+        method_body = [f"\n        {method_signature}", "        {", f"            {comment_wrapper[0]}"]
         for impl in implementations:
             source_code, tag = impl['source'], "BASE" if len(implementations) > 1 and impl == implementations[0] else "INHERITS"
             method_body.append(f"            --- ODOO METHOD SOURCE FROM MODULE: {impl['module']} ({tag}) ---")
-            for line in source_code.split('\n'): method_body.append(f"            {line}")
-        method_body.append("            */")
-        if is_common_method and override_keyword and not is_mixin: method_body.append(f"            return await base.{service_method_name}({base_call_params});")
-        elif "Task<" in return_type and is_public: method_body.append(f"            var entity = await Repository.GetAsync({id_param_for_public_task}); return entity;")
-        elif "Task<" in return_type and not is_public: method_body.append(f"            return default;")
+            for line in source_code.split('\n'): method_body.append(f"            // {line}")
+        method_body.append(f"            {comment_wrapper[1]}")
+
+        if is_common_method and 'override' in visibility and not is_mixin: method_body.append(f"            return await base.{service_method_name.split('<')[0]}({base_call_params});")
+        elif "Task<" in return_type: method_body.append(f"            return default;")
         else: method_body.append(f"            await Task.CompletedTask;")
         method_body.append("        }")
         content_parts.extend(method_body)
+
     content_parts.extend(["    }", "}"])
     return "\n".join(content_parts)
 
-def create_controller_content(project_base_name, module_name, model_name, methods, flat_structure, add_common_actions):
-    pascal_model, pascal_module = to_pascal_case(model_name), to_pascal_case(module_name)
+def create_marker_interface_content(project_name, mixin_name):
+    """
+    Tạo nội dung cho một interface đánh dấu (marker interface) rỗng.
+    Ví dụ: 'mail.thread' -> 'IMailThreadable'
+    """
+    pascal_mixin = to_pascal_case(mixin_name)
+    interface_name = f"I{pascal_mixin}able"
+    namespace = f"{project_name}.Domain.Shared.Interfaces"
+    
+    content = f"""
+    // Auto-generated Marker Interface from Odoo Mixin {mixin_name}
+    namespace {namespace}
+    {{
+        public interface {interface_name}
+        {{
+            // This interface is used to mark entities that inherit from the '{mixin_name}' Odoo mixin.
+            // It can be used for generic constraints in services.
+        }}
+    }}
+    """
+    return format_csharp_code(content)
+
+def create_mixin_data_interface_content(project_name, mixin_name, model_data, all_csharp_entity_names):
+    """Tạo nội dung cho một interface dữ liệu (ví dụ IThreadData) từ một mixin."""
+    pascal_mixin = to_pascal_case(mixin_name)
+    interface_name = f"I{pascal_mixin}Data"
+    namespace = f"{project_name}.Domain.Shared.Interfaces"
+    
+    using_statements = [
+        "using System;",
+        "using System.Collections.Generic;",
+        "using Volo.Abp.Domain.Entities;"
+    ]
+
+    content = f"""
+    // Auto-generated Data Interface from Odoo Mixin {mixin_name}
+    {'\n'.join(sorted(list(set(using_statements))))}
+
+    namespace {namespace}
+    {{
+        public interface {interface_name} : IEntity<Guid>
+        {{
+    """
+    
+    # Sắp xếp các thuộc tính theo thứ tự ABC
+    for field_name, field_info in sorted(model_data['fields'].items()):
+        field_type = field_info.get('type', '').lower()
+        prop_signature = ""
+        
+        if field_type in ODOO_TO_CSHARP_TYPE:
+            pascal_field = to_pascal_case(field_name)
+            csharp_type = ODOO_TO_CSHARP_TYPE[field_type]
+            is_required = field_info.get('is_required', False)
+            if not is_required and '?' not in csharp_type:
+                csharp_type += '?'
+            prop_signature = f"{csharp_type} {pascal_field} {{ get; set; }}"
+            
+        elif field_type == 'many2one' and 'related_model' in field_info:
+            nav_property_name = to_pascal_case(field_name.removesuffix('_id'))
+            related_model_pascal = to_pascal_case(field_info['related_model'])
+            # Interface chỉ định nghĩa navigation property, không có khóa ngoại
+            prop_signature = f"{related_model_pascal}? {nav_property_name} {{ get; set; }}"
+
+        elif field_type in ['one2many', 'many2many'] and 'related_model' in field_info:
+            pascal_field, related_model_pascal = to_pascal_case(field_name), to_pascal_case(field_info['related_model'])
+            prop_signature = f"ICollection<{related_model_pascal}>? {pascal_field} {{ get; set; }}"
+
+        if prop_signature:
+            content += f"        {prop_signature}\n\n"
+
+    content += "    }\n}"
+    return format_csharp_code(content)
+
+def create_controller_content(project_base_name, module_name, module_category, model_name, methods, flat_structure, flat_namespace, add_common_actions, all_csharp_entity_names, group_by_category):
+    pascal_model_original = to_pascal_case(model_name)
+    pascal_module_original = to_pascal_case(module_name)
+    pascal_module = f"{pascal_module_original}Module" if pascal_model_original == pascal_module_original and not flat_structure else pascal_module_original
+    
+    pascal_model = pascal_model_original
     controller_name, interface_name = f"{pascal_model}Controller", f"I{pascal_model}AppService"
-    entity_namespace = f"{project_base_name}.Domain.Entities" + ("" if flat_structure else f".{pascal_module}")
-    interface_namespace = f"{project_base_name}.Application.Contracts.Interfaces" + ("" if flat_structure else f".{pascal_module}")
-    controller_namespace = f"{project_base_name}.HttpApi.Controllers" + ("" if flat_structure else f".{pascal_module}")
+    
+    entity_namespace = f"{project_base_name}.Models" if flat_structure else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    interface_namespace = contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces" + ("" if flat_namespace else f".{pascal_module}")
+    controller_namespace = f"{project_base_name}.HttpApi.Controllers" + ("" if flat_namespace else f".{pascal_module}")
+    
+    route_parts = ["api", "app"]
+    if group_by_category and module_category:
+        clean_category = module_category.split('/')[0].strip().lower().replace(' ', '-')
+        if clean_category:
+            route_parts.append(clean_category)
+    route_parts.append(model_name.replace('_','-'))
+    route = f'[Route("{'/'.join(route_parts)}")]'
+    
     if add_common_actions:
         base_class = f"GenericController<{pascal_model}, {interface_name}>"
         using_statements = {f"using {project_base_name}.HttpApi.Controllers.Commons;"}
@@ -365,23 +547,28 @@ def create_controller_content(project_base_name, module_name, model_name, method
         base_class = "AbpControllerBase"
         using_statements = set()
         constructor_body = f"private readonly {interface_name} _appService;\n        public {controller_name}({interface_name} appService) {{ _appService = appService; }}"
+    
     using_statements.update(["using System;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};"])
+    
     main_content = f"""
+    // Auto-generated by Odoo C# Code Generator
     {'\n'.join(sorted(list(using_statements)))}
     namespace {controller_namespace}
     {{
-        [Route("api/app/{model_name.replace('_','-')}")]
+        {route}
         public partial class {controller_name} : {base_class}
         {{
             {constructor_body}
         }}
     }}
     """
+    
     partial_content = ""
-    specific_actions = {name: impl for name, impl in methods.items() if name.lower() not in ODOO_COMMON_API_METHODS}
+    specific_actions = {name: impl for name, impl in methods.items() if not name.startswith('_') and name.lower() not in ODOO_COMMON_API_METHODS}
     if specific_actions:
         partial_using = { "using System;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using System.Text.Json;", f"using {interface_namespace};", f"using {entity_namespace};" }
         partial_content = f"""
+        // Auto-generated by Odoo C# Code Generator
         {'\n'.join(sorted(list(partial_using)))}
         namespace {controller_namespace}
         {{
@@ -389,39 +576,40 @@ def create_controller_content(project_base_name, module_name, model_name, method
             {{
         """
         service_accessor = "AppService" if add_common_actions else "_appService"
+        
+        sorted_actions = []
         for method_name, implementations in specific_actions.items():
+            action_name = to_pascal_case(method_name.replace("action_", ""))
+            sorted_actions.append({'csharp_name': action_name, 'python_name': method_name, 'implementations': implementations})
+        sorted_actions.sort(key=lambda x: x['csharp_name'])
+
+        for item in sorted_actions:
+            action_name, method_name, implementations = item['csharp_name'], item['python_name'], item['implementations']
             last_impl = implementations[-1]
             params = last_impl.get('params', [])
-            action_name = to_pascal_case(method_name.replace("action_", ""))
             route_action = ''.join(['-' + c.lower() if c.isupper() else c for c in action_name]).strip('-')
             dto_name, action_params, service_call_params = f"{action_name}RequestDto", "Guid id", "id"
             if params:
                 partial_content += f"        public class {dto_name}\n        {{\n"
                 for p_name, p_type in params:
-                    csharp_type = map_python_type_to_csharp(p_type, p_name)
+                    csharp_type = map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)
                     prop_name = to_pascal_case(p_name)
                     partial_content += f"            public {csharp_type} {prop_name} {{ get; set; }}\n"
                 partial_content += "        }\n"
                 action_params += f", [FromBody] {dto_name} input"
                 service_call_params += ", " + ", ".join(f"input.{to_pascal_case(p_name)}" for p_name, _ in params)
+            service_method_name = f"{action_name}Async"
             partial_content += f"""
                 [HttpPost]
                 [Route(\"{{id}}/{route_action}\")]
                 public async Task<IActionResult> {action_name}Async({action_params})
                 {{
-                    var result = await {service_accessor}.{action_name}Async({service_call_params});
+                    var result = await {service_accessor}.{service_method_name}({service_call_params});
                     return Ok(result);
                 }}
             """
         partial_content += "            }\n}"
     return format_csharp_code(main_content), format_csharp_code(partial_content) if partial_content else None
-
-def create_marker_interface_content(project_name, mixin_name):
-    pascal_mixin = to_pascal_case(mixin_name)
-    interface_name = f"I{pascal_mixin}able"
-    namespace = f"{project_name}.Domain.Shared.Interfaces"
-    content = f"namespace {namespace} {{ public interface {interface_name} {{ }} }}"
-    return format_csharp_code(content)
 #</editor-fold>
 
 #<editor-fold desc="Odoo AST Visitor">
@@ -518,59 +706,80 @@ def main(args):
     master_models = {}
     auto_detected_mixins = set()
     manual_excluded_models = set(args.exclude_models or [])
-    output_path, project_base_name, flat_structure = Path(args.output_dir), args.project_name, args.flat_structure
+    output_path, project_base_name, flat_structure, flat_namespace = Path(args.output_dir), args.project_name, args.flat_structure, args.flat_namespace
 
     logging.info("Phase 1: Analyzing Odoo source directories...")
+    module_infos = {}
     for path_str in args.source_dirs:
         current_path = Path(path_str)
-        if not current_path.is_dir(): logging.warning(f"Skipping invalid source: {current_path}"); continue
+        if not current_path.is_dir():
+            logging.warning(f"Skipping invalid source: {current_path}")
+            continue
+        
         logging.info(f"--- Recursively scanning directory: {current_path} ---")
         for manifest_path in sorted(current_path.glob('**/__manifest__.py')):
             module_dir, module_name = manifest_path.parent, manifest_path.parent.name
-            if module_name.endswith(('_test', '_tests')): continue
+            if module_name.endswith(('_test', '_tests')):
+                continue
+            
+            try:
+                manifest_data = ast.literal_eval(manifest_path.read_text(encoding='utf-8'))
+                module_infos[module_name] = {
+                    'depends': manifest_data.get('depends', []),
+                    'category': manifest_data.get('category', '')
+                }
+            except Exception as e:
+                logging.warning(f"Could not read manifest for {module_name}: {e}")
+                module_infos[module_name] = {'depends': [], 'category': ''}
+
             logging.info(f"  Processing module: {module_name}")
             models_path = module_dir / 'models'
             if models_path.is_dir():
                 for model_file in sorted(models_path.glob('**/*.py')):
-                    if model_file.name == '__init__.py': continue
+                    if model_file.name == '__init__.py':
+                        continue
                     try:
                         source_code = model_file.read_text(encoding='utf-8')
                         visitor = OdooModelVisitor(source_code)
                         visitor.visit(ast.parse(source_code))
                         info = visitor.model_info
+                        
                         if info.get('is_abstract') and info.get('name'):
                             auto_detected_mixins.add(info['name'])
+
                         target_model_names = [m for m in info.get('inherits', [])]
                         base_module_info = {}
                         if info.get('name'):
                             target_model_names.append(info['name'])
                             base_module_info[info['name']] = (module_name, info['is_transient'])
+
                         for model_name in set(target_model_names):
-                            if model_name not in master_models: master_models[model_name] = {'fields': {}, 'methods': {}, 'all_methods_source': {}, 'source_modules': set(), 'inherited_mixins': set(), 'delegated_inherits': []}
+                            if model_name not in master_models:
+                                master_models[model_name] = {'fields': {}, 'methods': {}, 'all_methods_source': {}, 'source_modules': set(), 'inherited_mixins': set(), 'delegated_inherits': []}
+                            
                             if model_name in base_module_info:
                                 master_models[model_name]['base_module'] = base_module_info[model_name][0]
                                 master_models[model_name]['is_transient'] = base_module_info[model_name][1]
+
                             master_models[model_name]['fields'].update(info['fields'])
                             master_models[model_name]['delegated_inherits'].extend(info.get('delegated_inherits', []))
                             all_inherits = set(info.get('inherits', []) + [b.replace('models.', '') for b in info.get('base_classes', []) if b != 'models.Model'])
                             master_models[model_name]['inherited_mixins'].update(all_inherits)
+                            
                             for method_name, method_data in info['methods'].items():
                                 master_models[model_name]['all_methods_source'][method_name] = method_data['source']
                                 method_data['module'] = module_name
                                 master_models[model_name].setdefault('all_methods', {}).setdefault(method_name, []).append(method_data)
                             master_models[model_name]['source_modules'].add(module_name)
-                    except Exception as e: logging.error(f"Error processing file {model_file.name}: {e}")
+                    except Exception as e:
+                        logging.error(f"Error processing file {model_file.name}: {e}")
     
     final_exclude_set = auto_detected_mixins.union(manual_excluded_models)
     logging.info(f"Final mixin/exclusion list (auto + manual): {final_exclude_set}")
-
+    all_csharp_entity_names = {to_pascal_case(model_name) for model_name in master_models.keys() if model_name not in final_exclude_set}
+    
     logging.info("\nPhase 2: Generating C# source code for ABP Framework...")
-    module_dependencies = {}
-    for path_str in args.source_dirs:
-        for manifest_path in Path(path_str).glob('**/__manifest__.py'):
-            module_dir = manifest_path.parent
-            try: module_dependencies[module_dir.name] = ast.literal_eval(manifest_path.read_text(encoding='utf-8')).get('depends', [])
-            except: pass
+    
     attr_dir = output_path / f"src/{project_base_name}.Domain.Shared/Attributes"
     attr_dir.mkdir(parents=True, exist_ok=True)
     attribute_definitions = {
@@ -581,46 +790,74 @@ def main(args):
         "One2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class One2manyAttribute : Attribute { public string RelatedModel { get; set; } public string InverseField { get; set; } }",
         "Many2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2manyAttribute : Attribute { public string RelatedModel { get; set; } }",
     }
-    for file_name, class_def in attribute_definitions.items(): (attr_dir / file_name).write_text(format_csharp_code(f"namespace {project_base_name}.Domain.Shared.Attributes; {class_def}"), encoding='utf-8')
-    marker_interface_dir = output_path / f"src/{project_base_name}.Domain.Shared/Interfaces"
+    for file_name, class_def in attribute_definitions.items():
+        (attr_dir / file_name).write_text(format_csharp_code(f"namespace {project_base_name}.Domain.Shared.Attributes; {class_def}"), encoding='utf-8')
+    
+    data_interface_dir = output_path / f"src/{project_base_name}.Domain.Shared/Interfaces/Data"
+    marker_interface_dir = output_path / f"src/{project_base_name}.Domain.Shared/Interfaces/Markers"
     mixin_contracts_dir = output_path / f"src/{project_base_name}.Application.Contracts/Interfaces/Mixins"
     mixin_service_dir = output_path / f"src/{project_base_name}.Application/Services/Mixins"
-    for d in [marker_interface_dir, mixin_contracts_dir, mixin_service_dir]: d.mkdir(parents=True, exist_ok=True)
+    for d in [data_interface_dir, marker_interface_dir, mixin_contracts_dir, mixin_service_dir]:
+        d.mkdir(parents=True, exist_ok=True)
     (mixin_contracts_dir / "IMixinAppService.cs").write_text(format_csharp_code(f"using Volo.Abp.Application.Services;\nnamespace {project_base_name}.Application.Contracts.Interfaces.Mixins; public interface IMixinAppService : IApplicationService {{ }}"), encoding='utf-8')
     
     for model_name, data in master_models.items():
         base_module = data.get('base_module', sorted(list(data['source_modules']))[0] if data['source_modules'] else "unknown")
-        dependencies = module_dependencies.get(base_module, [])
+        dependencies = module_infos.get(base_module, {}).get('depends', [])
+        module_category = module_infos.get(base_module, {}).get('category', '')
         pascal_model = to_pascal_case(model_name)
         
         if model_name in final_exclude_set:
-            logging.info(f"Generating dedicated service for mixin model: '{model_name}'")
+            logging.info(f"Generating dedicated service and interfaces for mixin model: '{model_name}'")
             all_methods = data.get('all_methods', {})
+            
             (marker_interface_dir / f"I{pascal_model}able.cs").write_text(create_marker_interface_content(project_base_name, model_name), encoding='utf-8')
-            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, all_methods, True, is_mixin=True), encoding='utf-8')
-            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, all_methods, dependencies, True, args.include_private_methods, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set), encoding='utf-8')
+            if data.get('fields'):
+                (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names), encoding='utf-8')
+
+            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, all_methods, True, True, all_csharp_entity_names, is_mixin=True), encoding='utf-8')
+            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, all_methods, dependencies, True, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set), encoding='utf-8')
             continue
 
         logging.info(f"Generating ABP structure for model '{model_name}' (base module: {base_module})")
-        pascal_module = to_pascal_case(base_module)
-        domain_path = output_path / f"src/{project_base_name}.Domain"; app_contracts_path = output_path / f"src/{project_base_name}.Application.Contracts"
-        app_path = output_path / f"src/{project_base_name}.Application"; http_api_path = output_path / f"src/{project_base_name}.HttpApi"
-        enum_dir = domain_path / 'Enums' / ('' if flat_structure else pascal_module); entity_dir = domain_path / 'Entities' / ('' if flat_structure else pascal_module)
-        interface_dir = app_contracts_path / 'Interfaces' / pascal_module; service_dir = app_path / 'Services' / pascal_module
+        
+        pascal_module_original = to_pascal_case(base_module)
+        pascal_module = f"{pascal_module_original}Module" if pascal_model == pascal_module_original and not flat_structure else pascal_module_original
+        if pascal_module != pascal_module_original:
+            logging.warning(f"Name collision for module '{base_module}'. Renaming namespace component to '{pascal_module}'.")
+
+        domain_path = output_path / f"src/{project_base_name}.Domain"
+        app_contracts_path = output_path / f"src/{project_base_name}.Application.Contracts"
+        app_path = output_path / f"src/{project_base_name}.Application"
+        http_api_path = output_path / f"src/{project_base_name}.HttpApi"
+        
+        if flat_structure:
+            enum_dir = domain_path / 'Models' / 'Enums'
+            entity_dir = domain_path / 'Models'
+        else:
+            enum_dir = domain_path / 'Enums' / pascal_module
+            entity_dir = domain_path / 'Entities' / pascal_module
+        
+        interface_dir = app_contracts_path / 'Interfaces' / pascal_module
+        service_dir = app_path / 'Services' / pascal_module
         controller_dir = http_api_path / 'Controllers' / pascal_module
-        for d in [enum_dir, entity_dir, interface_dir, service_dir, controller_dir]: d.mkdir(parents=True, exist_ok=True)
+
+        for d in [enum_dir, entity_dir, interface_dir, service_dir, controller_dir]:
+            d.mkdir(parents=True, exist_ok=True)
         
         implemented_interfaces = [f"I{to_pascal_case(mixin)}able" for mixin in data.get('inherited_mixins', set()) if mixin in final_exclude_set]
-        (entity_dir / f"{pascal_model}.cs").write_text(create_model_entity_content(project_base_name, base_module, model_name, data, dependencies, flat_structure, implemented_interfaces), encoding='utf-8')
+        (entity_dir / f"{pascal_model}.cs").write_text(create_model_entity_content(project_base_name, base_module, model_name, data, dependencies, flat_structure, implemented_interfaces, args.entity_property_order), encoding='utf-8')
         
         computed_fields = {}
         for field_name, field_data in data['fields'].items():
             if field_data.get('type', '').lower() == 'selection' and 'selection' in field_data:
                 enum_filename = f"{to_pascal_case(model_name.split('.')[-1])}{to_pascal_case(field_name)}Enum.cs"
                 (enum_dir / enum_filename).write_text(create_enum_content(project_base_name, base_module, model_name, field_name, field_data['selection'], flat_structure), encoding='utf-8')
-            elif field_data.get('type') == 'Computed': computed_fields[field_name] = field_data.get('compute')
+            elif field_data.get('type') == 'Computed':
+                computed_fields[field_name] = field_data.get('compute')
         
-        if computed_fields: (entity_dir / f"{pascal_model}.Partials.cs").write_text(create_partial_model_content(project_base_name, base_module, model_name, computed_fields, data.get('all_methods_source', {}), flat_structure), encoding='utf-8')
+        if computed_fields:
+            (entity_dir / f"{pascal_model}.Partials.cs").write_text(create_partial_model_content(project_base_name, pascal_module, model_name, computed_fields, data.get('all_methods_source', {}), flat_structure), encoding='utf-8')
         
         all_methods = data.get('all_methods', {})
         public_methods = {k: v for k, v in all_methods.items() if not k.startswith('_')}
@@ -630,26 +867,32 @@ def main(args):
             for method_name, implementations in public_methods.items():
                 is_common = method_name.lower() in ODOO_COMMON_API_METHODS
                 is_override = len(implementations) > 1 or (len(implementations) == 1 and implementations[0]['module'] != data.get('base_module'))
-                if not is_common or is_override: has_specific_logic = True; break
+                if not is_common or is_override:
+                    has_specific_logic = True
+                    break
         
         should_generate_service = (args.generate_services == 'all') or (args.generate_services == 'specific' and has_specific_logic)
         should_generate_controller = False
-        if args.generate_controllers == 'all': should_generate_controller = True
-        elif args.generate_controllers == 'specific' and has_specific_logic: should_generate_controller = True
+        if args.generate_controllers == 'all':
+            should_generate_controller = True
+        elif args.generate_controllers == 'specific' and has_specific_logic:
+            should_generate_controller = True
         
         if should_generate_service:
             logging.info(f"  -> Generating AppService for '{model_name}'.")
-            (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, public_methods, flat_structure), encoding='utf-8')
-            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, all_methods, dependencies, flat_structure, args.include_private_methods, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set), encoding='utf-8')
+            (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module, model_name, public_methods, flat_structure, flat_namespace, all_csharp_entity_names), encoding='utf-8')
+            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module, model_name, all_methods, dependencies, flat_structure, flat_namespace, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set), encoding='utf-8')
         
         if should_generate_controller:
             logging.info(f"  -> Generating Controller for '{model_name}'.")
-            main_controller, partial_controller = create_controller_content(project_base_name, base_module, model_name, public_methods, flat_structure, args.add_common_actions)
+            main_controller, partial_controller = create_controller_content(project_base_name, pascal_module, module_category, model_name, public_methods, flat_structure, flat_namespace, args.add_common_actions, all_csharp_entity_names, args.group_by_category)
             (controller_dir / f"{pascal_model}Controller.cs").write_text(main_controller, encoding='utf-8')
-            if partial_controller: (controller_dir / f"{pascal_model}Controller.Partials.cs").write_text(partial_controller, encoding='utf-8')
+            if partial_controller:
+                (controller_dir / f"{pascal_model}Controller.Partials.cs").write_text(partial_controller, encoding='utf-8')
             
     logging.info("\nPhase 3: Cleaning up empty directories...")
     cleanup_empty_dirs(output_path)
+    
     logging.info("\nGeneration complete!")
     
 if __name__ == '__main__':
@@ -685,14 +928,29 @@ if __name__ == '__main__':
                         help="If generating controllers, this makes them inherit from GenericController to include common CRUD actions.\n"
                              "If not set, they inherit from AbpControllerBase.")
 
+    parser.add_argument('--group-by-category', action='store_true',
+                        help="Group controller routes by the module's category (from __manifest__.py).")
+
     parser.add_argument('--include-private-methods', action='store_true',
                         help="Generate skeletons for private/protected helper methods inside AppServices.")
 
     # --- Structure & Filtering Arguments ---
     parser.add_argument('--flat-structure', action='store_true',
                         help="Generate Entities and Enums in flat directories (e.g., /Entities, /Enums).")
+
+    parser.add_argument('--flat-namespace', action='store_true',
+                        help="Generate Interfaces/Services/Controllers in flat namespaces (e.g., ...Interfaces, ...Services).")
     
-    parser.add_argument('--exclude-models', nargs='*', default=['mail.thread', 'mail.group', 'mail.activity.mixin', 'portal.mixin', 'format.address.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin'],
+    parser.add_argument('--entity-property-order', type=str, choices=['type', 'abc'], default='abc',
+                        help="Control property order in generated Entities.\n"
+                             "- 'type': (Default) Group by type (Primitives, M2O, O2M, etc.).\n"
+                             "- 'abc': Sort all properties alphabetically.")
+    
+    #parser.add_argument('--exclude-models', nargs='*', default=['mail.activity.mixin', 'portal.mixin', 'format.address.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin'],
+    #                    help="Manually specify a list of models to exclude.\n"
+    #                         "Note: AbstractModels are already detected automatically.")
+    
+    parser.add_argument('--exclude-models', nargs='*', default=None,
                         help="Manually specify a list of models to exclude.\n"
                              "Note: AbstractModels are already detected automatically.")
     
