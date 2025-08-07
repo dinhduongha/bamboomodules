@@ -257,7 +257,7 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
     interface_namespace = contracts_namespace + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_namespace else ""))
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Volo.Abp.Application.Services;"]
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", "using Volo.Abp.Application.Services;"]
     
     if is_mixin:
         base_interface = "IMixinAppService"
@@ -306,24 +306,28 @@ def create_service_interface_content(project_base_name, module_name, model_name,
         last_impl = implementations[-1]; params = last_impl.get('params', []); 
         is_instance_method = last_impl.get('is_instance_method', True)
         
+        return_type_py = last_impl.get('return_type')
         if is_mixin and is_instance_method:
-            return_type_str = last_impl.get('return_type', "TEntity")
+            if return_type_py == 'self':
+                return_type_str = "TEntity"
+            else:
+                return_type_str = return_type_py or "TEntity" # Mặc định trả về TEntity
         else:
-            return_type_str = last_impl.get('return_type', pascal_model if not is_mixin else "object")
+            return_type_str = return_type_py or (pascal_model if not is_mixin else "object")
 
         param_parts = [f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} {p_name}" for p_name, p_type in params]
         
         generic_part, generic_constraint, param_str = "", "", ""
         if is_mixin and is_instance_method:
             generic_part = "<TEntity>"
-            param_str = ", ".join([f"TEntity entity"] + param_parts)
+            param_str = ", ".join([f"IEnumerable<TEntity> entities"] + param_parts)
             generic_constraint = f" where TEntity : IEntity<Guid>, I{pascal_model}able"
         elif not is_mixin:
             param_str = ", ".join([f"Guid id"] + param_parts)
         else: # Mixin static method
             param_str = ", ".join(param_parts)
         
-        return_type = f"Task<{map_python_type_to_csharp(return_type_str, all_csharp_entity_names)}>"
+        return_type = f"Task<{map_python_type_to_csharp(return_type_str, all_csharp_entity_names)}>" if return_type_str != "void" else "Task"
 
         content += f"        {return_type} {service_method_name}{generic_part}({param_str}){generic_constraint};\n"
         
@@ -342,7 +346,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
     interface_namespace = contracts_namespace + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_namespace else ""))
     service_namespace = f"{project_base_name}.Application.Services" + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_namespace else ""))
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};"]
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};"]
     
     private_fields, constructor_assignments = [], []
 
@@ -390,12 +394,14 @@ def create_service_implementation_content(project_base_name, module_name, model_
         if not include_private and method_name.startswith('_'): continue
         
         csharp_name, visibility = "", ""
+        is_instance_method = implementations[-1].get('is_instance_method', True)
         is_public = not method_name.startswith('_')
         is_common_method = method_name.lower() in ODOO_COMMON_API_METHODS
-        is_instance_method = implementations[-1].get('is_instance_method', True)
 
         if is_mixin:
-            if is_instance_method or is_public:
+            if is_instance_method:
+                visibility = "public"
+            elif is_public:
                 visibility = "public"
             elif method_name.startswith('__'):
                 visibility = "private"
@@ -430,7 +436,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
     for item in sorted_methods_info:
         service_method_name, visibility, method_name, implementations = item['csharp_name'], item['visibility'], item['python_name'], item['implementations']
         last_impl = implementations[-1]
-        params, return_type_str = last_impl.get('params', []), last_impl.get('return_type', None)
+        params, return_type_str_py = last_impl.get('params', []), last_impl.get('return_type', None)
         is_common_method = method_name.lower() in ODOO_COMMON_API_METHODS
         is_instance_method = last_impl.get('is_instance_method', True)
         base_call_params = ""
@@ -440,7 +446,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
         generic_part, generic_constraint, param_str = "", "", ""
         if is_mixin and 'public' in visibility and is_instance_method:
             generic_part = "<TEntity>"
-            param_str = ", ".join([f"TEntity entity"] + param_parts)
+            param_str = ", ".join([f"IEnumerable<TEntity> entities"] + param_parts)
             generic_constraint = f" where TEntity : IEntity<Guid>, I{pascal_model}able"
         elif 'public' in visibility and not is_common_method and not is_mixin:
             param_str = ", ".join([f"Guid id"] + param_parts)
@@ -452,13 +458,13 @@ def create_service_implementation_content(project_base_name, module_name, model_
             elif method_name.lower() == 'create': param_str, return_type, base_call_params = f"{pascal_model} entity, List<string> fields", "Task<object>", "entity, fields"
             elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"Guid id, List<string> fields, {pascal_model} defaultValues = null", "Task<object>", "id, fields, defaultValues"
             else:
-                final_return_type = return_type_str or (pascal_model if not is_mixin else "object")
+                final_return_type = return_type_str_py or (pascal_model if not is_mixin else "object")
                 return_type = f"Task<{map_python_type_to_csharp(final_return_type, all_csharp_entity_names)}>"
         else:
             if is_mixin and is_instance_method:
-                final_return_type = return_type_str or "TEntity"
+                final_return_type = "TEntity" if return_type_str_py == 'self' else (return_type_str_py or "TEntity")
             else:
-                final_return_type = return_type_str or (pascal_model if not is_mixin else "object")
+                final_return_type = return_type_str_py or (pascal_model if not is_mixin else "object")
             return_type = f"Task<{map_python_type_to_csharp(final_return_type, all_csharp_entity_names)}>" if final_return_type != "void" else "Task"
 
         if not service_method_name: continue
