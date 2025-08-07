@@ -1041,7 +1041,7 @@ if __name__ == '__main__':
     #                    help="Manually specify a list of models to exclude.\n"
     #                         "Note: AbstractModels are already detected automatically.")
     
-    parser.add_argument('--exclude-models', nargs='*', default=['format.address.mixin'],
+    parser.add_argument('--exclude-models', nargs='*', default=['format.address.mixin', 'mail.activity.mixin', 'portal.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin', 'transifex.code.translation', 'test.translation.import.model1', 'ir.qweb.field.contact', 'publisher_warranty.contract', 'ir.actions.report'],
                         help="Manually specify a list of models to exclude.\n"
                              "Note: AbstractModels are already detected automatically.")
     
