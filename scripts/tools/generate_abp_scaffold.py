@@ -250,8 +250,7 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
 
 def create_service_interface_content(project_base_name, module_name, model_name, methods, flat_model_dir, flat_namespace, all_csharp_entity_names, module_namespace_map, is_mixin=False):
     pascal_model = to_pascal_case(model_name)
-    pascal_module_original = to_pascal_case(module_name)
-    pascal_module = module_namespace_map.get(module_name, pascal_module_original)
+    pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
 
     interface_name = f"I{pascal_model}AppService"
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
@@ -309,9 +308,9 @@ def create_service_interface_content(project_base_name, module_name, model_name,
         return_type_py = last_impl.get('return_type')
         if is_mixin and is_instance_method:
             if return_type_py == 'self':
-                return_type_str = "TEntity"
+                return_type_str = "IEnumerable<TEntity>"
             else:
-                return_type_str = return_type_py or "TEntity" # Mặc định trả về TEntity
+                return_type_str = return_type_py or "TEntity"
         else:
             return_type_str = return_type_py or (pascal_model if not is_mixin else "object")
 
@@ -394,14 +393,12 @@ def create_service_implementation_content(project_base_name, module_name, model_
         if not include_private and method_name.startswith('_'): continue
         
         csharp_name, visibility = "", ""
-        is_instance_method = implementations[-1].get('is_instance_method', True)
         is_public = not method_name.startswith('_')
         is_common_method = method_name.lower() in ODOO_COMMON_API_METHODS
+        is_instance_method = implementations[-1].get('is_instance_method', True)
 
         if is_mixin:
-            if is_instance_method:
-                visibility = "public"
-            elif is_public:
+            if is_instance_method or is_public:
                 visibility = "public"
             elif method_name.startswith('__'):
                 visibility = "private"
@@ -455,14 +452,19 @@ def create_service_implementation_content(project_base_name, module_name, model_
 
         if is_common_method and 'override' in visibility:
             if method_name.lower() == 'write': param_str, return_type, base_call_params = f"List<Guid> ids, {pascal_model} entity, List<string> fields", "Task<List<object>>", "ids, entity, fields"
-            elif method_name.lower() == 'create': param_str, return_type, base_call_params = f"{pascal_model} entity, List<string> fields", "Task<object>", "entity, fields"
-            elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"Guid id, List<string> fields, {pascal_model} defaultValues = null", "Task<object>", "id, fields, defaultValues"
+            elif method_name.lower() == 'create': param_str, return_type, base_call_params = f"{pascal_model} entity, List<string> fields", f"Task<{pascal_model}>", "entity, fields"
+            elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"Guid id, List<string> fields, {pascal_model} defaultValues = null", f"Task<{pascal_model}>", "id, fields, defaultValues"
+            elif method_name.lower() == 'unlink': param_str, return_type, base_call_params = f"List<Guid> ids", "Task<object>", "ids"
+            elif method_name.lower() == 'default_get': param_str, return_type, base_call_params = f"List<string> fields", f"Task<{pascal_model}>", "fields"
             else:
-                final_return_type = return_type_str_py or (pascal_model if not is_mixin else "object")
+                final_return_type = return_type_str_py or "object"
                 return_type = f"Task<{map_python_type_to_csharp(final_return_type, all_csharp_entity_names)}>"
         else:
             if is_mixin and is_instance_method:
-                final_return_type = "TEntity" if return_type_str_py == 'self' else (return_type_str_py or "TEntity")
+                if return_type_str_py == 'self':
+                    final_return_type = "IEnumerable<TEntity>"
+                else:
+                    final_return_type = return_type_str_py or "TEntity"
             else:
                 final_return_type = return_type_str_py or (pascal_model if not is_mixin else "object")
             return_type = f"Task<{map_python_type_to_csharp(final_return_type, all_csharp_entity_names)}>" if final_return_type != "void" else "Task"
@@ -477,7 +479,9 @@ def create_service_implementation_content(project_base_name, module_name, model_
         method_body = [f"\n        {visibility} async {return_type} {service_method_name}{generic_part}({param_str}){generic_constraint}", "        {", f"            {comment_wrapper[0]}"]
         for impl in implementations:
             source_code, tag = impl['source'], "BASE" if len(implementations) > 1 and impl == implementations[0] else "INHERITS"
-            method_body.append(f"            --- ODOO METHOD SOURCE FROM MODULE: {impl['module']} ({tag}) ---")
+            full_path = impl.get('source_file')
+            source_file_info = Path(full_path).name if full_path else 'N/A'
+            method_body.append(f"            --- ODOO METHOD SOURCE (MODULE: {impl['module']}, FILE: {source_file_info}) ---")
             for line in source_code.split('\n'): method_body.append(f"            // {line}")
         method_body.append(f"            {comment_wrapper[1]}")
         
@@ -491,17 +495,18 @@ def create_service_implementation_content(project_base_name, module_name, model_
     return "\n".join(content_parts)
 
 def create_controller_content(project_base_name, module_name, module_category, model_name, methods, flat_model_dir, flat_service_dir, flat_controller_dir, add_common_actions, all_csharp_entity_names, group_by_category, module_namespace_map):
-    pascal_model_original = to_pascal_case(model_name)
-    pascal_module_original = to_pascal_case(module_name)
-    pascal_module = module_namespace_map.get(module_name, pascal_module_original)
+    pascal_model = to_pascal_case(model_name)
+    pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
 
-    pascal_model = f"{pascal_model_original}Model" if pascal_model_original == pascal_module and not flat_model_dir else pascal_model_original
-
-    controller_name, interface_name = f"{pascal_model}Controller", f"I{pascal_model}AppService"
+    controller_name = f"{pascal_model}Controller"
+    interface_name = f"I{pascal_model}AppService"
+    
+    # Xác định các namespace dựa trên các cờ flat tương ứng
     entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
     interface_namespace = f"{project_base_name}.Application.Contracts.Interfaces" + (f".{pascal_module}" if not flat_service_dir else "")
     controller_namespace = f"{project_base_name}.HttpApi.Controllers" + (f".{pascal_module}" if not flat_controller_dir else "")
     
+    # Xử lý route
     route_parts = ["api", "app"]
     if group_by_category and module_category:
         clean_category = module_category.split('/')[0].strip().lower().replace(' ', '-')
@@ -519,7 +524,7 @@ def create_controller_content(project_base_name, module_name, module_category, m
         using_statements = set()
         constructor_body = f"private readonly {interface_name} _appService;\n        public {controller_name}({interface_name} appService) {{ _appService = appService; }}"
     
-    using_statements.update(["using System;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};"])
+    using_statements.update(["using System;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};", f"using {entity_namespace};"])
     
     main_content = f"""
     // Auto-generated by Odoo C# Code Generator
@@ -536,6 +541,7 @@ def create_controller_content(project_base_name, module_name, module_category, m
     
     partial_content = ""
     specific_actions = {name: impl for name, impl in methods.items() if not name.startswith('_') and name.lower() not in ODOO_COMMON_API_METHODS}
+    
     if specific_actions:
         partial_using = { "using System;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using System.Text.Json;", f"using {interface_namespace};", f"using {entity_namespace};" }
         partial_content = f"""
@@ -552,6 +558,7 @@ def create_controller_content(project_base_name, module_name, module_category, m
         for method_name, implementations in specific_actions.items():
             action_name = to_pascal_case(method_name.replace("action_", ""))
             sorted_actions.append({'csharp_name': action_name, 'python_name': method_name, 'implementations': implementations})
+        
         sorted_actions.sort(key=lambda x: x['csharp_name'])
 
         for item in sorted_actions:
@@ -661,9 +668,11 @@ def create_mixin_data_interface_content(project_name, mixin_name, model_data, al
 
 #<editor-fold desc="Odoo AST Visitor">
 class OdooModelVisitor(ast.NodeVisitor):
-    def __init__(self, source_code):
-        self.model_info = {'name': None, 'inherits': [], 'fields': {}, 'methods': {}, 'is_transient': False, 'is_abstract': False, 'base_classes': [], 'delegated_inherits': []}
+    def __init__(self, source_code, source_filename):
+        self.found_models = []
+        self.current_model_info = None
         self.full_source_text = source_code
+        self.source_filename = source_filename # Lưu tên file
 
     def _get_type_hint_str(self, annotation_node):
         if not annotation_node: return None
@@ -676,30 +685,40 @@ class OdooModelVisitor(ast.NodeVisitor):
         return None
 
     def visit_ClassDef(self, node):
-        if self.model_info['name'] or self.model_info['inherits']: return
+        self.current_model_info = {'name': None, 'inherits': [], 'fields': {}, 'methods': {}, 'is_transient': False, 'is_abstract': False, 'base_classes': [], 'delegated_inherits': []}
+        
         for base in node.bases:
             if isinstance(base, ast.Attribute) and hasattr(base, "value") and hasattr(base.value, "id"):
                 base_name = f"{base.value.id}.{base.attr}"
-                self.model_info['base_classes'].append(base_name)
-                if base_name == 'models.AbstractModel': self.model_info['is_abstract'] = True
-                if base_name == 'models.TransientModel': self.model_info['is_transient'] = True
+                self.current_model_info['base_classes'].append(base_name)
+                if base_name == 'models.AbstractModel': self.current_model_info['is_abstract'] = True
+                if base_name == 'models.TransientModel': self.current_model_info['is_transient'] = True
+        
         for item in node.body:
             if isinstance(item, ast.Assign):
                 for target in item.targets:
                     if isinstance(target, ast.Name):
-                        if target.id == '_name' and isinstance(item.value, ast.Constant): self.model_info['name'] = item.value.value
+                        if target.id == '_name' and isinstance(item.value, ast.Constant):
+                            self.current_model_info['name'] = item.value.value
                         elif target.id == '_inherit':
-                            if isinstance(item.value, ast.Constant): self.model_info['inherits'].append(item.value.value)
+                            if isinstance(item.value, ast.Constant):
+                                self.current_model_info['inherits'].append(item.value.value)
                             elif isinstance(item.value, (ast.List, ast.Tuple)):
                                 for elt in item.value.elts:
-                                    if isinstance(elt, ast.Constant): self.model_info['inherits'].append(elt.value)
+                                    if isinstance(elt, ast.Constant):
+                                        self.current_model_info['inherits'].append(elt.value)
                         elif target.id == '_inherits' and isinstance(item.value, ast.Dict):
                             for key_node, val_node in zip(item.value.keys, item.value.values):
                                 if isinstance(key_node, ast.Constant) and isinstance(val_node, ast.Constant):
-                                    self.model_info['delegated_inherits'].append((key_node.value, val_node.value))
-        if self.model_info['name'] or self.model_info['inherits']: self.generic_visit(node)
+                                    self.current_model_info['delegated_inherits'].append((key_node.value, val_node.value))
+        
+        if self.current_model_info['name'] or self.current_model_info['inherits']:
+            self.generic_visit(node)
+            self.found_models.append(self.current_model_info)
+        self.current_model_info = None
 
     def visit_Assign(self, node):
+        if self.current_model_info is None: return
         if not (len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and isinstance(node.value, ast.Call)): return
         field_name = node.targets[0].id; call = node.value
         if not (isinstance(call.func, ast.Attribute) and hasattr(call.func.value, 'id') and call.func.value.id == 'fields'): return
@@ -722,11 +741,11 @@ class OdooModelVisitor(ast.NodeVisitor):
             else:
                 for kw in call.keywords:
                     if kw.arg == 'comodel_name' and isinstance(kw.value, ast.Constant): related_model = kw.value.value; break
-            
-            if related_model: field_data['related_model'] = related_model
+            if related_model:
+                field_data['related_model'] = related_model
             else: 
                 logging.warning(f"Could not determine related model for field '{field_name}'. Skipping relation attributes.")
-                self.model_info['fields'][field_name] = field_data
+                self.current_model_info['fields'][field_name] = field_data
                 return
             
             if field_type.lower() == 'one2many':
@@ -746,9 +765,10 @@ class OdooModelVisitor(ast.NodeVisitor):
                             selection_list.append((elt.elts[0].value, elt.elts[1].value))
             if selection_list: field_data['selection'] = selection_list
             
-        self.model_info['fields'][field_name] = field_data
+        self.current_model_info['fields'][field_name] = field_data
 
     def visit_FunctionDef(self, node):
+        if self.current_model_info is None: return
         method_name = node.name
         
         is_instance_method = len(node.args.args) > 0 and node.args.args[0].arg == 'self'
@@ -762,9 +782,11 @@ class OdooModelVisitor(ast.NodeVisitor):
             except: source_code = f"# Could not retrieve source code for {method_name}"
         
         method_data = {'params': params, 'source': inspect.cleandoc(source_code or ""), 'is_instance_method': is_instance_method}
-        if return_type_str: method_data['return_type'] = return_type_str
+        if return_type_str:
+            method_data['return_type'] = return_type_str
         
-        self.model_info['methods'][method_name] = method_data
+        method_data['source_file'] = self.source_filename
+        self.current_model_info['methods'][method_name] = method_data
 #</editor-fold>
 
 # --- HÀM CHÍNH ĐIỀU PHỐI ---
@@ -821,12 +843,14 @@ def main(args):
                         continue
                     try:
                         source_code = model_file.read_text(encoding='utf-8')
-                        visitor = OdooModelVisitor(source_code)
+                        visitor = OdooModelVisitor(source_code, str(model_file))
                         visitor.visit(ast.parse(source_code))
-                        info = visitor.model_info
-                        
-                        if info.get('is_abstract') and info.get('name'):
-                            auto_detected_mixins.add(info['name'])
+                        for info in visitor.found_models:
+                            # Logic nhận diện mixin mới
+                            model_odoo_name = info.get('name')
+                            if model_odoo_name:
+                                if info.get('is_abstract') or model_odoo_name.endswith('.mixin'):
+                                    auto_detected_mixins.add(model_odoo_name)
 
                         target_model_names = [m for m in info.get('inherits', [])]
                         base_module_info = {}
@@ -856,8 +880,11 @@ def main(args):
                         logging.error(f"Error processing file {model_file.name}: {e}")
     
     final_exclude_set = auto_detected_mixins.union(manual_excluded_models)
-    logging.info(f"Final mixin/exclusion list (auto + manual): {final_exclude_set}")
-    
+    sorted_exclude_list = sorted(final_exclude_set)
+    logging.info(f"Final mixin/exclusion list (auto + manual): {sorted_exclude_list}")
+    master_model_list = sorted(master_models)
+    logging.info(f"Final model list: {master_model_list}")
+
     all_csharp_model_names = {to_pascal_case(model_name) for model_name in master_models.keys()}
     all_csharp_module_names = {to_pascal_case(module_name) for module_name in all_module_names}
     
@@ -1041,7 +1068,7 @@ if __name__ == '__main__':
     #                    help="Manually specify a list of models to exclude.\n"
     #                         "Note: AbstractModels are already detected automatically.")
     
-    parser.add_argument('--exclude-models', nargs='*', default=['format.address.mixin', 'mail.activity.mixin', 'portal.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin', 'transifex.code.translation', 'test.translation.import.model1', 'ir.qweb.field.contact', 'publisher_warranty.contract', 'ir.actions.report'],
+    parser.add_argument('--exclude-models', nargs='*', default=['format.address.mixin', 'mail.activity.mixin', 'portal.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin', 'transifex.code.translation', 'test.translation.import.model1', 'purchase.bill.line.match', 'publisher_warranty.contract', 'ir.qweb.field.contact', 'ir.actions.actions', 'ir.actions.report'],
                         help="Manually specify a list of models to exclude.\n"
                              "Note: AbstractModels are already detected automatically.")
     
