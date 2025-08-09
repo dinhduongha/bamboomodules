@@ -836,7 +836,7 @@ class OdooModelVisitor(ast.NodeVisitor):
         current_class_info = {
             'name': None, 'inherits': [], 'fields': {}, 'methods': {}, 
             'is_transient': False, 'is_abstract': False, 'base_classes': [], 
-            'delegated_inherits': [], 'table_name': None
+            'delegated_inherits': [], 'table_name': None, 'is_auto': True
         }
 
         for base in node.bases:
@@ -854,6 +854,8 @@ class OdooModelVisitor(ast.NodeVisitor):
                             current_class_info['name'] = item.value.value
                         elif target.id == '_table' and isinstance(item.value, ast.Constant):
                             current_class_info['table_name'] = item.value.value
+                        elif target.id == '_auto' and isinstance(item.value, ast.Constant):
+                            current_class_info['is_auto'] = item.value.value
                         elif target.id == '_inherit':
                             if isinstance(item.value, ast.Constant):
                                 current_class_info['inherits'].append(item.value.value)
@@ -981,20 +983,28 @@ def _resolve_base_modules(master_models, module_infos, all_parsed_files, all_mod
     # Bước 2: Xây dựng cây phụ thuộc bắc cầu
     transitive_deps = {}
     def get_transitive_dependencies(module, seen=None):
+        # `seen` dùng để chống lặp vô hạn trong trường hợp có dependency vòng tròn
         if seen is None: seen = set()
         if module in seen: return set()
         seen.add(module)
-        if module in transitive_deps: return transitive_deps[module]
         
+        # Dùng cache để tăng tốc
+        if module in transitive_deps:
+            return transitive_deps[module]
+
+        # Lấy các phụ thuộc trực tiếp
         direct_deps = set(module_infos.get(module, {}).get('depends', []))
         all_deps = set(direct_deps)
+
+        # Đệ quy để lấy phụ thuộc của các phụ thuộc
         for dep in direct_deps:
-            all_deps.update(get_transitive_dependencies(dep, seen))
+            next_deps = get_transitive_dependencies(dep, seen.copy())
+            all_deps.update(next_deps)
         
         transitive_deps[module] = all_deps
         return all_deps
 
-    for module in all_module_names:
+    for module in sorted(all_module_names):
         get_transitive_dependencies(module)
 
     # Bước 3: Quyết định module gốc dựa trên cây phụ thuộc
@@ -1025,14 +1035,14 @@ def _resolve_base_modules(master_models, module_infos, all_parsed_files, all_mod
                 # THÊM MỚI: Log thông tin chi tiết nếu cờ được bật
                 if is_logging:
                     deps_of_b = transitive_deps.get(cand_b, set())
-                    logging.info(f"  Checking if '{cand_a}' is root against '{cand_b}':")
-                    logging.info(f"    cand_a = '{cand_a}'")
-                    logging.info(f"    cand_b = '{cand_b}'")
-                    logging.info(f"    transitive_deps của cand_b: {deps_of_b}")
-                    print(f"  Checking if '{cand_a}' is root against '{cand_b}':")
-                    print(f"    cand_a = '{cand_a}'")
-                    print(f"    cand_b = '{cand_b}'")
-                    print(f"    transitive_deps của cand_b: {deps_of_b}")
+                    # logging.info(f"  Checking if '{cand_a}' is root against '{cand_b}':")
+                    # logging.info(f"    cand_a = '{cand_a}'")
+                    # logging.info(f"    cand_b = '{cand_b}'")
+                    # logging.info(f"    transitive_deps của cand_b: {deps_of_b}")
+                    # print(f"  Checking if '{cand_a}' is root against '{cand_b}':")
+                    # print(f"    cand_a = '{cand_a}'")
+                    # print(f"    cand_b = '{cand_b}'")
+                    # print(f"    transitive_deps của cand_b: {deps_of_b}")
                 
                 if cand_a not in transitive_deps.get(cand_b, set()):
                     is_root = False
@@ -1080,7 +1090,12 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
         logging.info(f"--- Recursively scanning directory: {current_path} ---")
         for manifest_path in sorted(current_path.glob('**/__manifest__.py')):
             module_dir, module_name = manifest_path.parent, manifest_path.parent.name
+            if module_name.startswith(('test_', 'test.')):
+                continue
             if module_name.endswith(('_test', '_tests')):
+                continue
+            if 'overwrite_' in str(manifest_path):
+                logging.info(f"  -> Skipping overwrite path: {manifest_path}")
                 continue
             
             all_module_names.add(module_name)
@@ -1137,6 +1152,8 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
                         master_models[target_model_name]['is_transient'] = info['is_transient']
                         if info.get('table_name'):
                              master_models[target_model_name]['table_name'] = info['table_name']
+                        if info.get('is_auto'):
+                             master_models[target_model_name]['is_auto'] = info['is_auto']
                     master_models[target_model_name]['fields'].update(info['fields'])
                     master_models[target_model_name]['delegated_inherits'].extend(info.get('delegated_inherits', []))
                     master_models[target_model_name]['source_modules'].add(module_name)
@@ -1405,9 +1422,6 @@ if __name__ == '__main__':
                              "- 'controller': Flat for HttpApi layer.\n"
                              "- 'all': Flat for all layers.\n"
                              "- 'none': No flattening, use module subdirectories for all.")
-
-    # parser.add_argument('--flat-namespace', nargs='+', default=['model'], choices=['all', 'none', 'model', 'service', 'controller'],
-    #                     help="Flatten C# namespace for specified layers.")
     
     parser.add_argument('--flat-namespace', nargs='+', default=['model'], choices=['all', 'none', 'model', 'service', 'controller'],
                         help="Flatten C# namespace for specified layers (e.g., ...Interfaces, ...Services).\n"
