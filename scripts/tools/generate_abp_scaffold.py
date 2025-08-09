@@ -62,7 +62,7 @@ def cleanup_empty_dirs(path):
     for dirpath, _, _ in os.walk(path, topdown=False):
         if not os.listdir(dirpath):
             try:
-                logging.info(f"  Cleaning up empty directory: {dirpath}")
+                #logging.info(f"  Cleaning up empty directory: {dirpath}")
                 os.rmdir(dirpath)
             except OSError as e:
                 logging.error(f"Error removing directory {dirpath}: {e}")
@@ -70,6 +70,7 @@ def cleanup_empty_dirs(path):
 def map_python_type_to_csharp(py_type_str, all_csharp_entity_names, param_name=""):
     if not py_type_str: return "object"
     if py_type_str == "TEntity": return "TEntity"
+    if py_type_str == "IEnumerable<TEntity>": return "IEnumerable<TEntity>"
     if param_name.endswith("_ids"): return "List<Guid>"
     if param_name.endswith("_id"): return "Guid"
     py_type_str = py_type_str.strip("'\"")
@@ -84,7 +85,7 @@ def map_python_type_to_csharp(py_type_str, all_csharp_entity_names, param_name="
     potential_entity_name = to_pascal_case(py_type_str)
     if potential_entity_name in all_csharp_entity_names:
         return potential_entity_name
-    logging.warning(f"Unrecognized type hint '{py_type_str}' for parameter '{param_name}'. Falling back to 'object'.")
+    #logging.warning(f"Unrecognized type hint '{py_type_str}' for parameter '{param_name}'. Falling back to 'object'.")
     return "object"
 
 # --- C# Content Generation Functions ---
@@ -130,7 +131,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
                     entity_namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_related_module}"
                     using_statements.add(f"using {entity_namespace};")
 
-    table_name = model_name.replace('.', '_')
+    table_name = model_data.get('table_name') or model_name.replace('.', '_')
     depends_str = f"Depends = new[] {{ {', '.join(f'\"{dep}\"' for dep in dependencies)} }}" if dependencies else ""
     is_transient = model_data.get('is_transient', False)
     attributes = [f'[Module("{module_name}"{(", " + depends_str) if depends_str else ""})]', f'[Model("{model_name}", IsTransient = {str(is_transient).lower()})]', f'[Table("{table_name}")]']
@@ -159,7 +160,39 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
     def generate_property_string(field_name, field_info, pascal_field_name):
         prop_content = ""
         field_type = field_info['type'].lower()
-        
+
+        if field_name.endswith('country_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'res.country'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.country'.")
+
+        if field_name.endswith('currency_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'res.currency'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.currency'.")
+
+        if field_name.endswith('company_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'res.company'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.company'.")
+
+        if field_name.endswith('user_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'res.users'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.users'.")
+
+        if field_name.endswith('bank_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'res.bank'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.bank'.")
+
+        if field_name.endswith('partner_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'res.partner'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.partner'.")
+
+        if field_name.endswith('uom_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'uom.uom'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'uom.uom'.")
+
+        if field_name.endswith('website_id') and 'related_model' not in field_info:
+            field_info['related_model'] = 'website'
+            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'website'.")
+
         if field_type in ['many2one', 'one2many', 'many2many'] and 'related_model' not in field_info:
             nav_prop_name = to_pascal_case(field_name.removesuffix('_id'))
             if field_type == 'many2one':
@@ -258,10 +291,11 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
     # =================================================================
     # THÊM ĐOẠN CODE GỠ LỖI NÀY VÀO ĐÂY
     # =================================================================
-    logging.info(f"--- Debugging property keys for model: {model_name} ---")
+    logging.info(f"--- Debugging property keys for model: {model_name}, table_name: {model_data.get('table_name') } ---")
     # Lấy tất cả các key, chuyển thành list, sắp xếp và in ra
     property_keys = sorted(list(properties_to_generate.keys()))
     print(f"Generated property keys for '{model_name}': {property_keys}")
+    logging.info(f"Generated property keys for '{model_name}': {property_keys}")
     logging.info(f"--- End debugging for model: {model_name} ---")
     # =================================================================
 
@@ -275,199 +309,6 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
         if prop_name in properties_to_generate:
             content += properties_to_generate.pop(prop_name)[0]
     content += "            //</editor-fold>\n"
-
-    if property_order == 'abc':
-        for prop_name, (prop_code, _) in sorted(properties_to_generate.items()):
-            content += prop_code
-    else: # type
-        sorted_props = sorted(properties_to_generate.items(), key=lambda item: (item[1][1], item[0]))
-        for _, (prop_code, _) in sorted_props:
-            content += prop_code
-    
-    content += "        }\n    }"
-    return format_csharp_code(content)
-
-def create_model_entity_content1(project_name, module_name, model_name, model_data, dependencies, flat_model_dir, implemented_interfaces, property_order, module_namespace_map):
-    pascal_model = to_pascal_case(model_name)
-    pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
-    
-    base_class = f"FullAuditedEntity<Guid>"
-    if any(f.get('type', '').lower() == 'one2many' for f in model_data.get('fields', {}).values()):
-        base_class = f"FullAuditedAggregateRoot<Guid>"
-
-    final_interfaces = []
-    if 'company_id' in model_data.get('fields', {}):
-        final_interfaces.append("IMultiTenant")
-    final_interfaces.extend(sorted(implemented_interfaces))
-
-    inverse_field_nav_map = {'create_uid': 'Creator', 'write_uid': 'LastModifier', 'company_id': 'Company'}
-    
-    using_statements = {
-        "using System;", "using System.Collections.Generic;", "using System.ComponentModel.DataAnnotations;",
-        "using System.ComponentModel.DataAnnotations.Schema;", "using Volo.Abp.Domain.Entities;",
-        f"using {project_name}.Domain.Shared.Attributes;", f"using {project_name}.Domain.Shared.Interfaces;"
-    }
-    if "Audited" in base_class: using_statements.add("using Volo.Abp.Domain.Entities.Auditing;")
-    if "IMultiTenant" in final_interfaces: using_statements.add("using Volo.Abp.MultiTenancy;")
-    if final_interfaces: using_statements.add(f"using {project_name}.MixinData;")
-    
-    for field_info in model_data.get('fields', {}).values():
-        if 'related_model' in field_info:
-            related_model_name = field_info['related_model']
-            if related_model_name in master_models:
-                related_model_base_module = master_models[related_model_name].get('base_module')
-                if related_model_base_module:
-                    pascal_related_module = module_namespace_map.get(related_model_base_module, to_pascal_case(related_model_base_module))
-                    entity_namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_related_module}"
-                    using_statements.add(f"using {entity_namespace};")
-
-    table_name = model_name.replace('.', '_')
-    depends_str = f"Depends = new[] {{ {', '.join(f'\"{dep}\"' for dep in dependencies)} }}" if dependencies else ""
-    is_transient = model_data.get('is_transient', False)
-    attributes = [f'[Module("{module_name}"{(", " + depends_str) if depends_str else ""})]', f'[Model("{model_name}", IsTransient = {str(is_transient).lower()})]', f'[Table("{table_name}")]']
-    namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_module}"
-    inheritance = f": {base_class}{', ' + ', '.join(final_interfaces) if final_interfaces else ''}"
-    
-    content = f"""
-    {'\n'.join(sorted(list(using_statements)))}
-    namespace {namespace}
-    {{
-        {'\n        '.join(attributes)}
-        public partial class {pascal_model} {inheritance}
-        {{
-    """
-    
-    properties_to_generate = {}
-
-    def get_property_sort_group(field_info):
-        field_type = field_info['type'].lower()
-        if field_type in ODOO_TO_CSHARP_TYPE: return 10
-        if field_type == 'many2one': return 20
-        if field_type == 'one2many': return 30
-        if field_type == 'many2many': return 40
-        return 99
-
-    def generate_property_string(field_name, field_info, pascal_field_name):
-        prop_content = ""
-        field_type = field_info['type'].lower()
-        
-        # SỬA LỖI: Áp dụng quy tắc cho country_id
-        if field_name.endswith('country_id') and 'related_model' not in field_info:
-            field_info['related_model'] = 'res.country'
-            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.country'.")
-        if field_name.endswith('currency_id') and 'related_model' not in field_info:
-            field_info['related_model'] = 'res.currency'
-            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.currency'.")
-        if field_name.endswith('bank_id') and 'related_model' not in field_info:
-            field_info['related_model'] = 'res.bank'
-            logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'res.bank'.")
-
-        if field_type in ['many2one', 'one2many', 'many2many'] and 'related_model' not in field_info:
-            nav_prop_name = to_pascal_case(field_name.removesuffix('_id'))
-            if field_type == 'many2one':
-                return f"""
-                // TODO: Odoo C# Code Generator could not resolve the related model for '{field_name}' ({field_type}).
-                // Please complete the following navigation property manually.
-                [Column("{field_name}")]
-                public Guid? {pascal_field_name} {{ get; set; }}
-                /*
-                [Many2one(RelatedModel = "your.model.name")]
-                [ForeignKey(nameof({pascal_field_name}))]
-                public virtual YourRelatedModel? {nav_prop_name} {{ get; set; }}
-                */
-                """
-            else: # one2many, many2many
-                 return f"""
-                // TODO: Odoo C# Code Generator could not resolve the related model for '{field_name}' ({field_type}).
-                // Please uncomment and complete the following collection navigation property manually.
-                /*
-                [{(field_type.capitalize())}(RelatedModel = "your.model.name")]
-                public virtual ICollection<YourRelatedModel>? {pascal_field_name} {{ get; set; }}
-                */
-                """
-
-        if field_type in ODOO_TO_CSHARP_TYPE:
-            csharp_type = ODOO_TO_CSHARP_TYPE[field_type]
-            is_required = field_info.get('is_required', False)
-            if not is_required and '?' not in csharp_type: csharp_type += '?'
-            attr_lines = ['[Required]' if is_required else '']
-            if field_info.get('is_translatable'):
-                attr_lines.extend(['[JsonField]', f'[Column("{field_name}", TypeName = "jsonb")]'])
-            else:
-                attr_lines.append(f'[Column("{field_name}")]')
-            prop_content = f'{"\n            ".join(filter(None, attr_lines))}\n            public {csharp_type} {pascal_field_name} {{ get; set; }}\n'
-        elif field_type == 'many2one':
-            nav_property_name = to_pascal_case(field_name.removesuffix('_id'))
-            related_model_pascal = to_pascal_case(field_info['related_model'])
-            prop_content = f"""
-            [Column("{field_name}")] public Guid? {pascal_field_name} {{ get; set; }}
-            [Many2one(RelatedModel = "{field_info['related_model']}")]
-            [ForeignKey(nameof({pascal_field_name}))]
-            public virtual {related_model_pascal}? {nav_property_name} {{ get; set; }}
-            """
-        elif field_type == 'one2many':
-            inverse_field = field_info.get('inverse_field', '')
-            csharp_inverse_field = inverse_field_nav_map.get(inverse_field, to_pascal_case(inverse_field))
-            related_model_pascal = to_pascal_case(field_info['related_model'])
-            prop_content = f"""
-            [One2many(RelatedModel = "{field_info['related_model']}", InverseField = "{csharp_inverse_field}")]
-            public virtual ICollection<{related_model_pascal}>? {pascal_field_name} {{ get; set; }}
-            """
-        elif field_type == 'many2many':
-            related_model_pascal = to_pascal_case(field_info['related_model'])
-            prop_content = f"""
-            [Many2many(RelatedModel = "{field_info['related_model']}")]
-            public virtual ICollection<{related_model_pascal}>? {pascal_field_name} {{ get; set; }}
-            """
-        return prop_content.strip()
-    
-    for field_name, field_info in model_data['fields'].items():
-        if field_info.get('type') == 'Computed': continue
-        
-        prop_code, prop_name = "", ""
-        sort_group = get_property_sort_group(field_info)
-        
-        if field_name == 'id': continue # Xử lý riêng
-        elif field_name == 'create_date':
-            properties_to_generate['CreationTime'] = ('\n            [Column("create_date")]\n            public override DateTime CreationTime { get => base.CreationTime; protected set => base.CreationTime = value; }\n', 2)
-        elif field_name == 'create_uid':
-            res_users_pascal = to_pascal_case("res.users")
-            properties_to_generate['CreatorId'] = ('\n            [Column("create_uid")]\n            public override Guid? CreatorId { get => base.CreatorId; protected set => base.CreatorId = value; }\n', 2)
-            properties_to_generate['Creator'] = (f'\n            [ForeignKey(nameof(CreatorId))]\n            public virtual {res_users_pascal}? Creator {{ get; protected set; }}\n', 21)
-        elif field_name == 'write_date':
-            properties_to_generate['LastModificationTime'] = ('\n            [Column("write_date")]\n            public override DateTime? LastModificationTime { get => base.LastModificationTime; protected set => base.LastModificationTime = value; }\n', 2)
-        elif field_name == 'write_uid':
-            res_users_pascal = to_pascal_case("res.users")
-            properties_to_generate['LastModifierId'] = ('\n            [Column("write_uid")]\n            public override Guid? LastModifierId { get => base.LastModifierId; protected set => base.LastModifierId = value; }\n', 2)
-            properties_to_generate['LastModifier'] = (f'\n            [ForeignKey(nameof(LastModifierId))]\n            public virtual {res_users_pascal}? LastModifier {{ get; protected set; }}\n', 21)
-        elif field_name == 'company_id':
-            if 'related_model' in field_info:
-                nav_prop_name = to_pascal_case('company')
-                related_model_pascal = to_pascal_case(field_info['related_model'])
-                prop_code = f'[ForeignKey(nameof(TenantId))]\n            public virtual {related_model_pascal}? {nav_prop_name} {{ get; set; }}'
-                properties_to_generate[nav_prop_name] = (f'\n            {prop_code}\n', 21)
-        else:
-            prop_name = to_pascal_case(field_name)
-            if field_info['type'].lower() in ['one2many', 'many2many'] and field_name.endswith('_ids'):
-                prop_name = to_pascal_case(field_name[:-4]) + 's'
-            
-            prop_code = generate_property_string(field_name, field_info, prop_name)
-            if prop_code:
-                properties_to_generate[prop_name] = (f'\n            {prop_code}\n', sort_group)
-
-    # =================================================================
-    # THÊM ĐOẠN CODE GỠ LỖI NÀY VÀO ĐÂY
-    # =================================================================
-    logging.info(f"--- Debugging property keys for model: {model_name} ---")
-    # Lấy tất cả các key, chuyển thành list, sắp xếp và in ra
-    property_keys = sorted(list(properties_to_generate.keys()))
-    print(f"Generated property keys for '{model_name}': {property_keys}")
-    logging.info(f"--- End debugging for model: {model_name} ---")
-    # =================================================================
-
-    content += "\n            [Key]\n            public override Guid Id { get => base.Id; protected set => base.Id = value; }\n"
-    if has_company_id:
-        content += '\n            [Column("company_id")]\n            public virtual Guid? TenantId { get; protected set; }\n'
 
     if property_order == 'abc':
         for prop_name, (prop_code, _) in sorted(properties_to_generate.items()):
@@ -495,21 +336,39 @@ def create_enum_content(project_base_name, module_name, model_name, field_name, 
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_partial_model_content(project_base_name, module_name, model_name, computed_fields, all_methods_source, flat_model_ns, module_namespace_map):
+def create_partial_model_content(project_base_name, module_name, model_name, computed_fields, all_methods, flat_model_dir, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     
-    namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
     content = f"""
-    using System; using System.ComponentModel.DataAnnotations.Schema; using {project_base_name}.Domain.Shared.Attributes;
+    // Auto-generated by Odoo C# Code Generator
+    using System;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using {project_base_name}.Domain.Shared.Attributes;
+
     namespace {namespace}
     {{
         public partial class {pascal_model}
         {{
     """
+    
     for field_name, compute_method_name in sorted(computed_fields.items()):
         pascal_field = to_pascal_case(field_name)
-        compute_source = all_methods_source.get(compute_method_name, f"# Source for '{compute_method_name}' not found.")
+        
+        # Lấy thông tin chi tiết của phương thức compute
+        compute_implementations = all_methods.get(compute_method_name, [])
+        if compute_implementations:
+            last_impl = compute_implementations[-1]
+            compute_source = last_impl.get('source', f"# Source for '{compute_method_name}' not found.")
+            source_module = last_impl.get('module', 'N/A')
+            full_path = last_impl.get('source_file')
+            source_file_info = Path(full_path).name if full_path else 'N/A'
+            comment_header = f"--- ODOO COMPUTE METHOD SOURCE (MODULE: {source_module}, FILE: {source_file_info}) ---"
+        else:
+            compute_source = f"# Source for '{compute_method_name}' not found."
+            comment_header = "--- ODOO COMPUTE METHOD SOURCE ---"
+
         content += f"""
             [NotMapped]
             public object {pascal_field} 
@@ -517,7 +376,7 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
                 get
                 {{
                     /*
-                    --- ODOO COMPUTE METHOD SOURCE ---
+                    {comment_header}
 {compute_source}
                     */
                     return default;
@@ -977,7 +836,7 @@ class OdooModelVisitor(ast.NodeVisitor):
         current_class_info = {
             'name': None, 'inherits': [], 'fields': {}, 'methods': {}, 
             'is_transient': False, 'is_abstract': False, 'base_classes': [], 
-            'delegated_inherits': []
+            'delegated_inherits': [], 'table_name': None
         }
 
         for base in node.bases:
@@ -993,6 +852,8 @@ class OdooModelVisitor(ast.NodeVisitor):
                     if isinstance(target, ast.Name):
                         if target.id == '_name' and isinstance(item.value, ast.Constant):
                             current_class_info['name'] = item.value.value
+                        elif target.id == '_table' and isinstance(item.value, ast.Constant):
+                            current_class_info['table_name'] = item.value.value
                         elif target.id == '_inherit':
                             if isinstance(item.value, ast.Constant):
                                 current_class_info['inherits'].append(item.value.value)
@@ -1049,7 +910,7 @@ class OdooModelVisitor(ast.NodeVisitor):
                     if kw.arg == 'comodel_name' and isinstance(kw.value, ast.Constant):
                         related_model = kw.value.value
                         break
-            # Chỉ lưu tên thô, không phân giải ở đây
+            
             if related_model:
                 field_data['related_model'] = related_model
             
@@ -1104,6 +965,101 @@ class OdooModelVisitor(ast.NodeVisitor):
         
         context['methods'][method_name] = method_data
 #</editor-fold>
+
+def _resolve_base_modules(master_models, module_infos, all_parsed_files, all_module_names):
+    logging.info("Resolving base modules for all models...")
+    
+    # Bước 1: Thu thập các module ứng viên cho mỗi model
+    base_module_candidates = {}
+    for parsed_file in all_parsed_files:
+        module_name = parsed_file['module_name']
+        for info in parsed_file['models']:
+            defined_model_name = info.get('name')
+            if defined_model_name:
+                base_module_candidates.setdefault(defined_model_name, []).append(module_name)
+
+    # Bước 2: Xây dựng cây phụ thuộc bắc cầu
+    transitive_deps = {}
+    def get_transitive_dependencies(module, seen=None):
+        if seen is None: seen = set()
+        if module in seen: return set()
+        seen.add(module)
+        if module in transitive_deps: return transitive_deps[module]
+        
+        direct_deps = set(module_infos.get(module, {}).get('depends', []))
+        all_deps = set(direct_deps)
+        for dep in direct_deps:
+            all_deps.update(get_transitive_dependencies(dep, seen))
+        
+        transitive_deps[module] = all_deps
+        return all_deps
+
+    for module in all_module_names:
+        get_transitive_dependencies(module)
+
+    # Bước 3: Quyết định module gốc dựa trên cây phụ thuộc
+    base_module_map = {}
+    for model_name, candidates in base_module_candidates.items():
+        # THÊM MỚI: Bật cờ logging nếu model là 'sale.order'
+        #is_logging = model_name == 'res.partner'
+        is_logging = True
+        
+        if is_logging:
+            logging.info(f"\n--- Start Debugging for model: {model_name} ---")
+            logging.info(f"Candidates: {sorted(candidates)}")
+            print(f"\n--- Start Debugging for model: {model_name} ---")
+            print(f"Candidates: {sorted(candidates)}")
+
+        is_logging = model_name == 'res.partner'
+
+        if len(candidates) == 1:
+            base_module_map[model_name] = candidates[0]
+            continue
+        
+        root_module = None
+        for cand_a in sorted(candidates): # Sắp xếp để đảm bảo thứ tự nhất quán
+            is_root = True
+            for cand_b in sorted(candidates):
+                if cand_a == cand_b: continue
+                
+                # THÊM MỚI: Log thông tin chi tiết nếu cờ được bật
+                if is_logging:
+                    deps_of_b = transitive_deps.get(cand_b, set())
+                    logging.info(f"  Checking if '{cand_a}' is root against '{cand_b}':")
+                    logging.info(f"    cand_a = '{cand_a}'")
+                    logging.info(f"    cand_b = '{cand_b}'")
+                    logging.info(f"    transitive_deps của cand_b: {deps_of_b}")
+                    print(f"  Checking if '{cand_a}' is root against '{cand_b}':")
+                    print(f"    cand_a = '{cand_a}'")
+                    print(f"    cand_b = '{cand_b}'")
+                    print(f"    transitive_deps của cand_b: {deps_of_b}")
+                
+                if cand_a not in transitive_deps.get(cand_b, set()):
+                    is_root = False
+                    if is_logging:
+                        logging.info(f"    -> RESULT: '{cand_a}' is NOT in deps of '{cand_b}'. '{cand_a}' cannot be the root. Breaking inner loop.")
+                        print(f"    -> RESULT: '{cand_a}' is NOT in deps of '{cand_b}'. '{cand_a}' cannot be the root. Breaking inner loop.")
+                    break
+                else:
+                    if is_logging:
+                        logging.info(f"    -> RESULT: '{cand_a}' IS in deps of '{cand_b}'. Check continues.")
+                        print(f"    -> RESULT: '{cand_a}' IS in deps of '{cand_b}'. Check continues.")
+
+            if is_root:
+                if is_logging:
+                    logging.info(f"  -> SUCCESS: '{cand_a}' is the root module for '{model_name}'. Breaking outer loop.")
+                    print(f"  -> SUCCESS: '{cand_a}' is the root module for '{model_name}'. Breaking outer loop.")                    
+                root_module = cand_a
+                break
+        
+        base_module_map[model_name] = root_module if root_module else sorted(candidates)[0]
+
+    # Bước 4: Áp dụng vào master_models
+    for model_name, data in master_models.items():
+        if model_name in base_module_map:
+            data['base_module'] = base_module_map[model_name]
+
+    return master_models
 
 def analyze_odoo_sources(source_dirs, manual_excluded_models):
     global master_models
@@ -1179,6 +1135,8 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
                 if target_model_name in master_models:
                     if target_model_name == info.get('name'):
                         master_models[target_model_name]['is_transient'] = info['is_transient']
+                        if info.get('table_name'):
+                             master_models[target_model_name]['table_name'] = info['table_name']
                     master_models[target_model_name]['fields'].update(info['fields'])
                     master_models[target_model_name]['delegated_inherits'].extend(info.get('delegated_inherits', []))
                     master_models[target_model_name]['source_modules'].add(module_name)
@@ -1197,7 +1155,7 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
                 auto_detected_mixins.add(model_odoo_name)
     final_exclude_set = auto_detected_mixins.union(manual_excluded_models)
 
-    models_to_remove = {name for name in master_models if name.startswith('test_')}
+    models_to_remove = {name for name in master_models if (name.startswith('test_') or name.startswith('test.') or name.endswith('.test') or '.test.' in name)}
     for model_name in models_to_remove:
         del master_models[model_name]
         logging.info(f"  -> Skipping test model: {model_name}")
@@ -1233,50 +1191,7 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
             resolve_inheritance(model_name)
         
     # BƯỚC 5: Xác định module gốc
-    base_module_candidates = {}
-    for parsed_file in all_parsed_files:
-        module_name = parsed_file['module_name']
-        for info in parsed_file['models']:
-            defined_model_name = info.get('name')
-            if defined_model_name:
-                base_module_candidates.setdefault(defined_model_name, []).append(module_name)
-    
-    transitive_deps = {}
-    def get_transitive_dependencies(module, seen=None):
-        if seen is None: seen = set()
-        if module in seen: return set()
-        seen.add(module)
-        if module in transitive_deps: return transitive_deps[module]
-        direct_deps = set(module_infos.get(module, {}).get('depends', []))
-        all_deps = set(direct_deps)
-        for dep in direct_deps:
-            all_deps.update(get_transitive_dependencies(dep, seen))
-        transitive_deps[module] = all_deps
-        return all_deps
-
-    for module in all_module_names:
-        get_transitive_dependencies(module)
-
-    base_module_map = {}
-    for model_name, candidates in base_module_candidates.items():
-        if len(candidates) == 1:
-            base_module_map[model_name] = candidates[0]
-            continue
-        
-        root_module = None
-        for cand_a in candidates:
-            is_root = True
-            for cand_b in candidates:
-                if cand_a == cand_b: continue
-                if cand_a in transitive_deps.get(cand_b, set()):
-                    is_root = False; break
-            if is_root:
-                root_module = cand_a; break
-        base_module_map[model_name] = root_module if root_module else sorted(candidates)[0]
-    
-    for model_name, data in master_models.items():
-        if model_name in base_module_map:
-            data['base_module'] = base_module_map[model_name]
+    master_models = _resolve_base_modules(master_models, module_infos, all_parsed_files, all_module_names)
 
     return {
         "master_models": master_models,
@@ -1396,7 +1311,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                 computed_fields[field_name] = field_data.get('compute')
         
         if computed_fields:
-            (entity_dir / f"{pascal_model}.Partials.cs").write_text(create_partial_model_content(project_base_name, base_module, model_name, computed_fields, data.get('all_methods', {}), flat_model_ns, module_namespace_map), encoding='utf-8')
+            (entity_dir / f"{pascal_model}.Partials.cs").write_text(create_partial_model_content(project_base_name, base_module, model_name, computed_fields, data.get('all_methods', {}), flat_model_ns, module_namespace_map), encoding='utf-8')        
         
         all_methods = data.get('all_methods', {})
         public_methods = {k: v for k, v in all_methods.items() if not k.startswith('_')}
@@ -1442,306 +1357,6 @@ def main(args):
     
     # Phần 2: Tạo các content
     generate_csharp_files(args, **analysis_result)
-
-def main1(args):
-    global master_models
-    master_models = {}
-    auto_detected_mixins = set()
-    manual_excluded_models = set(args.exclude_models or [])
-    output_path, project_base_name = Path(args.output_dir), args.project_name
-    
-    flat_structure_args = args.flat_structure if args.flat_structure is not None else []
-    if 'all' in flat_structure_args:
-        flat_model_dir, flat_service_dir, flat_controller_dir = True, True, True
-    elif 'none' in flat_structure_args:
-        flat_model_dir, flat_service_dir, flat_controller_dir = False, False, False
-    else:
-        flat_model_dir = 'model' in flat_structure_args
-        flat_service_dir = 'service' in flat_structure_args
-        flat_controller_dir = 'controller' in flat_structure_args
-        
-    flat_namespace_args = args.flat_namespace if args.flat_namespace is not None else []
-    if 'all' in flat_namespace_args:
-        flat_model_ns, flat_service_ns, flat_controller_ns = True, True, True
-    elif 'none' in flat_namespace_args:
-        flat_model_ns, flat_service_ns, flat_controller_ns = False, False, False
-    else:
-        flat_model_ns = 'model' in flat_namespace_args
-        flat_service_ns = 'service' in flat_namespace_args
-        flat_controller_ns = 'controller' in flat_namespace_args
-
-    logging.info("Phase 1: Analyzing Odoo source directories...")
-    module_infos = {}
-    all_module_names = set()
-    all_parsed_files = []
-
-    # BƯỚC 1: Quét và thu thập tất cả dữ liệu thô
-    for path_str in args.source_dirs:
-        current_path = Path(path_str)
-        if not current_path.is_dir():
-            logging.warning(f"Skipping invalid source: {current_path}")
-            continue
-        
-        logging.info(f"--- Recursively scanning directory: {current_path} ---")
-        for manifest_path in sorted(current_path.glob('**/__manifest__.py')):
-            module_dir, module_name = manifest_path.parent, manifest_path.parent.name
-            if module_name.endswith(('_test', '_tests')):
-                continue
-            
-            all_module_names.add(module_name)
-            try:
-                manifest_data = ast.literal_eval(manifest_path.read_text(encoding='utf-8'))
-                module_infos[module_name] = {
-                    'depends': manifest_data.get('depends', []),
-                    'category': manifest_data.get('category', '')
-                }
-            except Exception as e:
-                logging.warning(f"Could not read manifest for {module_name}: {e}")
-                module_infos[module_name] = {'depends': [], 'category': ''}
-
-            logging.info(f"  Processing module: {module_name}")
-            models_path = module_dir / 'models'
-            if models_path.is_dir():
-                for model_file in sorted(models_path.glob('**/*.py')):
-                    if model_file.name == '__init__.py':
-                        continue
-                    try:
-                        source_code = model_file.read_text(encoding='utf-8')
-                        visitor = OdooModelVisitor(source_code, str(model_file))
-                        visitor.visit(ast.parse(source_code))
-                        if visitor.found_models:
-                            all_parsed_files.append({'module_name': module_name, 'models': visitor.found_models})
-                    except Exception as e:
-                        logging.error(f"Error parsing file {model_file.name}: {e}")
-
-    # BƯỚC 2: Tổng hợp dữ liệu ban đầu
-    for parsed_file in all_parsed_files:
-        module_name = parsed_file['module_name']
-        for info in parsed_file['models']:
-            model_odoo_name = info.get('name')
-            target_model_names = set(info.get('inherits', []))
-            if model_odoo_name:
-                target_model_names.add(model_odoo_name)
-
-            for target_model_name in target_model_names:
-                if target_model_name not in master_models:
-                    master_models[target_model_name] = {'fields': {}, 'methods': {}, 'source_modules': set(), 'base_classes': set(), 'delegated_inherits': []}
-                
-                master_models[target_model_name]['fields'].update(info['fields'])
-                master_models[target_model_name]['delegated_inherits'].extend(info.get('delegated_inherits', []))
-                master_models[target_model_name]['source_modules'].add(module_name)
-                master_models[target_model_name]['base_classes'].update(info.get('base_classes', []))
-                
-                for method_name, method_data in info['methods'].items():
-                    master_models[target_model_name].setdefault('all_methods', {}).setdefault(method_name, []).append(method_data)
-
-    # Thêm model gốc và các mixin vào master_models để đệ quy
-    master_models['models.Model'] = {'fields': COMMON_ODOO_FIELDS.copy(), 'methods': {}, 'base_classes': set()}
-    for parsed_file in all_parsed_files:
-        for info in parsed_file['models']:
-            if info.get('is_abstract'):
-                model_name = info.get('name')
-                if model_name not in master_models:
-                     master_models[model_name] = {'fields': {}, 'methods': {}, 'source_modules': set(), 'base_classes': set(), 'delegated_inherits': []}
-
-    # BƯỚC 3: Phân giải kế thừa đệ quy
-    resolved_models = set()
-    def resolve_inheritance(model_name):
-        if model_name in resolved_models or model_name not in master_models:
-            return
-
-        data = master_models[model_name]
-        parents_to_resolve = data.get('base_classes', set()).union(data.get('inherited_mixins', set()))
-        
-        for parent_name in parents_to_resolve:
-            resolve_inheritance(parent_name) # Đệ quy
-            
-            parent_data = master_models.get(parent_name, {})
-            merged_fields = parent_data.get('fields', {}).copy()
-            merged_fields.update(data.get('fields', {}))
-            data['fields'] = merged_fields
-            
-            merged_methods = parent_data.get('all_methods', {}).copy()
-            merged_methods.update(data.get('all_methods', {}))
-            data['all_methods'] = merged_methods
-
-        resolved_models.add(model_name)
-
-    for model_name in list(master_models.keys()):
-        resolve_inheritance(model_name)
-
-    # BƯỚC 5: Xác định module gốc chính xác
-    base_module_candidates = {}
-    for parsed_file in all_parsed_files:
-        module_name = parsed_file['module_name']
-        for info in parsed_file['models']:
-            defined_model_name = info.get('name')
-            if defined_model_name:
-                base_module_candidates.setdefault(defined_model_name, []).append(module_name)
-    
-    transitive_deps = {}
-    def get_transitive_dependencies(module, seen=None):
-        if seen is None: seen = set()
-        if module in seen: return set()
-        seen.add(module)
-        if module in transitive_deps: return transitive_deps[module]
-        direct_deps = set(module_infos.get(module, {}).get('depends', []))
-        all_deps = set(direct_deps)
-        for dep in direct_deps:
-            all_deps.update(get_transitive_dependencies(dep, seen))
-        transitive_deps[module] = all_deps
-        return all_deps
-
-    for module in all_module_names:
-        get_transitive_dependencies(module)
-
-    base_module_map = {}
-    for model_name, candidates in base_module_candidates.items():
-        if len(candidates) == 1:
-            base_module_map[model_name] = candidates[0]
-            continue
-        
-        root_module = None
-        for cand_a in candidates:
-            is_root = True
-            for cand_b in candidates:
-                if cand_a == cand_b: continue
-                if cand_a in transitive_deps.get(cand_b, set()):
-                    is_root = False; break
-            if is_root:
-                root_module = cand_a; break
-        
-        base_module_map[model_name] = root_module if root_module else sorted(candidates)[0]
-    
-    for model_name, data in master_models.items():
-        if model_name in base_module_map:
-            data['base_module'] = base_module_map[model_name]
-
-    final_exclude_set = auto_detected_mixins.union(manual_excluded_models)
-    logging.info(f"Final mixin/exclusion list (auto + manual): {final_exclude_set}")
-    
-    all_csharp_model_names = {to_pascal_case(model_name) for model_name in master_models.keys()}
-    all_csharp_module_names = {to_pascal_case(module_name) for module_name in all_module_names}
-    
-    conflicting_names = all_csharp_model_names.intersection(all_csharp_module_names)
-    module_namespace_map = {}
-    for module_name in all_module_names:
-        pascal_module = to_pascal_case(module_name)
-        if pascal_module in conflicting_names:
-            module_namespace_map[module_name] = f"{pascal_module}Module"
-            logging.warning(f"Global name collision for '{module_name}'. Its namespace will be '{pascal_module}Module'.")
-        else:
-            module_namespace_map[module_name] = pascal_module
-            
-    all_csharp_entity_names = {to_pascal_case(model_name) for model_name in master_models.keys() if model_name not in final_exclude_set}
-    
-    logging.info("\nPhase 2: Generating C# source code for ABP Framework...")
-    
-    attr_dir = output_path / f"src/{project_base_name}.Domain.Shared/Attributes"
-    attr_dir.mkdir(parents=True, exist_ok=True)
-    attribute_definitions = {
-        "ModuleAttribute.cs": "[AttributeUsage(AttributeTargets.Class)] public class ModuleAttribute : Attribute { public string Name { get; } public string[] Depends { get; } public ModuleAttribute(string name, params string[] depends) { Name = name; Depends = depends; } }",
-        "ModelAttribute.cs": "[AttributeUsage(AttributeTargets.Class)] public class ModelAttribute : Attribute { public string Name { get; set; } public bool IsTransient { get; set; } public ModelAttribute(string name) { Name = name; } }",
-        "JsonFieldAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class JsonFieldAttribute : Attribute {}",
-        "Many2oneAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2oneAttribute : Attribute { public string RelatedModel { get; set; } }",
-        "One2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class One2manyAttribute : Attribute { public string RelatedModel { get; set; } public string InverseField { get; set; } }",
-        "Many2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2manyAttribute : Attribute { public string RelatedModel { get; set; } }",
-    }
-    for file_name, class_def in attribute_definitions.items():
-        (attr_dir / file_name).write_text(format_csharp_code(f"namespace {project_base_name}.Domain.Shared.Attributes; {class_def}"), encoding='utf-8')
-    
-    marker_interface_dir = output_path / f"src/{project_base_name}.Domain.Shared/Interfaces/Markers"
-    data_interface_dir = output_path / f"src/{project_base_name}.Domain/MixinData"
-    mixin_contracts_dir = output_path / f"src/{project_base_name}.Application.Contracts/Interfaces/Mixins"
-    mixin_service_dir = output_path / f"src/{project_base_name}.Application/Services/Mixins"
-    for d in [marker_interface_dir, data_interface_dir, mixin_contracts_dir, mixin_service_dir]:
-        d.mkdir(parents=True, exist_ok=True)
-    
-    (mixin_contracts_dir / "IMixinAppService.cs").write_text(format_csharp_code(f"using Volo.Abp.Application.Services;\nnamespace {project_base_name}.Application.Contracts.Interfaces.Mixins; public interface IMixinAppService : IApplicationService {{ }}"), encoding='utf-8')
-    
-    for model_name, data in master_models.items():
-        base_module = data.get('base_module', sorted(list(data['source_modules']))[0] if data['source_modules'] else "unknown")
-        dependencies = module_infos.get(base_module, {}).get('depends', [])
-        module_category = module_infos.get(base_module, {}).get('category', '')
-        pascal_model = to_pascal_case(model_name)
-        
-        if model_name in final_exclude_set:
-            logging.info(f"Generating dedicated service and interfaces for mixin model: '{model_name}'")
-            all_methods = data.get('all_methods', {})
-            (marker_interface_dir / f"I{pascal_model}able.cs").write_text(create_marker_interface_content(project_base_name, model_name), encoding='utf-8')
-            if data.get('fields'):
-                (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names, flat_model_dir, module_namespace_map), encoding='utf-8')
-            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, all_methods, flat_model_dir, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
-            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
-            continue
-
-        logging.info(f"Generating ABP structure for model '{model_name}' (base module: {base_module})")
-        
-        pascal_module_for_ns = module_namespace_map.get(base_module, to_pascal_case(base_module))
-
-        domain_path = output_path / f"src/{project_base_name}.Domain"
-        app_contracts_path = output_path / f"src/{project_base_name}.Application.Contracts"
-        app_path = output_path / f"src/{project_base_name}.Application"
-        http_api_path = output_path / f"src/{project_base_name}.HttpApi"
-        
-        entity_dir = (domain_path / 'Models') if flat_model_dir else (domain_path / 'Entities' / pascal_module_for_ns)
-        enum_dir = (domain_path / 'Models' / 'Enums') if flat_model_dir else (domain_path / 'Enums' / pascal_module_for_ns)
-        interface_dir = (app_contracts_path / 'Interfaces') if flat_service_dir else (app_contracts_path / 'Interfaces' / pascal_module_for_ns)
-        service_dir = (app_path / 'Services') if flat_service_dir else (app_path / 'Services' / pascal_module_for_ns)
-        controller_dir = (http_api_path / 'Controllers') if flat_controller_dir else (http_api_path / 'Controllers' / pascal_module_for_ns)
-        
-        for d in [enum_dir, entity_dir, interface_dir, service_dir, controller_dir]:
-            d.mkdir(parents=True, exist_ok=True)
-        
-        implemented_interfaces = [f"I{to_pascal_case(mixin)}able" for mixin in data.get('inherited_mixins', set()) if mixin in final_exclude_set]
-        (entity_dir / f"{pascal_model}.cs").write_text(create_model_entity_content(project_base_name, base_module, model_name, data, dependencies, flat_model_dir, implemented_interfaces, args.entity_property_order, module_namespace_map), encoding='utf-8')
-        
-        computed_fields = {}
-        for field_name, field_data in data['fields'].items():
-            if field_data.get('type', '').lower() == 'selection' and 'selection' in field_data:
-                enum_filename = f"{to_pascal_case(model_name.split('.')[-1])}{to_pascal_case(field_name)}Enum.cs"
-                (enum_dir / enum_filename).write_text(create_enum_content(project_base_name, base_module, model_name, field_name, field_data['selection'], flat_model_ns, module_namespace_map), encoding='utf-8')
-            elif field_data.get('type') == 'Computed':
-                computed_fields[field_name] = field_data.get('compute')
-        
-        if computed_fields:
-            (entity_dir / f"{pascal_model}.Partials.cs").write_text(create_partial_model_content(project_base_name, base_module, model_name, computed_fields, data.get('all_methods_source', {}), flat_model_ns, module_namespace_map), encoding='utf-8')
-        
-        all_methods = data.get('all_methods', {})
-        public_methods = {k: v for k, v in all_methods.items() if not k.startswith('_')}
-        
-        has_specific_logic = False
-        if public_methods:
-            for method_name, implementations in public_methods.items():
-                is_common = method_name.lower() in ODOO_COMMON_API_METHODS
-                is_override = len(implementations) > 1 or (len(implementations) == 1 and implementations[0]['module'] != data.get('base_module'))
-                if not is_common or is_override:
-                    has_specific_logic = True
-                    break
-        
-        should_generate_service = (args.generate_services == 'all') or (args.generate_services == 'specific' and has_specific_logic)
-        should_generate_controller = False
-        if args.generate_controllers == 'all':
-            should_generate_controller = True
-        elif args.generate_controllers == 'specific' and has_specific_logic:
-            should_generate_controller = True
-        
-        if should_generate_service:
-            logging.info(f"  -> Generating AppService for '{model_name}'.")
-            (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module_for_ns, model_name, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map), encoding='utf-8')
-            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
-        
-        if should_generate_controller:
-            logging.info(f"  -> Generating Controller for '{model_name}'.")
-            main_controller, partial_controller = create_controller_content(project_base_name, pascal_module_for_ns, module_category, model_name, public_methods, flat_model_ns, flat_service_ns, flat_controller_ns, args.add_common_actions, all_csharp_entity_names, args.group_by_category, module_namespace_map)
-            (controller_dir / f"{pascal_model}Controller.cs").write_text(main_controller, encoding='utf-8')
-            if partial_controller:
-                (controller_dir / f"{pascal_model}Controller.Partials.cs").write_text(partial_controller, encoding='utf-8')
-            
-    logging.info("\nPhase 3: Cleaning up empty directories...")
-    cleanup_empty_dirs(output_path)
-    
-    logging.info("\nGeneration complete!")
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
