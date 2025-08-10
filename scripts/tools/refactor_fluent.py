@@ -127,21 +127,55 @@ def handle_split_fluent(args):
 # CHỨC NĂNG 2: CONVERT ENTITIES SANG ABP FRAMEWORK
 # ==============================================================================
 
+# ==============================================================================
+# DANH SÁCH TÙY CHỈNH
+# ==============================================================================
+# THÊM TÊN CÁC LỚP (CLASS) BẠN MUỐN COI LÀ "BẢNG HỆ THỐNG" VÀO ĐÂY
+# Ví dụ: ["MyCustomSystemTable", "AnotherSpecialOne"]
+MANUAL_SYSTEM_ENTITIES = [
+    # "TenLop1", 
+    # "TenLop2"
+]
+
 def process_entity_file(content):
     """Áp dụng tất cả các quy tắc chuyển đổi cho một file entity."""
     one2many_found = False
-
+    
     # Kiểm tra xem có phải là bảng nối M2M không
     join_table_pk_pattern = r'\[PrimaryKey\(".*",\s*".*"\)\]'
     is_many_to_many_join_table = bool(re.search(join_table_pk_pattern, content))
 
-    # Nếu là bảng nối, chỉ xử lý đơn giản rồi trả về
     if is_many_to_many_join_table:
-        # Comment out các thuộc tính [Index]
         content = re.sub(r'^(\s*\[Index.*\]\s*)$', r'//\1', content, flags=re.MULTILINE)
-        # Comment out thuộc tính [PrimaryKey]
         content = re.sub(f'^(\\s*{join_table_pk_pattern}\\s*)$', r'//\1', content, flags=re.MULTILINE)
         return content
+
+    # --- LOGIC MỚI: Xử lý MultiTenancy có điều kiện ---
+    class_name_match = re.search(r'public\s+partial\s+class\s+(\w+)', content)
+    if not class_name_match:
+        return content 
+    
+    class_name = class_name_match.group(1)
+
+    # 1. Kiểm tra qua thuộc tính [Table]
+    table_attr_pattern = r'\[Table\("(ir|res|bas)_[^"]*"\)\]'
+    is_system_by_attribute = bool(re.search(table_attr_pattern, content))
+    
+    # 2. Kiểm tra qua danh sách tùy chỉnh
+    is_system_by_manual_list = class_name in MANUAL_SYSTEM_ENTITIES
+    
+    is_system_entity = is_system_by_attribute or is_system_by_manual_list
+    
+    has_company_id = '[Column("company_id")]' in content or 'public Guid? CompanyId' in content
+    
+    should_add_multitenancy = False
+    if is_system_entity:
+        if has_company_id:
+            should_add_multitenancy = True
+    else:
+        # Entity tùy chỉnh luôn có multi-tenancy
+        should_add_multitenancy = True
+    # ---------------------------------------------------
 
     # a) Thay thế using
     abp_usings = """using System;
@@ -151,19 +185,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
-using Volo.Abp.Domain.Entities.Auditing;
-using Volo.Abp.MultiTenancy;"""
+using Volo.Abp.Domain.Entities.Auditing;"""
+    # Chỉ thêm using IMultiTenant nếu cần
+    if should_add_multitenancy:
+        abp_usings += "\nusing Volo.Abp.MultiTenancy;"
     content = re.sub(r'^\s*using Microsoft\.EntityFrameworkCore;.*$', abp_usings, content, flags=re.MULTILINE)
 
     # Comment out [Index]
     content = re.sub(r'^(\s*\[Index.*\]\s*)$', r'//\1', content, flags=re.MULTILINE)
-
-    # c) Thay thế Id và thêm TenantId
-    id_replacement = r"""public Guid Id { get => base.Id; set => base.Id = value; }
+    
+    # c) Thay thế Id và TenantId (có điều kiện)
+    if should_add_multitenancy:
+        id_replacement = r"""public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }"""
+    else: # Không có multi-tenancy
+        id_replacement = r"public Guid Id { get => base.Id; set => base.Id = value; }"
     content = re.sub(r'public\s+Guid\s+Id\s*{\s*get;\s*set;\s*}', id_replacement, content)
+
 
     # d, e, f, g) Thay thế các trường Auditing
     content = content.replace("public Guid? CreateUid { get; set; }", "public Guid? CreatorId { get; set; }")
@@ -171,19 +211,20 @@ using Volo.Abp.MultiTenancy;"""
     content = content.replace("public DateTime? CreateDate { get; set; }", "public DateTime CreationTime { get; set; }")
     content = content.replace("public DateTime? WriteDate { get; set; }", "public DateTime? LastModificationTime { get; set; }")
 
-    # h, i, j) Thay thế các ForeignKey
+    # h, i, j) Thay thế các ForeignKey (có điều kiện cho CompanyId)
     content = content.replace('[ForeignKey("CreateUid")]', '[ForeignKey("CreatorId")]')
     content = content.replace('[ForeignKey("WriteUid")]', '[ForeignKey("LastModifierId")]')
-    content = content.replace('[ForeignKey("CompanyId")]', '[ForeignKey("TenantId")]')
+    if should_add_multitenancy:
+        content = content.replace('[ForeignKey("CompanyId")]', '[ForeignKey("TenantId")]')
+        # Xóa thuộc tính CompanyId và [Column("company_id")] của nó vì đã có TenantId
+        company_id_pattern = re.compile(
+            r'^\s*\[Column\("company_id"\)\].*(\r?\n)\s*public\s+Guid\?\s+CompanyId\s*{\s*get;\s*set;\s*}.*(\r?\n)?',
+            re.MULTILINE
+        )
+        content = company_id_pattern.sub('', content)
 
     # k) Cắt phần khởi tạo của ICollection
     content = re.sub(r'(public\s+virtual\s+ICollection<[^>]*>\s*.*?{\s*get;\s*set;\s*})(\s*=\s*new.*;)', r'\1', content)
-    
-    company_id_pattern = re.compile(
-        r'^\s*\[Column\("company_id"\)\].*(\r?\n)\s*public\s+Guid\?\s+CompanyId\s*{\s*get;\s*set;\s*}.*(\r?\n)?',
-        re.MULTILINE
-    )
-    content = company_id_pattern.sub('', content)
 
     # l & m) Xử lý JsonField và các mối quan hệ
     lines = content.split('\n')
@@ -191,21 +232,15 @@ using Volo.Abp.MultiTenancy;"""
     i = 0
     while i < len(lines):
         line = lines[i].expandtabs(4)
-        
-        # YÊU CẦU MỚI 2: Sửa vị trí [JsonField]
         if 'TypeName = "jsonb"' in line:
             j = i + 1
             while j < len(lines) and not lines[j].strip().startswith("public"): j += 1
             if j < len(lines):
                 public_line_indent = ' ' * (len(lines[j]) - len(lines[j].lstrip(' ')))
-                # Thêm [JsonField] VÀO TRƯỚC
                 new_lines.append(f"{public_line_indent}[JsonField]")
-                # Thêm các dòng gốc (bao gồm [Column])
-                for k in range(i, j + 1):
-                    new_lines.append(lines[k])
+                for k in range(i, j + 1): new_lines.append(lines[k])
                 i = j + 1
                 continue
-
         if line.strip().startswith("[InverseProperty"):
             prev_line = lines[i-1].strip() if i > 0 else ""
             next_line = lines[i+1].strip() if i < len(lines) - 1 else ""
@@ -213,46 +248,52 @@ using Volo.Abp.MultiTenancy;"""
             is_o2m = (prev_line.startswith("[ForeignKey") and next_line.startswith("public virtual ICollection"))
             is_m2o = (prev_line.startswith("[ForeignKey") and not next_line.startswith("public virtual ICollection"))
             indent = ' ' * (len(line) - len(line.lstrip(' ')))
-
             if is_m2m:
                 if new_lines and not new_lines[-1].strip(): new_lines.pop()
-                new_lines.append("") # Thêm dòng trống để tách biệt
+                new_lines.append("") 
                 new_lines.append(f"{indent}// [Many2many]")
-                new_lines.append(f"{indent}// [NotMapped] // Many2many")
-                new_lines.append(f"{indent}// {lines[i].strip()}")
-                new_lines.append(f"{indent}// {lines[i+1].strip()}")
+                new_lines.append(f"{indent}[NotMapped] //Many2many")
+                new_lines.append(f"{indent}// {lines[i].strip()} //[Many2many]")
+                new_lines.append(f"{indent}{lines[i+1].strip()}")
                 i += 2
                 continue
-            
             elif is_o2m:
                 one2many_found = True
                 if new_lines and new_lines[-1].strip() == prev_line: new_lines.pop()
                 new_lines.append(f"{indent}// [One2many]")
                 new_lines.append(lines[i-1])
-                new_lines.append(f"{indent}[NotMapped] // One2many")
-                new_lines.append(f"{indent}// {lines[i].strip()}")
+                new_lines.append(f"{indent}[NotMapped] //One2many")
+                new_lines.append(f"{indent}// {lines[i].strip()} //[One2many]")
                 new_lines.append(lines[i+1])
                 i += 2
                 continue
-
             elif is_m2o:
                 if new_lines and new_lines[-1].strip() == prev_line: new_lines.pop()
                 new_lines.append(f"{indent}// [Many2one]")
                 new_lines.append(lines[i-1])
-                new_lines.append(f"{indent}// {lines[i].strip()}")
+                new_lines.append(f"{indent}// {lines[i].strip()} //[Many2one]")
                 new_lines.append(lines[i+1])
                 i += 2
                 continue
-        
         new_lines.append(lines[i])
         i += 1
-
     content = "\n".join(new_lines)
     
+    # Xây dựng chuỗi kế thừa một cách linh hoạt
+    inheritance_parts = []
     if one2many_found:
-        replacement_inheritance = r': FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject'
+        inheritance_parts.append("FullAuditedAggregateRoot<Guid>")
     else:
-        replacement_inheritance = r': FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject'
+        inheritance_parts.append("FullAuditedEntity<Guid>")
+    
+    inheritance_parts.append("IEntityDto<Guid>")
+    
+    if should_add_multitenancy:
+        inheritance_parts.append("IMultiTenant")
+        
+    inheritance_parts.append("IAuditedObject")
+    
+    replacement_inheritance = ': ' + ', '.join(inheritance_parts)
     
     content = re.sub(
         r'(public\s+partial\s+class\s+\w+)(\s*:.*)?',
