@@ -230,10 +230,14 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
         if field_type in ODOO_TO_CSHARP_TYPE:
             csharp_type = ODOO_TO_CSHARP_TYPE[field_type]
             is_required = field_info.get('is_required', False)
+            is_translatable = field_info.get('is_translatable', False)
+            is_sparse = field_info.get('is_sparse', False)
+
             if not is_required and '?' not in csharp_type: csharp_type += '?'
             attr_lines = ['[Required]' if is_required else '']
-            if field_info.get('is_translatable'):
-                attr_lines.extend(['[JsonField]', f'[Column("{field_name}", TypeName = "jsonb")]'])
+            if is_translatable or not is_sparse:
+                attr_lines.append(f'[JsonField(IsSparse = {str(is_sparse).lower()})]')
+                attr_lines.append(f'[Column("{field_name}", TypeName = "jsonb")]')
             else:
                 attr_lines.append(f'[Column("{field_name}")]')
             prop_content = f'{"\n            ".join(filter(None, attr_lines))}\n            public {csharp_type} {pascal_field_name} {{ get; set; }}\n'
@@ -1095,6 +1099,13 @@ class OdooModelVisitor(ast.NodeVisitor):
                 break
         field_data['has_index'] = has_index
 
+        is_sparse = False
+        for kw in call.keywords:
+            if kw.arg == 'sparse' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
+                is_sparse = True
+                break
+        field_data['is_sparse'] = is_sparse
+
         is_required = False
         for kw in call.keywords:
             if kw.arg == 'required' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
@@ -1474,7 +1485,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
     attribute_definitions = {
         "ModuleAttribute.cs": "[AttributeUsage(AttributeTargets.Class)] public class ModuleAttribute : Attribute { public string Name { get; } public string[] Depends { get; } public ModuleAttribute(string name, params string[] depends) { Name = name; Depends = depends; } }",
         "ModelAttribute.cs": "[AttributeUsage(AttributeTargets.Class)] public class ModelAttribute : Attribute { public string Name { get; set; } public bool IsTransient { get; set; } public bool IsAuto { get; set; } = true; public ModelAttribute(string name) { Name = name; } }",
-        "JsonFieldAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class JsonFieldAttribute : Attribute {}",
+        "JsonFieldAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class JsonFieldAttribute : Attribute { public bool IsSparse { get; set; } = false; }",
         "Many2oneAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2oneAttribute : Attribute { public string RelatedModel { get; set; } }",
         "One2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class One2manyAttribute : Attribute { public string RelatedModel { get; set; } public string InverseField { get; set; } }",
         "Many2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2manyAttribute : Attribute { public string RelatedModel { get; set; } }",
