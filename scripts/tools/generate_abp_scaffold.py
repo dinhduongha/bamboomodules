@@ -394,9 +394,10 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_interface_content(project_base_name, module_name, model_name, methods, flat_model_dir, flat_namespace, all_csharp_entity_names, module_namespace_map, is_mixin=False):
+def create_service_interface_content(project_base_name, module_name, model_name, model_data, methods, flat_model_dir, flat_namespace, all_csharp_entity_names, module_namespace_map, is_mixin=False):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
+    is_auto = model_data.get('is_auto', True)
 
     interface_name = f"I{pascal_model}AppService"
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
@@ -408,6 +409,8 @@ def create_service_interface_content(project_base_name, module_name, model_name,
         base_interface = "IMixinAppService"
         using_statements.extend([f"using {project_base_name}.Domain.Shared.Interfaces;", "using Volo.Abp.Domain.Entities;"])
         using_statements.append(f"using {contracts_namespace}.Mixins;")
+    elif not is_auto:
+        base_interface = "IApplicationService"
     else:
         entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
         base_interface = f"IGenericApplicationService<{pascal_model}>"
@@ -479,11 +482,12 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_implementation_content(project_base_name, module_name, model_name, methods, dependencies, flat_model_dir, flat_namespace, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map):
+def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_dir, flat_namespace, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module_original = to_pascal_case(module_name)
     pascal_module = module_namespace_map.get(module_name, pascal_module_original)
-    
+    is_auto = model_data.get('is_auto', True)
+
     service_name, interface_name = f"{pascal_model}AppService", f"I{pascal_model}AppService"
     depends_list_str = ', '.join(f'\"{dep}\"' for dep in dependencies)
     depends_str = f"Depends = new[] {{ {depends_list_str} }}" if dependencies else ""
@@ -493,11 +497,20 @@ def create_service_implementation_content(project_base_name, module_name, model_
     
     using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};"]
     
-    private_fields, constructor_assignments = [], []
+    private_fields, constructor_assignments, constructor_params = [], [], []
 
     if is_mixin:
         base_class, constructor_params, base_call = "ApplicationService", [], ""
         using_statements.extend(["using Volo.Abp.Application.Services;", f"using {project_base_name}.Domain.Shared.Interfaces;", "using Volo.Abp.Domain.Entities;"])
+    elif not is_auto:
+        base_class, base_call = "ApplicationService", ""
+        repo_interface_name = f"I{pascal_model}Repository"
+        repo_var_name = f"_{repo_interface_name[1].lower()}{repo_interface_name[2:]}"
+        repo_namespace = f"{project_base_name}.Domain.Repositories"
+        using_statements.extend(["using Volo.Abp.Application.Services;", repo_namespace])
+        private_fields.append(f"private readonly {repo_interface_name} {repo_var_name};")
+        constructor_params.append(f"{repo_interface_name} {repo_var_name[1:]}")
+        constructor_assignments.append(f"{repo_var_name} = {repo_var_name[1:]};")
     else:
         base_class = f"GenericApplicationService<{pascal_model}>"
         base_constructor_params_str = "repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache"
@@ -640,9 +653,10 @@ def create_service_implementation_content(project_base_name, module_name, model_
     content_parts.extend(["    }", "}"])
     return "\n".join(content_parts)
 
-def create_controller_content(project_base_name, module_name, module_category, model_name, methods, flat_model_ns, flat_service_ns, flat_controller_ns, add_common_actions, all_csharp_entity_names, group_by_category, module_namespace_map):
+def create_controller_content(project_base_name, module_name, module_category, model_name, model_data, methods, flat_model_ns, flat_service_ns, flat_controller_ns, add_common_actions, all_csharp_entity_names, group_by_category, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
+    is_auto = model_data.get('is_auto', True)
 
     controller_name = f"{pascal_model}Controller"
     interface_name = f"I{pascal_model}AppService"
@@ -661,7 +675,7 @@ def create_controller_content(project_base_name, module_name, module_category, m
     route_parts.append(model_name.replace('_','-'))
     route = f'[Route("{'/'.join(route_parts)}")]'
     
-    if add_common_actions:
+    if add_common_actions and is_auto:
         base_class = f"GenericController<{pascal_model}, {interface_name}>"
         using_statements = {f"using {project_base_name}.HttpApi.Controllers.Commons;"}
         constructor_body = f"public {controller_name}({interface_name} service) : base(service) {{ }}"
@@ -1501,8 +1515,8 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             (marker_interface_dir / f"I{pascal_model}able.cs").write_text(create_marker_interface_content(project_base_name, model_name), encoding='utf-8')
             if data.get('fields'):
                 (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names, flat_model_dir, module_namespace_map), encoding='utf-8')
-            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, all_methods, flat_model_dir, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
-            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
+            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, data, all_methods, flat_model_dir, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
+            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
             continue
 
         logging.info(f"Generating ABP structure for model '{model_name}' (base module: {base_module})")
@@ -1558,12 +1572,12 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         
         if should_generate_service:
             logging.info(f"  -> Generating AppService for '{model_name}'.")
-            (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module_for_ns, model_name, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map), encoding='utf-8')
-            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
+            (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module_for_ns, model_name, data, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map), encoding='utf-8')
+            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, data, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
         
         if should_generate_controller:
             logging.info(f"  -> Generating Controller for '{model_name}'.")
-            main_controller, partial_controller = create_controller_content(project_base_name, pascal_module_for_ns, module_category, model_name, public_methods, flat_model_ns, flat_service_ns, flat_controller_ns, args.add_common_actions, all_csharp_entity_names, args.group_by_category, module_namespace_map)
+            main_controller, partial_controller = create_controller_content(project_base_name, pascal_module_for_ns, module_category, model_name, data, public_methods, flat_model_ns, flat_service_ns, flat_controller_ns, args.add_common_actions, all_csharp_entity_names, args.group_by_category, module_namespace_map)
             (controller_dir / f"{pascal_model}Controller.cs").write_text(main_controller, encoding='utf-8')
             if partial_controller:
                 (controller_dir / f"{pascal_model}Controller.Partials.cs").write_text(partial_controller, encoding='utf-8')
