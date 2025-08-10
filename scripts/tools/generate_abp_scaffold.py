@@ -235,11 +235,13 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
 
             if not is_required and '?' not in csharp_type: csharp_type += '?'
             attr_lines = ['[Required]' if is_required else '']
-            if is_translatable or not is_sparse:
+
+            if is_translatable or is_sparse:
                 attr_lines.append(f'[JsonField(IsSparse = {str(is_sparse).lower()})]')
                 attr_lines.append(f'[Column("{field_name}", TypeName = "jsonb")]')
             else:
                 attr_lines.append(f'[Column("{field_name}")]')
+
             prop_content = f'{"\n            ".join(filter(None, attr_lines))}\n            public {csharp_type} {pascal_field_name} {{ get; set; }}\n'
         elif field_type == 'many2one':
             nav_property_name = to_pascal_case(field_name.removesuffix('_id'))
