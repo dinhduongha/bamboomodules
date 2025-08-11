@@ -137,11 +137,109 @@ MANUAL_SYSTEM_ENTITIES = [
     # "TenLop2"
 ]
 
+# CÁC BẢNG CẦN COMMENT OUT QUAN HỆ MANY-TO-MANY
+# Có nhiều bảng tham chiếu đến nó, vậy thì để các bảng đó quyết định quan hệ.
+# Thêm tên các lớp (class) vào đây.
+COMMENT_OUT_M2M_RELATIONSHIPS = [
+    "AccountAccount", # 51
+    "AccountAccountTemplate", # 29
+    "AccountAnalyticAccount", # 11
+    "AccountAccountTemplate", # 7
+    "AccountFiscalPosition", #9
+    "AccountJournal", # (???) 28 
+    "AccountMove", # (???) 21 
+    "AccountMoveLine", # (???) 7 
+    #"AccountPayment", # 7
+    "AccountTax", # 8
+    "CrmLead", # 6
+    "CrmTeam", # 19
+    "EventEvent", # 16
+    #"EventType", # 7
+    #"GamificationBadge", # 6    
+    "HrDepartment", # 14
+    "HrEmployee", # 37
+    "IrAttachment", # 81
+    "IrMailServer", # 6    
+    "IrModel", # 34
+    "IrModelFields", # 15
+    "IrModuleModule", # 11
+    "IrUiView", # 19
+    "LoyaltyProgram", # 6
+    "MailActivityType", # 10
+    "MailAlias", # 6    
+    "MailingMailing", # 10
+    "MailMessage", # 17
+    "MailTemplate", # 28
+    "MrpBom", # 6
+    "MrpProduction", # 13
+    "ProcurementGroup", # 8
+    "ProductCategory", # 9
+    #"ProductPricelist", # 8
+    "ProductProduct", # 70
+    "ProductTemplate", # 12
+    "ProjectProject", # 13
+    "ProjectTask", # 8
+    "ResCountry", # 25
+    "ResCountryState", # 6
+    "ResCurrency", # 44
+    "ResourceCalendar", # 10    
+    "ResPartner", # 120
+    "ResUsers", # 1457
+    "SaleOrder", # 22
+    "SaleOrderLine", # 16
+    "SlideSlide", # 7
+    "SmsTemplate", # 8
+    "StockLocation", # 44
+    "StockLot", # 7
+    "StockMove", # 11
+    "StockPicking", # 11
+    "StockPickingType", # 22
+    "StockRoute", # 10
+    "StockRule", # 9
+    "StockWarehouse", # 14
+    "SurveyQuestion", # 7
+    "SurveySurvey", # 8
+    "UomUom", # 28
+    "UtmCampaign", # 11
+    "UtmMedium", # 8
+    "UtmSource", # 9
+    "Website", # 33
+    "ResCompany" # 166
+
+]
+
+# CÁC BẢNG CẦN COMMENT OUT QUAN HỆ ONE-TO-MANY
+# Thêm tên các lớp (class) vào đây.
+COMMENT_OUT_O2M_RELATIONSHIPS = [
+    "AccountAccount", # 14
+    "AccountAccountTag", # 6
+    "AccountJournal", # 20
+    "AccountMove", # 11
+    "AccountTax", # 15
+    "CrmLead", # 8
+    "HrEmployee", # 8   
+    "IrAttachment", # 13
+    "MrpProduction", # 7
+    "PosConfig", # 16
+    "ProductProduct", # 8
+    "ProductTemplate", # 15
+    "ProductTemplateAttributeValue", # 10
+    "ResCountry", # 7
+    "ResGroups", # 17
+    "ResPartner", # 25
+    "ResPartnerCategory", # 5
+    "ResUsers", # 23
+    "StockMove", # 7
+    "StockPicking", # 9
+    "StockQuant", # 7
+    "StockRoute", # 7
+    "ResCompany"
+]
+
 def process_entity_file(content):
     """Áp dụng tất cả các quy tắc chuyển đổi cho một file entity."""
     one2many_found = False
     
-    # Kiểm tra xem có phải là bảng nối M2M không
     join_table_pk_pattern = r'\[PrimaryKey\(".*",\s*".*"\)\]'
     is_many_to_many_join_table = bool(re.search(join_table_pk_pattern, content))
 
@@ -150,22 +248,16 @@ def process_entity_file(content):
         content = re.sub(f'^(\\s*{join_table_pk_pattern}\\s*)$', r'//\1', content, flags=re.MULTILINE)
         return content
 
-    # --- LOGIC MỚI: Xử lý MultiTenancy có điều kiện ---
     class_name_match = re.search(r'public\s+partial\s+class\s+(\w+)', content)
     if not class_name_match:
         return content 
     
     class_name = class_name_match.group(1)
 
-    # 1. Kiểm tra qua thuộc tính [Table]
     table_attr_pattern = r'\[Table\("(ir|res|bas)_[^"]*"\)\]'
     is_system_by_attribute = bool(re.search(table_attr_pattern, content))
-    
-    # 2. Kiểm tra qua danh sách tùy chỉnh
     is_system_by_manual_list = class_name in MANUAL_SYSTEM_ENTITIES
-    
     is_system_entity = is_system_by_attribute or is_system_by_manual_list
-    
     has_company_id = '[Column("company_id")]' in content or 'public Guid? CompanyId' in content
     
     should_add_multitenancy = False
@@ -173,11 +265,8 @@ def process_entity_file(content):
         if has_company_id:
             should_add_multitenancy = True
     else:
-        # Entity tùy chỉnh luôn có multi-tenancy
         should_add_multitenancy = True
-    # ---------------------------------------------------
 
-    # a) Thay thế using
     abp_usings = """using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -186,47 +275,38 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;"""
-    # Chỉ thêm using IMultiTenant nếu cần
     if should_add_multitenancy:
         abp_usings += "\nusing Volo.Abp.MultiTenancy;"
     content = re.sub(r'^\s*using Microsoft\.EntityFrameworkCore;.*$', abp_usings, content, flags=re.MULTILINE)
 
-    # Comment out [Index]
     content = re.sub(r'^(\s*\[Index.*\]\s*)$', r'//\1', content, flags=re.MULTILINE)
     
-    # c) Thay thế Id và TenantId (có điều kiện)
     if should_add_multitenancy:
         id_replacement = r"""public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }"""
-    else: # Không có multi-tenancy
+    else:
         id_replacement = r"public Guid Id { get => base.Id; set => base.Id = value; }"
     content = re.sub(r'public\s+Guid\s+Id\s*{\s*get;\s*set;\s*}', id_replacement, content)
 
-
-    # d, e, f, g) Thay thế các trường Auditing
     content = content.replace("public Guid? CreateUid { get; set; }", "public Guid? CreatorId { get; set; }")
     content = content.replace("public Guid? WriteUid { get; set; }", "public Guid? LastModifierId { get; set; }")
     content = content.replace("public DateTime? CreateDate { get; set; }", "public DateTime CreationTime { get; set; }")
     content = content.replace("public DateTime? WriteDate { get; set; }", "public DateTime? LastModificationTime { get; set; }")
 
-    # h, i, j) Thay thế các ForeignKey (có điều kiện cho CompanyId)
     content = content.replace('[ForeignKey("CreateUid")]', '[ForeignKey("CreatorId")]')
     content = content.replace('[ForeignKey("WriteUid")]', '[ForeignKey("LastModifierId")]')
     if should_add_multitenancy:
         content = content.replace('[ForeignKey("CompanyId")]', '[ForeignKey("TenantId")]')
-        # Xóa thuộc tính CompanyId và [Column("company_id")] của nó vì đã có TenantId
         company_id_pattern = re.compile(
             r'^\s*\[Column\("company_id"\)\].*(\r?\n)\s*public\s+Guid\?\s+CompanyId\s*{\s*get;\s*set;\s*}.*(\r?\n)?',
             re.MULTILINE
         )
         content = company_id_pattern.sub('', content)
 
-    # k) Cắt phần khởi tạo của ICollection
     content = re.sub(r'(public\s+virtual\s+ICollection<[^>]*>\s*.*?{\s*get;\s*set;\s*})(\s*=\s*new.*;)', r'\1', content)
 
-    # l & m) Xử lý JsonField và các mối quan hệ
     lines = content.split('\n')
     new_lines = []
     i = 0
@@ -244,55 +324,70 @@ using Volo.Abp.Domain.Entities.Auditing;"""
         if line.strip().startswith("[InverseProperty"):
             prev_line = lines[i-1].strip() if i > 0 else ""
             next_line = lines[i+1].strip() if i < len(lines) - 1 else ""
+            indent = ' ' * (len(line) - len(line.lstrip(' ')))
+
             is_m2m = (prev_line == "" and next_line.startswith("public virtual ICollection"))
             is_o2m = (prev_line.startswith("[ForeignKey") and next_line.startswith("public virtual ICollection"))
             is_m2o = (prev_line.startswith("[ForeignKey") and not next_line.startswith("public virtual ICollection"))
-            indent = ' ' * (len(line) - len(line.lstrip(' ')))
+
             if is_m2m:
-                if new_lines and not new_lines[-1].strip(): new_lines.pop()
-                new_lines.append("") 
-                new_lines.append(f"{indent}// [Many2many]")
-                new_lines.append(f"{indent}[NotMapped] //Many2many")
-                new_lines.append(f"{indent}// {lines[i].strip()} //[Many2many]")
-                new_lines.append(f"{indent}{lines[i+1].strip()}")
+                if class_name in COMMENT_OUT_M2M_RELATIONSHIPS:
+                    if new_lines and not new_lines[-1].strip(): new_lines.pop()
+                    new_lines.append("")                    
+                    new_lines.append(f"{indent}// [Many2many] // RELATIONSHIP COMMENTED OUT FOR '{class_name}'")
+                    new_lines.append(f"{indent}// [NotMapped] // Many2many")
+                    new_lines.append(f"{indent}// {lines[i].strip()} // Many2many")
+                    new_lines.append(f"{indent}// {lines[i+1].strip()}")
+                else: # Giữ lại quan hệ nhưng disable nó cho EF Core
+                    new_lines.append("")
+                    new_lines.append(f"{indent}// [Many2many]")
+                    new_lines.append(f"{indent}[NotMapped] // Many2many")
+                    new_lines.append(f"{indent}// {lines[i].strip()} // Many2many")
+                    new_lines.append(lines[i+1])
                 i += 2
                 continue
+            
             elif is_o2m:
-                one2many_found = True
-                if new_lines and new_lines[-1].strip() == prev_line: new_lines.pop()
-                new_lines.append(f"{indent}// [One2many]")
-                new_lines.append(lines[i-1])
-                new_lines.append(f"{indent}[NotMapped] //One2many")
-                new_lines.append(f"{indent}// {lines[i].strip()} //[One2many]")
-                new_lines.append(lines[i+1])
+                if class_name in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    if new_lines and new_lines[-1].strip() == lines[i-1].strip(): new_lines.pop()
+                    new_lines.append(f"{indent}// [One2many] // RELATIONSHIP COMMENTED OUT FOR '{class_name}'")
+                    new_lines.append(f"{indent}// [NotMapped] // One2many")
+                    new_lines.append(f"{indent}// {lines[i-1].strip()}")
+                    new_lines.append(f"{indent}// {lines[i].strip()}  //[One2many]")
+                    new_lines.append(f"{indent}// {lines[i+1].strip()}")
+                else: # Giữ lại quan hệ nhưng disable nó cho EF Core
+                    one2many_found = True
+                    if new_lines and new_lines[-1].strip() == prev_line: new_lines.pop()
+                    new_lines.append(f"{indent}// [One2many]")
+                    new_lines.append(lines[i-1])
+                    new_lines.append(f"{indent}// [NotMapped] // One2many")
+                    new_lines.append(f"{indent}// {lines[i].strip()}  //[One2many]")
+                    new_lines.append(lines[i+1])
                 i += 2
                 continue
+
             elif is_m2o:
                 if new_lines and new_lines[-1].strip() == prev_line: new_lines.pop()
                 new_lines.append(f"{indent}// [Many2one]")
                 new_lines.append(lines[i-1])
-                new_lines.append(f"{indent}// {lines[i].strip()} //[Many2one]")
+                new_lines.append(f"{indent}// {lines[i].strip()} // [Many2one]")
                 new_lines.append(lines[i+1])
                 i += 2
                 continue
+        
         new_lines.append(lines[i])
         i += 1
     content = "\n".join(new_lines)
     
-    # Xây dựng chuỗi kế thừa một cách linh hoạt
     inheritance_parts = []
     if one2many_found:
         inheritance_parts.append("FullAuditedAggregateRoot<Guid>")
     else:
         inheritance_parts.append("FullAuditedEntity<Guid>")
-    
     inheritance_parts.append("IEntityDto<Guid>")
-    
     if should_add_multitenancy:
         inheritance_parts.append("IMultiTenant")
-        
     inheritance_parts.append("IAuditedObject")
-    
     replacement_inheritance = ': ' + ', '.join(inheritance_parts)
     
     content = re.sub(
