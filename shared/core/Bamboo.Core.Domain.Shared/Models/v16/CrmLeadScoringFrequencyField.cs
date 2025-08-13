@@ -47,7 +47,7 @@ public partial class CrmLeadScoringFrequencyField : FullAuditedEntity<Guid>, IEn
     [ForeignKey("FieldId")]
     //[InverseProperty("CrmLeadScoringFrequencyFields")]
     [NotMapped]
-    public virtual IrModelField? Field { get; set; }
+    public virtual IrModelFields? Field { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("CrmLeadScoringFrequencyFieldWriteUs")]

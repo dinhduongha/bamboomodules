@@ -16,11 +16,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<object> CreateAsync(TEntity entity, List<string> fields);
         Task<List<object>> WriteAsync(List<Guid> ids, TEntity entity, List<string> fields);
         Task DeleteAsync(List<Guid> ids);
+        Task<TEntity> UnlinkAsync(List<Guid> ids);
+
         Task<object> NameCreateAsync(string name);
         Task<List<(Guid Id, string Name)>> NameGetAsync(List<Guid> ids);
         Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string domain = null, string @operator = "ilike", int limit = 100);
         Task<object> CopyAsync(Guid id, List<string> fields, TEntity defaultValues = null);
         Task<Dictionary<string, object>> DefaultGetAsync(List<string> fields);
+        Task<TEntity> DefaultGetAsync(object fields);
         Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null);
         Task<OnchangeResult> OnchangeAsync(List<string> changedFields, TEntity values, Dictionary<string, object> fieldInfo);
     }

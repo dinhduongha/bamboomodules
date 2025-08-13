@@ -256,7 +256,7 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("Vehicle")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
 
     //[InverseProperty("Vehicle")]
     [NotMapped]

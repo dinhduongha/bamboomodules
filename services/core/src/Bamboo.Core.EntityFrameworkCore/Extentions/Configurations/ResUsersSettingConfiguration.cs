@@ -8,9 +8,9 @@ namespace Bamboo.Core.EntityFrameworkCore
 {
     public static partial class ModelBuilderExtensions
     {
-        public static void ConfigureResUsersSetting(this ModelBuilder modelBuilder)
+        public static void ConfigureResUsersSettings(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ResUsersSetting>(entity =>
+            modelBuilder.Entity<ResUsersSettings>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("res_users_settings_pkey");
 
@@ -46,7 +46,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                     .HasConstraintName("res_users_settings_create_uid_fkey");
 
                 entity.HasOne(d => d.User).WithOne(p => p.ResUsersSettingUser)
-                    .HasForeignKey<ResUsersSetting>(d => d.UserId)
+                    .HasForeignKey<ResUsersSettings>(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("res_users_settings_user_id_fkey");
 
@@ -62,7 +62,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         r => r.HasOne<ResLang>().WithMany()
                             .HasForeignKey("ResLangId")
                             .HasConstraintName("res_lang_res_users_settings_rel_res_lang_id_fkey"),
-                        l => l.HasOne<ResUsersSetting>().WithMany()
+                        l => l.HasOne<ResUsersSettings>().WithMany()
                             .HasForeignKey("ResUsersSettingsId")
                             .HasConstraintName("res_lang_res_users_settings_rel_res_users_settings_id_fkey"),
                         j =>

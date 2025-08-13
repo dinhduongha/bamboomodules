@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -74,7 +75,7 @@ public partial class IrEmbeddedAction: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("EmbeddedAction")]
     [NotMapped]
-    public virtual ICollection<IrFilter> IrFilters { get; set; } 
+    public virtual ICollection<IrFilters> IrFilters { get; set; } 
 
     [ForeignKey("ParentActionId")]
     //[InverseProperty("IrEmbeddedActions")]

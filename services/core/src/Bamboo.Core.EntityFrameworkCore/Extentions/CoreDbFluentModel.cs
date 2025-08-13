@@ -10,7 +10,7 @@ public static class CoreDbModelFluentCreatingExtensions
    public static void ConfigureCoreFluentExt(this ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresExtension("pg_trgm");
-
+#if ConfigureCoreFluentExtCombine
         modelBuilder.Entity<AccountAccount>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("account_account_pkey");
@@ -47980,7 +47980,7 @@ public static class CoreDbModelFluentCreatingExtensions
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("wizard_ir_model_menu_create_write_uid_fkey");
         });
-
+#endif
         //OnModelCreatingPartial(modelBuilder);
     }
 

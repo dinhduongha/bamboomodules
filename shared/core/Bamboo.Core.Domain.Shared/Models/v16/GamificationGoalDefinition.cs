@@ -93,7 +93,7 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("BatchDistinctiveField")]
     //[InverseProperty("GamificationGoalDefinitionBatchDistinctiveFieldNavigations")]
     [NotMapped]
-    public virtual IrModelField? BatchDistinctiveFieldNavigation { get; set; }
+    public virtual IrModelFields? BatchDistinctiveFieldNavigation { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("GamificationGoalDefinitionCreateUs")]
@@ -103,12 +103,12 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("FieldId")]
     //[InverseProperty("GamificationGoalDefinitionFields")]
     [NotMapped]
-    public virtual IrModelField? Field { get; set; }
+    public virtual IrModelFields? Field { get; set; }
 
     [ForeignKey("FieldDateId")]
     //[InverseProperty("GamificationGoalDefinitionFieldDates")]
     [NotMapped]
-    public virtual IrModelField? FieldDate { get; set; }
+    public virtual IrModelFields? FieldDate { get; set; }
 
     //[InverseProperty("Definition")]
     [NotMapped]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -81,7 +82,7 @@ public partial class IrModelFieldAccess: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("FieldId")]
     //[InverseProperty("IrModelAccesses")]
     [NotMapped]
-    public virtual IrModelField? Field { get; set; }
+    public virtual IrModelFields? Field { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelAccessWriteUs")]

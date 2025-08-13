@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -48,7 +49,7 @@ public partial class IrServerObjectLine: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("Col1")]
     //[InverseProperty("IrServerObjectLines")]
     [NotMapped]
-    public virtual IrModelField? Col1Navigation { get; set; }
+    public virtual IrModelFields? Col1Navigation { get; set; }
 
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrServerObjectLineCreateUs")]

@@ -49,7 +49,7 @@ public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<
     [ForeignKey("FieldId")]
     //[InverseProperty("WebsiteSaleExtraFields")]
     [NotMapped]
-    public virtual IrModelField? Field { get; set; }
+    public virtual IrModelFields? Field { get; set; }
 
     [ForeignKey("WebsiteId")]
     //[InverseProperty("WebsiteSaleExtraFields")]

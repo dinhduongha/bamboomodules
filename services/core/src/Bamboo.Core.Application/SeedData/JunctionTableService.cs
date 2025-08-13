@@ -15,13 +15,13 @@ namespace Bamboo.Core.Application
     {
         private readonly IJunctionTableRepository _junctionTableRepository;
         private readonly IEntityMetadataProvider _junctionTableMetadataProvider;
-        private readonly IRepository<IrModelField, Guid> _irModelFieldRepository;
+        private readonly IRepository<IrModelFields, Guid> _irModelFieldRepository;
         private readonly bool _useIrModelField;
 
         public JunctionTableService(
             IJunctionTableRepository junctionTableRepository,
             IEntityMetadataProvider junctionTableMetadataProvider,
-            IRepository<IrModelField, Guid> irModelFieldRepository,
+            IRepository<IrModelFields, Guid> irModelFieldRepository,
             IConfiguration configuration)
         {
             _junctionTableRepository = junctionTableRepository;

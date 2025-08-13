@@ -91,7 +91,7 @@ public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("TimeFieldId")]
     //[InverseProperty("DataRecycleModels")]
     [NotMapped]
-    public virtual IrModelField? TimeField { get; set; }
+    public virtual IrModelFields? TimeField { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("DataRecycleModelWriteUs")]

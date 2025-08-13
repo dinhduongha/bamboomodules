@@ -98,7 +98,7 @@ public partial class ResourceCalendar: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("Calendar")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } 
+    public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; } 
 
     //[InverseProperty("Calendar")]
     [NotMapped]

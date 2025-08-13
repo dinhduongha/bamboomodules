@@ -420,7 +420,7 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("PurchaserEmployee")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
 
     //[InverseProperty("Emp")]
     [NotMapped]

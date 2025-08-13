@@ -234,7 +234,7 @@ public partial class ProjectProject: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("ProjectProjectId")]
     //[InverseProperty("ProjectProjects")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTags { get; set; } 
+    public virtual ICollection<ProjectTags> ProjectTags { get; set; } 
 
     [ForeignKey("ProjectProjectId")]
     //[InverseProperty("ProjectProjects")]

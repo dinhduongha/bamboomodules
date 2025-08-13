@@ -132,7 +132,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.HasMany(d => d.Fields).WithMany(p => p.Servers)
                     .UsingEntity<Dictionary<string, object>>(
                         "IrActServerWebhookFieldRel",
-                        r => r.HasOne<IrModelField>().WithMany()
+                        r => r.HasOne<IrModelFields>().WithMany()
                             .HasForeignKey("FieldId")
                             .HasConstraintName("ir_act_server_webhook_field_rel_field_id_fkey"),
                         l => l.HasOne<IrActServer>().WithMany()

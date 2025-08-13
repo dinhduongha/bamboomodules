@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -570,7 +571,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<CalendarFilter> CalendarFilters { get; set; } 
+    public virtual ICollection<CalendarFilters> CalendarFilters { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
@@ -606,11 +607,11 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Purchaser")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServicePurchasers { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServicePurchasers { get; set; } 
 
     //[InverseProperty("Vendor")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServiceVendors { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServiceVendors { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
@@ -794,11 +795,11 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     //[InverseProperty("Guest")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumeGuests { get; set; } 
+    public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumeGuests { get; set; } 
 
     //[InverseProperty("Partner")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumePartners { get; set; } 
+    public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumePartners { get; set; } 
 
     //[InverseProperty("Author")]
     [NotMapped]

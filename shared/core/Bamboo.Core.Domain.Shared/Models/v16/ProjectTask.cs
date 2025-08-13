@@ -307,7 +307,7 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("ProjectTaskId")]
     //[InverseProperty("ProjectTasks")]
     [NotMapped]
-    public virtual ICollection<ProjectTag> ProjectTags { get; set; } 
+    public virtual ICollection<ProjectTags> ProjectTags { get; set; } 
 
     [ForeignKey("DependsOnId")]
     //[InverseProperty("DependsOns")]

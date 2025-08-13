@@ -72,7 +72,7 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("FilterId")]
     //[InverseProperty("WebsiteSnippetFilters")]
     [NotMapped]
-    public virtual IrFilter? Filter { get; set; }
+    public virtual IrFilters? Filter { get; set; }
 
     [ForeignKey("WebsiteId")]
     //[InverseProperty("WebsiteSnippetFilters")]

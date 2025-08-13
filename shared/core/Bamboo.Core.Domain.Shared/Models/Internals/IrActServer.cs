@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -187,7 +188,7 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     //[InverseProperty("IrActServers")]
     //[InverseProperty("IrActServerLinkFields")]
     [NotMapped]
-    public virtual IrModelField? LinkField { get; set; }
+    public virtual IrModelFields? LinkField { get; set; }
 
     [ForeignKey("ModelId")]
     //[InverseProperty("IrActServerModels")]
@@ -212,7 +213,7 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("UpdateFieldId")]
     //[InverseProperty("IrActServerUpdateFields")]
     [NotMapped]
-    public virtual IrModelField? UpdateField { get; set; }
+    public virtual IrModelFields? UpdateField { get; set; }
 
     [ForeignKey("UpdateRelatedModelId")]
     //[InverseProperty("IrActServerUpdateRelatedModels")]
@@ -246,7 +247,7 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("ServerId")]
     //[InverseProperty("Servers")]
     [NotMapped]
-    public virtual ICollection<IrModelField> Fields { get; set; } 
+    public virtual ICollection<IrModelFields> Fields { get; set; } 
 
     [ForeignKey("ActId")]
     //[InverseProperty("Acts")]

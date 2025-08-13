@@ -131,10 +131,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                     .HasConstraintName("project_project_write_uid_fkey");
 
                 //entity.HasMany(d => d.ProjectTags).WithMany(p => p.ProjectProjects)
-                entity.HasMany<ProjectTag>().WithMany()
+                entity.HasMany<ProjectTags>().WithMany()
                     .UsingEntity<Dictionary<string, object>>(
                         "ProjectProjectProjectTagsRel",
-                        r => r.HasOne<ProjectTag>().WithMany()
+                        r => r.HasOne<ProjectTags>().WithMany()
                             .HasForeignKey("ProjectTagsId")
                             .HasConstraintName("project_project_project_tags_rel_project_tags_id_fkey"),
                         l => l.HasOne<ProjectProject>().WithMany()

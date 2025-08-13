@@ -124,7 +124,7 @@ public partial class MrpWorkorder : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("LeaveId")]
     //[InverseProperty("MrpWorkorders")]
     [NotMapped]
-    public virtual ResourceCalendarLeaf? Leave { get; set; }
+    public virtual ResourceCalendarLeaves? Leave { get; set; }
 
     [ForeignKey("MoAnalyticAccountLineId")]
     //[InverseProperty("MrpWorkorderMoAnalyticAccountLines")]

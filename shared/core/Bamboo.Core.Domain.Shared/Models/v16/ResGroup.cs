@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -121,7 +122,7 @@ public partial class ResGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [ForeignKey("GroupId")]
     //[InverseProperty("Groups")]
     [NotMapped]
-    public virtual ICollection<IrModelField> Fields { get; set; } 
+    public virtual ICollection<IrModelFields> Fields { get; set; } 
 
     [ForeignKey("Hid")]
     //[InverseProperty("Hids")]

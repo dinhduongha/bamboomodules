@@ -7,17 +7,17 @@ namespace Bamboo.Core.Models;
 [AttributeUsage(AttributeTargets.Property)]
 public class JsonFieldAttribute : Attribute { }
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class ModuleAttribute : Attribute
-{
-    public string Name { get; }
-    public string[] Depends { get; }
-    public ModuleAttribute(string name, string[]? depends = null)
-    {
-        Name = name;
-        Depends = depends ?? Array.Empty<string>();
-    }
-}
+// [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+// public class ModuleAttribute : Attribute
+// {
+//     public string Name { get; }
+//     public string[] Depends { get; }
+//     public ModuleAttribute(string name, string[]? depends = null)
+//     {
+//         Name = name;
+//         Depends = depends ?? Array.Empty<string>();
+//     }
+// }
 
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

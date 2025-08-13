@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -83,7 +84,7 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("WebsiteFormDefaultFieldId")]
     //[InverseProperty("IrModels")]
     [NotMapped]
-    public virtual IrModelField? WebsiteFormDefaultField { get; set; }
+    public virtual IrModelFields? WebsiteFormDefaultField { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelWriteUs")]
@@ -160,7 +161,7 @@ public partial class IrModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("ModelNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelField> IrModelFields { get; set; } 
+    public virtual ICollection<IrModelFields> IrModelFields { get; set; } 
 
     //[InverseProperty("Model")]
     [NotMapped]

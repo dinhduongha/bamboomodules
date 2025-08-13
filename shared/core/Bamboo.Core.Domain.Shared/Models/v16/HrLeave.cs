@@ -252,7 +252,7 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("Holiday")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeaves { get; set; } 
+    public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; } 
 
     [ForeignKey("HrLeaveId")]
     //[InverseProperty("HrLeaves")]

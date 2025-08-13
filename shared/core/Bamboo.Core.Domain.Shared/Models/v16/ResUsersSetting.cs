@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -14,7 +15,7 @@ namespace Bamboo.Core.Models;
 [Table("res_users_settings")]
 //[Index("MuteUntilDt", Name = "res_users_settings__mute_until_dt_index")]
 //[Index("UserId", Name = "res_users_settings_unique_user_id", IsUnique = true)]
-public partial class ResUsersSetting: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersSettings: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -93,6 +94,6 @@ public partial class ResUsersSetting: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     //[InverseProperty("UserSetting")]
     [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolume> ResUsersSettingsVolumes { get; set; } 
+    public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumes { get; set; } 
 
 }

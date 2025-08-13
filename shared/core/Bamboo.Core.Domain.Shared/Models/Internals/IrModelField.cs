@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -19,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("Model", "Name", Name = "ir_model_fields_name_unique", IsUnique = true)]
 //[Index("State", Name = "ir_model_fields_state_index")]
 //[Index("WebsiteFormBlacklisted", Name = "ir_model_fields_website_form_blacklisted_index")]
-public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrModelFields: FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -178,12 +179,12 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("RelatedFieldId")]
     //[InverseProperty("InverseRelatedField")]
     [NotMapped]
-    public virtual IrModelField? RelatedField { get; set; }
+    public virtual IrModelFields? RelatedField { get; set; }
 
     [ForeignKey("RelationFieldId")]
     //[InverseProperty("InverseRelationFieldNavigation")]
     [NotMapped]
-    public virtual IrModelField? RelationFieldNavigation { get; set; }
+    public virtual IrModelFields? RelationFieldNavigation { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelFieldWriteUs")]
@@ -212,11 +213,11 @@ public partial class IrModelField: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     //[InverseProperty("RelatedField")]
     [NotMapped]
-    public virtual ICollection<IrModelField> InverseRelatedField { get; set; } 
+    public virtual ICollection<IrModelFields> InverseRelatedField { get; set; } 
 
     //[InverseProperty("RelationFieldNavigation")]
     [NotMapped]
-    public virtual ICollection<IrModelField> InverseRelationFieldNavigation { get; set; } 
+    public virtual ICollection<IrModelFields> InverseRelationFieldNavigation { get; set; } 
 
     //[InverseProperty("LinkField")]
     [NotMapped]

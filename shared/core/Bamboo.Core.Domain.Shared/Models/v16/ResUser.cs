@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -133,7 +134,7 @@ public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("User")]
     [NotMapped]
-    public virtual ResUsersSetting? ResUsersSettingUser { get; set; }
+    public virtual ResUsersSettings? ResUsersSettingUser { get; set; }
 
     [ForeignKey("SaleTeamId")]
     //[InverseProperty("ResUsers")]
@@ -3838,11 +3839,11 @@ public partial class ResUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     //[InverseProperty("CreateU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeafCreateUs { get; set; } 
+    public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeavesCreateUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaf> ResourceCalendarLeafWriteUs { get; set; } 
+    public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeavesWriteUs { get; set; } 
 
     //[InverseProperty("WriteU")]
     [NotMapped]

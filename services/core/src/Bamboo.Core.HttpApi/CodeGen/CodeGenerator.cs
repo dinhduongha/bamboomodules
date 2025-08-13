@@ -421,7 +421,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(CalendarAttendee));
         lstTypes.Add(typeof(CalendarEvent));
         lstTypes.Add(typeof(CalendarEventType));
-        lstTypes.Add(typeof(CalendarFilter));
+        lstTypes.Add(typeof(CalendarFilters));
         lstTypes.Add(typeof(CalendarProviderConfig));
         lstTypes.Add(typeof(CalendarRecurrence));
         lstTypes.Add(typeof(ChangeLockDate));
@@ -430,7 +430,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(ChangePasswordWizard));
         lstTypes.Add(typeof(ChangeProductionQty));
         lstTypes.Add(typeof(ConfirmStockSm));
-        lstTypes.Add(typeof(CrmIapLeadHelper));
+        lstTypes.Add(typeof(CrmIapLeadHelpers));
         lstTypes.Add(typeof(CrmIapLeadIndustry));
         lstTypes.Add(typeof(CrmIapLeadMiningRequest));
         lstTypes.Add(typeof(CrmIapLeadRole));
@@ -460,7 +460,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(FleetVehicle));
         lstTypes.Add(typeof(FleetVehicleAssignationLog));
         lstTypes.Add(typeof(FleetVehicleLogContract));
-        lstTypes.Add(typeof(FleetVehicleLogService));
+        lstTypes.Add(typeof(FleetVehicleLogServices));
         lstTypes.Add(typeof(FleetVehicleModel));
         lstTypes.Add(typeof(FleetVehicleModelBrand));
         lstTypes.Add(typeof(FleetVehicleModelCategory));
@@ -534,14 +534,14 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrDemoFailureWizard));
         lstTypes.Add(typeof(IrExport));
         lstTypes.Add(typeof(IrExportsLine));
-        lstTypes.Add(typeof(IrFilter));
+        lstTypes.Add(typeof(IrFilters));
         lstTypes.Add(typeof(IrLogging));
         lstTypes.Add(typeof(IrMailServer));
         lstTypes.Add(typeof(IrModel));
         lstTypes.Add(typeof(IrModelAccess));
         lstTypes.Add(typeof(IrModelConstraint));
         lstTypes.Add(typeof(IrModelDatum));
-        lstTypes.Add(typeof(IrModelField));
+        lstTypes.Add(typeof(IrModelFields));
         lstTypes.Add(typeof(IrModelFieldsSelection));
         lstTypes.Add(typeof(IrModelRelation));
         lstTypes.Add(typeof(IrModuleCategory));
@@ -681,7 +681,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(ProjectProject));
         lstTypes.Add(typeof(ProjectProjectStage));
         lstTypes.Add(typeof(ProjectShareWizard));
-        lstTypes.Add(typeof(ProjectTag));
+        lstTypes.Add(typeof(ProjectTags));
         lstTypes.Add(typeof(ProjectTask));
         lstTypes.Add(typeof(ProjectTaskRecurrence));
         lstTypes.Add(typeof(ProjectTaskType));
@@ -724,12 +724,12 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(ResUsersDeletion));
         lstTypes.Add(typeof(ResUsersIdentitycheck));
         lstTypes.Add(typeof(ResUsersLog));
-        lstTypes.Add(typeof(ResUsersSetting));
-        lstTypes.Add(typeof(ResUsersSettingsVolume));
+        lstTypes.Add(typeof(ResUsersSettings));
+        lstTypes.Add(typeof(ResUsersSettingsVolumes));
         lstTypes.Add(typeof(ResetViewArchWizard));
         lstTypes.Add(typeof(ResourceCalendar));
         lstTypes.Add(typeof(ResourceCalendarAttendance));
-        lstTypes.Add(typeof(ResourceCalendarLeaf));
+        lstTypes.Add(typeof(ResourceCalendarLeaves));
         lstTypes.Add(typeof(ResourceResource));
         lstTypes.Add(typeof(SaleAdvancePaymentInv));
         lstTypes.Add(typeof(SaleOrder));

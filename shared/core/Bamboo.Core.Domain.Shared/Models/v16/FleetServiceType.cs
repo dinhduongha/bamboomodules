@@ -54,7 +54,7 @@ public partial class FleetServiceType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     //[InverseProperty("ServiceType")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FleetServiceTypeWriteUs")]

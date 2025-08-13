@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -44,5 +45,5 @@ public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("ParentFieldId")]
     //[InverseProperty("IrModelInherits")]
     [NotMapped]
-    public virtual IrModelField? ParentField { get; set; }
+    public virtual IrModelFields? ParentField { get; set; }
 }

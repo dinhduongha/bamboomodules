@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -118,7 +119,7 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudite
     [ForeignKey("ResLangId")]
     //[InverseProperty("ResLangs")]
     [NotMapped]
-    public virtual ICollection<ResUsersSetting> ResUsersSettings { get; set; } 
+    public virtual ICollection<ResUsersSettings> ResUsersSettings { get; set; } 
 
     [ForeignKey("LangId")]
     //[InverseProperty("Langs")]

@@ -12,7 +12,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_tags")]
 //[Index("Name", Name = "project_tags_name_uniq", IsUnique = true)]
-public partial class ProjectTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectTags : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]

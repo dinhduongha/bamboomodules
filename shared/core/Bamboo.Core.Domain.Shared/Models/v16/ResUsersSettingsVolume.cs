@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("GuestId", Name = "res_users_settings_volumes_guest_id_index")]
 //[Index("PartnerId", Name = "res_users_settings_volumes_partner_id_index")]
 //[Index("UserSettingId", Name = "res_users_settings_volumes_user_setting_id_index")]
-public partial class ResUsersSettingsVolume : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersSettingsVolumes : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -70,7 +71,7 @@ public partial class ResUsersSettingsVolume : FullAuditedEntity<Guid>, IEntityDt
     [ForeignKey("UserSettingId")]
     //[InverseProperty("ResUsersSettingsVolumes")]
     [NotMapped]
-    public virtual ResUsersSetting? UserSetting { get; set; }
+    public virtual ResUsersSettings? UserSetting { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("ResUsersSettingsVolumeWriteUs")]

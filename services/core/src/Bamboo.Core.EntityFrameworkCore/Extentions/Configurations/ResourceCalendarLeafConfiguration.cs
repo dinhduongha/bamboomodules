@@ -10,7 +10,7 @@ namespace Bamboo.Core.EntityFrameworkCore
     {
         public static void ConfigureResourceCalendarLeaf(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ResourceCalendarLeaf>(entity =>
+            modelBuilder.Entity<ResourceCalendarLeaves>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("resource_calendar_leaves_pkey");
 

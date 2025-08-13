@@ -20,6 +20,16 @@ public class DateOnlyConverter : ValueConverter<DateOnly, DateTime>
             d => DateOnly.FromDateTime(d))
     { }
 }
+public class TimeOnlyConverter : ValueConverter<TimeOnly, TimeSpan>
+{
+    public TimeOnlyConverter()
+        : base(
+            t => t.ToTimeSpan(),             // C# -> DB
+            ts => TimeOnly.FromTimeSpan(ts)  // DB -> C#
+        )
+    { }
+}
+
 public class StringDictionaryConverter : ValueConverter<StringDictionary, string>
 {
     public StringDictionaryConverter()

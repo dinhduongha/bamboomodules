@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -206,7 +207,7 @@ public partial class IrAttachment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     //[InverseProperty("MessageMainAttachment")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
 
     //[InverseProperty("MessageMainAttachment")]
     [NotMapped]

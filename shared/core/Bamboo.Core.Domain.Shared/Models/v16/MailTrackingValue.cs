@@ -115,12 +115,12 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("Field")]
     //[InverseProperty("MailTrackingValues")]
     [NotMapped]
-    public virtual IrModelField? FieldNavigation { get; set; }
+    public virtual IrModelFields? FieldNavigation { get; set; }
 
     // [ForeignKey("FieldId")]
     // //[InverseProperty("MailTrackingValues")]
     // [NotMapped]
-    // public virtual IrModelField? Field { get; set; }
+    // public virtual IrModelFields? Field { get; set; }
 
     [ForeignKey("MailMessageId")]
     //[InverseProperty("MailTrackingValues")]

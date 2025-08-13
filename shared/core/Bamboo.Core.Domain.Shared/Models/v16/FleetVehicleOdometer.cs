@@ -65,6 +65,6 @@ public partial class FleetVehicleOdometer : FullAuditedEntity<Guid>, IEntityDto<
 
     //[InverseProperty("Odometer")]
     [NotMapped]
-    public virtual ICollection<FleetVehicleLogService> FleetVehicleLogServices { get; set; } 
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
 
 }

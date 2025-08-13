@@ -106,7 +106,7 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [ForeignKey("ObjectId")]
     //[InverseProperty("FetchmailServers")]
     [NotMapped]
-    public virtual IrModel? Object { get; set; }
+    public virtual IrModel? IrModelObject { get; set; }
 
     [ForeignKey("LastModifierId")]
     //[InverseProperty("FetchmailServerWriteUs")]

@@ -59,7 +59,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("fetchmail_server_create_uid_fkey");
 
-                entity.HasOne(d => d.Object).WithMany(p => p.FetchmailServers)
+                entity.HasOne(d => d.IrModelObject).WithMany(p => p.FetchmailServers)
                     .HasForeignKey(d => d.ObjectId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("fetchmail_server_object_id_fkey");

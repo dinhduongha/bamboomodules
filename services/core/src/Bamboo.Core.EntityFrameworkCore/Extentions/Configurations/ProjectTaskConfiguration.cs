@@ -206,10 +206,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         });
 
                 //entity.HasMany(d => d.ProjectTags).WithMany(p => p.ProjectTasks)
-                entity.HasMany<ProjectTag>().WithMany()
+                entity.HasMany<ProjectTags>().WithMany()
                     .UsingEntity<Dictionary<string, object>>(
                         "ProjectTagsProjectTaskRel",
-                        r => r.HasOne<ProjectTag>().WithMany()
+                        r => r.HasOne<ProjectTags>().WithMany()
                             .HasForeignKey("ProjectTagsId")
                             .HasConstraintName("project_tags_project_task_rel_project_tags_id_fkey"),
                         l => l.HasOne<ProjectTask>().WithMany()

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +15,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_valuation_layer_revaluation")]
-public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockValuationLayerRevaluation : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,9 +27,6 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
-    [Column("lot_id")]
-    public Guid? LotId { get; set; }
-
     [Column("account_journal_id")]
     public Guid? AccountJournalId { get; set; }
 
@@ -36,7 +37,7 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     public Guid? CreatorId { get; set; }
 
     [Column("write_uid")]
-    public override Guid? LastModifierId { get; set; }
+    public Guid? LastModifierId { get; set; }
 
     [Column("reason")]
     public string? Reason { get; set; }
@@ -51,45 +52,35 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
     public DateTime CreationTime { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public override DateTime? LastModificationTime { get; set; }
+    public DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("StockValuationLayerRevaluations")]
-    [NotMapped]
+    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
     public virtual AccountAccount? Account { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountJournalId")]
-    //[InverseProperty("StockValuationLayerRevaluations")]
-    [NotMapped]
+    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
     public virtual AccountJournal? AccountJournal { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockValuationLayerRevaluations")]
-    [NotMapped]
+    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockValuationLayerRevaluationCreateUs")]
-    [NotMapped]
+    // [InverseProperty("StockValuationLayerRevaluationCreateU")] // [Many2one]
     public virtual ResUser? CreateU { get; set; }
 
-    [ForeignKey("LotId")]
-    //[InverseProperty("StockValuationLayerRevaluations")]
-    [NotMapped]
-    public virtual StockLot? Lot { get; set; }
-
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("StockValuationLayerRevaluations")]
-    [NotMapped]
+    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockValuationLayerRevaluationWriteUs")]
-    [NotMapped]
+    // [InverseProperty("StockValuationLayerRevaluationWriteU")] // [Many2one]
     public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("StockValuationLayerRevaluationId")]
-    //[InverseProperty("StockValuationLayerRevaluations")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
 }
