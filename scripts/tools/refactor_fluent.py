@@ -28,10 +28,10 @@ VIEW_ENTITIES = [
 COMMENT_OUT_M2M_RELATIONSHIPS = [
     "AccountAccount", # 51
     #"AccountAccountTemplate", # 29
-    #"AccountAnalyticAccount", # 11
-    #"AccountFiscalPosition", #9
     #"AccountJournal", # (???) 28 
     #"AccountMove", # (???) 21 
+    #"AccountAnalyticAccount", # 11
+    #"AccountFiscalPosition", #9
     #"AccountMoveLine", # (???) 7 
     #"AccountPayment", # 7
     #"AccountTax", # 8
@@ -41,13 +41,13 @@ COMMENT_OUT_M2M_RELATIONSHIPS = [
     #"EventType", # 7
     #"GamificationBadge", # 6    
     #"HrDepartment", # 14
-    "HrEmployee", # 37
+    #"HrEmployee", # 37
     "IrAttachment", # 81
     #"IrMailServer", # 6    
     "IrModel", # 34
     "IrModelFields", # 15
     "IrModuleModule", # 11
-    "IrUiView", # 19
+    #"IrUiView", # 19
     #"LoyaltyProgram", # 6
     #"MailActivityType", # 10
     #"MailAlias", # 6    
@@ -59,7 +59,7 @@ COMMENT_OUT_M2M_RELATIONSHIPS = [
     #"ProcurementGroup", # 8
     #"ProductCategory", # 9
     #"ProductPricelist", # 8
-    #"ProductProduct", # 70
+    "ProductProduct", # 70
     #"ProductTemplate", # 12
     #"ProjectProject", # 13
     #"ProjectTask", # 8
@@ -84,9 +84,9 @@ COMMENT_OUT_M2M_RELATIONSHIPS = [
     #"SurveyQuestion", # 7
     #"SurveySurvey", # 8
     "UomUom", # 28
-    "UtmCampaign", # 11
-    "UtmMedium", # 8
-    "UtmSource", # 9
+    #"UtmCampaign", # 11
+    #"UtmMedium", # 8
+    #"UtmSource", # 9
     "Website", # 33
     "ResCompany" # 166
 
@@ -109,6 +109,7 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
     #"ProductTemplate", # 15
     #"ProductTemplateAttributeValue", # 10
     "ResCountry", # 7
+    #"ResCurrency", # 
     #"ResGroups", # 17
     "ResPartner", # 25
     #"ResPartnerCategory", # 5
@@ -121,8 +122,9 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
 ]
 
 PROPERTIES_TO_CLEAN_WITHMANY = [
-    "Company", "CreateU", "WriteU", "Currency",
-    "Country", "Partner", "MessageMainAttachment",
+    "Company", "CreateU", "WriteU", "User", "Currency",
+    "Country", "Partner", "PartnerCategory", "MessageMainAttachment",
+    "Account", "Journal", "Product", "ProductUom", "ProductCateg"
 ]
 
 # ==============================================================================
@@ -180,6 +182,18 @@ def find_statement_end_index(lines, start_index):
             return i
     return start_index # Fallback
 
+def transform_using_entity_block(match):
+    """Hàm trợ giúp được gọi bởi re.sub để thực hiện việc biến đổi phức tạp cho UsingEntity."""
+    indent = match.group(1)
+    has_many_part = match.group(2)
+    using_entity_block = match.group(3)
+    target_entity = match.group(4)
+    
+    commented_line = f"{indent}// {has_many_part.strip()}"
+    new_line = f"{indent}entity.HasMany<{target_entity}>().WithMany()"
+    
+    return f"{commented_line}\n{new_line}{using_entity_block}"
+
 def analyze_and_transform_fluent_block(entity_name, body_content):
     """Phân tích và biến đổi nội dung BÊN TRONG của một khối cấu hình."""
     key_match = re.search(r'HasKey\(e\s*=>\s*new\s*{\s*([^}]*)}\)', body_content)
@@ -227,44 +241,220 @@ def analyze_and_transform_fluent_block(entity_name, body_content):
         current_content = re.sub(rf'_{old.lower()}_', f'_{new.lower()}_', current_content)
         current_content = re.sub(rf'_{old.lower()}$', f'_{new.lower()}', current_content)
 
-    for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
-        pattern = re.compile(r'(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))\s*\.WithMany\([^)]*\)', re.DOTALL)
-        current_content = pattern.sub(r'\1.WithMany()', current_content)
+    # for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+    #     pattern = re.compile(
+    #         # Bắt đầu từ đầu dòng, chụp lại phần thụt lề (group 1)
+    #         r'^(\s*)'
+    #         # Chụp lại phần HasOne(...) (group 2)
+    #         r'(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))'
+    #         # Chụp lại phần WithMany(...) có tham số (group 3)
+    #         r'(\s*\.WithMany\([^)]+\))',
+    #         re.MULTILINE
+    #     )
+        
+    #     def replace_with_comment_and_new_line(match):
+    #         indent = match.group(1)
+    #         has_one_part = match.group(2)
+    #         with_many_part = match.group(3)
+            
+    #         original_full_line = f"{has_one_part}{with_many_part}".strip()
+    #         commented_line = f"{indent}// {original_full_line}"
+    #         new_line = f"{indent}{has_one_part}.WithMany()"
+            
+    #         return f"{commented_line}\n{new_line}"
+
+    #     current_content = pattern.sub(replace_with_comment_and_new_line, current_content)
+
+    # lines = current_content.splitlines()
+    # new_lines = []
+    # for line in lines:
+    #     transformed = False
+    #     for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+    #         pattern = re.compile(
+    #             r'^(\s*)' # Group 1: Thụt lề
+    #             r'(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))' # Group 2: Phần HasOne
+    #             r'(\s*\.WithMany\([^)]+\))' # Group 3: Phần WithMany
+    #         )
+    #         match = pattern.match(line.strip())
+    #         if match:
+    #             indent = ' ' * (len(line) - len(line.lstrip(' ')))
+    #             has_one_part = match.group(2)
+    #             with_many_part = match.group(3)
+                
+    #             original_full_line = f"{has_one_part}{with_many_part}".strip()
+    #             commented_line = f"{indent}// {original_full_line}"
+    #             new_line = f"{indent}{has_one_part}.WithMany()"
+                
+    #             new_lines.append(commented_line)
+    #             new_lines.append(new_line)
+    #             transformed = True
+    #             break # Đã xử lý dòng này, chuyển sang dòng tiếp theo
+        
+    #     if not transformed:
+    #         new_lines.append(line)
+    
+    # current_content = "\n".join(new_lines)
+
 
     # ** SỬA LỖI: Chuyển sang xử lý UsingEntity theo từng câu lệnh hoàn chỉnh **
+    # lines = current_content.splitlines()
+    # new_lines = []
+    # i = 0
+    # while i < len(lines):
+    #     line = lines[i]
+    #     # Tìm điểm bắt đầu của một câu lệnh HasMany có khả năng là UsingEntity
+    #     if line.strip().startswith("entity.HasMany"):
+    #         end_index = find_statement_end_index(lines, i)
+    #         statement_lines = lines[i : end_index + 1]
+    #         statement_content = "\n".join(statement_lines)
+
+    #         # Chỉ xử lý nếu đây thực sự là khối UsingEntity M2M
+    #         if ".UsingEntity<Dictionary<string, object>>" in statement_content:
+    #             print(f"    -> Xử lý khối M2M UsingEntity đặc biệt.")
+    #             first_line = statement_lines[0]
+    #             commented_line = "//" + first_line
+    #             target_entity = "Unknown"
+    #             target_match = re.search(r'\.HasOne<([a-zA-Z_0-9]+)>', statement_content)
+    #             if target_match: target_entity = target_match.group(1)
+                
+    #             indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')))
+    #             new_line = f"{indent}entity.HasMany<{target_entity}>().WithMany()"
+                
+    #             new_lines.append(commented_line)
+    #             new_lines.append(new_line)
+    #             new_lines.extend(statement_lines[1:])
+    #             i = end_index + 1
+    #             continue
+        
+    #     new_lines.append(line)
+    #     i += 1
+    
+    # current_content = "\n".join(new_lines)
+    # using_entity_pattern = re.compile(
+    #     # Group 1: Thụt lề
+    #     r'^(\s*)'
+    #     # Group 2: Dòng HasMany(...).WithMany(...)
+    #     r'(entity\.HasMany\([^\)]+\)\.WithMany\([^\)]+\))'
+    #     # Group 3: Toàn bộ khối .UsingEntity theo sau
+    #     r'(\s*\.UsingEntity<Dictionary<string, object>>\s*\('
+    #     # Tìm HasOne đầu tiên bên trong để lấy tên entity
+    #     r'[^,]+,\s*[^=]*=>\s*\w+\.HasOne<([a-zA-Z_0-9]+)>' # Group 4: Tên Entity
+    #     # Bắt phần còn lại của khối cho đến khi kết thúc
+    #     r'.*?\);)',
+    #     re.DOTALL | re.MULTILINE
+    # )
+    # current_content = using_entity_pattern.sub(transform_using_entity_block, current_content)
+
     lines = current_content.splitlines()
     new_lines = []
     i = 0
     while i < len(lines):
         line = lines[i]
-        # Tìm điểm bắt đầu của một câu lệnh HasMany có khả năng là UsingEntity
+        
+        is_processed = False
+
+        # --- QUY TẮC 1: Xử lý HasMany(...).UsingEntity(...) (phức tạp, nhiều dòng) ---
         if line.strip().startswith("entity.HasMany"):
             end_index = find_statement_end_index(lines, i)
             statement_lines = lines[i : end_index + 1]
             statement_content = "\n".join(statement_lines)
-
-            # Chỉ xử lý nếu đây thực sự là khối UsingEntity M2M
             if ".UsingEntity<Dictionary<string, object>>" in statement_content:
                 print(f"    -> Xử lý khối M2M UsingEntity đặc biệt.")
                 first_line = statement_lines[0]
-                commented_line = "//" + first_line
+                
+                # ** SỬA LỖI: Xử lý thụt lề cho dòng comment **
+                indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')))
+                stripped_first_line = first_line.lstrip()
+                commented_line = f"{indent}// {stripped_first_line}"
+                
                 target_entity = "Unknown"
                 target_match = re.search(r'\.HasOne<([a-zA-Z_0-9]+)>', statement_content)
                 if target_match: target_entity = target_match.group(1)
                 
-                indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')))
                 new_line = f"{indent}entity.HasMany<{target_entity}>().WithMany()"
                 
                 new_lines.append(commented_line)
                 new_lines.append(new_line)
                 new_lines.extend(statement_lines[1:])
                 i = end_index + 1
-                continue
+                is_processed = True
         
+        if is_processed: continue
+
+        # --- QUY TẮC 2: Xử lý HasOne() (đơn giản, một dòng) ---
+        # Sử dụng logic chính xác bạn đã cung cấp
+        transformed_has_one = False
+        for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+            pattern = re.compile(
+                r'^(\s*)' # Group 1: Thụt lề
+                r'(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))' # Group 2: Phần HasOne
+                r'(\s*\.WithMany\([^)]+\))' # Group 3: Phần WithMany
+            )
+            # Chú ý: chạy match trên line đã strip() để pattern đơn giản hơn
+            match = pattern.match(line.strip())
+            if match:
+                indent = ' ' * (len(line) - len(line.lstrip(' ')))
+                has_one_part = match.group(2)
+                with_many_part = match.group(3)
+                
+                original_full_line = f"{has_one_part}{with_many_part}".strip()
+                commented_line = f"{indent}// {original_full_line}"
+                new_line = f"{indent}{has_one_part}.WithMany()"
+                
+                new_lines.append(commented_line)
+                new_lines.append(new_line)
+                transformed_has_one = True
+                break
+        
+        if transformed_has_one:
+            i += 1
+            continue
+
+        # --- QUY TẮC 3: Xử lý CreationTime ---
+        if line.strip().startswith("entity.Property(e => e.CreationTime)"):
+            end_index = find_statement_end_index(lines, i)
+            statement_lines = lines[i : end_index + 1]
+            statement_content = "\n".join(statement_lines)
+            
+            if ".HasDefaultValueSql(" not in statement_content:
+                print("    -> Thêm HasDefaultValueSql(\"now()\") cho CreationTime.")
+                first_line = statement_lines[0]
+                indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')) + 4)
+                new_default_sql_line = f'{indent}.HasDefaultValueSql("now()")'
+                
+                new_lines.append(first_line)
+                new_lines.append(new_default_sql_line)
+                new_lines.extend(statement_lines[1:])
+            else:
+                # Thuộc tính đã có, giữ nguyên
+                new_lines.extend(statement_lines)
+            
+            i = end_index + 1
+            is_processed = True
+
+        if is_processed:
+            continue
+        # Nếu không có quy tắc nào khớp, giữ lại dòng gốc
         new_lines.append(line)
         i += 1
     
     current_content = "\n".join(new_lines)
+
+    lines = current_content.splitlines()
+    final_lines = []
+    for line in lines:
+        if line.strip().startswith('//'):
+            final_lines.append(line)
+            continue
+        
+        modified_line = line
+        for class_to_clean in COMMENT_OUT_M2M_RELATIONSHIPS:
+            pattern = re.compile(r'(\.WithMany\(\s*p\s*=>\s*p\.' + class_to_clean + r'\s*\))')
+            modified_line = pattern.sub('.WithMany()', modified_line)
+        
+        final_lines.append(modified_line)
+    
+    current_content = "\n".join(final_lines)
 
     return ("PROCESS", current_content, "")
 
