@@ -53,7 +53,7 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
     #"MailMessage",
     #"MailTemplate",
     #"MrpProduction", # 7
-    #"ProductProduct", # 8
+    "ProductProduct",
     #"ProductTemplate", # 15
     #"ProjectProject",
     "ResCompany",
@@ -239,15 +239,37 @@ def analyze_and_transform_fluent_block(entity_name, body_content, schema_map):
             end_index = find_statement_end_index(lines, i)
             statement_lines = lines[i : end_index + 1]
             statement_content = "\n".join(statement_lines)
+            
             if ".UsingEntity<Dictionary<string, object>>" in statement_content:
                 print(f"    -> Xử lý khối M2M UsingEntity đặc biệt.")
                 first_line = statement_lines[0]
                 indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')))
                 commented_line = f"{indent}// {first_line.lstrip()}"
-                target_entity = "Unknown"
-                target_match = re.search(r'\.HasOne<([a-zA-Z_0-9]+)>', statement_content)
-                if target_match: target_entity = target_match.group(1)
-                new_line = f"{indent}entity.HasMany<{target_entity}>().WithMany()"
+
+                # 1. Tìm tất cả các entity được định nghĩa trong HasOne<...> bên trong khối
+                entities_in_block = re.findall(r'\.HasOne<([a-zA-Z_0-9]+)>', statement_content)
+                
+                # 2. Xác định entity1 và entity2
+                entity1 = entity_name
+                entity2 = next((name for name in entities_in_block if name != entity_name), None)
+                
+                # 3. Áp dụng logic 3 trường hợp của bạn
+                new_line = ""
+                if entity1 in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    # Trường hợp 1: entity đang xử lý nằm trong danh sách
+                    if entity2:
+                        new_line = f"{indent}entity.HasMany<{entity2}>().WithMany()"
+                    else: # Fallback nếu không tìm thấy entity2
+                        new_line = first_line 
+                elif entity2 and entity2 in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    # Trường hợp 2: entity đối diện nằm trong danh sách
+                    has_many_part_match = re.search(r'(entity\.HasMany\([^\)]+\))', first_line)
+                    if has_many_part_match:
+                        new_line = f"{indent}{has_many_part_match.group(1)}.WithMany()"
+                else:
+                    # Trường hợp 3: Không entity nào trong danh sách, giữ nguyên
+                    new_line = first_line
+
                 new_lines.append(commented_line)
                 new_lines.append(new_line)
                 new_lines.extend(statement_lines[1:])
@@ -659,6 +681,9 @@ using Volo.Abp.MultiTenancy;"""
     content = content.replace("public DateTime? WriteDate { get; set; }", "public DateTime? LastModificationTime { get; set; }")
     content = content.replace("public DateOnly? ", "public DateTime? ")
     content = content.replace("public DateOnly ", "public DateTime ")
+    content = content.replace('[ForeignKey("CompanyId")]', '[ForeignKey("TenantId")]')
+    content = content.replace('[ForeignKey("CreateUid")]', '[ForeignKey("CreatorId")]')
+    content = content.replace('[ForeignKey("WriteUid")]', '[ForeignKey("LastModifierId")]')
     
     # Xóa thuộc tính CompanyId gốc
     company_id_pattern = re.compile(r'^\s*\[Column\("company_id"\)\].*(\r?\n)\s*public\s+Guid\?\s+CompanyId\s*{\s*get;\s*set;\s*}.*(\r?\n)?', re.MULTILINE)
