@@ -17,8 +17,30 @@ MANUAL_SYSTEM_ENTITIES = [
 # Thêm tên lớp (class) của các View vào đây
 # Ví dụ: ["AccountInvoiceReport"]
 VIEW_ENTITIES = [
-    # "TenView1",
-    # "TenView2"
+    "AccountRoot",
+    "AssetAssetReport",
+    "CrmActivityReport",
+    "EventSaleReport",
+    "FleetVehicleCostReport",
+    "FollowupStatByPartner",
+    "FollowupStat",
+    "HrAttendanceReport",
+    "HrContractHistory",
+    "HrEmployeePublic",
+    "HrEmployeeSkillReport",
+    "HrLeaveEmployeeTypeReport",
+    "HrLeaveReportCalendar",
+    "HrLeaveReport",
+    "ImLivechatReportChannel",
+    "ImLivechatReportOperator",
+    "LunchCashmoveReport",
+    "MailingTraceReport",
+    "PurchaseBillLineMatch",
+    "PurchaseBillUnion",
+    "ReportPosOrder",
+    "ReportProjectTaskUser",
+    "ReportStockQuantity",
+    "VendorDelayReport"
 ]
 
 
