@@ -184,7 +184,11 @@ def analyze_and_transform_fluent_block(entity_name, body_content, schema_map):
 
     if should_add_multitenancy:
         print("    -> Đánh dấu là MultiTenant.")
-        current_content = re.sub(r'(Property\(e\s*=>\s*e\.)CompanyId', r'\1TenantId', current_content)
+        # Xóa các dòng entity.Property(e => e.CompanyId) cũ trước khi thêm mới
+        # Dùng regex để xóa cả câu lệnh có thể trên nhiều dòng
+        company_prop_pattern = re.compile(r'^\s*entity\.Property\(e\s*=>\s*e\.CompanyId\).*?;', re.DOTALL | re.MULTILINE)
+        current_content = company_prop_pattern.sub('', current_content)
+
         current_content = re.sub(r'(\.HasIndex\((.|\n)*?e\.)CompanyId', r'\1TenantId', current_content)
         tenant_id_property_code = 'entity.Property(e => e.TenantId).HasColumnName("company_id");'
         id_block_pattern = re.compile(r'(Property\(e\s*=>\s*e\.Id\).*?;)', re.DOTALL)
@@ -205,9 +209,93 @@ def analyze_and_transform_fluent_block(entity_name, body_content, schema_map):
         current_content = re.sub(rf'_{old.lower()}_', f'_{new.lower()}_', current_content)
         current_content = re.sub(rf'_{old.lower()}$', f'_{new.lower()}', current_content)
 
-    for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
-        pattern = re.compile(r'(\s*entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\)\s*\.WithMany\()([^\)]*)(\))')
-        current_content = pattern.sub(r'\1\3', current_content)
+    lines = current_content.splitlines()
+    new_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        is_processed = False
+
+        if line.strip().startswith("entity.Property(e => e.CreationTime)"):
+            end_index = find_statement_end_index(lines, i)
+            statement_lines = lines[i : end_index + 1]
+            statement_content = "\n".join(statement_lines)
+            if ".HasDefaultValueSql(" not in statement_content:
+                print("    -> Thêm HasDefaultValueSql(\"now()\") cho CreationTime.")
+                first_line = statement_lines[0]
+                indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')) + 4)
+                new_default_sql_line = f'{indent}.HasDefaultValueSql("now()")'
+                new_lines.append(first_line)
+                new_lines.append(new_default_sql_line)
+                new_lines.extend(statement_lines[1:])
+            else:
+                new_lines.extend(statement_lines)
+            i = end_index + 1
+            is_processed = True
+        
+        if is_processed: continue
+
+        if line.strip().startswith("entity.HasMany"):
+            end_index = find_statement_end_index(lines, i)
+            statement_lines = lines[i : end_index + 1]
+            statement_content = "\n".join(statement_lines)
+            if ".UsingEntity<Dictionary<string, object>>" in statement_content:
+                print(f"    -> Xử lý khối M2M UsingEntity đặc biệt.")
+                first_line = statement_lines[0]
+                indent = ' ' * (len(first_line) - len(first_line.lstrip(' ')))
+                commented_line = f"{indent}// {first_line.lstrip()}"
+                target_entity = "Unknown"
+                target_match = re.search(r'\.HasOne<([a-zA-Z_0-9]+)>', statement_content)
+                if target_match: target_entity = target_match.group(1)
+                new_line = f"{indent}entity.HasMany<{target_entity}>().WithMany()"
+                new_lines.append(commented_line)
+                new_lines.append(new_line)
+                new_lines.extend(statement_lines[1:])
+                i = end_index + 1
+                is_processed = True
+        
+        if is_processed: continue
+
+        for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+            pattern = re.compile(r'^(\s*)(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))(\s*\.WithMany\([^)]+\);?)$')
+            match = pattern.match(line.strip())
+            if match:
+                indent = ' ' * (len(line) - len(line.lstrip(' ')))
+                has_one_part = match.group(2)
+                original_full_line = line.strip()
+                commented_line = f"{indent}// {original_full_line}"
+                new_line = f"{indent}{has_one_part}.WithMany()"
+                new_lines.append(commented_line)
+                new_lines.append(new_line)
+                is_processed = True
+                break
+        
+        if is_processed:
+            i += 1
+            continue
+            
+        new_lines.append(line)
+        i += 1
+    
+    current_content = "\n".join(new_lines)
+
+    lines = current_content.splitlines()
+    final_lines = []
+    for line in lines:
+        if line.strip().startswith('//'):
+            final_lines.append(line)
+            continue
+        modified_line = line
+        for class_to_clean in COMMENT_OUT_M2M_RELATIONSHIPS:
+            pattern = re.compile(r'(\.WithMany\(\s*p\s*=>\s*p\.' + class_to_clean + r'\s*\))')
+            modified_line = pattern.sub('.WithMany()', modified_line)
+        final_lines.append(modified_line)
+    
+    current_content = "\n".join(final_lines)
+
+    # for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+    #     pattern = re.compile(r'(\s*entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\)\s*\.WithMany\()([^\)]*)(\))')
+    #     current_content = pattern.sub(r'\1\3', current_content)
     
     return ("PROCESS", current_content)
 
