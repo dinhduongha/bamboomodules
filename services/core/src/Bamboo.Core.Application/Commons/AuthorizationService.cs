@@ -14,7 +14,7 @@ using Volo.Abp.Users;
 
 using Bamboo.Core.Models;
 
-namespace Bamboo.Core.Application
+namespace Bamboo.Core.Application.Services.Commons
 {
     public class AuthorizationService : ITransientDependency
     {
