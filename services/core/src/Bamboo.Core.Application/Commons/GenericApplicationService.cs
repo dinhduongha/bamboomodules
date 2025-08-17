@@ -18,6 +18,7 @@ using Bamboo.Core.Models;
 using Volo.Abp.Data;
 using Volo.Abp.MultiTenancy;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Services.Commons;
 
 namespace Bamboo.Core.Application
 {
@@ -95,7 +96,7 @@ namespace Bamboo.Core.Application
             {
                 var attr = prop.GetCustomAttribute<RelationFieldAttribute>();
                 if (attr != null)
-                    relationFields[prop.Name] = attr.RelatedModel;
+                    relationFields[prop.Name] = attr.Model;
             }
             return relationFields;
         }
@@ -659,7 +660,7 @@ namespace Bamboo.Core.Application
             if (relatedModel != null)
             {
                 var attr = property.GetCustomAttribute<RelationFieldAttribute>();
-                return attr?.RelationType ?? "many2one";
+                return attr?.Type ?? "many2one";
             }
 
             var type = property.PropertyType;

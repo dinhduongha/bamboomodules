@@ -19,7 +19,7 @@ using Volo.Abp.Users;
 
 using Bamboo.Core.Models;
 
-namespace Bamboo.Core.Application
+namespace Bamboo.Core.Application.Services.Commons
 {
     public class DomainParser : ITransientDependency
     {
@@ -122,7 +122,7 @@ namespace Bamboo.Core.Application
             {
                 var attr = prop.GetCustomAttribute<RelationFieldAttribute>();
                 if (attr != null)
-                    relationFields[prop.Name] = attr.RelatedModel;
+                    relationFields[prop.Name] = attr.Model;
             }
             return relationFields;
         }
@@ -307,18 +307,18 @@ namespace Bamboo.Core.Application
     [AttributeUsage(AttributeTargets.Property)]
     public class JsonbFieldAttribute : Attribute { }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class RelationFieldAttribute : Attribute
-    {
-        public string RelatedModel { get; }
-        public string RelationType { get; }
+    // [AttributeUsage(AttributeTargets.Property)]
+    // public class RelationFieldAttribute : Attribute
+    // {
+    //     public string RelatedModel { get; }
+    //     public string RelationType { get; }
 
-        public RelationFieldAttribute(string relatedModel, string relationType)
-        {
-            RelatedModel = relatedModel;
-            RelationType = relationType;
-        }
-    }
+    //     public RelationFieldAttribute(string relatedModel, string relationType)
+    //     {
+    //         RelatedModel = relatedModel;
+    //         RelationType = relationType;
+    //     }
+    // }
 }
 /* OLD
 namespace Bamboo.Core.Application
