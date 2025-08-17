@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,14 +21,18 @@ public partial class HrRuleInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("input_id")]
     public Guid? InputId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -36,20 +41,23 @@ public partial class HrRuleInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public string? Code { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrRuleInputCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrRuleInputCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("InputId")]
-    //[InverseProperty("HrRuleInputs")] //Many2One
+    // [InverseProperty("HrRuleInput")] //Many2one
     public virtual HrSalaryRule? Input { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrRuleInputWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrRuleInputWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

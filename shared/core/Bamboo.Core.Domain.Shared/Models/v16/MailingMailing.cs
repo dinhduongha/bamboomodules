@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mailing_mailing")]
-//[Index("CampaignId", Name = "mailing_mailing__campaign_id_index")]
-public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CampaignId", Name = "mailing_mailing_campaign_id_index")]
+public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,12 +22,15 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("source_id")]
     public Guid? SourceId { get; set; }
+
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -53,7 +57,7 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public long? AbTestingPc { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -103,11 +107,11 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("keep_archives")]
     public bool? KeepArchives { get; set; }
 
-    [Column("ab_testing_enabled")]
-    public bool? AbTestingEnabled { get; set; }
-
     [Column("ab_testing_completed")]
     public bool? AbTestingCompleted { get; set; }
+
+    [Column("ab_testing_enabled")]
+    public bool? AbTestingEnabled { get; set; }
 
     [Column("kpi_mail_required")]
     public bool? KpiMailRequired { get; set; }
@@ -125,13 +129,10 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public DateTime? CalendarDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
-
-    [Column("card_campaign_id")]
-    public Guid? CardCampaignId { get; set; }
 
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
@@ -145,118 +146,120 @@ public partial class MailingMailing: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("sms_allow_unsubscribe")]
     public bool? SmsAllowUnsubscribe { get; set; }
 
+    // [Many2one]
     [ForeignKey("CampaignId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
-    [ForeignKey("CardCampaignId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
-    public virtual CardCampaign? CardCampaign { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailingMailingCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailingMailingCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
-    [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("...")]
-    [NotMapped]
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
+    // [One2many]
+    [ForeignKey("MassMailingId")]
+    [InverseProperty("MassMailing")]
+    public virtual ICollection<LinkTracker> LinkTracker { get; set; }
 
-    //[InverseProperty("MassMailing")]
-    [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
+    // [One2many]
+    [ForeignKey("MassMailingId")]
+    [InverseProperty("MassMailing")]
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
-    //[InverseProperty("MassMailing")]
-    [NotMapped]
-    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } 
+    // [One2many]
+    [ForeignKey("MassMailingId")]
+    [InverseProperty("MassMailing")]
+    public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
-    //[InverseProperty("MassMailing")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
+    // [One2many]
+    [ForeignKey("MailingId")]
+    [InverseProperty("Mailing")]
+    public virtual ICollection<MailMail> MailMail { get; set; }
 
-    //[InverseProperty("Mailing")]
-    [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } 
-
+    // [Many2one]
     [ForeignKey("MailServerId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual IrMailServer? MailServer { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailingFilterId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual MailingFilter? MailingFilter { get; set; }
 
-    //[InverseProperty("MassMailing")]
-    [NotMapped]
-    public virtual ICollection<MailingMailingScheduleDate> MailingMailingScheduleDates { get; set; } 
+    // [One2many]
+    [ForeignKey("MassMailingId")]
+    [InverseProperty("MassMailing")]
+    public virtual ICollection<MailingMailingScheduleDate> MailingMailingScheduleDate { get; set; }
 
-    //[InverseProperty("MassMailing")]
-    [NotMapped]
-    public virtual ICollection<MailingMailingTest> MailingMailingTests { get; set; } 
+    // [One2many]
+    [ForeignKey("MassMailingId")]
+    [InverseProperty("MassMailing")]
+    public virtual ICollection<MailingMailingTest> MailingMailingTest { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailingModelId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual IrModel? MailingModel { get; set; }
 
-    //[InverseProperty("Mailing")]
-    [NotMapped]
-    public virtual ICollection<MailingSmsTest> MailingSmsTests { get; set; } 
+    // [One2many]
+    [ForeignKey("MailingId")]
+    [InverseProperty("Mailing")]
+    public virtual ICollection<MailingSmsTest> MailingSmsTest { get; set; }
 
-    //[InverseProperty("MassMailing")]
-    [NotMapped]
-    public virtual ICollection<MailingTrace> MailingTraces { get; set; } 
+    // [One2many]
+    [ForeignKey("MassMailingId")]
+    [InverseProperty("MassMailing")]
+    public virtual ICollection<MailingTrace> MailingTrace { get; set; }
 
+    // [Many2one]
     [ForeignKey("MediumId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual UtmMedium? Medium { get; set; }
 
-    //[InverseProperty("Mailing")]
-    [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposers { get; set; } 
+    // [Many2one]
+    [ForeignKey("MessageMainAttachmentId")]
+    // [InverseProperty("MailingMailing")] //Many2one
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    //[InverseProperty("Mailing")]
-    [NotMapped]
-    public virtual ICollection<SmsSms> SmsSms { get; set; } 
+    // [One2many]
+    [ForeignKey("MailingId")]
+    [InverseProperty("Mailing")]
+    public virtual ICollection<SmsComposer> SmsComposer { get; set; }
 
+    // [One2many]
+    [ForeignKey("MailingId")]
+    [InverseProperty("Mailing")]
+    public virtual ICollection<SmsSms> SmsSms { get; set; }
+
+    // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("SourceId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
+    // [InverseProperty("MailingMailing")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("MailingMailingUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("MailingMailingUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
-    //[InverseProperty("AbTestingWinnerMailing")]
-    [NotMapped]
-    public virtual ICollection<UtmCampaign> UtmCampaigns { get; set; } 
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailingMailingWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailingMailingWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MassMailingId")]
-    //[InverseProperty("MassMailings")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MassMailingId")] //Many2many
+    // [InverseProperty("MassMailing")] //Many2many
+    public virtual ICollection<IrAttachment> Attachment { get; set; }
 
-    [ForeignKey("MailingMailingId")]
-    //[InverseProperty("MailingMailings")]
-    [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailingMailingId")]
+    // [InverseProperty("MailingMailing")]
+    // public virtual ICollection<MailingList> MailingList { get; set; }
 }

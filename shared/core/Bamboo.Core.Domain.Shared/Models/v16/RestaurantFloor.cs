@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("restaurant_floor")]
-public partial class RestaurantFloor: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RestaurantFloor: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,18 @@ public partial class RestaurantFloor: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
+    [Column("pos_config_id")]
+    public Guid? PosConfigId { get; set; }
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,27 +47,28 @@ public partial class RestaurantFloor: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("RestaurantFloorCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("RestaurantFloorCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("Floor")]
-    [NotMapped]
-    public virtual ICollection<RestaurantTable> RestaurantTables { get; set; } 
+    // [Many2one]
+    [ForeignKey("PosConfigId")]
+    // [InverseProperty("RestaurantFloor")] //Many2one
+    public virtual PosConfig? PosConfig { get; set; }
 
+    // [One2many]
+    [ForeignKey("FloorId")]
+    [InverseProperty("Floor")]
+    public virtual ICollection<RestaurantTable> RestaurantTable { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("RestaurantFloorWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("RestaurantFloorId")]
-    //[InverseProperty("RestaurantFloors")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
+    // [InverseProperty("RestaurantFloorWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

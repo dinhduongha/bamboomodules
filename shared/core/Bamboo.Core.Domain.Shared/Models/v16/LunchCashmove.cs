@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("lunch_cashmove")]
-public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LunchCashmove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? UserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,7 +44,7 @@ public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Description { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -47,27 +52,23 @@ public partial class LunchCashmove : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("amount")]
     public double? Amount { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("LunchCashmoveCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("LunchCashmoveCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("LunchCashmoves")]
-    [NotMapped]
+    // [InverseProperty("LunchCashmove")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("LunchCashmoveUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("LunchCashmoveUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("LunchCashmoveWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("LunchCashmoveWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,13 +10,19 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("base_import_tests_models_preview")]
-public partial class BaseImportTestsModelsPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class BaseImportTestsModelsPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("somevalue")]
     public Guid? Somevalue { get; set; }
@@ -26,7 +31,7 @@ public partial class BaseImportTestsModelsPreview: FullAuditedEntity<Guid>, IEnt
     public Guid? Othervalue { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -35,18 +40,18 @@ public partial class BaseImportTestsModelsPreview: FullAuditedEntity<Guid>, IEnt
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BaseImportTestsModelsPreviewCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("BaseImportTestsModelsPreviewCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BaseImportTestsModelsPreviewWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("BaseImportTestsModelsPreviewWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

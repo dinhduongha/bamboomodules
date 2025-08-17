@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,6 +23,10 @@ public partial class HrPayslipInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("payslip_id")]
     public Guid? PayslipId { get; set; }
 
@@ -32,10 +37,10 @@ public partial class HrPayslipInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? ContractId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -44,27 +49,31 @@ public partial class HrPayslipInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Code { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("amount")]
     public double? Amount { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContractId")]
-    //[InverseProperty("HrPayslipInputs")] //Many2One
+    // [InverseProperty("HrPayslipInput")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrPayslipInputCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrPayslipInputCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PayslipId")]
-    //[InverseProperty("HrPayslipInputs")] //Many2One
+    // [InverseProperty("HrPayslipInput")] //Many2one
     public virtual HrPayslip? Payslip { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrPayslipInputWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrPayslipInputWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

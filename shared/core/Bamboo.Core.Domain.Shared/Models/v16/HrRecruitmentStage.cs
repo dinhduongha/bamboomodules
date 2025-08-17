@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_recruitment_stage")]
-public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrRecruitmentStage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,7 +20,11 @@ public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -27,14 +32,14 @@ public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TemplateId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("legend_blocked", TypeName = "jsonb")]
@@ -58,36 +63,39 @@ public partial class HrRecruitmentStage : FullAuditedEntity<Guid>, IEntityDto<Gu
     public bool? HiredStage { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrRecruitmentStageCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrRecruitmentStageCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("LastStageId")]
+    [InverseProperty("LastStage")]
+    public virtual ICollection<HrApplicant> HrApplicantLastStage { get; set; }
+
+    // [One2many]
+    [ForeignKey("StageId")]
+    [InverseProperty("Stage")]
+    public virtual ICollection<HrApplicant> HrApplicantStage { get; set; }
+
+    // [Many2one]
     [ForeignKey("TemplateId")]
-    //[InverseProperty("HrRecruitmentStages")]
-    [NotMapped]
+    // [InverseProperty("HrRecruitmentStage")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrRecruitmentStageWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrRecruitmentStageWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("LastStage")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantLastStages { get; set; } 
-
-    //[InverseProperty("Stage")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicantStages { get; set; } 
-
-    [ForeignKey("HrRecruitmentStageId")]
-    //[InverseProperty("HrRecruitmentStages")]
-    [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrRecruitmentStageId")] //Many2many
+    // [InverseProperty("HrRecruitmentStage")] //Many2many
+    public virtual ICollection<HrJob> HrJob { get; set; }
 }

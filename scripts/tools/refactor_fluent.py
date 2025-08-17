@@ -714,17 +714,20 @@ def refactor_entity_file(content, schema_map):
     else:
         content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
 
+#using System;
+#using System.Collections.Generic;
+#using System.ComponentModel.DataAnnotations;
+#using System.ComponentModel.DataAnnotations.Schema;
+
     # Thay thế usings
-    abp_usings = """using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+    abp_usings = """
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
-using Volo.Abp.Domain.Entities.Auditing;"""
-    if should_add_multitenancy:
-        abp_usings += "\nusing Volo.Abp.MultiTenancy;"
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;"""
+    #if should_add_multitenancy:
+    #    abp_usings += "\nusing Volo.Abp.MultiTenancy;"
 
     content = re.sub(r'^\s*using Microsoft\.EntityFrameworkCore;.*$', abp_usings, content, flags=re.MULTILINE)
     

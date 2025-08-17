@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -19,7 +20,11 @@ public partial class MailMessageReaction: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("message_id")]
     public Guid? MessageId { get; set; }
 
@@ -32,18 +37,18 @@ public partial class MailMessageReaction: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("content")]
     public string? Content { get; set; }
 
+    // [Many2one]
     [ForeignKey("GuestId")]
-    //[InverseProperty("MailMessageReactions")]
-    [NotMapped]
+    // [InverseProperty("MailMessageReaction")] //Many2one
     public virtual MailGuest? Guest { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageId")]
-    //[InverseProperty("MailMessageReactions")]
-    [NotMapped]
+    // [InverseProperty("MailMessageReaction")] //Many2one
     public virtual MailMessage? Message { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("MailMessageReactions")]
-    [NotMapped]
+    // [InverseProperty("MailMessageReaction")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 }

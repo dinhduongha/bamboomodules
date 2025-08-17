@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -9,10 +10,8 @@ using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
-/// <summary>
-/// Mass Mailing Subscription Information
-/// </summary>
-//[Table("mailing_contact_list_rel")]
+
+[Table("mailing_contact_list_rel")]
 //[Index("ContactId", "ListId", Name = "mailing_contact_list_rel_unique_contact_list", IsUnique = true)]
 public partial class MailingContactListRel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -23,67 +22,51 @@ public partial class MailingContactListRel: FullAuditedEntity<Guid>, IEntityDto<
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    /// <summary>
-    /// Contact
-    /// </summary>
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("contact_id")]
     public Guid? ContactId { get; set; }
 
-    /// <summary>
-    /// Mailing List
-    /// </summary>
     [Column("list_id")]
-    public Guid ListId { get; set; }
+    public Guid? ListId { get; set; }
 
-    /// <summary>
-    /// Created by
-    /// </summary>
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
-    /// <summary>
-    /// Last Updated by
-    /// </summary>
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    /// <summary>
-    /// Opt Out
-    /// </summary>
     [Column("opt_out")]
     public bool? OptOut { get; set; }
 
-    /// <summary>
-    /// Unsubscription Date
-    /// </summary>
     [Column("unsubscription_date", TypeName = "timestamp without time zone")]
     public DateTime? UnsubscriptionDate { get; set; }
 
-    /// <summary>
-    /// Created on
-    /// </summary>
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
-    /// <summary>
-    /// Last Updated on
-    /// </summary>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContactId")]
-    //[InverseProperty("MailingContactListRels")]
-    public virtual MailingContact Contact { get; set; } = null!;
+    // [InverseProperty("MailingContactListRel")] //Many2one
+    public virtual MailingContact? Contact { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailingContactListRelCreateUs")]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailingContactListRelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ListId")]
-    //[InverseProperty("MailingContactListRels")]
-    public virtual MailingList List { get; set; } = null!;
+    // [InverseProperty("MailingContactListRel")] //Many2one
+    public virtual MailingList? List { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailingContactListRelWriteUs")]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailingContactListRelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

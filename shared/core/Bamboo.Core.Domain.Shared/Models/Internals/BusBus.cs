@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("bus_bus")]
-public partial class BusBus: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class BusBus: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,9 +19,13 @@ public partial class BusBus: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudited
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -35,18 +37,18 @@ public partial class BusBus: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudited
     public string? Message { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BusBuCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("BusBusCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BusBuWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("BusBusWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

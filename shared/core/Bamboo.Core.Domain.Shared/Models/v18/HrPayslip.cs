@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_payslip")]
 //[Index("State", Name = "hr_payslip__state_index")]
-public partial class HrPayslip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrPayslip: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,12 +22,15 @@ public partial class HrPayslip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("struct_id")]
     public Guid? StructId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
-
 
     [Column("contract_id")]
     public Guid? ContractId { get; set; }
@@ -35,10 +39,10 @@ public partial class HrPayslip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? PayslipRunId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -65,10 +69,10 @@ public partial class HrPayslip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public bool? CreditNote { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
@@ -79,51 +83,63 @@ public partial class HrPayslip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("date")]
     public DateTime? Date { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContractId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrPayslipCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrPayslipCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("Payslip") //Many2many
-    public virtual ICollection<HrPayslipInput> HrPayslipInputs { get; set; } = null;
+    // [One2many]
+    [ForeignKey("PayslipId")]
+    [InverseProperty("Payslip")]
+    public virtual ICollection<HrPayslipInput> HrPayslipInput { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("Slip") //Many2many
-    public virtual ICollection<HrPayslipLine> HrPayslipLines { get; set; } = null;
+    // [One2many]
+    [ForeignKey("SlipId")]
+    [InverseProperty("Slip")]
+    public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("Payslip") //Many2many
-    public virtual ICollection<HrPayslipWorkedDay> HrPayslipWorkedDays { get; set; } = null;
+    // [One2many]
+    [ForeignKey("PayslipId")]
+    [InverseProperty("Payslip")]
+    public virtual ICollection<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("PayslipRunId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrPayslipRun? PayslipRun { get; set; }
 
+    // [Many2one]
     [ForeignKey("StructId")]
-    //[InverseProperty("HrPayslips")] //Many2One
+    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrPayrollStructure? Struct { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrPayslipWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrPayslipWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,24 +10,20 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_act_server")]
 //[Index("ModelId", Name = "ir_act_server__model_id_index")]
 //[Index("Path", Name = "ir_act_server_path_unique", IsUnique = true)]
-public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrActServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("binding_model_id")]
     public Guid? BindingModelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -47,14 +42,14 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Help { get; set; }
+    [Column("help", TypeName = "jsonb")]
+    public string? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -158,109 +153,126 @@ public partial class IrActServer: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("website_published")]
     public bool? WebsitePublished { get; set; }
 
+    [Column("base_automation_id")]
+    public Guid? BaseAutomationId { get; set; }
+
+    // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    //[InverseProperty("IrActServers")]
-    [NotMapped]
+    // [InverseProperty("IrActServer")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActivityUserId")]
-    //[InverseProperty("IrActServerActivityUsers")]
-    [NotMapped]
-    public virtual ResUser? ActivityUser { get; set; }
+    // [InverseProperty("IrActServerActivityUser")] //Many2one
+    public virtual ResUsers? ActivityUser { get; set; }
 
+    // [Many2one]
+    [ForeignKey("BaseAutomationId")]
+    // [InverseProperty("IrActServer")] //Many2one
+    public virtual BaseAutomation? BaseAutomation { get; set; }
+
+    // [One2many]
+    [ForeignKey("ActionServerId")]
+    [InverseProperty("ActionServer")]
+    public virtual ICollection<BaseAutomation> BaseAutomations { get; set; }
+
+    // [Many2one]
     [ForeignKey("BindingModelId")]
-    //[InverseProperty("IrActServerBindingModels")]
-    [NotMapped]
+    // [InverseProperty("IrActServerBindingModel")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrActServerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrActServerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CrudModelId")]
-    //[InverseProperty("IrActServerCrudModels")]
-    [NotMapped]
+    // [InverseProperty("IrActServerCrudModel")] //Many2one
     public virtual IrModel? CrudModel { get; set; }
 
+    // [One2many]
+    [ForeignKey("IrActionsServerId")]
+    [InverseProperty("IrActionsServer")]
+    public virtual ICollection<IrCron> IrCron { get; set; }
+
+    // [One2many]
+    [ForeignKey("ServerId")]
+    [InverseProperty("Server")]
+    public virtual ICollection<IrServerObjectLines> IrServerObjectLines { get; set; }
+
+    // [Many2one]
     [ForeignKey("LinkFieldId")]
-    // v16-Compat
-    //[InverseProperty("IrActServers")]
-    //[InverseProperty("IrActServerLinkFields")]
-    [NotMapped]
+    // [InverseProperty("IrActServer")] //Many2one
     public virtual IrModelFields? LinkField { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("IrActServerModels")]
-    [NotMapped]
+    // [InverseProperty("IrActServerModel")] //Many2one
     public virtual IrModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("SelectionValue")]
-    //[InverseProperty("IrActServers")]
-    [NotMapped]
+    // [InverseProperty("IrActServer")] //Many2one
     public virtual IrModelFieldsSelection? SelectionValueNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    //[InverseProperty("IrActServers")]
-    [NotMapped]
+    // [InverseProperty("IrActServer")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("TemplateId")]
-    //[InverseProperty("IrActServers")]
-    [NotMapped]
+    // [InverseProperty("IrActServer")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
+    // [Many2one]
     [ForeignKey("UpdateFieldId")]
-    //[InverseProperty("IrActServerUpdateFields")]
-    [NotMapped]
+    // [InverseProperty("IrActServerUpdateField")] //Many2one
     public virtual IrModelFields? UpdateField { get; set; }
 
+    // [Many2one]
     [ForeignKey("UpdateRelatedModelId")]
-    //[InverseProperty("IrActServerUpdateRelatedModels")]
-    [NotMapped]
+    // [InverseProperty("IrActServerUpdateRelatedModel")] //Many2one
     public virtual IrModel? UpdateRelatedModel { get; set; }
 
+    // [One2many]
+    [ForeignKey("ActionServerId")]
+    [InverseProperty("ActionServer")]
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilter { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrActServerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrActServerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("IrActionsServer")]
-    [NotMapped]
-    public virtual ICollection<IrCron> IrCrons { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ServerId")] //Many2many
+    // [InverseProperty("Server")] //Many2many
+    public virtual ICollection<IrActServer> Action { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("Server")]
-    [NotMapped]
-    public virtual ICollection<IrServerObjectLine> IrServerObjectLines { get; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ServerId")] //Many2many
+    // [InverseProperty("Server")] //Many2many
+    public virtual ICollection<IrModelFields> Field { get; set; }
 
-    //[InverseProperty("ActionServer")]
-    [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ActId")] //Many2many
+    // [InverseProperty("Act")] //Many2many
+    public virtual ICollection<ResGroups> Gid { get; set; }
 
-    [ForeignKey("ServerId")]
-    //[InverseProperty("Servers")]
-    [NotMapped]
-    public virtual ICollection<IrActServer> Actions { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("IrActServerId")] //Many2many
+    // [InverseProperty("IrActServer")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 
-    [ForeignKey("ServerId")]
-    //[InverseProperty("Servers")]
-    [NotMapped]
-    public virtual ICollection<IrModelFields> Fields { get; set; } 
-
-    [ForeignKey("ActId")]
-    //[InverseProperty("Acts")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } 
-
-    [ForeignKey("IrActServerId")]
-    //[InverseProperty("IrActServers")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
-
-    [ForeignKey("ActionId")]
-    //[InverseProperty("Actions")]
-    [NotMapped]
-    public virtual ICollection<IrActServer> Servers { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ActionId")] //Many2many
+    // [InverseProperty("Action")] //Many2many
+    public virtual ICollection<IrActServer> Server { get; set; }
 }

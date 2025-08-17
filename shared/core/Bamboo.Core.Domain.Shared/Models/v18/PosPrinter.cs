@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,8 +21,11 @@ public partial class PosPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,7 +40,7 @@ public partial class PosPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public string? ProxyIp { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -44,28 +48,30 @@ public partial class PosPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("epson_printer_ip")]
     public string? EpsonPrinterIp { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("PosPrinters")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("PosPrinter")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PosPrinterCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PosPrinterCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PosPrinterWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PosPrinterWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("PrinterId")]
-    //[InverseProperty("Printers")]
-    [NotMapped]
-    public virtual ICollection<PosCategory> Categories { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PrinterId")] //Many2many
+    // [InverseProperty("Printer")] //Many2many
+    public virtual ICollection<PosCategory> Category { get; set; }
 
-    [ForeignKey("PrinterId")]
-    //[InverseProperty("Printers")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> Configs { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PrinterId")]
+    // [InverseProperty("Printer")]
+    // public virtual ICollection<PosConfig> Config { get; set; }
 }

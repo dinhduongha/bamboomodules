@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_embed")]
-//[Index("SlideId", Name = "slide_embed__slide_id_index")]
+//[Index("SlideId", Name = "slide_embed_slide_id_index")]
 public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -21,6 +22,10 @@ public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
 
@@ -28,7 +33,7 @@ public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public long? CountViews { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -37,23 +42,23 @@ public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public string? Url { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SlideEmbedCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SlideEmbedCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("SlideId")]
-    //[InverseProperty("SlideEmbeds")]
-    [NotMapped]
+    // [InverseProperty("SlideEmbed")] //Many2one
     public virtual SlideSlide? Slide { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SlideEmbedWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SlideEmbedWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

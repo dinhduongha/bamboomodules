@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_link_wizard")]
-public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PaymentLinkWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -30,7 +35,7 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -38,11 +43,9 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("res_model")]
     public string? ResModel { get; set; }
 
-    // v16-Compat
     [Column("description")]
     public string? Description { get; set; }
 
-    // v16-Compat
     [Column("payment_provider_selection")]
     public string? PaymentProviderSelection { get; set; }
 
@@ -53,45 +56,28 @@ public partial class PaymentLinkWizard : FullAuditedEntity<Guid>, IEntityDto<Gui
     public decimal? AmountMax { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("discount_date")]
-    public DateTime? DiscountDate { get; set; }
-
-    [JsonField]
-    [Column("open_installments", TypeName = "jsonb")]
-    public string? OpenInstallments { get; set; }
-
-    [Column("has_eligible_epd")]
-    public bool? HasEligibleEpd { get; set; }
-
-    [Column("amount_paid")]
-    public decimal? AmountPaid { get; set; }
-
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PaymentLinkWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PaymentLinkWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("PaymentLinkWizards")]
-    [NotMapped]
+    // [InverseProperty("PaymentLinkWizard")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("PaymentLinkWizards")]
-    [NotMapped]
+    // [InverseProperty("PaymentLinkWizard")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PaymentLinkWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PaymentLinkWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("maintenance_equipment")]
 //[Index("SerialNo", Name = "maintenance_equipment_serial_no", IsUnique = true)]
-public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,24 +22,15 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
-    [Column("maintenance_team_id")]
-    public Guid? MaintenanceTeamId { get; set; }
-
     [Column("technician_user_id")]
     public Guid? TechnicianUserId { get; set; }
-
-    [Column("maintenance_count")]
-    public long? MaintenanceCount { get; set; }
-
-    [Column("maintenance_open_count")]
-    public long? MaintenanceOpenCount { get; set; }
-
-    [Column("expected_mtbf")]
-    public long? ExpectedMtbf { get; set; }
 
     [Column("owner_user_id")]
     public Guid? OwnerUserId { get; set; }
@@ -52,24 +44,20 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("color")]
     public long? Color { get; set; }
 
-    // v16-Compat
-    // [Column("maintenance_count")]
-    // public long? MaintenanceCount { get; set; }
+    [Column("maintenance_count")]
+    public long? MaintenanceCount { get; set; }
 
-    // v16-Compat
-    // [Column("maintenance_open_count")]
-    // public long? MaintenanceOpenCount { get; set; }
+    [Column("maintenance_open_count")]
+    public long? MaintenanceOpenCount { get; set; }
 
-    // v16-Compat
     [Column("period")]
     public long? Period { get; set; }
 
-    // v16-Compat
-    // [Column("maintenance_team_id")]
-    // public Guid? MaintenanceTeamId { get; set; }
+    [Column("maintenance_team_id")]
+    public Guid? MaintenanceTeamId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -86,14 +74,11 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("serial_no")]
     public string? SerialNo { get; set; }
 
-    [Column("effective_date")]
-    public DateTime? EffectiveDate { get; set; }
-
     [Column("assign_date")]
     public DateTime? AssignDate { get; set; }
 
-    // [Column("effective_date")]
-    // public DateTime? EffectiveDate { get; set; }
+    [Column("effective_date")]
+    public DateTime? EffectiveDate { get; set; }
 
     [Column("warranty_date")]
     public DateTime? WarrantyDate { get; set; }
@@ -106,11 +91,7 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
-
-    [JsonField]
-    [Column("equipment_properties", TypeName = "jsonb")]
-    public string? EquipmentProperties { get; set; }
+    public string? Name { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
@@ -119,7 +100,7 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -127,7 +108,6 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("cost")]
     public double? Cost { get; set; }
 
-    // v16-Compat
     [Column("maintenance_duration")]
     public double? MaintenanceDuration { get; set; }
 
@@ -140,64 +120,63 @@ public partial class MaintenanceEquipment: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("equipment_assign_to")]
     public string? EquipmentAssignTo { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual MaintenanceEquipmentCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MaintenanceEquipmentCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MaintenanceEquipmentCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [One2many]
+    [ForeignKey("EquipmentId")]
+    [InverseProperty("Equipment")]
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
+
+    // [Many2one]
     [ForeignKey("MaintenanceTeamId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual MaintenanceTeam? MaintenanceTeam { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("OwnerUserId")]
-    //[InverseProperty("MaintenanceEquipmentOwnerUsers")]
-    [NotMapped]
-    public virtual ResUser? OwnerUser { get; set; }
+    // [InverseProperty("MaintenanceEquipmentOwnerUser")] //Many2one
+    public virtual ResUsers? OwnerUser { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("MaintenanceEquipments")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("TechnicianUserId")]
-    //[InverseProperty("MaintenanceEquipmentTechnicianUsers")]
-    [NotMapped]
-    public virtual ResUser? TechnicianUser { get; set; }
+    // [InverseProperty("MaintenanceEquipmentTechnicianUser")] //Many2one
+    public virtual ResUsers? TechnicianUser { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MaintenanceEquipmentWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Equipment")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } 
-
-
+    // [InverseProperty("MaintenanceEquipmentWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

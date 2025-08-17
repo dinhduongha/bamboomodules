@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_bom")]
-//[Index("TenantId", Name = "mrp_bom_company_id_index")]
+//[Index("CompanyId", Name = "mrp_bom_company_id_index")]
 //[Index("ProductId", Name = "mrp_bom_product_id_index")]
 //[Index("ProductTmplId", Name = "mrp_bom_product_tmpl_id_index")]
-public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,7 +24,10 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -42,14 +46,8 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
 
-    [Column("produce_delay")]
-    public long? ProduceDelay { get; set; }
-
-    [Column("days_to_prepare_mo")]
-    public long? DaysToPrepareMo { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -76,76 +74,84 @@ public partial class MrpBom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public bool? AllowOperationDependencies { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("project_id")]
-    public Guid? ProjectId { get; set; }
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("MrpBoms")]
-    [NotMapped]
+    // [InverseProperty("MrpBom")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("MrpBomCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("MrpBoms")]
-    [NotMapped]
+    // [InverseProperty("MrpBom")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpBomCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
+
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
+
+    // [Many2one]
     [ForeignKey("PickingTypeId")]
-    //[InverseProperty("MrpBoms")]
-    [NotMapped]
+    // [InverseProperty("MrpBom")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("MrpBoms")]
-    [NotMapped]
+    // [InverseProperty("MrpBom")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductTmplId")]
-    //[InverseProperty("MrpBoms")]
-    [NotMapped]
+    // [InverseProperty("MrpBom")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("MrpBoms")]
-    [NotMapped]
+    // [InverseProperty("MrpBom")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpBomWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MrpBomWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Bom")]
-    [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } 
-
-    //[InverseProperty("Bom")]
-    [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
-
-    //[InverseProperty("Bom")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
-
-    //[InverseProperty("Bom")]
-    [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } 
-
-    //[InverseProperty("Bom")]
-    [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } 
-
-    //[InverseProperty("Bom")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MrpBomId")] //Many2many
+    // [InverseProperty("MrpBom")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

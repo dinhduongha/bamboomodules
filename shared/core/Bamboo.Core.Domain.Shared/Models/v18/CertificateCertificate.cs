@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,18 +21,21 @@ public partial class CertificateCertificate: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("private_key_id")]
     public Guid? PrivateKeyId { get; set; }
 
     [Column("public_key_id")]
     public Guid? PublicKeyId { get; set; }
 
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -64,28 +68,33 @@ public partial class CertificateCertificate: FullAuditedEntity<Guid>, IEntityDto
     public DateTime? DateEnd { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("CertificateCertificates")] //Many2One
+    // [InverseProperty("CertificateCertificate")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("CertificateCertificateCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CertificateCertificateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PrivateKeyId")]
-    //[InverseProperty("CertificateCertificatePrivateKeys")] //Many2One
+    // [InverseProperty("CertificateCertificatePrivateKey")] //Many2one
     public virtual CertificateKey? PrivateKey { get; set; }
 
+    // [Many2one]
     [ForeignKey("PublicKeyId")]
-    //[InverseProperty("CertificateCertificatePublicKeys")] //Many2One
+    // [InverseProperty("CertificateCertificatePublicKey")] //Many2one
     public virtual CertificateKey? PublicKey { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("CertificateCertificateWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("CertificateCertificateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_karma_rank")]
-public partial class GamificationKarmaRank: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationKarmaRank: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,18 +21,22 @@ public partial class GamificationKarmaRank: FullAuditedEntity<Guid>, IEntityDto<
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("karma_min")]
     public long? KarmaMin { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -42,26 +47,28 @@ public partial class GamificationKarmaRank: FullAuditedEntity<Guid>, IEntityDto<
     public string? DescriptionMotivational { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("GamificationKarmaRankCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("GamificationKarmaRankCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("NextRank")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUserNextRanks { get; set; } 
+    // [One2many]
+    [ForeignKey("NextRankId")]
+    [InverseProperty("NextRank")]
+    public virtual ICollection<ResUsers> ResUsersNextRank { get; set; }
 
-    //[InverseProperty("Rank")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUserRanks { get; set; } 
+    // [One2many]
+    [ForeignKey("RankId")]
+    [InverseProperty("Rank")]
+    public virtual ICollection<ResUsers> ResUsersRank { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("GamificationKarmaRankWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("GamificationKarmaRankWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

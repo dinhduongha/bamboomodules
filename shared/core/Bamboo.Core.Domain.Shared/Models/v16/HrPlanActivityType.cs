@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_plan_activity_type")]
-public partial class HrPlanActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrPlanActivityType: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,9 @@ public partial class HrPlanActivityType : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("activity_type_id")]
     public Guid? ActivityTypeId { get; set; }
@@ -30,7 +34,7 @@ public partial class HrPlanActivityType : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? PlanId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,38 +49,38 @@ public partial class HrPlanActivityType : FullAuditedEntity<Guid>, IEntityDto<Gu
     public string? Note { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    //[InverseProperty("HrPlanActivityTypes")]
-    [NotMapped]
+    // [InverseProperty("HrPlanActivityType")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrPlanActivityTypes")]
-    [NotMapped]
+    // [InverseProperty("HrPlanActivityType")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrPlanActivityTypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrPlanActivityTypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PlanId")]
-    //[InverseProperty("HrPlanActivityTypes")]
-    [NotMapped]
+    // [InverseProperty("HrPlanActivityType")] //Many2one
     public virtual HrPlan? Plan { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResponsibleId")]
-    //[InverseProperty("HrPlanActivityTypeResponsibleNavigations")]
-    [NotMapped]
-    public virtual ResUser? ResponsibleNavigation { get; set; }
+    // [InverseProperty("HrPlanActivityTypeResponsibleNavigation")] //Many2one
+    public virtual ResUsers? ResponsibleNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrPlanActivityTypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrPlanActivityTypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,10 +23,10 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("field_id")]
-    public Guid? FieldId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
-    // v16-Compat
     [Column("field")]
     public Guid? Field { get; set; }
 
@@ -41,21 +42,18 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
-    // v16-Compat
     [Column("tracking_sequence")]
     public long? TrackingSequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
     [Column("field_desc")]
     public string? FieldDesc { get; set; }
 
-    // v16-Compat
     [Column("field_type")]
     public string? FieldType { get; set; }
 
@@ -64,10 +62,6 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("new_value_char")]
     public string? NewValueChar { get; set; }
-
-    [JsonField]
-    [Column("field_info", TypeName = "jsonb")]
-    public string? FieldInfo { get; set; }
 
     [Column("old_value_text")]
     public string? OldValueText { get; set; }
@@ -82,7 +76,7 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     public DateTime? NewValueDatetime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -90,45 +84,37 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("old_value_float")]
     public double? OldValueFloat { get; set; }
 
-    // v16-Compat
     [Column("old_value_monetary")]
     public double? OldValueMonetary { get; set; }
 
     [Column("new_value_float")]
     public double? NewValueFloat { get; set; }
 
-    // v16-Compat
     [Column("new_value_monetary")]
     public double? NewValueMonetary { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailTrackingValueCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailTrackingValueCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("MailTrackingValues")]
-    [NotMapped]
+    // [InverseProperty("MailTrackingValue")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("Field")]
-    //[InverseProperty("MailTrackingValues")]
-    [NotMapped]
+    // [InverseProperty("MailTrackingValue")] //Many2one
     public virtual IrModelFields? FieldNavigation { get; set; }
 
-    // [ForeignKey("FieldId")]
-    // //[InverseProperty("MailTrackingValues")]
-    // [NotMapped]
-    // public virtual IrModelFields? Field { get; set; }
-
+    // [Many2one]
     [ForeignKey("MailMessageId")]
-    //[InverseProperty("MailTrackingValues")]
-    [NotMapped]
+    // [InverseProperty("MailTrackingValue")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailTrackingValueWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailTrackingValueWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

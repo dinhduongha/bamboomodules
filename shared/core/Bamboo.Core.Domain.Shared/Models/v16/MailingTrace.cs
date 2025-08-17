@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mailing_trace")]
-//[Index("MassMailingId", Name = "mailing_trace__mass_mailing_id_index")]
-public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("MassMailingId", Name = "mailing_trace_mass_mailing_id_index")]
+public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("mail_mail_id")]
     public Guid? MailMailId { get; set; }
@@ -37,7 +42,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? CampaignId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -60,9 +65,6 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("failure_type")]
     public string? FailureType { get; set; }
 
-    [Column("failure_reason")]
-    public string? FailureReason { get; set; }
-
     [Column("sent_datetime", TypeName = "timestamp without time zone")]
     public DateTime? SentDatetime { get; set; }
 
@@ -76,7 +78,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime? LinksClickDatetime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -84,7 +86,7 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("sms_sms_id")]
     public Guid? SmsSmsId { get; set; }
 
-    [Column("sms_id_int")]
+    [Column("sms_sms_id_int")]
     public Guid? SmsSmsIdInt { get; set; }
 
     [Column("sms_number")]
@@ -93,41 +95,38 @@ public partial class MailingTrace: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("sms_code")]
     public string? SmsCode { get; set; }
 
+    // [Many2one]
     [ForeignKey("CampaignId")]
-    //[InverseProperty("MailingTraces")]
-    [NotMapped]
+    // [InverseProperty("MailingTrace")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailingTraceCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailingTraceCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("MailingTrace")]
-    [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
+    // [One2many]
+    [ForeignKey("MailingTraceId")]
+    [InverseProperty("MailingTrace")]
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailMailId")]
-    //[InverseProperty("MailingTraces")]
-    [NotMapped]
+    // [InverseProperty("MailingTrace")] //Many2one
     public virtual MailMail? MailMail { get; set; }
 
+    // [Many2one]
     [ForeignKey("MassMailingId")]
-    //[InverseProperty("MailingTraces")]
-    [NotMapped]
+    // [InverseProperty("MailingTrace")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
-    [ForeignKey("SmsSmsId")] 
-    //[InverseProperty("MailingTraces")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("SmsSmsId")]
+    // [InverseProperty("MailingTrace")] //Many2one
     public virtual SmsSms? SmsSms { get; set; }
 
-    //[InverseProperty("MailingTrace")]
-    [NotMapped]
-    public virtual ICollection<SmsTracker> SmsTrackers { get; set; } 
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailingTraceWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailingTraceWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sale_order_option")]
 //[Index("OrderId", Name = "sale_order_option_order_id_index")]
-public partial class SaleOrderOption : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderOption: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class SaleOrderOption : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("order_id")]
     public Guid? OrderId { get; set; }
@@ -37,7 +42,7 @@ public partial class SaleOrderOption : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? UomId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -55,42 +60,38 @@ public partial class SaleOrderOption : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public decimal? Discount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SaleOrderOptionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SaleOrderOptionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LineId")]
-    //[InverseProperty("SaleOrderOptions")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderOption")] //Many2one
     public virtual SaleOrderLine? Line { get; set; }
 
+    // [Many2one]
     [ForeignKey("OrderId")]
-    //[InverseProperty("SaleOrderOptions")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderOption")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("SaleOrderOptions")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderOption")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("UomId")]
-    //[InverseProperty("SaleOrderOptions")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderOption")] //Many2one
     public virtual UomUom? Uom { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SaleOrderOptionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SaleOrderOptionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

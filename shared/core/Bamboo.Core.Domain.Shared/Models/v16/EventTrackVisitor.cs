@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
+
+namespace Bamboo.Core.Models;
+
+[Table("event_track_visitor")]
+//[Index("PartnerId", Name = "event_track_visitor_partner_id_index")]
+//[Index("TrackId", Name = "event_track_visitor_track_id_index")]
+//[Index("VisitorId", Name = "event_track_visitor_visitor_id_index")]
+public partial class EventTrackVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
+    [Column("partner_id")]
+    public Guid? PartnerId { get; set; }
+
+    [Column("visitor_id")]
+    public Guid? VisitorId { get; set; }
+
+    [Column("track_id")]
+    public Guid? TrackId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
+
+    [Column("write_uid")]
+    public override Guid? LastModifierId { get; set; }
+
+    [Column("is_wishlisted")]
+    public bool? IsWishlisted { get; set; }
+
+    [Column("is_blacklisted")]
+    public bool? IsBlacklisted { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public override DateTime? LastModificationTime { get; set; }
+
+    [Column("quiz_points")]
+    public long? QuizPoints { get; set; }
+
+    [Column("quiz_completed")]
+    public bool? QuizCompleted { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("EventTrackVisitorCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PartnerId")]
+    // [InverseProperty("EventTrackVisitor")] //Many2one
+    public virtual ResPartner? Partner { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TrackId")]
+    // [InverseProperty("EventTrackVisitor")] //Many2one
+    public virtual EventTrack? Track { get; set; }
+
+    // [Many2one]
+    [ForeignKey("VisitorId")]
+    // [InverseProperty("EventTrackVisitor")] //Many2one
+    public virtual WebsiteVisitor? Visitor { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("EventTrackVisitorWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+}

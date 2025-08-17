@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_token")]
-//[Index("TenantId", Name = "payment_token_company_id_index")]
-public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "payment_token_company_id_index")]
+public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,17 +22,18 @@ public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
-
-    [Column("payment_method_id")]
-    public Guid? PaymentMethodId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,7 +44,6 @@ public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("provider_ref")]
     public string? ProviderRef { get; set; }
 
-    // v16-Compat
     [Column("verified")]
     public bool? Verified { get; set; }
 
@@ -50,46 +51,48 @@ public partial class PaymentToken: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("PaymentTokenId")]
+    [InverseProperty("PaymentToken")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
+
+    // [One2many]
+    [ForeignKey("PaymentTokenId")]
+    [InverseProperty("PaymentToken")]
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PaymentTokens")]
-    [NotMapped]
+    // [InverseProperty("PaymentToken")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PaymentTokenCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PaymentTokenCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("PaymentTokens")]
-    [NotMapped]
+    // [InverseProperty("PaymentToken")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [One2many]
+    [ForeignKey("TokenId")]
+    [InverseProperty("Token")]
+    public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProviderId")]
-    //[InverseProperty("PaymentTokens")]
-    [NotMapped]
+    // [InverseProperty("PaymentToken")] //Many2one
     public virtual PaymentProvider? Provider { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PaymentTokenWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("PaymentToken")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } 
-
-    //[InverseProperty("PaymentToken")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
-    //[InverseProperty("Token")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
-
+    // [InverseProperty("PaymentTokenWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

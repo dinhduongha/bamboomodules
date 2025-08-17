@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,11 @@ public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("visitor_id")]
     public Guid? VisitorId { get; set; }
 
@@ -38,18 +43,18 @@ public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
+    // [Many2one]
     [ForeignKey("PageId")]
-    //[InverseProperty("WebsiteTracks")]
-    [NotMapped]
+    // [InverseProperty("WebsiteTrack")] //Many2one
     public virtual WebsitePage? Page { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("WebsiteTracks")]
-    [NotMapped]
+    // [InverseProperty("WebsiteTrack")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("VisitorId")]
-    //[InverseProperty("WebsiteTracks")]
-    [NotMapped]
+    // [InverseProperty("WebsiteTrack")] //Many2one
     public virtual WebsiteVisitor? Visitor { get; set; }
 }

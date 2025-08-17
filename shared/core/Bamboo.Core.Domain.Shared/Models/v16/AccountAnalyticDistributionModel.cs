@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,8 +21,9 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence")]
-    public long? Sequence { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -30,7 +32,7 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
     public Guid? PartnerCategoryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -40,7 +42,7 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
     public string? AnalyticDistribution { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -54,38 +56,38 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
     [Column("account_prefix")]
     public string? AccountPrefix { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAnalyticDistributionModels")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAnalyticDistributionModelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAnalyticDistributionModelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountAnalyticDistributionModels")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerCategoryId")]
-    //[InverseProperty("AccountAnalyticDistributionModels")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ResPartnerCategory? PartnerCategory { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("AccountAnalyticDistributionModels")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductCategId")]
-    //[InverseProperty("AccountAnalyticDistributionModels")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ProductCategory? ProductCateg { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAnalyticDistributionModelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAnalyticDistributionModelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

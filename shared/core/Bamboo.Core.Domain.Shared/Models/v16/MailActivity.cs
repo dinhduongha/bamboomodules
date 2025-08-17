@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -25,6 +26,10 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
 
@@ -47,7 +52,7 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? PreviousActivityTypeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -61,14 +66,8 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("summary")]
     public string? Summary { get; set; }
 
-    [Column("user_tz")]
-    public string? UserTz { get; set; }
-
     [Column("date_deadline")]
     public DateTime? DateDeadline { get; set; }
-
-    [Column("date_done")]
-    public DateTime? DateDone { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
@@ -76,11 +75,8 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("automated")]
     public bool? Automated { get; set; }
 
-    [Column("active")]
-    public bool? Active { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -88,63 +84,56 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("calendar_event_id")]
     public Guid? CalendarEventId { get; set; }
 
-    // v16-Compat
     [Column("note_id")]
     public Guid? NoteId { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    //[InverseProperty("MailActivityActivityTypes")]
-    [NotMapped]
+    // [InverseProperty("MailActivityActivityType")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("CalendarEventId")]
-    //[InverseProperty("MailActivities")]
-    [NotMapped]
+    // [InverseProperty("MailActivity")] //Many2one
     public virtual CalendarEvent? CalendarEvent { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailActivityCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailActivityCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("NoteId")]
-    //[InverseProperty("MailActivities")]
-    [NotMapped]
+    // [InverseProperty("MailActivity")] //Many2one
     public virtual NoteNote? NoteNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("PreviousActivityTypeId")]
-    //[InverseProperty("MailActivityPreviousActivityTypes")]
-    [NotMapped]
+    // [InverseProperty("MailActivityPreviousActivityType")] //Many2one
     public virtual MailActivityType? PreviousActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("RecommendedActivityTypeId")]
-    //[InverseProperty("MailActivityRecommendedActivityTypes")]
-    [NotMapped]
+    // [InverseProperty("MailActivityRecommendedActivityType")] //Many2one
     public virtual MailActivityType? RecommendedActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("RequestPartnerId")]
-    //[InverseProperty("MailActivities")]
-    [NotMapped]
+    // [InverseProperty("MailActivity")] //Many2one
     public virtual ResPartner? RequestPartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResModelId")]
-    //[InverseProperty("MailActivities")]
-    [NotMapped]
+    // [InverseProperty("MailActivity")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("MailActivityUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("MailActivityUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailActivityWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("ActivityId")]
-    //[InverseProperty("Activities")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } 
+    // [InverseProperty("MailActivityWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

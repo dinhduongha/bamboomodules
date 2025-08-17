@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("uom_category")]
-public partial class UomCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class UomCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,19 +20,23 @@ public partial class UomCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -39,18 +44,18 @@ public partial class UomCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("is_pos_groupable")]
     public bool? IsPosGroupable { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("UomCategoryCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("UomCategoryCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<UomUom> UomUom { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("UomCategoryWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<UomUom> UomUoms { get; set; } 
-
+    // [InverseProperty("UomCategoryWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

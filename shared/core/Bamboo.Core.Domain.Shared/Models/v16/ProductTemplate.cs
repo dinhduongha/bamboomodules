@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,10 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_template")]
-//[Index("TenantId", Name = "product_template_company_id_index")]
+//[Index("CompanyId", Name = "product_template_company_id_index")]
 //[Index("IsPublished", Name = "product_template_is_published_index")]
 //[Index("WebsiteId", Name = "product_template_website_id_index")]
-public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("WebsiteSequence", Name = "product_template_website_sequence_index")]
+public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,7 +25,10 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -43,31 +48,26 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public long? Color { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
     [Column("detailed_type")]
     public string? DetailedType { get; set; }
 
     [Column("type")]
     public string? Type { get; set; }
 
-    [Column("service_tracking")]
-    public string? ServiceTracking { get; set; }
-
     [Column("default_code")]
     public string? DefaultCode { get; set; }
 
-    // v16-Compat
     [Column("priority")]
     public string? Priority { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -80,10 +80,6 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [JsonField]
     [Column("description_sale", TypeName = "jsonb")]
     public string? DescriptionSale { get; set; }
-
-    [JsonField]
-    [Column("product_properties", TypeName = "jsonb")]
-    public string? ProductProperties { get; set; }
 
     [Column("list_price")]
     public decimal? ListPrice { get; set; }
@@ -109,30 +105,11 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("has_configurable_attributes")]
     public bool? HasConfigurableAttributes { get; set; }
 
-    [Column("is_favorite")]
-    public bool? IsFavorite { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
-
-    [JsonField]
-    [Column("property_account_income_id", TypeName = "jsonb")]
-    public string? PropertyAccountIncomeId { get; set; }
-
-    [JsonField]
-    [Column("property_account_expense_id", TypeName = "jsonb")]
-    public string? PropertyAccountExpenseId { get; set; }
-
-    [JsonField]
-    [Column("asset_category_id", TypeName = "jsonb")]
-    public string? AssetCategoryId { get; set; }
-
-    [JsonField]
-    [Column("deferred_revenue_category_id", TypeName = "jsonb")]
-    public string? DeferredRevenueCategoryId { get; set; }
 
     [Column("service_type")]
     public string? ServiceType { get; set; }
@@ -149,23 +126,8 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("sale_line_warn_msg")]
     public string? SaleLineWarnMsg { get; set; }
 
-    [Column("sale_delay")]
-    public long? SaleDelay { get; set; }
-
     [Column("tracking")]
     public string? Tracking { get; set; }
-
-    [JsonField]
-    [Column("responsible_id", TypeName = "jsonb")]
-    public string? ResponsibleId { get; set; }
-
-    [JsonField]
-    [Column("property_stock_production", TypeName = "jsonb")]
-    public string? PropertyStockProduction { get; set; }
-
-    [JsonField]
-    [Column("property_stock_inventory", TypeName = "jsonb")]
-    public string? PropertyStockInventory { get; set; }
 
     [JsonField]
     [Column("description_picking", TypeName = "jsonb")]
@@ -179,21 +141,9 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("description_pickingin", TypeName = "jsonb")]
     public string? DescriptionPickingin { get; set; }
 
-    [Column("is_storable")]
-    public bool? IsStorable { get; set; }
+    [Column("sale_delay")]
+    public long? SaleDelay { get; set; }
 
-    [Column("lot_valuated")]
-    public bool? LotValuated { get; set; }
-
-    [JsonField]
-    [Column("public_description", TypeName = "jsonb")]
-    public string? PublicDescription { get; set; }
-
-    // v16-Compat
-    // [Column("sale_delay")]
-    // public double? SaleDelay { get; set; }
-
-    // v16-Compat
     [Column("pos_categ_id")]
     public Guid? PosCategId { get; set; }
 
@@ -202,20 +152,6 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("to_weight")]
     public bool? ToWeight { get; set; }
-
-    [Column("self_order_available")]
-    public bool? SelfOrderAvailable { get; set; }
-
-    [JsonField]
-    [Column("project_id", TypeName = "jsonb")]
-    public string? ProjectId { get; set; }
-
-    [JsonField]
-    [Column("project_template_id", TypeName = "jsonb")]
-    public string? ProjectTemplateId { get; set; }
-
-    [Column("create_repair")]
-    public bool? CreateRepair { get; set; }
 
     [Column("purchase_method")]
     public string? PurchaseMethod { get; set; }
@@ -226,34 +162,17 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("purchase_line_warn_msg")]
     public string? PurchaseLineWarnMsg { get; set; }
 
-    [JsonField]
-    [Column("property_account_creditor_price_difference", TypeName = "jsonb")]
-    public string? PropertyAccountCreditorPriceDifference { get; set; }
-
-    [JsonField]
-    [Column("service_to_purchase", TypeName = "jsonb")]
-    public string? ServiceToPurchase { get; set; }
-
-    // v16-Compat
     [Column("produce_delay")]
     public double? ProduceDelay { get; set; }
 
-    // v16-Compat
     [Column("days_to_prepare_mo")]
     public double? DaysToPrepareMo { get; set; }
-
-    // v16-Compat
-    // [Column("service_tracking")]
-    // public string? ServiceTracking { get; set; }
 
     [Column("can_be_expensed")]
     public bool? CanBeExpensed { get; set; }
 
-    [Column("country_of_origin")]
-    public Guid? CountryOfOrigin { get; set; }
-
-    [Column("hs_code")]
-    public string? HsCode { get; set; }
+    [Column("service_tracking")]
+    public string? ServiceTracking { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -296,10 +215,6 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
-    [JsonField]
-    [Column("description_ecommerce", TypeName = "jsonb")]
-    public string? DescriptionEcommerce { get; set; }
-
     [Column("compare_list_price")]
     public decimal? CompareListPrice { get; set; }
 
@@ -325,171 +240,251 @@ public partial class ProductTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("available_threshold")]
     public double? AvailableThreshold { get; set; }
 
+    [Column("membership_date_from")]
+    public DateTime? MembershipDateFrom { get; set; }
+
+    [Column("membership_date_to")]
+    public DateTime? MembershipDateTo { get; set; }
+
+    [Column("membership")]
+    public bool? Membership { get; set; }
+
+    [Column("product_add_mode")]
+    public string? ProductAddMode { get; set; }
+
+    [Column("country_of_origin")]
+    public Guid? CountryOfOrigin { get; set; }
+
+    [Column("hs_code")]
+    public string? HsCode { get; set; }
+
+    [Column("split_method_landed_cost")]
+    public string? SplitMethodLandedCost { get; set; }
+
+    [Column("landed_cost_ok")]
+    public bool? LandedCostOk { get; set; }
+
+    [Column("expiration_time")]
+    public long? ExpirationTime { get; set; }
+
+    [Column("use_time")]
+    public long? UseTime { get; set; }
+
+    [Column("removal_time")]
+    public long? RemovalTime { get; set; }
+
+    [Column("alert_time")]
+    public long? AlertTime { get; set; }
+
+    [Column("use_expiration_date")]
+    public bool? UseExpirationDate { get; set; }
+
+    [Column("service_upsell_threshold")]
+    public double? ServiceUpsellThreshold { get; set; }
+
+    [Column("email_template_id")]
+    public Guid? EmailTemplateId { get; set; }
+
+    // [Many2one]
     [ForeignKey("BaseUnitId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual WebsiteBaseUnit? BaseUnit { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual ProductCategory? Categ { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [Many2one]
+    [ForeignKey("CountryOfOrigin")]
+    // [InverseProperty("ProductTemplate")] //Many2one
+    public virtual ResCountry? CountryOfOriginNavigation { get; set; }
 
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("ProductTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("EmailTemplateId")]
+    // [InverseProperty("ProductTemplate")] //Many2one
+    public virtual MailTemplate? EmailTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<MrpBom> MrpBom { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("PosCategId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual PosCategory? PosCateg { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductImage> ProductImage { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductPricelistItem> ProductPricelistItem { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductProduct> ProductProduct { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusion { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<StockChangeProductQty> StockChangeProductQty { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductTmplId")]
+    [InverseProperty("ProductTmpl")]
+    public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
+
+    // [Many2one]
     [ForeignKey("UomId")]
-    //[InverseProperty("ProductTemplateUoms")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateUom")] //Many2one
     public virtual UomUom? Uom { get; set; }
 
+    // [Many2one]
     [ForeignKey("UomPoId")]
-    //[InverseProperty("ProductTemplateUomPos")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateUomPo")] //Many2one
     public virtual UomUom? UomPo { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteRibbonId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplate")] //Many2one
     public virtual ProductRibbon? WebsiteRibbon { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductTemplateId")] //Many2many
+    // [InverseProperty("ProductTemplate")] //Many2many
+    public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SrcId")] //Many2many
+    // [InverseProperty("Src")] //Many2many
+    public virtual ICollection<ProductProduct> Dest { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductImage> ProductImages { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SrcId")] //Many2many
+    // [InverseProperty("SrcNavigation")] //Many2many
+    public virtual ICollection<ProductTemplate> Dest1 { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductPricelistItem> ProductPricelistItems { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SrcId")] //Many2many
+    // [InverseProperty("Src")] //Many2many
+    public virtual ICollection<ProductTemplate> DestNavigation { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateId")]
+    // [InverseProperty("ProductTemplate")]
+    // public virtual ICollection<ProductAttribute> ProductAttribute { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateId")]
+    // [InverseProperty("ProductTemplate")]
+    // public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateId")]
+    // [InverseProperty("ProductTemplate")]
+    // public virtual ICollection<ProductPublicCategory> ProductPublicCategory { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusions { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductTemplateId")] //Many2many
+    // [InverseProperty("ProductTemplate")] //Many2many
+    public virtual ICollection<ProductTag> ProductTag { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductId")]
+    // [InverseProperty("Product")]
+    // public virtual ICollection<StockRoute> Route { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DestId")] //Many2many
+    // [InverseProperty("DestNavigation")] //Many2many
+    public virtual ICollection<ProductTemplate> Src { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<StockChangeProductQty> StockChangeProductQties { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DestId")] //Many2many
+    // [InverseProperty("Dest1")] //Many2many
+    public virtual ICollection<ProductTemplate> SrcNavigation { get; set; }
 
-    //[InverseProperty("ProductTmpl")]
-    [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProdId")] //Many2many
+    // [InverseProperty("Prod")] //Many2many
+    public virtual ICollection<AccountTax> Tax { get; set; }
 
-    [ForeignKey("ProductTemplateId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
-
-    //[ForeignKey("SrcId")]
-    //[InverseProperty("Srcs")]
-    [NotMapped]
-    public virtual ICollection<ProductProduct> Dests { get; set; } 
-
-    //[ForeignKey("SrcId")]
-    //[InverseProperty("SrcsNavigation")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> Dests1 { get; set; } 
-
-    //[ForeignKey("SrcId")]
-    //[InverseProperty("Srcs")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> DestsNavigation { get; set; } 
-
-    [ForeignKey("ProductTemplateId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
-    public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } 
-
-    [ForeignKey("ProductTemplateId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayouts { get; set; } 
-
-    [ForeignKey("ProductTemplateId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
-    public virtual ICollection<ProductPublicCategory> ProductPublicCategories { get; set; } 
-
-    [ForeignKey("ProductTemplateId")]
-    //[InverseProperty("ProductTemplates")]
-    [NotMapped]
-    public virtual ICollection<ProductTag> ProductTags { get; set; } 
-
-    [ForeignKey("ProductId")]
-    //[InverseProperty("Products")]
-    [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } 
-
-    //[ForeignKey("DestId")]
-    //[InverseProperty("DestsNavigation")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> Srcs { get; set; } 
-
-    //[ForeignKey("DestId")]
-    //[InverseProperty("Dests1")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> SrcsNavigation { get; set; } 
-
-    //[ForeignKey("ProdId")]
-    //[InverseProperty("Prods")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; set; } 
-
-    //[ForeignKey("ProdId")]
-    //[InverseProperty("ProdsNavigation")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> TaxesNavigation { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProdId")] //Many2many
+    // [InverseProperty("ProdNavigation")] //Many2many
+    public virtual ICollection<AccountTax> TaxNavigation { get; set; }
 }

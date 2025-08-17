@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,24 +10,19 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_cron_trigger")]
-//[Index("CallAt", Name = "ir_cron_trigger__call_at_index")]
-//[Index("CronId", Name = "ir_cron_trigger_cron_id_index")]
-public partial class IrCronTrigger: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("CronId", Name = "ir_cron_trigger__cron_id_index")]
+public partial class IrCronTrigger: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("cron_id")]
     public Guid? CronId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -37,27 +31,28 @@ public partial class IrCronTrigger: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? CallAt { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("Trigger")]
-    [NotMapped]
-    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; set; } 
+    // [One2many]
+    [ForeignKey("TriggerId")]
+    [InverseProperty("Trigger")]
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrence { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrCronTriggerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrCronTriggerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CronId")]
-    //[InverseProperty("IrCronTriggers")]
-    [NotMapped]
+    // [InverseProperty("IrCronTrigger")] //Many2one
     public virtual IrCron? Cron { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrCronTriggerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrCronTriggerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

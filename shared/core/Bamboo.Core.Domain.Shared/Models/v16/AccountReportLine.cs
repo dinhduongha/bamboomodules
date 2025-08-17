@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_report_line")]
 //[Index("Code", Name = "account_report_line_code_uniq", IsUnique = true)]
-public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("report_id")]
     public Guid? ReportId { get; set; }
@@ -37,7 +42,7 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? ActionId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,18 +50,12 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("groupby")]
     public string? Groupby { get; set; }
 
-    [Column("user_groupby")]
-    public string? UserGroupby { get; set; }
-
     [Column("code")]
     public string? Code { get; set; }
 
-    [Column("horizontal_split_side")]
-    public string? HorizontalSplitSide { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("foldable")]
     public bool? Foldable { get; set; }
@@ -68,45 +67,43 @@ public partial class AccountReportLine : FullAuditedEntity<Guid>, IEntityDto<Gui
     public bool? HideIfZero { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("ReportLine")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } 
+    // [One2many]
+    [ForeignKey("ReportLineId")]
+    [InverseProperty("ReportLine")]
+    public virtual ICollection<AccountReportExpression> AccountReportExpression { get; set; }
 
-    //[InverseProperty("CarryoverOriginReportLine")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } 
+    // [One2many]
+    [ForeignKey("CarryoverOriginReportLineId")]
+    [InverseProperty("CarryoverOriginReportLine")]
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValue { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountReportLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountReportLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<AccountReportLine> InverseParent { get; set; } 
-
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<AccountReportLine> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual AccountReportLine? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("ReportId")]
-    //[InverseProperty("AccountReportLines")]
-    [NotMapped]
+    // [InverseProperty("AccountReportLine")] //Many2one
     public virtual AccountReport? Report { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountReportLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountReportLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_order_line")]
 //[Index("OrderId", Name = "pos_order_line_order_id_index")]
-public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,9 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -30,14 +34,8 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("refunded_orderline_id")]
     public Guid? RefundedOrderlineId { get; set; }
 
-    [Column("combo_parent_id")]
-    public Guid? ComboParentId { get; set; }
-
-    [Column("combo_item_id")]
-    public Guid? ComboItemId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,20 +46,11 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("notice")]
     public string? Notice { get; set; }
 
-    [Column("price_type")]
-    public string? PriceType { get; set; }
-
     [Column("full_product_name")]
     public string? FullProductName { get; set; }
 
     [Column("customer_note")]
     public string? CustomerNote { get; set; }
-
-    [Column("uuid")]
-    public string? Uuid { get; set; }
-
-    [Column("note")]
-    public string? Note { get; set; }
 
     [Column("price_unit")]
     public decimal? PriceUnit { get; set; }
@@ -81,17 +70,11 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("discount")]
     public decimal? Discount { get; set; }
 
-    [Column("skip_change")]
-    public bool? SkipChange { get; set; }
-
     [Column("is_total_cost_computed")]
     public bool? IsTotalCostComputed { get; set; }
 
-    [Column("is_edited")]
-    public bool? IsEdited { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -108,80 +91,93 @@ public partial class PosOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("down_payment_details")]
     public string? DownPaymentDetails { get; set; }
 
-    [Column("qty_delivered")]
-    public double? QtyDelivered { get; set; }
+    [Column("reward_id")]
+    public Guid? RewardId { get; set; }
 
-    [Column("combo_id")]
-    public Guid? ComboId { get; set; }
+    [Column("coupon_id")]
+    public Guid? CouponId { get; set; }
 
-    [Column("event_ticket_id")]
-    public Guid? EventTicketId { get; set; }
+    [Column("reward_identifier_code")]
+    public string? RewardIdentifierCode { get; set; }
 
-    [ForeignKey("ComboId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
-    public virtual ProductCombo? Combo { get; set; }
+    [Column("is_reward_line")]
+    public bool? IsRewardLine { get; set; }
 
-    [ForeignKey("ComboItemId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
-    public virtual ProductComboItem? ComboItem { get; set; }
+    [Column("points_cost")]
+    public double? PointsCost { get; set; }
 
-    [ForeignKey("ComboParentId")]
-    //[InverseProperty("InverseComboParent")]
-    [NotMapped]
-    public virtual PosOrderLine? ComboParent { get; set; }
+    [Column("note")]
+    public string? Note { get; set; }
 
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
+    [Column("mp_skip")]
+    public bool? MpSkip { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
+    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("PosOrderLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [Many2one]
+    [ForeignKey("CouponId")]
+    // [InverseProperty("PosOrderLine")] //Many2one
+    public virtual LoyaltyCard? Coupon { get; set; }
 
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("PosOrderLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("RefundedOrderlineId")]
+    [InverseProperty("RefundedOrderline")]
+    public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; set; }
+
+    // [Many2one]
     [ForeignKey("OrderId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
+    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual PosOrder? Order { get; set; }
 
+    // [One2many]
+    [ForeignKey("PosOrderLineId")]
+    [InverseProperty("PosOrderLine")]
+    public virtual ICollection<PosPackOperationLot> PosPackOperationLot { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
+    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("RefundedOrderlineId")]
-    //[InverseProperty("InverseRefundedOrderline")]
-    [NotMapped]
+    // [InverseProperty("InverseRefundedOrderline")] //Many2one
     public virtual PosOrderLine? RefundedOrderline { get; set; }
 
+    // [Many2one]
+    [ForeignKey("RewardId")]
+    // [InverseProperty("PosOrderLine")] //Many2one
+    public virtual LoyaltyReward? Reward { get; set; }
+
+    // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
+    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderOriginId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
+    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual SaleOrder? SaleOrderOrigin { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PosOrderLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PosOrderLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("RefundedOrderline")]
-    [NotMapped]
-    public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; set; } 
-
-    //[InverseProperty("PosOrderLine")]
-    [NotMapped]
-    public virtual ICollection<PosPackOperationLot> PosPackOperationLots { get; set; } 
-
-    [ForeignKey("PosOrderLineId")]
-    //[InverseProperty("PosOrderLines")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PosOrderLineId")] //Many2many
+    // [InverseProperty("PosOrderLine")] //Many2many
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

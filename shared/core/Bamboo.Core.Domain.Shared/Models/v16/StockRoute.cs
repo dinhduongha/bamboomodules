@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_route")]
-//[Index("TenantId", Name = "stock_route_company_id_index")]
-public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "stock_route_company_id_index")]
+public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -31,14 +36,14 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? SupplierWhId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -56,7 +61,7 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public bool? PackagingSelectable { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -64,102 +69,120 @@ public partial class StockRoute: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("sale_selectable")]
     public bool? SaleSelectable { get; set; }
 
-    [Column("shipping_selectable")]
-    public bool? ShippingSelectable { get; set; }
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockRoutes")]
-    [NotMapped]
+    // [InverseProperty("StockRoute")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockRouteCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockRouteCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("RouteId")]
+    [InverseProperty("Route")]
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
+
+    // [One2many]
+    [ForeignKey("RouteId")]
+    [InverseProperty("Route")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("RouteId")]
+    [InverseProperty("Route")]
+    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOption { get; set; }
+
+    // [One2many]
+    [ForeignKey("RouteId")]
+    [InverseProperty("Route")]
+    public virtual ICollection<StockRule> StockRule { get; set; }
+
+    // [One2many]
+    [ForeignKey("CrossdockRouteId")]
+    [InverseProperty("CrossdockRoute")]
+    public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoute { get; set; }
+
+    // [One2many]
+    [ForeignKey("DeliveryRouteId")]
+    [InverseProperty("DeliveryRoute")]
+    public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoute { get; set; }
+
+    // [One2many]
+    [ForeignKey("RouteId")]
+    [InverseProperty("Route")]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [One2many]
+    [ForeignKey("PbmRouteId")]
+    [InverseProperty("PbmRoute")]
+    public virtual ICollection<StockWarehouse> StockWarehousePbmRoute { get; set; }
+
+    // [One2many]
+    [ForeignKey("ReceptionRouteId")]
+    [InverseProperty("ReceptionRoute")]
+    public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoute { get; set; }
+
+    // [One2many]
+    [ForeignKey("SubcontractingRouteId")]
+    [InverseProperty("SubcontractingRoute")]
+    public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingRoute { get; set; }
+
+    // [Many2one]
     [ForeignKey("SuppliedWhId")]
-    //[InverseProperty("StockRouteSuppliedWhs")]
-    [NotMapped]
+    // [InverseProperty("StockRouteSuppliedWh")] //Many2one
     public virtual StockWarehouse? SuppliedWh { get; set; }
 
+    // [Many2one]
     [ForeignKey("SupplierWhId")]
-    //[InverseProperty("StockRouteSupplierWhs")]
-    [NotMapped]
+    // [InverseProperty("StockRouteSupplierWh")] //Many2one
     public virtual StockWarehouse? SupplierWh { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockRouteWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockRouteWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Route")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RouteId")] //Many2many
+    // [InverseProperty("Route")] //Many2many
+    public virtual ICollection<ProductCategory> Categ { get; set; }
 
-    //[InverseProperty("Route")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("RouteId")]
+    // [InverseProperty("Route")]
+    // public virtual ICollection<StockMove> Move { get; set; }
 
-    //[InverseProperty("Route")]
-    [NotMapped]
-    public virtual ICollection<StockReplenishmentOption> StockReplenishmentOptions { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RouteId")] //Many2many
+    // [InverseProperty("Route")] //Many2many
+    public virtual ICollection<ProductPackaging> Packaging { get; set; }
 
-    //[InverseProperty("Route")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RouteId")] //Many2many
+    // [InverseProperty("Route")] //Many2many
+    public virtual ICollection<ProductTemplate> Product { get; set; }
 
-    //[InverseProperty("CrossdockRoute")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoutes { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockRouteId")]
+    // [InverseProperty("StockRoute")]
+    // public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
-    //[InverseProperty("DeliveryRoute")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoutes { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockRouteId")]
+    // [InverseProperty("StockRoute")]
+    // public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
 
-    //[InverseProperty("Route")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
-    //[InverseProperty("PbmRoute")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmRoutes { get; set; } 
-
-    //[InverseProperty("ReceptionRoute")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoutes { get; set; } 
-
-    [ForeignKey("RouteId")]
-    //[InverseProperty("Routes")]
-    [NotMapped]
-    public virtual ICollection<ProductCategory> Categs { get; set; } 
-
-    [ForeignKey("RouteId")]
-    //[InverseProperty("Routes")]
-    [NotMapped]
-    public virtual ICollection<StockMove> Moves { get; set; } 
-
-    [ForeignKey("RouteId")]
-    //[InverseProperty("Routes")]
-    [NotMapped]
-    public virtual ICollection<ProductPackaging> Packagings { get; set; } 
-
-    [ForeignKey("StockRouteId")]
-    //[InverseProperty("StockRoutes")]
-    [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
-
-    [ForeignKey("RouteId")]
-    //[InverseProperty("Routes")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> Products { get; set; } 
-
-    [ForeignKey("StockRouteId")]
-    //[InverseProperty("StockRoutes")]
-    [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } 
-
-    [ForeignKey("RouteId")]
-    //[InverseProperty("Routes")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> Warehouses { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RouteId")] //Many2many
+    // [InverseProperty("Route")] //Many2many
+    public virtual ICollection<StockWarehouse> Warehouse { get; set; }
 }

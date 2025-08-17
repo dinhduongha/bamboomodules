@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,14 +22,15 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
     [Column("mail_channel_id")]
     public Guid? MailChannelId { get; set; }
-
-    [Column("discuss_channel_id")]
-    public Guid? DiscussChannelId { get; set; }
 
     [Column("script_step_id")]
     public Guid? ScriptStepId { get; set; }
@@ -37,7 +39,7 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? UserScriptAnswerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -46,38 +48,38 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? UserRawAnswer { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ChatbotMessageCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ChatbotMessageCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [ForeignKey("DiscussChannelId")]
-    //[InverseProperty("ChatbotMessages")]
-    [NotMapped]
-    public virtual DiscussChannel? DiscussChannel { get; set; }
+    // [Many2one]
+    [ForeignKey("MailChannelId")]
+    // [InverseProperty("ChatbotMessage")] //Many2one
+    public virtual MailChannel? MailChannel { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailMessageId")]
-    //[InverseProperty("ChatbotMessage")]
-    [NotMapped]
+    // [InverseProperty("ChatbotMessage")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
+    // [Many2one]
     [ForeignKey("ScriptStepId")]
-    //[InverseProperty("ChatbotMessages")]
-    [NotMapped]
+    // [InverseProperty("ChatbotMessage")] //Many2one
     public virtual ChatbotScriptStep? ScriptStep { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserScriptAnswerId")]
-    //[InverseProperty("ChatbotMessages")]
-    [NotMapped]
+    // [InverseProperty("ChatbotMessage")] //Many2one
     public virtual ChatbotScriptAnswer? UserScriptAnswer { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ChatbotMessageWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ChatbotMessageWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

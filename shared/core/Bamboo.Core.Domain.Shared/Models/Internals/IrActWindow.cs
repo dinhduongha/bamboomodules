@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,25 +10,20 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Model("ir.actions.act_window")]
-
 [Table("ir_act_window")]
 //[Index("Path", Name = "ir_act_window_path_unique", IsUnique = true)]
-public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrActWindow: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("binding_model_id")]
     public Guid? BindingModelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -46,18 +40,16 @@ public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("binding_view_types")]
     public string? BindingViewTypes { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("help", TypeName = "jsonb")]
-    public StringDictionary? Help { get; set; }
+    public string? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -98,62 +90,64 @@ public partial class IrActWindow : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("filter")]
     public bool? Filter { get; set; }
 
+    // [One2many]
+    [ForeignKey("CustomAuditActionId")]
+    [InverseProperty("CustomAuditAction")]
+    public virtual ICollection<AccountReportColumn> AccountReportColumn { get; set; }
+
+    // [Many2one]
     [ForeignKey("BindingModelId")]
-    //[InverseProperty("IrActWindows")]
-    [NotMapped]
+    // [InverseProperty("IrActWindow")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
-    [RelationField(RelationType: "many2one", RelatedModel: "ResUser", RelatedField: "Id")]
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrActWindowCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrActWindowCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("CustomAuditAction")]
-    [NotMapped]
-    public virtual ICollection<AccountReportColumn> AccountReportColumns { get; set; } 
+    // [One2many]
+    [ForeignKey("ActionId")]
+    [InverseProperty("Action")]
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinition { get; set; }
 
-    //[InverseProperty("Action")]
-    [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } 
+    // [One2many]
+    [ForeignKey("ActWindowId")]
+    [InverseProperty("ActWindow")]
+    public virtual ICollection<IrActWindowView> IrActWindowView { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("ActWindow")]
-    [NotMapped]
-    public virtual ICollection<IrActWindowView> IrActWindowViews { get; set; } 
+    // [One2many]
+    [ForeignKey("ParentActionId")]
+    [InverseProperty("ParentAction")]
+    public virtual ICollection<IrEmbeddedActions> IrEmbeddedActions { get; set; }
 
-    //[InverseProperty("ParentAction")]
-    [NotMapped]
-    public virtual ICollection<IrEmbeddedAction> IrEmbeddedActions { get; set; } 
+    // [One2many]
+    [ForeignKey("RefIrActWindow")]
+    [InverseProperty("RefIrActWindowNavigation")]
+    public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("RefIrActWindowNavigation")]
-    [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
-
+    // [Many2one]
     [ForeignKey("SearchViewId")]
-    //[InverseProperty("IrActWindowSearchViews")]
-    [NotMapped]
+    // [InverseProperty("IrActWindowSearchView")] //Many2one
     public virtual IrUiView? SearchView { get; set; }
 
-    // v16-Compat
-    //[InverseProperty("SidebarAction")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplate> SmsTemplates { get; set; } 
+    // [One2many]
+    [ForeignKey("SidebarActionId")]
+    [InverseProperty("SidebarAction")]
+    public virtual ICollection<SmsTemplate> SmsTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("ViewId")]
-    //[InverseProperty("IrActWindowViews")]
-    [NotMapped]
+    // [InverseProperty("IrActWindowView")] //Many2one
     public virtual IrUiView? View { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrActWindowWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrActWindowWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ActId")]
-    //[InverseProperty("ActsNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ActId")] //Many2many
+    // [InverseProperty("ActNavigation")] //Many2many
+    public virtual ICollection<ResGroups> Gid { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter_capacity")]
 //[Index("WorkcenterId", "ProductId", Name = "mrp_workcenter_capacity_unique_product", IsUnique = true)]
-public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpWorkcenterCapacity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +22,10 @@ public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
 
@@ -28,13 +33,13 @@ public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto
     public Guid? ProductId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -48,27 +53,23 @@ public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto
     [Column("time_stop")]
     public double? TimeStop { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpWorkcenterCapacityCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MrpWorkcenterCapacityCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("MrpWorkcenterCapacities")]
-    [NotMapped]
+    // [InverseProperty("MrpWorkcenterCapacity")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkcenterId")]
-    //[InverseProperty("MrpWorkcenterCapacities")]
-    [NotMapped]
+    // [InverseProperty("MrpWorkcenterCapacity")] //Many2one
     public virtual MrpWorkcenter? Workcenter { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpWorkcenterCapacityWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MrpWorkcenterCapacityWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

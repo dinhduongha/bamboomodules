@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_challenge_line")]
-public partial class GamificationChallengeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationChallengeLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class GamificationChallengeLine: FullAuditedEntity<Guid>, IEntity
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("challenge_id")]
     public Guid? ChallengeId { get; set; }
@@ -30,13 +35,13 @@ public partial class GamificationChallengeLine: FullAuditedEntity<Guid>, IEntity
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -44,27 +49,28 @@ public partial class GamificationChallengeLine: FullAuditedEntity<Guid>, IEntity
     [Column("target_goal")]
     public double? TargetGoal { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChallengeId")]
-    //[InverseProperty("GamificationChallengeLines")]
-    [NotMapped]
+    // [InverseProperty("GamificationChallengeLine")] //Many2one
     public virtual GamificationChallenge? Challenge { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("GamificationChallengeLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("GamificationChallengeLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefinitionId")]
-    //[InverseProperty("GamificationChallengeLines")]
-    [NotMapped]
+    // [InverseProperty("GamificationChallengeLine")] //Many2one
     public virtual GamificationGoalDefinition? Definition { get; set; }
 
-    //[InverseProperty("Line")]
-    [NotMapped]
-    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } 
+    // [One2many]
+    [ForeignKey("LineId")]
+    [InverseProperty("Line")]
+    public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("GamificationChallengeLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("GamificationChallengeLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

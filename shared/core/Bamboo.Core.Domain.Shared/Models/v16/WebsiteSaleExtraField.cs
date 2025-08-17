@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -19,7 +20,11 @@ public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
@@ -30,34 +35,34 @@ public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? FieldId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebsiteSaleExtraFieldCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("WebsiteSaleExtraFieldCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("FieldId")]
-    //[InverseProperty("WebsiteSaleExtraFields")]
-    [NotMapped]
+    // [InverseProperty("WebsiteSaleExtraField")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("WebsiteSaleExtraFields")]
-    [NotMapped]
+    // [InverseProperty("WebsiteSaleExtraField")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebsiteSaleExtraFieldWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("WebsiteSaleExtraFieldWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

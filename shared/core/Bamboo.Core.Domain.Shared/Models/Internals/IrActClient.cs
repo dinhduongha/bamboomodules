@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +10,6 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_act_client")]
 //[Index("Path", Name = "ir_act_client_path_unique", IsUnique = true)]
 public partial class IrActClient: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
@@ -20,14 +18,11 @@ public partial class IrActClient: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("binding_model_id")]
     public Guid? BindingModelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -46,14 +41,14 @@ public partial class IrActClient: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Help { get; set; }
+    [Column("help", TypeName = "jsonb")]
+    public string? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -73,18 +68,18 @@ public partial class IrActClient: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("params_store")]
     public byte[]? ParamsStore { get; set; }
 
+    // [Many2one]
     [ForeignKey("BindingModelId")]
-    //[InverseProperty("IrActClients")]
-    [NotMapped]
+    // [InverseProperty("IrActClient")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrActClientCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrActClientCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrActClientWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrActClientWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

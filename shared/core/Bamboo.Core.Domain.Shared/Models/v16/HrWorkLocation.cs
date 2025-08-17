@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_work_location")]
-public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrWorkLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,20 +21,20 @@ public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("address_id")]
     public Guid? AddressId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
-
-    [Column("location_type")]
-    public string? LocationType { get; set; }
 
     [Column("location_number")]
     public string? LocationNumber { get; set; }
@@ -42,33 +43,33 @@ public partial class HrWorkLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("AddressId")]
-    //[InverseProperty("HrWorkLocations")]
-    [NotMapped]
+    // [InverseProperty("HrWorkLocation")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrWorkLocations")]
-    [NotMapped]
+    // [InverseProperty("HrWorkLocation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrWorkLocationCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrWorkLocationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("WorkLocationId")]
+    [InverseProperty("WorkLocation")]
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrWorkLocationWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("WorkLocation")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
-
+    // [InverseProperty("HrWorkLocationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_asset_asset")]
-public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAssetAsset: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,7 +21,10 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -46,7 +50,7 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? AccountAnalyticId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -98,7 +102,7 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? Prorata { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -106,59 +110,53 @@ public partial class AccountAssetAsset: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("method_progress_factor")]
     public double? MethodProgressFactor { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountAnalyticId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual AccountAnalyticAccount? AccountAnalytic { get; set; }
 
-    //[InverseProperty("Asset")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } 
+    // [One2many]
+    [ForeignKey("AssetId")]
+    [InverseProperty("Asset")]
+    public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual AccountAssetCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAssetAssetCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAssetAssetCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("InvoiceId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual AccountMove? Invoice { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountAssetAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAssetAssetWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    // v16-Compat
-    //[InverseProperty("Asset")]
-    // [NotMapped]
-    // public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLines { get; set; } 
-
+    // [InverseProperty("AccountAssetAssetWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

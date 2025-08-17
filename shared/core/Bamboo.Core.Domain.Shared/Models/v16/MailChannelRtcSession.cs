@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,8 +13,8 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_channel_rtc_session")]
 //[Index("ChannelMemberId", Name = "mail_channel_rtc_session_channel_member_unique", IsUnique = true)]
-//[Index("LastModificationTime", Name = "mail_channel_rtc_session_write_date_index")]
-public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("WriteDate", Name = "mail_channel_rtc_session_write_date_index")]
+public partial class MailChannelRtcSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +22,11 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("channel_member_id")]
     public Guid? ChannelMemberId { get; set; }
 
@@ -29,7 +34,7 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? ChannelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -50,30 +55,30 @@ public partial class MailChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
+    // [Many2one]
     [ForeignKey("ChannelId")]
-    //[InverseProperty("MailChannelRtcSessions")]
-    [NotMapped]
+    // [InverseProperty("MailChannelRtcSession")] //Many2one
     public virtual MailChannel? Channel { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChannelMemberId")]
-    //[InverseProperty("MailChannelRtcSession")]
-    [NotMapped]
+    // [InverseProperty("MailChannelRtcSession")] //Many2one
     public virtual MailChannelMember? ChannelMember { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailChannelRtcSessionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailChannelRtcSessionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("RtcInvitingSessionId")]
+    [InverseProperty("RtcInvitingSession")]
+    public virtual ICollection<MailChannelMember> MailChannelMember { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailChannelRtcSessionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("RtcInvitingSession")]
-    [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } 
-
+    // [InverseProperty("MailChannelRtcSessionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

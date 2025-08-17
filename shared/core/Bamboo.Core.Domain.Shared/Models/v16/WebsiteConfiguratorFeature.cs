@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -19,7 +20,11 @@ public partial class WebsiteConfiguratorFeature: FullAuditedEntity<Guid>, IEntit
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -33,7 +38,7 @@ public partial class WebsiteConfiguratorFeature: FullAuditedEntity<Guid>, IEntit
     public long? MenuSequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -52,7 +57,7 @@ public partial class WebsiteConfiguratorFeature: FullAuditedEntity<Guid>, IEntit
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -62,28 +67,28 @@ public partial class WebsiteConfiguratorFeature: FullAuditedEntity<Guid>, IEntit
     public bool? MenuCompany { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebsiteConfiguratorFeatureCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("WebsiteConfiguratorFeatureCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModuleId")]
-    //[InverseProperty("WebsiteConfiguratorFeatures")]
-    [NotMapped]
+    // [InverseProperty("WebsiteConfiguratorFeature")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
+    // [Many2one]
     [ForeignKey("PageViewId")]
-    //[InverseProperty("WebsiteConfiguratorFeatures")]
-    [NotMapped]
+    // [InverseProperty("WebsiteConfiguratorFeature")] //Many2one
     public virtual IrUiView? PageView { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebsiteConfiguratorFeatureWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("WebsiteConfiguratorFeatureWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

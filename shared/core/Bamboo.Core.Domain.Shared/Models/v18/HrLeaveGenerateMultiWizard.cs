@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class HrLeaveGenerateMultiWizard: FullAuditedEntity<Guid>, IEntit
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("holiday_status_id")]
     public Guid? HolidayStatusId { get; set; }
 
@@ -30,7 +35,7 @@ public partial class HrLeaveGenerateMultiWizard: FullAuditedEntity<Guid>, IEntit
     public Guid? CategoryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,43 +53,44 @@ public partial class HrLeaveGenerateMultiWizard: FullAuditedEntity<Guid>, IEntit
     public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual HrEmployeeCategory? Category { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizards")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrLeaveGenerateMultiWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [Many2one]
     [ForeignKey("HolidayStatusId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual HrLeaveType? HolidayStatus { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrLeaveGenerateMultiWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("HrLeaveGenerateMultiWizardId")]
-    //[InverseProperty("HrLeaveGenerateMultiWizards")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrLeaveGenerateMultiWizardId")] //Many2many
+    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2many
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_milestone")]
-public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectMilestone: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,7 +21,10 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -28,7 +32,7 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? ProjectId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -46,7 +50,7 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? IsReached { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -57,38 +61,33 @@ public partial class ProjectMilestone : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("quantity_percentage")]
     public double? QuantityPercentage { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProjectMilestoneCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProjectMilestoneCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("ProjectMilestones")]
-    [NotMapped]
+    // [InverseProperty("ProjectMilestone")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProjectId")]
-    //[InverseProperty("ProjectMilestones")]
-    [NotMapped]
+    // [InverseProperty("ProjectMilestone")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
+    // [One2many]
+    [ForeignKey("MilestoneId")]
+    [InverseProperty("Milestone")]
+    public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+
+    // [Many2one]
     [ForeignKey("SaleLineId")]
-    //[InverseProperty("ProjectMilestones")]
-    [NotMapped]
+    // [InverseProperty("ProjectMilestone")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProjectMilestoneWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Milestone")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
-
+    // [InverseProperty("ProjectMilestoneWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

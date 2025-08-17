@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_registration")]
-//[Index("UtmCampaignId", Name = "event_registration__utm_campaign_id_index")]
-//[Index("UtmMediumId", Name = "event_registration__utm_medium_id_index")]
-//[Index("UtmSourceId", Name = "event_registration__utm_source_id_index")]
-//[Index("Barcode", Name = "event_registration_barcode_event_uniq", IsUnique = true)]
-public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("UtmCampaignId", Name = "event_registration_utm_campaign_id_index")]
+//[Index("UtmMediumId", Name = "event_registration_utm_medium_id_index")]
+//[Index("UtmSourceId", Name = "event_registration_utm_source_id_index")]
+public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,7 +24,10 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -47,13 +50,10 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("barcode")]
-    public string? Barcode { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -67,16 +67,8 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("mobile")]
     public string? Mobile { get; set; }
 
-
-    [Column("company_name")]
-    public string? CompanyName { get; set; }
-
     [Column("state")]
     public string? State { get; set; }
-
-    [JsonField]
-    [Column("registration_properties", TypeName = "jsonb")]
-    public string? RegistrationProperties { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -85,7 +77,7 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     public DateTime? DateClosed { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -93,110 +85,98 @@ public partial class EventRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("visitor_id")]
     public Guid? VisitorId { get; set; }
 
-    [Column("pos_order_line_id")]
-    public Guid? PosOrderLineId { get; set; }
-
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
     [Column("sale_order_line_id")]
     public Guid? SaleOrderLineId { get; set; }
 
-    [Column("sale_status")]
-    public string? SaleStatus { get; set; }
-
     [Column("is_paid")]
     public bool? IsPaid { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventRegistrationCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventRegistrationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EventId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
-    // v16-Compat
-    [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("AccountAccounts")]
-    [NotMapped]
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
+    // [One2many]
+    [ForeignKey("RegistrationId")]
+    [InverseProperty("Registration")]
+    public virtual ICollection<EventMailRegistration> EventMailRegistration { get; set; }
 
-    //[InverseProperty("Registration")]
-    [NotMapped]
-    public virtual ICollection<EventMailRegistration> EventMailRegistrations { get; set; } 
+    // [One2many]
+    [ForeignKey("RegistrationId")]
+    [InverseProperty("Registration")]
+    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
-    //[InverseProperty("LastRegistration")]
-    [NotMapped]
-    public virtual ICollection<EventMail> EventMails { get; set; } 
-
-    //[InverseProperty("Registration")]
-    [NotMapped]
-    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswers { get; set; } 
-
+    // [Many2one]
     [ForeignKey("EventTicketId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual EventEventTicket? EventTicket { get; set; }
 
+    // [Many2one]
+    [ForeignKey("MessageMainAttachmentId")]
+    // [InverseProperty("EventRegistration")] //Many2one
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
-    [ForeignKey("PosOrderLineId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
-    public virtual PosOrderLine? PosOrderLine { get; set; }
+    // [One2many]
+    [ForeignKey("RegistrationId")]
+    [InverseProperty("Registration")]
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
-    //[InverseProperty("Registration")]
-    [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
-
+    // [Many2one]
     [ForeignKey("SaleOrderId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("UtmCampaignId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual UtmCampaign? UtmCampaign { get; set; }
 
+    // [Many2one]
     [ForeignKey("UtmMediumId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual UtmMedium? UtmMedium { get; set; }
 
+    // [Many2one]
     [ForeignKey("UtmSourceId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual UtmSource? UtmSource { get; set; }
 
+    // [Many2one]
     [ForeignKey("VisitorId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventRegistration")] //Many2one
     public virtual WebsiteVisitor? Visitor { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventRegistrationWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventRegistrationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("EventRegistrationId")]
-    //[InverseProperty("EventRegistrations")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("EventRegistrationId")] //Many2many
+    // [InverseProperty("EventRegistration")] //Many2many
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
 }

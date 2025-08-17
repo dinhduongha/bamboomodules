@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -10,9 +11,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-// Must-Copy-To-Tenants
 [Table("mail_message_subtype")]
-public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailMessageSubtype: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +21,10 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
@@ -28,7 +32,7 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,7 +45,7 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -60,48 +64,54 @@ public partial class MailMessageSubtype : FullAuditedEntity<Guid>, IEntityDto<Gu
     public bool? TrackRecipients { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailMessageSubtypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailMessageSubtypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("AllocationNotifSubtype")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtypes { get; set; } 
+    // [One2many]
+    [ForeignKey("AllocationNotifSubtypeId")]
+    [InverseProperty("AllocationNotifSubtype")]
+    public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtype { get; set; }
 
-    //[InverseProperty("LeaveNotifSubtype")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtypes { get; set; } 
+    // [One2many]
+    [ForeignKey("LeaveNotifSubtypeId")]
+    [InverseProperty("LeaveNotifSubtype")]
+    public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtype { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<MailMessageSubtype> InverseParent { get; set; } 
-
-    //[InverseProperty("Subtype")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
-
-    //[InverseProperty("Subtype")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } 
-
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<MailMessageSubtype> InverseParent { get; set; }
+
+    // [One2many]
+    [ForeignKey("SubtypeId")]
+    [InverseProperty("Subtype")]
+    public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
+
+    // [One2many]
+    [ForeignKey("SubtypeId")]
+    [InverseProperty("Subtype")]
+    public virtual ICollection<MailMessage> MailMessage { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual MailMessageSubtype? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailMessageSubtypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailMessageSubtypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MailMessageSubtypeId")]
-    //[InverseProperty("MailMessageSubtypes")]
-    [NotMapped]
-    public virtual ICollection<MailFollower> MailFollowers { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailMessageSubtypeId")]
+    // [InverseProperty("MailMessageSubtype")]
+    // public virtual ICollection<MailFollowers> MailFollowers { get; set; }
 }

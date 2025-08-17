@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_tax_template")]
 //[Index("Name", "TypeTaxUse", "TaxScope", "ChartTemplateId", Name = "account_tax_template_name_company_uniq", IsUnique = true)]
-public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountTaxTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("chart_template_id")]
     public Guid? ChartTemplateId { get; set; }
@@ -34,17 +39,14 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? CashBasisTransitionAccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    //public Dictionary<string, string?>? Name { get; set; }
-    public StringDictionary? Name { get; set; }
-
+    public string? Name { get; set; }
 
     [Column("type_tax_use")]
     public string? TypeTaxUse { get; set; }
@@ -81,73 +83,77 @@ public partial class AccountTaxTemplate : FullAuditedEntity<Guid>, IEntityDto<Gu
     public bool? Analytic { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("TaxDestId")]
+    [InverseProperty("TaxDest")]
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxDest { get; set; }
 
+    // [One2many]
+    [ForeignKey("TaxSrcId")]
+    [InverseProperty("TaxSrc")]
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxSrc { get; set; }
+
+    // [One2many]
+    [ForeignKey("InvoiceTaxId")]
+    [InverseProperty("InvoiceTax")]
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateInvoiceTax { get; set; }
+
+    // [One2many]
+    [ForeignKey("RefundTaxId")]
+    [InverseProperty("RefundTax")]
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateRefundTax { get; set; }
+
+    // [Many2one]
     [ForeignKey("CashBasisTransitionAccountId")]
-    //[InverseProperty("AccountTaxTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxTemplate")] //Many2one
     public virtual AccountAccountTemplate? CashBasisTransitionAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChartTemplateId")]
-    //[InverseProperty("AccountTaxTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxTemplate")] //Many2one
     public virtual AccountChartTemplate? ChartTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountTaxTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountTaxTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("TaxGroupId")]
-    //[InverseProperty("AccountTaxTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxTemplate")] //Many2one
     public virtual AccountTaxGroup? TaxGroup { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountTaxTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountTaxTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("TaxDest")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxDests { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("TaxId")]
+    // [InverseProperty("Tax")]
+    // public virtual ICollection<AccountAccountTemplate> Account { get; set; }
 
-    //[InverseProperty("TaxSrc")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplateTaxSrcs { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountTaxTemplateId")]
+    // [InverseProperty("AccountTaxTemplate")]
+    // public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplate { get; set; }
 
-    //[InverseProperty("InvoiceTax")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateInvoiceTaxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ParentTax")] //Many2many
+    // [InverseProperty("ParentTax")] //Many2many
+    public virtual ICollection<AccountTaxTemplate> ChildTax { get; set; }
 
-    //[InverseProperty("RefundTax")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateRefundTaxes { get; set; } 
-
-    [ForeignKey("AccountTaxTemplateId")]
-    //[InverseProperty("AccountTaxTemplates")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; } 
-
-    [ForeignKey("TaxId")]
-    //[InverseProperty("Taxes")]
-    [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> Accounts { get; set; } 
-
-    [ForeignKey("ParentTax")]
-    //[InverseProperty("ParentTaxes")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> ChildTaxes { get; set; } 
-
-    [ForeignKey("ChildTax")]
-    //[InverseProperty("ChildTaxes")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> ParentTaxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ChildTax")] //Many2many
+    // [InverseProperty("ChildTax")] //Many2many
+    public virtual ICollection<AccountTaxTemplate> ParentTax { get; set; }
 }

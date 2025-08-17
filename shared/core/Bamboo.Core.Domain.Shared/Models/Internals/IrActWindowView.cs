@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,17 +10,13 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_act_window_view")]
 //[Index("ActWindowId", "ViewMode", Name = "act_window_view_unique_mode_per_action", IsUnique = true)]
-public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -33,7 +28,7 @@ public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? ActWindowId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,28 +40,28 @@ public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? Multi { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActWindowId")]
-    //[InverseProperty("IrActWindowViews")]
-    [NotMapped]
+    // [InverseProperty("IrActWindowView")] //Many2one
     public virtual IrActWindow? ActWindow { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrActWindowViewCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrActWindowViewCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ViewId")]
-    //[InverseProperty("IrActWindowViewsNavigation")]
-    [NotMapped]
+    // [InverseProperty("IrActWindowViewNavigation")] //Many2one
     public virtual IrUiView? View { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrActWindowViewWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrActWindowViewWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -11,8 +11,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_currency_rate")]
-//[Index("Name", Name = "res_currency_rate_name_index")]
-//[Index("Name", "CurrencyId", "TenantId", Name = "res_currency_rate_unique_name_per_day", IsUnique = true)]
+//[Index("Name", Name = "res_currency_rate__name_index")]
+//[Index("Name", "CurrencyId", "CompanyId", Name = "res_currency_rate_unique_name_per_day", IsUnique = true)]
 public partial class ResCurrencyRate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -22,11 +22,15 @@ public partial class ResCurrencyRate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -38,28 +42,28 @@ public partial class ResCurrencyRate: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public decimal? Rate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ResCurrencyRates")]
-    [NotMapped]
+    // [InverseProperty("ResCurrencyRate")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResCurrencyRateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResCurrencyRateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("ResCurrencyRates")]
-    [NotMapped]
+    // [InverseProperty("ResCurrencyRate")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResCurrencyRateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ResCurrencyRateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

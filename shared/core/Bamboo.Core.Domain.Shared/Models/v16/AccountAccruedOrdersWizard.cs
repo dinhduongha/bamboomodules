@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,8 +21,8 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("journal_id")]
-    public Guid? JournalId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -30,7 +31,7 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     public Guid? AccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,38 +46,33 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     public decimal? Amount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("AccountAccruedOrdersWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAccruedOrdersWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAccruedOrdersWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAccruedOrdersWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountAccruedOrdersWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
-    [ForeignKey("JournalId")]
-    //[InverseProperty("AccountAccruedOrdersWizards")]
-    [NotMapped]
-    public virtual AccountJournal? Journal { get; set; }
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAccruedOrdersWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAccruedOrdersWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

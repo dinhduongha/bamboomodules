@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,10 +10,9 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("web_tour_tour")]
 //[Index("Name", Name = "web_tour_tour_uniq_name", IsUnique = true)]
-public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class WebTourTour: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,16 +21,19 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    //v16-Compat
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
@@ -50,38 +51,34 @@ public partial class WebTourTour: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAu
     public bool? Custom { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("WebTourTourCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
-
-    //[InverseProperty("Tour")]
-    [NotMapped]
-    public virtual ICollection<WebTourTourStep> WebTourTourSteps { get; set; } 
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebTourTourWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //v16-Compat
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("WebTourTours")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("WebTourTour")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
-    //v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("WebTourTourCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [ForeignKey("WebTourTourId")]
-    //[InverseProperty("WebTourTours")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
+    // [One2many]
+    [ForeignKey("TourId")]
+    [InverseProperty("Tour")]
+    public virtual ICollection<WebTourTourStep> WebTourTourStep { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("WebTourTourWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("WebTourTourId")] //Many2many
+    // [InverseProperty("WebTourTour")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

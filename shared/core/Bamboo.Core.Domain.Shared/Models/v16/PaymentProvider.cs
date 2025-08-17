@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_provider")]
-//[Index("TenantId", Name = "payment_provider_company_id_index")]
-public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "payment_provider_company_id_index")]
+public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -43,7 +48,7 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? ModuleId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,15 +59,13 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("state")]
     public string? State { get; set; }
 
-    // v16-Compat
     [Column("module_state")]
     public string? ModuleState { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("display_as", TypeName = "jsonb")]
     public string? DisplayAs { get; set; }
@@ -102,29 +105,24 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("allow_express_checkout")]
     public bool? AllowExpressCheckout { get; set; }
 
-    // v16-Compat
     [Column("fees_active")]
     public bool? FeesActive { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
     [Column("fees_dom_fixed")]
     public double? FeesDomFixed { get; set; }
 
-    // v16-Compat
     [Column("fees_dom_var")]
     public double? FeesDomVar { get; set; }
 
-    // v16-Compat
     [Column("fees_int_fixed")]
     public double? FeesIntFixed { get; set; }
 
-    // v16-Compat
     [Column("fees_int_var")]
     public double? FeesIntVar { get; set; }
 
@@ -134,75 +132,81 @@ public partial class PaymentProvider: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
+    [Column("custom_mode")]
+    public string? CustomMode { get; set; }
+
+    [Column("qr_code")]
+    public bool? QrCode { get; set; }
+
+    // [One2many]
+    [ForeignKey("PaymentProviderId")]
+    [InverseProperty("PaymentProvider")]
+    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PaymentProviders")]
-    [NotMapped]
+    // [InverseProperty("PaymentProvider")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PaymentProviderCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PaymentProviderCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ExpressCheckoutFormViewId")]
-    //[InverseProperty("PaymentProviderExpressCheckoutFormViews")]
-    [NotMapped]
+    // [InverseProperty("PaymentProviderExpressCheckoutFormView")] //Many2one
     public virtual IrUiView? ExpressCheckoutFormView { get; set; }
 
+    // [Many2one]
     [ForeignKey("InlineFormViewId")]
-    //[InverseProperty("PaymentProviderInlineFormViews")]
-    [NotMapped]
+    // [InverseProperty("PaymentProviderInlineFormView")] //Many2one
     public virtual IrUiView? InlineFormView { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModuleId")]
-    //[InverseProperty("PaymentProviders")]
-    [NotMapped]
+    // [InverseProperty("PaymentProvider")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProviderId")]
+    [InverseProperty("Provider")]
+    public virtual ICollection<PaymentToken> PaymentToken { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProviderId")]
+    [InverseProperty("Provider")]
+    public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
+
+    // [Many2one]
     [ForeignKey("RedirectFormViewId")]
-    //[InverseProperty("PaymentProviderRedirectFormViews")]
-    [NotMapped]
+    // [InverseProperty("PaymentProviderRedirectFormView")] //Many2one
     public virtual IrUiView? RedirectFormView { get; set; }
 
+    // [Many2one]
     [ForeignKey("TokenInlineFormViewId")]
-    //[InverseProperty("PaymentProviderTokenInlineFormViews")]
-    [NotMapped]
+    // [InverseProperty("PaymentProviderTokenInlineFormView")] //Many2one
     public virtual IrUiView? TokenInlineFormView { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("PaymentProviders")]
-    [NotMapped]
+    // [InverseProperty("PaymentProvider")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PaymentProviderWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PaymentProviderWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("PaymentProvider")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PaymentId")] //Many2many
+    // [InverseProperty("Payment")] //Many2many
+    public virtual ICollection<ResCountry> Country { get; set; }
 
-    //[InverseProperty("Provider")]
-    [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } 
-
-    //[InverseProperty("Provider")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
-
-    [ForeignKey("PaymentId")]
-    //[InverseProperty("Payments")]
-    [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; set; } 
-
-    [ForeignKey("PaymentProviderId")]
-    //[InverseProperty("PaymentProviders")]
-    [NotMapped]
-    public virtual ICollection<ResCurrency> Currencies { get; set; } 
-
-    [ForeignKey("PaymentProviderId")]
-    //[InverseProperty("PaymentProviders")]
-    [NotMapped]
-    public virtual ICollection<PaymentIcon> PaymentIcons { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PaymentProviderId")] //Many2many
+    // [InverseProperty("PaymentProvider")] //Many2many
+    public virtual ICollection<PaymentIcon> PaymentIcon { get; set; }
 }

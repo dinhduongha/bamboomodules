@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_payment_method_line")]
-public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntity
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -33,7 +38,7 @@ public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntity
     public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,7 +47,7 @@ public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntity
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -50,51 +55,43 @@ public partial class AccountPaymentMethodLine : FullAuditedEntity<Guid>, IEntity
     [Column("payment_provider_id")]
     public Guid? PaymentProviderId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("PaymentMethodLineId")]
+    [InverseProperty("PaymentMethodLine")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
+    // [One2many]
+    [ForeignKey("PaymentMethodLineId")]
+    [InverseProperty("PaymentMethodLine")]
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountPaymentMethodLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountPaymentMethodLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountPaymentMethodLines")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentAccountId")]
-    //[InverseProperty("AccountPaymentMethodLines")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual AccountAccount? PaymentAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentMethodId")]
-    //[InverseProperty("AccountPaymentMethodLines")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual AccountPaymentMethod? PaymentMethod { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentProviderId")]
-    //[InverseProperty("AccountPaymentMethodLines")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual PaymentProvider? PaymentProvider { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountPaymentMethodLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("PaymentMethodLine")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } 
-
-    //[InverseProperty("PaymentMethodLine")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
-    [ForeignKey("AccountPaymentMethodLineId")]
-    //[InverseProperty("AccountPaymentMethodLines")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
+    // [InverseProperty("AccountPaymentMethodLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

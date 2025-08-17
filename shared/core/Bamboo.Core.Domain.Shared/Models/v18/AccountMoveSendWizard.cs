@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("move_id")]
     public Guid? MoveId { get; set; }
 
@@ -30,7 +35,7 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? MailTemplateId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,38 +59,39 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     public string? MailBody { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountMoveSendWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountMoveSendWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailTemplateId")]
-    //[InverseProperty("AccountMoveSendWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveSendWizard")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("AccountMoveSendWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveSendWizard")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("PdfReportId")]
-    //[InverseProperty("AccountMoveSendWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveSendWizard")] //Many2one
     public virtual IrActReportXml? PdfReport { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountMoveSendWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountMoveSendWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountMoveSendWizardId")]
-    //[InverseProperty("AccountMoveSendWizards")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountMoveSendWizardId")] //Many2many
+    // [InverseProperty("AccountMoveSendWizard")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,25 +10,21 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_module_module")]
-//[Index("CategoryId", Name = "ir_module_module_category_id_index")]
-//[Index("State", Name = "ir_module_module_state_index")]
+//[Index("CategoryId", Name = "ir_module_module__category_id_index")]
+//[Index("State", Name = "ir_module_module__state_index")]
 //[Index("Name", Name = "ir_module_module_name_uniq", IsUnique = true)]
-public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrModuleModule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    //[Column("company_id")]
-    //public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -61,14 +56,14 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("shortdesc", TypeName = "jsonb")]
-    public StringDictionary? Shortdesc { get; set; }
+    public string? Shortdesc { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
-    public StringDictionary? Description { get; set; }
+    public string? Description { get; set; }
 
     [Column("application")]
     public bool? Application { get; set; }
@@ -118,72 +113,85 @@ public partial class IrModuleModule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("imported")]
     public bool? Imported { get; set; }
 
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequests { get; set; } 
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequest { get; set; }
 
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReviews { get; set; } 
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReview { get; set; }
 
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstalls { get; set; } 
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<BaseModuleUninstall> BaseModuleUninstall { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("IrModuleModules")]
-    [NotMapped]
+    // [InverseProperty("IrModuleModule")] //Many2one
     public virtual IrModuleCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModuleModuleCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrModuleModuleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<IrDemoFailure> IrDemoFailure { get; set; }
+
+    // [One2many]
+    [ForeignKey("Module")]
+    [InverseProperty("ModuleNavigation")]
+    public virtual ICollection<IrModelConstraint> IrModelConstraint { get; set; }
+
+    // [One2many]
+    [ForeignKey("Module")]
+    [InverseProperty("ModuleNavigation")]
+    public virtual ICollection<IrModelRelation> IrModelRelation { get; set; }
+
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependency { get; set; }
+
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusion { get; set; }
+
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
+
+    // [One2many]
+    [ForeignKey("ModuleId")]
+    [InverseProperty("Module")]
+    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeature { get; set; }
+
+    // [One2many]
+    [ForeignKey("ThemeId")]
+    [InverseProperty("Theme")]
+    public virtual ICollection<Website> WebsiteNavigation { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModuleModuleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModuleModuleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<IrDemoFailure> IrDemoFailures { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ModuleId")] //Many2many
+    // [InverseProperty("Module")] //Many2many
+    public virtual ICollection<ResCountry> Country { get; set; }
 
-    //[InverseProperty("ModuleNavigation")]
-    [NotMapped]
-    public virtual ICollection<IrModelConstraint> IrModelConstraints { get; set; } 
-
-    //[InverseProperty("ModuleNavigation")]
-    [NotMapped]
-    public virtual ICollection<IrModelRelation> IrModelRelations { get; set; } 
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependencies { get; set; } 
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusions { get; set; } 
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } 
-
-    //[InverseProperty("Module")]
-    [NotMapped]
-    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; set; } 
-
-    //[InverseProperty("Theme")]
-    [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } 
-
-    [ForeignKey("ModuleId")]
-    //[InverseProperty("Modules")]
-    [NotMapped]
-    public virtual ICollection<ResCountry> Countries { get; set; } 
-
-    [ForeignKey("ModuleId")]
-    //[InverseProperty("Modules")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageExport> Wizs { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ModuleId")]
+    // [InverseProperty("Module")]
+    // public virtual ICollection<BaseLanguageExport> Wiz { get; set; }
 }

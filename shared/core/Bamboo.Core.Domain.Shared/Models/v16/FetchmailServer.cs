@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("fetchmail_server")]
 //[Index("ServerType", Name = "fetchmail_server_server_type_index")]
 //[Index("State", Name = "fetchmail_server_state_index")]
-public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +22,11 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("port")]
     public long? Port { get; set; }
 
@@ -32,7 +37,7 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public long? Priority { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -77,7 +82,7 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public DateTime? Date { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -94,22 +99,23 @@ public partial class FetchmailServer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("google_gmail_access_token")]
     public string? GoogleGmailAccessToken { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("FetchmailServerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("FetchmailServerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("FetchmailServer")]
-    [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } 
+    // [One2many]
+    [ForeignKey("FetchmailServerId")]
+    [InverseProperty("FetchmailServer")]
+    public virtual ICollection<MailMail> MailMail { get; set; }
 
+    // [Many2one]
     [ForeignKey("ObjectId")]
-    //[InverseProperty("FetchmailServers")]
-    [NotMapped]
-    public virtual IrModel? IrModelObject { get; set; }
+    // [InverseProperty("FetchmailServer")] //Many2one
+    public virtual IrModel? Object { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("FetchmailServerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("FetchmailServerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

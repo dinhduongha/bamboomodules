@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_user_input_line")]
-//[Index("QuestionId", Name = "survey_user_input_line__question_id_index")]
-//[Index("UserInputId", Name = "survey_user_input_line__user_input_id_index")]
+//[Index("UserInputId", Name = "survey_user_input_line_user_input_id_index")]
 public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -21,6 +21,10 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("user_input_id")]
     public Guid? UserInputId { get; set; }
@@ -34,9 +38,6 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("question_sequence")]
     public long? QuestionSequence { get; set; }
 
-    [Column("value_scale")]
-    public long? ValueScale { get; set; }
-
     [Column("suggested_answer_id")]
     public Guid? SuggestedAnswerId { get; set; }
 
@@ -44,7 +45,7 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? MatrixRowId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -71,7 +72,7 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public DateTime? ValueDatetime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -82,38 +83,38 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("answer_score")]
     public double? AnswerScore { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SurveyUserInputLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SurveyUserInputLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MatrixRowId")]
-    //[InverseProperty("SurveyUserInputLineMatrixRows")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInputLineMatrixRow")] //Many2one
     public virtual SurveyQuestionAnswer? MatrixRow { get; set; }
 
+    // [Many2one]
     [ForeignKey("QuestionId")]
-    //[InverseProperty("SurveyUserInputLines")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInputLine")] //Many2one
     public virtual SurveyQuestion? Question { get; set; }
 
+    // [Many2one]
     [ForeignKey("SuggestedAnswerId")]
-    //[InverseProperty("SurveyUserInputLineSuggestedAnswers")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInputLineSuggestedAnswer")] //Many2one
     public virtual SurveyQuestionAnswer? SuggestedAnswer { get; set; }
 
+    // [Many2one]
     [ForeignKey("SurveyId")]
-    //[InverseProperty("SurveyUserInputLines")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInputLine")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserInputId")]
-    //[InverseProperty("SurveyUserInputLines")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInputLine")] //Many2one
     public virtual SurveyUserInput? UserInput { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SurveyUserInputLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SurveyUserInputLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

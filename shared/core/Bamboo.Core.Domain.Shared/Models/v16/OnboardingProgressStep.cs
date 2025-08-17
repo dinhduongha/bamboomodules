@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("onboarding_progress_step")]
+//[Index("ProgressId", "StepId", Name = "onboarding_progress_step_progress_step_uniq", IsUnique = true)]
 public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -20,11 +22,18 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
+    [Column("progress_id")]
+    public Guid? ProgressId { get; set; }
+
     [Column("step_id")]
     public Guid? StepId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -33,33 +42,28 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
     public string? StepState { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("OnboardingProgressSteps")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("OnboardingProgressStepCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("OnboardingProgressStepCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
+    [ForeignKey("ProgressId")]
+    // [InverseProperty("OnboardingProgressStep")] //Many2one
+    public virtual OnboardingProgress? Progress { get; set; }
+
+    // [Many2one]
     [ForeignKey("StepId")]
-    //[InverseProperty("OnboardingProgressSteps")]
-    [NotMapped]
+    // [InverseProperty("OnboardingProgressStep")] //Many2one
     public virtual OnboardingOnboardingStep? Step { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("OnboardingProgressStepWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("OnboardingProgressStepId")]
-    //[InverseProperty("OnboardingProgressSteps")]
-    [NotMapped]
-    public virtual ICollection<OnboardingProgress> OnboardingProgresses { get; set; } 
+    // [InverseProperty("OnboardingProgressStepWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,12 +12,12 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_location")]
-//[Index("Barcode", "TenantId", Name = "stock_location_barcode_company_uniq", IsUnique = true)]
-//[Index("TenantId", Name = "stock_location_company_id_index")]
+//[Index("Barcode", "CompanyId", Name = "stock_location_barcode_company_uniq", IsUnique = true)]
+//[Index("CompanyId", Name = "stock_location_company_id_index")]
 //[Index("LocationId", Name = "stock_location_location_id_index")]
 //[Index("ParentPath", Name = "stock_location_parent_path_index")]
 //[Index("Usage", Name = "stock_location_usage_index")]
-public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,6 +25,10 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("location_id")]
     public Guid? LocationId { get; set; }
@@ -50,7 +55,7 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? StorageCategoryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -85,7 +90,6 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("scrap_location")]
     public bool? ScrapLocation { get; set; }
 
-    // v16-Compat
     [Column("return_location")]
     public bool? ReturnLocation { get; set; }
 
@@ -93,7 +97,7 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public bool? ReplenishLocation { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -104,221 +108,271 @@ public partial class StockLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("valuation_out_account_id")]
     public Guid? ValuationOutAccountId { get; set; }
 
+    [Column("is_subcontracting_location")]
+    public bool? IsSubcontractingLocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockLocations")]
-    [NotMapped]
+    // [InverseProperty("StockLocation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockLocationCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockLocationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
     [ForeignKey("LocationId")]
-    //[InverseProperty("InverseLocation")]
-    [NotMapped]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockLocation> InverseLocation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LocationId")]
+    // [InverseProperty("InverseLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<MrpProduction> MrpProductionLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationSrcId")]
+    [InverseProperty("LocationSrc")]
+    public virtual ICollection<MrpProduction> MrpProductionLocationSrc { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductionLocationId")]
+    [InverseProperty("ProductionLocation")]
+    public virtual ICollection<MrpProduction> MrpProductionProductionLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<MrpUnbuild> MrpUnbuildLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<MrpUnbuild> MrpUnbuildLocationDest { get; set; }
+
+    // [Many2one]
     [ForeignKey("RemovalStrategyId")]
-    //[InverseProperty("StockLocations")]
-    [NotMapped]
+    // [InverseProperty("StockLocation")] //Many2one
     public virtual ProductRemoval? RemovalStrategy { get; set; }
 
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<RepairLine> RepairLineLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<RepairLine> RepairLineLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("InternalTransitLocationId")]
+    [InverseProperty("InternalTransitLocation")]
+    public virtual ICollection<ResCompany> ResCompanyInternalTransitLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("SubcontractingLocationId")]
+    [InverseProperty("SubcontractingLocation")]
+    public virtual ICollection<ResCompany> ResCompanySubcontractingLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockMoveLine> StockMoveLineLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<StockMoveLine> StockMoveLineLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockMove> StockMoveLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<StockMove> StockMoveLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<StockPackageDestination> StockPackageDestination { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<StockPackageLevel> StockPackageLevel { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockPicking> StockPickingLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<StockPicking> StockPickingLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultLocationDestId")]
+    [InverseProperty("DefaultLocationDest")]
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultLocationSrcId")]
+    [InverseProperty("DefaultLocationSrc")]
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationSrc { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationInId")]
+    [InverseProperty("LocationIn")]
+    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationIn { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationOutId")]
+    [InverseProperty("LocationOut")]
+    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationOut { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockQuant> StockQuant { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockQuantPackage> StockQuantPackage { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockReturnPicking> StockReturnPickingLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("OriginalLocationId")]
+    [InverseProperty("OriginalLocation")]
+    public virtual ICollection<StockReturnPicking> StockReturnPickingOriginalLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentLocationId")]
+    [InverseProperty("ParentLocation")]
+    public virtual ICollection<StockReturnPicking> StockReturnPickingParentLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<StockRule> StockRuleLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationSrcId")]
+    [InverseProperty("LocationSrc")]
+    public virtual ICollection<StockRule> StockRuleLocationSrc { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockScrap> StockScrapLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("ScrapLocationId")]
+    [InverseProperty("ScrapLocation")]
+    public virtual ICollection<StockScrap> StockScrapScrapLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LotStockId")]
+    [InverseProperty("LotStock")]
+    public virtual ICollection<StockWarehouse> StockWarehouseLotStock { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [One2many]
+    [ForeignKey("PbmLocId")]
+    [InverseProperty("PbmLoc")]
+    public virtual ICollection<StockWarehouse> StockWarehousePbmLoc { get; set; }
+
+    // [One2many]
+    [ForeignKey("SamLocId")]
+    [InverseProperty("SamLoc")]
+    public virtual ICollection<StockWarehouse> StockWarehouseSamLoc { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewLocationId")]
+    [InverseProperty("ViewLocation")]
+    public virtual ICollection<StockWarehouse> StockWarehouseViewLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("WhInputStockLocId")]
+    [InverseProperty("WhInputStockLoc")]
+    public virtual ICollection<StockWarehouse> StockWarehouseWhInputStockLoc { get; set; }
+
+    // [One2many]
+    [ForeignKey("WhOutputStockLocId")]
+    [InverseProperty("WhOutputStockLoc")]
+    public virtual ICollection<StockWarehouse> StockWarehouseWhOutputStockLoc { get; set; }
+
+    // [One2many]
+    [ForeignKey("WhPackStockLocId")]
+    [InverseProperty("WhPackStockLoc")]
+    public virtual ICollection<StockWarehouse> StockWarehouseWhPackStockLoc { get; set; }
+
+    // [One2many]
+    [ForeignKey("WhQcStockLocId")]
+    [InverseProperty("WhQcStockLoc")]
+    public virtual ICollection<StockWarehouse> StockWarehouseWhQcStockLoc { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepair { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrap { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuild { get; set; }
+
+    // [Many2one]
     [ForeignKey("StorageCategoryId")]
-    //[InverseProperty("StockLocations")]
-    [NotMapped]
+    // [InverseProperty("StockLocation")] //Many2one
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
+    // [Many2one]
     [ForeignKey("ValuationInAccountId")]
-    //[InverseProperty("StockLocationValuationInAccounts")]
-    [NotMapped]
+    // [InverseProperty("StockLocationValuationInAccount")] //Many2one
     public virtual AccountAccount? ValuationInAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("ValuationOutAccountId")]
-    //[InverseProperty("StockLocationValuationOutAccounts")]
-    [NotMapped]
+    // [InverseProperty("StockLocationValuationOutAccount")] //Many2one
     public virtual AccountAccount? ValuationOutAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("WarehouseId")]
-    //[InverseProperty("StockLocations")]
-    [NotMapped]
+    // [InverseProperty("StockLocation")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockLocationWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockLocation> InverseLocation { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionLocationDests { get; set; } 
-
-    //[InverseProperty("LocationSrc")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionLocationSrcs { get; set; } 
-
-    //[InverseProperty("ProductionLocation")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductionProductionLocations { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuildLocationDests { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuildLocations { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLineLocationDests { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLineLocations { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
-
-    //[InverseProperty("InternalTransitLocation")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineLocationDests { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLineLocations { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveLocationDests { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveLocations { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockPackageDestination> StockPackageDestinations { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingLocationDests { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingLocations { get; set; } 
-
-    //[InverseProperty("DefaultLocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationDests { get; set; } 
-
-    //[InverseProperty("DefaultLocationSrc")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationSrcs { get; set; } 
-
-    //[InverseProperty("LocationIn")]
-    [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationIns { get; set; } 
-
-    //[InverseProperty("LocationOut")]
-    [NotMapped]
-    public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationOuts { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockQuantPackage> StockQuantPackages { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingLocations { get; set; } 
-
-    //[InverseProperty("OriginalLocation")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingOriginalLocations { get; set; } 
-
-    //[InverseProperty("ParentLocation")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickingParentLocations { get; set; } 
-
-    //[InverseProperty("LocationDest")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRuleLocationDests { get; set; } 
-
-    //[InverseProperty("LocationSrc")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRuleLocationSrcs { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScrapLocations { get; set; } 
-
-    //[InverseProperty("ScrapLocation")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScrapScrapLocations { get; set; } 
-
-    //[InverseProperty("LotStock")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseLotStocks { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
-    //[InverseProperty("PbmLoc")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmLocs { get; set; } 
-
-    //[InverseProperty("SamLoc")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamLocs { get; set; } 
-
-    //[InverseProperty("ViewLocation")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseViewLocations { get; set; } 
-
-    //[InverseProperty("WhInputStockLoc")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhInputStockLocs { get; set; } 
-
-    //[InverseProperty("WhOutputStockLoc")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhOutputStockLocs { get; set; } 
-
-    //[InverseProperty("WhPackStockLoc")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhPackStockLocs { get; set; } 
-
-    //[InverseProperty("WhQcStockLoc")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseWhQcStockLocs { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScraps { get; set; } 
-
-    //[InverseProperty("Location")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; set; } 
-
+    // [InverseProperty("StockLocationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

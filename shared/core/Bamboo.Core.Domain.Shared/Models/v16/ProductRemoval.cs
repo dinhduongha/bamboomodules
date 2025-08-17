@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_removal")]
-public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductRemoval: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,50 +21,45 @@ public partial class ProductRemoval : FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat json
-    //[Column("name")]
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    [Column("name")]
+    public string? Name { get; set; }
 
-    // v16-Compat json
-    //[Column("method")]
-    [JsonField]
-    [Column("method", TypeName = "jsonb")]
+    [Column("method")]
     public string? Method { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductRemovalCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductRemovalCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("RemovalStrategyId")]
+    [InverseProperty("RemovalStrategy")]
+    public virtual ICollection<ProductCategory> ProductCategory { get; set; }
+
+    // [One2many]
+    [ForeignKey("RemovalStrategyId")]
+    [InverseProperty("RemovalStrategy")]
+    public virtual ICollection<StockLocation> StockLocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductRemovalWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("RemovalStrategy")]
-    [NotMapped]
-    public virtual ICollection<ProductCategory> ProductCategories { get; set; } 
-
-    //[InverseProperty("RemovalStrategy")]
-    [NotMapped]
-    public virtual ICollection<StockLocation> StockLocations { get; set; } 
-
+    // [InverseProperty("ProductRemovalWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

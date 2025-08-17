@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,8 +21,9 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("route_id")]
-    public Guid? RouteId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -36,7 +38,7 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? WarehouseId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,7 +50,7 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? DatePlanned { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -56,64 +58,44 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("quantity")]
     public double? Quantity { get; set; }
 
-    [Column("supplier_id")]
-    public Guid? SupplierId { get; set; }
-
-    [Column("bom_id")]
-    public Guid? BomId { get; set; }
-
-    [ForeignKey("BomId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
-    public virtual MrpBom? Bom { get; set; }
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
+    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductReplenishCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductReplenishCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
+    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductTmplId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
+    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
+    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
-    [ForeignKey("RouteId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
-    public virtual StockRoute? Route { get; set; }
-
-    [ForeignKey("SupplierId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
-    public virtual ProductSupplierinfo? Supplier { get; set; }
-
+    // [Many2one]
     [ForeignKey("WarehouseId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
+    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductReplenishWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductReplenishWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ProductReplenishId")]
-    //[InverseProperty("ProductReplenishes")]
-    [NotMapped]
-    public virtual ICollection<StockRoute> StockRoutes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductReplenishId")] //Many2many
+    // [InverseProperty("ProductReplenish")] //Many2many
+    public virtual ICollection<StockRoute> StockRoute { get; set; }
 }

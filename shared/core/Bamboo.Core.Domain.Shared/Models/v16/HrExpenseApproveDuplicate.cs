@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_expense_approve_duplicate")]
-public partial class HrExpenseApproveDuplicate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrExpenseApproveDuplicate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,39 +21,41 @@ public partial class HrExpenseApproveDuplicate : FullAuditedEntity<Guid>, IEntit
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrExpenseApproveDuplicateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrExpenseApproveDuplicateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrExpenseApproveDuplicateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrExpenseApproveDuplicateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("HrExpenseApproveDuplicateId")]
-    //[InverseProperty("HrExpenseApproveDuplicates")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrExpenseApproveDuplicateId")] //Many2many
+    // [InverseProperty("HrExpenseApproveDuplicate")] //Many2many
+    public virtual ICollection<HrExpense> HrExpense { get; set; }
 
-    [ForeignKey("HrExpenseApproveDuplicateId")]
-    //[InverseProperty("HrExpenseApproveDuplicates")]
-    [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrExpenseApproveDuplicateId")] //Many2many
+    // [InverseProperty("HrExpenseApproveDuplicate")] //Many2many
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 }

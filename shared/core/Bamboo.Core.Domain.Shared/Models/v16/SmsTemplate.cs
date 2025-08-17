@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_template")]
 //[Index("Model", Name = "sms_template_model_index")]
-public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +22,10 @@ public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
@@ -28,7 +33,7 @@ public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? SidebarActionId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -44,73 +49,81 @@ public partial class SmsTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("body", TypeName = "jsonb")]
     public string? Body { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("SmsTemplateId")]
+    [InverseProperty("SmsTemplate")]
+    public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SmsTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SmsTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("SmsTemplateId")]
+    [InverseProperty("SmsTemplate")]
+    public virtual ICollection<IrActServer> IrActServer { get; set; }
+
+    // [One2many]
+    [ForeignKey("SmsTemplateId")]
+    [InverseProperty("SmsTemplate")]
+    public virtual ICollection<MailingMailing> MailingMailing { get; set; }
+
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("SmsTemplates")]
-    [NotMapped]
+    // [InverseProperty("SmsTemplate")] //Many2one
     public virtual IrModel? ModelNavigation { get; set; }
 
+    // [One2many]
+    [ForeignKey("SmsTemplateId")]
+    [InverseProperty("SmsTemplate")]
+    public virtual ICollection<ProjectProjectStage> ProjectProjectStage { get; set; }
+
+    // [One2many]
+    [ForeignKey("SmsTemplateId")]
+    [InverseProperty("SmsTemplate")]
+    public virtual ICollection<ProjectTaskType> ProjectTaskType { get; set; }
+
+    // [One2many]
+    [ForeignKey("StockSmsConfirmationTemplateId")]
+    [InverseProperty("StockSmsConfirmationTemplate")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [Many2one]
     [ForeignKey("SidebarActionId")]
-    //[InverseProperty("SmsTemplates")]
-    [NotMapped]
+    // [InverseProperty("SmsTemplate")] //Many2one
     public virtual IrActWindow? SidebarAction { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("SmsTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [One2many]
+    [ForeignKey("TemplateId")]
+    [InverseProperty("Template")]
+    public virtual ICollection<SmsComposer> SmsComposer { get; set; }
 
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("SmsTemplate")]
-    [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; set; } 
-
-    //[InverseProperty("SmsTemplate")]
-    [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } 
-
-    //[InverseProperty("SmsTemplate")]
-    [NotMapped]
-    public virtual ICollection<ProjectProjectStage> ProjectProjectStages { get; set; } 
-
-    //[InverseProperty("SmsTemplate")]
-    [NotMapped]
-    public virtual ICollection<ProjectTaskType> ProjectTaskTypes { get; set; } 
-
-    //[InverseProperty("StockSmsConfirmationTemplate")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    //[InverseProperty("Template")]
-    [NotMapped]
-    public virtual ICollection<SmsComposer> SmsComposers { get; set; } 
-
-    //[InverseProperty("SmsTemplate")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreviews { get; set; } 
-
+    // [One2many]
     [ForeignKey("SmsTemplateId")]
-    //[InverseProperty("SmsTemplates")]
-    [NotMapped]
-    public virtual ICollection<SmsTemplateReset> SmsTemplateResets { get; set; } 
+    [InverseProperty("SmsTemplate")]
+    public virtual ICollection<SmsTemplatePreview> SmsTemplatePreview { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("SmsTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("SmsTemplateId")]
+    // [InverseProperty("SmsTemplate")]
+    // public virtual ICollection<SmsTemplateReset> SmsTemplateReset { get; set; }
 }

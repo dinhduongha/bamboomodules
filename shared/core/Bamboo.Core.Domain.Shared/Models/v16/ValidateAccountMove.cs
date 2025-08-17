@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("validate_account_move")]
-public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ValidateAccountMove: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,8 +21,12 @@ public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -29,34 +34,19 @@ public partial class ValidateAccountMove : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("force_post")]
     public bool? ForcePost { get; set; }
 
-    [Column("ignore_abnormal_date")]
-    public bool? IgnoreAbnormalDate { get; set; }
-
-    [Column("ignore_abnormal_amount")]
-    public bool? IgnoreAbnormalAmount { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ValidateAccountMoveCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ValidateAccountMoveCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ValidateAccountMoveWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("ValidateAccountMoveId")]
-    //[InverseProperty("ValidateAccountMoves")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
+    // [InverseProperty("ValidateAccountMoveWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,11 +22,15 @@ public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("mail_notification_id")]
     public Guid? MailNotificationId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -34,7 +39,7 @@ public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public string? SmsUuid { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -42,23 +47,23 @@ public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("mailing_trace_id")]
     public Guid? MailingTraceId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SmsTrackerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SmsTrackerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailNotificationId")]
-    //[InverseProperty("SmsTrackers")]
-    [NotMapped]
+    // [InverseProperty("SmsTracker")] //Many2one
     public virtual MailNotification? MailNotification { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailingTraceId")]
-    //[InverseProperty("SmsTrackers")]
-    [NotMapped]
+    // [InverseProperty("SmsTracker")] //Many2one
     public virtual MailingTrace? MailingTrace { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SmsTrackerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SmsTrackerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

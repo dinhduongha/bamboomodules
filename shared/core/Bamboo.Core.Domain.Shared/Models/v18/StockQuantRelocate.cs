@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("dest_location_id")]
     public Guid? DestLocationId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? DestPackageId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,33 +41,34 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
     public string? Message { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockQuantRelocateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockQuantRelocateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DestLocationId")]
-    //[InverseProperty("StockQuantRelocates")]
-    [NotMapped]
+    // [InverseProperty("StockQuantRelocate")] //Many2one
     public virtual StockLocation? DestLocation { get; set; }
 
+    // [Many2one]
     [ForeignKey("DestPackageId")]
-    //[InverseProperty("StockQuantRelocates")]
-    [NotMapped]
+    // [InverseProperty("StockQuantRelocate")] //Many2one
     public virtual StockQuantPackage? DestPackage { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockQuantRelocateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockQuantRelocateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("StockQuantRelocateId")]
-    //[InverseProperty("StockQuantRelocates")]
-    [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("StockQuantRelocateId")] //Many2many
+    // [InverseProperty("StockQuantRelocate")] //Many2many
+    public virtual ICollection<StockQuant> StockQuant { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,28 +21,35 @@ public partial class HrEmployeeDeleteWizard: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrEmployeeDeleteWizardCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrEmployeeDeleteWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrEmployeeDeleteWizardWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrEmployeeDeleteWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("HrEmployeeDeleteWizardId")]
-    [NotMapped]//One2Many
-    //[InverseProperty("HrEmployeeDeleteWizards")] //One2Many
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } = null;
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrEmployeeDeleteWizardId")] //Many2many
+    // [InverseProperty("HrEmployeeDeleteWizard")] //Many2many
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

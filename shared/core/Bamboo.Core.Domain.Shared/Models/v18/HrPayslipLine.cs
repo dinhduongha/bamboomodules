@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -24,6 +25,10 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -33,15 +38,14 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("parent_rule_id")]
     public Guid? ParentRuleId { get; set; }
 
-
     [Column("register_id")]
     public Guid? RegisterId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("slip_id")]
     public Guid? SlipId { get; set; }
@@ -72,7 +76,7 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("condition_python")]
     public string? ConditionPython { get; set; }
@@ -90,10 +94,10 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public bool? AppearsOnPayslip { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("quantity")]
     public double? Quantity { get; set; }
@@ -128,59 +132,73 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("account_credit")]
     public Guid? AccountCredit { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountCredit")]
-    //[InverseProperty("HrPayslipLineAccountCreditNavigations")] //Many2One
+    // [InverseProperty("HrPayslipLineAccountCreditNavigation")] //Many2one
     public virtual AccountAccount? AccountCreditNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountDebit")]
-    //[InverseProperty("HrPayslipLineAccountDebitNavigations")] //Many2One
+    // [InverseProperty("HrPayslipLineAccountDebitNavigation")] //Many2one
     public virtual AccountAccount? AccountDebitNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountTaxId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual AccountTax? AccountTax { get; set; }
 
+    // [Many2one]
     [ForeignKey("AnalyticAccountId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrSalaryRuleCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContractId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrPayslipLineCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrPayslipLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentRuleId")]
-    //[InverseProperty("HrPayslipLineParentRules")] //Many2One
+    // [InverseProperty("HrPayslipLineParentRule")] //Many2one
     public virtual HrSalaryRule? ParentRule { get; set; }
 
+    // [Many2one]
     [ForeignKey("RegisterId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrContributionRegister? Register { get; set; }
 
+    // [Many2one]
     [ForeignKey("SalaryRuleId")]
-    //[InverseProperty("HrPayslipLineSalaryRules")] //Many2One
+    // [InverseProperty("HrPayslipLineSalaryRule")] //Many2one
     public virtual HrSalaryRule? SalaryRule { get; set; }
 
+    // [Many2one]
     [ForeignKey("SlipId")]
-    //[InverseProperty("HrPayslipLines")] //Many2One
+    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrPayslip? Slip { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrPayslipLineWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrPayslipLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

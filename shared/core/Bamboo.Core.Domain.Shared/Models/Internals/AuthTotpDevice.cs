@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,10 +10,9 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("auth_totp_device")]
 //[Index("UserId", "Index", Name = "auth_totp_device_user_id_index_idx")]
-public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +20,10 @@ public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("name")]
     public string? Name { get; set; }
@@ -42,10 +44,10 @@ public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Key { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("AuthTotpDevices")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("AuthTotpDevice")] //Many2one
+    public virtual ResUsers? User { get; set; }
 }

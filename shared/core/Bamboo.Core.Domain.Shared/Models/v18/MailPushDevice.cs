@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("mail_push_device")]
 //[Index("PartnerId", Name = "mail_push_device__partner_id_index")]
 //[Index("Endpoint", Name = "mail_push_device_endpoint_unique", IsUnique = true)]
-public partial class MailPushDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailPushDevice: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,11 +23,15 @@ public partial class MailPushDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,27 +46,28 @@ public partial class MailPushDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public DateTime? ExpirationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailPushDeviceCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailPushDeviceCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("MailPushDevice")]
-    [NotMapped]
-    public virtual ICollection<MailPush> MailPushes { get; set; } 
+    // [One2many]
+    [ForeignKey("MailPushDeviceId")]
+    [InverseProperty("MailPushDevice")]
+    public virtual ICollection<MailPush> MailPush { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("MailPushDevices")]
-    [NotMapped]
+    // [InverseProperty("MailPushDevice")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailPushDeviceWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailPushDeviceWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("theme_ir_ui_view")]
-public partial class ThemeIrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ThemeIrUiView: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,12 +20,16 @@ public partial class ThemeIrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("priority")]
     public long? Priority { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -58,27 +63,28 @@ public partial class ThemeIrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public bool? CustomizeShow { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ThemeIrUiViewCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ThemeIrUiViewCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("ThemeTemplateId")]
+    [InverseProperty("ThemeTemplate")]
+    public virtual ICollection<IrUiView> IrUiView { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePage { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ThemeIrUiViewWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("ThemeTemplate")]
-    [NotMapped]
-    public virtual ICollection<IrUiView> IrUiViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<ThemeWebsitePage> ThemeWebsitePages { get; set; } 
-
+    // [InverseProperty("ThemeIrUiViewWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

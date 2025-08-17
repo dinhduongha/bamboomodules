@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_resend_message")]
-public partial class MailResendMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailResendMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,43 +20,49 @@ public partial class MailResendMessage: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailResendMessageCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailResendMessageCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailMessageId")]
-    //[InverseProperty("MailResendMessages")]
-    [NotMapped]
+    // [InverseProperty("MailResendMessage")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
+    // [One2many]
+    [ForeignKey("ResendWizardId")]
+    [InverseProperty("ResendWizard")]
+    public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailResendMessageWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailResendMessageWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("ResendWizard")]
-    [NotMapped]
-    public virtual ICollection<MailResendPartner> MailResendPartners { get; set; } 
-
-    [ForeignKey("MailResendMessageId")]
-    //[InverseProperty("MailResendMessages")]
-    [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailResendMessageId")] //Many2many
+    // [InverseProperty("MailResendMessage")] //Many2many
+    public virtual ICollection<MailNotification> MailNotification { get; set; }
 }

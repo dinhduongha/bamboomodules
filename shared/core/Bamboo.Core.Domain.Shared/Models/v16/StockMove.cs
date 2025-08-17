@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,17 +12,19 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_move")]
-//[Index("TenantId", Name = "stock_move_company_id_index")]
+//[Index("CompanyId", Name = "stock_move_company_id_index")]
+//[Index("CreatedProductionId", Name = "stock_move_created_production_id_index")]
 //[Index("Date", Name = "stock_move_date_index")]
+//[Index("GroupId", Name = "stock_move_group_id_index")]
 //[Index("LocationDestId", Name = "stock_move_location_dest_id_index")]
 //[Index("LocationId", Name = "stock_move_location_id_index")]
 //[Index("OrderpointId", Name = "stock_move_orderpoint_id_index")]
 //[Index("OriginReturnedMoveId", Name = "stock_move_origin_returned_move_id_index")]
 //[Index("PickingId", Name = "stock_move_picking_id_index")]
 //[Index("ProductId", Name = "stock_move_product_id_index")]
-//[Index("ProductId", "LocationId", "LocationDestId", "TenantId", "State", Name = "stock_move_product_location_index")]
+//[Index("ProductId", "LocationId", "LocationDestId", "CompanyId", "State", Name = "stock_move_product_location_index")]
 //[Index("State", Name = "stock_move_state_index")]
-public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,6 +32,10 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -45,17 +52,11 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
 
-    [Column("location_final_id")]
-    public Guid? LocationFinalId { get; set; }
-
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
-
-    [Column("scrap_id")]
-    public Guid? ScrapId { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
@@ -88,7 +89,7 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? ProductPackagingId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -126,13 +127,6 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("product_uom_qty")]
     public decimal? ProductUomQty { get; set; }
 
-    [Column("quantity")]
-    public decimal? Quantity { get; set; }
-
-    [Column("picked")]
-    public bool? Picked { get; set; }
-
-    // v16-Compat
     [Column("quantity_done")]
     public decimal? QuantityDone { get; set; }
 
@@ -158,7 +152,7 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime? DelayAlertDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -166,7 +160,6 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("price_unit")]
     public double? PriceUnit { get; set; }
 
-    // v16-Compat
     [Column("analytic_account_line_id")]
     public Guid? AnalyticAccountLineId { get; set; }
 
@@ -179,15 +172,11 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("purchase_line_id")]
     public Guid? PurchaseLineId { get; set; }
 
-    // v16-Compat
     [Column("created_purchase_line_id")]
     public Guid? CreatedPurchaseLineId { get; set; }
 
     [Column("repair_id")]
     public Guid? RepairId { get; set; }
-
-    [Column("repair_line_type")]
-    public string? RepairLineType { get; set; }
 
     [Column("is_done")]
     public bool? IsDone { get; set; }
@@ -234,238 +223,244 @@ public partial class StockMove : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("weight")]
     public decimal? Weight { get; set; }
 
-    // v16-Compat
+    [Column("is_subcontract")]
+    public bool? IsSubcontract { get; set; }
+
+    // [One2many]
+    [ForeignKey("StockMoveId")]
+    [InverseProperty("StockMove")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
+
+    // [Many2one]
     [ForeignKey("AnalyticAccountLineId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual AccountAnalyticLine? AnalyticAccountLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("BomLineId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual MrpBomLine? BomLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("ByproductId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual MrpBomByproduct? Byproduct { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("ConsumeUnbuildId")]
-    //[InverseProperty("StockMoveConsumeUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("StockMoveConsumeUnbuild")] //Many2one
     public virtual MrpUnbuild? ConsumeUnbuild { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockMoveCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockMoveCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatedProductionId")]
-    //[InverseProperty("StockMoveCreatedProductions")]
-    [NotMapped]
+    // [InverseProperty("StockMoveCreatedProduction")] //Many2one
     public virtual MrpProduction? CreatedProduction { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatedPurchaseLineId")]
-    //[InverseProperty("StockMoveCreatedPurchaseLines")]
-    [NotMapped]
+    // [InverseProperty("StockMoveCreatedPurchaseLine")] //Many2one
     public virtual PurchaseOrderLine? CreatedPurchaseLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual ProcurementGroup? Group { get; set; }
 
+    // [One2many]
+    [ForeignKey("OriginReturnedMoveId")]
+    [InverseProperty("OriginReturnedMove")]
+    public virtual ICollection<StockMove> InverseOriginReturnedMove { get; set; }
+
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("StockMoveLocations")]
-    [NotMapped]
+    // [InverseProperty("StockMoveLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationDestId")]
-    //[InverseProperty("StockMoveLocationDests")]
-    [NotMapped]
+    // [InverseProperty("StockMoveLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
+    // [Many2one]
     [ForeignKey("OperationId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual MrpRoutingWorkcenter? Operation { get; set; }
 
+    // [Many2one]
     [ForeignKey("OrderFinishedLotId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockLot? OrderFinishedLot { get; set; }
 
+    // [Many2one]
     [ForeignKey("OrderpointId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockWarehouseOrderpoint? Orderpoint { get; set; }
 
+    // [Many2one]
     [ForeignKey("OriginReturnedMoveId")]
-    //[InverseProperty("InverseOriginReturnedMove")]
-    [NotMapped]
+    // [InverseProperty("InverseOriginReturnedMove")] //Many2one
     public virtual StockMove? OriginReturnedMove { get; set; }
 
+    // [Many2one]
     [ForeignKey("PackageLevelId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockPackageLevel? PackageLevel { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("StockMovePartners")]
-    [NotMapped]
+    // [InverseProperty("StockMovePartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingTypeId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductPackagingId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual ProductPackaging? ProductPackaging { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUom")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual UomUom? ProductUomNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductionId")]
-    //[InverseProperty("StockMoveProductions")]
-    [NotMapped]
+    // [InverseProperty("StockMoveProduction")] //Many2one
     public virtual MrpProduction? Production { get; set; }
 
+    // [Many2one]
     [ForeignKey("PurchaseLineId")]
-    //[InverseProperty("StockMovePurchaseLines")]
-    [NotMapped]
+    // [InverseProperty("StockMovePurchaseLine")] //Many2one
     public virtual PurchaseOrderLine? PurchaseLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("MoveDestId")]
+    [InverseProperty("MoveDest")]
+    public virtual ICollection<PurchaseRequisitionLine> PurchaseRequisitionLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("RawMaterialProductionId")]
-    //[InverseProperty("StockMoveRawMaterialProductions")]
-    [NotMapped]
+    // [InverseProperty("StockMoveRawMaterialProduction")] //Many2one
     public virtual MrpProduction? RawMaterialProduction { get; set; }
 
+    // [Many2one]
     [ForeignKey("RepairId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual RepairOrder? Repair { get; set; }
 
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<RepairLine> RepairLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+
+    // [Many2one]
     [ForeignKey("RestrictPartnerId")]
-    //[InverseProperty("StockMoveRestrictPartners")]
-    [NotMapped]
+    // [InverseProperty("StockMoveRestrictPartner")] //Many2one
     public virtual ResPartner? RestrictPartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("RuleId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockRule? Rule { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleLineId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
 
-    [ForeignKey("ScrapId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
-    public virtual StockScrap? Scrap { get; set; }
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<StockAssignSerial> StockAssignSerial { get; set; }
 
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<StockScrap> StockScrap { get; set; }
+
+    // [One2many]
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
+
+    // [One2many]
+    [ForeignKey("StockMoveId")]
+    [InverseProperty("StockMove")]
+    public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
+
+    // [Many2one]
     [ForeignKey("UnbuildId")]
-    //[InverseProperty("StockMoveUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("StockMoveUnbuild")] //Many2one
     public virtual MrpUnbuild? Unbuild { get; set; }
 
+    // [Many2one]
     [ForeignKey("WarehouseId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkorderId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
+    // [InverseProperty("StockMove")] //Many2one
     public virtual MrpWorkorder? Workorder { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockMoveWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockMoveWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("StockMove")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MoveOrigId")] //Many2many
+    // [InverseProperty("MoveOrig")] //Many2many
+    public virtual ICollection<StockMove> MoveDest { get; set; }
 
-    //[InverseProperty("OriginReturnedMove")]
-    [NotMapped]
-    public virtual ICollection<StockMove> InverseOriginReturnedMove { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MoveDestId")] //Many2many
+    // [InverseProperty("MoveDest")] //Many2many
+    public virtual ICollection<StockMove> MoveOrig { get; set; }
 
-    //[InverseProperty("Move")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } 
-
-    //[InverseProperty("Move")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
-
-    //[InverseProperty("Move")]
-    [NotMapped]
-    public virtual ICollection<StockAssignSerial> StockAssignSerials { get; set; } 
-
-    //[InverseProperty("Move")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
-
-    //[InverseProperty("Move")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } 
-
-    //[InverseProperty("Move")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } 
-
-    //[InverseProperty("StockMove")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
-
-    [ForeignKey("MoveOrigId")]
-    //[InverseProperty("MoveOrigs")]
-    [NotMapped]
-    public virtual ICollection<StockMove> MoveDests { get; set; } 
-
-    [ForeignKey("MoveDestId")]
-    //[InverseProperty("MoveDests")]
-    [NotMapped]
-    public virtual ICollection<StockMove> MoveOrigs { get; set; } 
-
-    [ForeignKey("MoveId")]
-    //[InverseProperty("Moves")]
-    [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } 
-
-    [ForeignKey("StockMoveId")]
-    //[InverseProperty("StockMoves")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
-
-
-    [ForeignKey("MoveId")]
-    //[InverseProperty("Moves")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValues { get; set; } 
-
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MoveId")] //Many2many
+    // [InverseProperty("Move")] //Many2many
+    public virtual ICollection<StockRoute> Route { get; set; }
 }

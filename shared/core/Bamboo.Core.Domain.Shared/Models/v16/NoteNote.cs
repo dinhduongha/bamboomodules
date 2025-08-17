@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,17 +12,21 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("note_note")]
-public partial class NoteNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class NoteNote: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -33,7 +38,7 @@ public partial class NoteNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public long? Color { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -51,47 +56,50 @@ public partial class NoteNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public bool? Open { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("NoteNotes")]
-    [NotMapped]
+    // [InverseProperty("NoteNote")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("NoteNoteCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("NoteNoteCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("NoteId")]
+    [InverseProperty("NoteNavigation")]
+    public virtual ICollection<MailActivity> MailActivity { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("NoteNotes")]
-    [NotMapped]
+    // [InverseProperty("NoteNote")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("NoteNoteUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("NoteNoteUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("NoteNoteWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("NoteNoteWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("NoteNavigation")]
-    [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("NoteId")] //Many2many
+    // [InverseProperty("Note")] //Many2many
+    public virtual ICollection<NoteStage> Stage { get; set; }
 
-    [ForeignKey("NoteId")]
-    //[InverseProperty("Notes")]
-    [NotMapped]
-    public virtual ICollection<NoteStage> Stages { get; set; } 
-
-    [ForeignKey("NoteId")]
-    //[InverseProperty("Notes")]
-    [NotMapped]
-    public virtual ICollection<NoteTag> Tags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("NoteId")] //Many2many
+    // [InverseProperty("Note")] //Many2many
+    public virtual ICollection<NoteTag> Tag { get; set; }
 }

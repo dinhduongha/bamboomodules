@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,22 +22,19 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("nb_days")]
-    public long? NbDays { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
-    // v16-Compat
     [Column("months")]
     public long? Months { get; set; }
 
-    // v16-Compat
     [Column("days")]
     public long? Days { get; set; }
 
-    // v16-Compat
     [Column("days_after")]
     public long? DaysAfter { get; set; }
 
-    // v16-Compat
     [Column("discount_days")]
     public long? DiscountDays { get; set; }
 
@@ -44,7 +42,7 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
     public Guid? PaymentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -52,46 +50,33 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("value")]
     public string? Value { get; set; }
 
-    [Column("delay_type")]
-    public string? DelayType { get; set; }
-
-    [Column("days_next_month")]
-    public string? DaysNextMonth { get; set; }
-
     [Column("value_amount")]
     public decimal? ValueAmount { get; set; }
 
-    // v16-Compat
     [Column("end_month")]
     public bool? EndMonth { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
     [Column("discount_percentage")]
     public double? DiscountPercentage { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountPaymentTermLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountPaymentTermLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentId")]
-    //[InverseProperty("AccountPaymentTermLines")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentTermLine")] //Many2one
     public virtual AccountPaymentTerm? Payment { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountPaymentTermLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountPaymentTermLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

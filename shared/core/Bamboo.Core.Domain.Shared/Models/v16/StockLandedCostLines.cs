@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_landed_cost_lines")]
-public partial class StockLandedCostLines : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockLandedCostLines: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +20,10 @@ public partial class StockLandedCostLines : FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("cost_id")]
     public Guid? CostId { get; set; }
@@ -34,10 +35,10 @@ public partial class StockLandedCostLines : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? AccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -49,39 +50,38 @@ public partial class StockLandedCostLines : FullAuditedEntity<Guid>, IEntityDto<
     public decimal? PriceUnit { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("StockLandedCostLines")] // [Many2one]
+    // [InverseProperty("StockLandedCostLines")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("CostId")]
-    // [InverseProperty("StockLandedCostLines")] // [Many2one]
+    // [InverseProperty("StockLandedCostLines")] //Many2one
     public virtual StockLandedCost? Cost { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockLandedCostLinesCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockLandedCostLinesCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockLandedCostLines")] // [Many2one]
+    // [InverseProperty("StockLandedCostLines")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
-
-    // [Many2many]
-    //[NotMapped] // Many2many
-    // [InverseProperty("CostLine")] // Many2many
-    //public virtual ICollection<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
+    // [One2many]
+    [ForeignKey("CostLineId")]
+    [InverseProperty("CostLine")]
+    public virtual ICollection<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockLandedCostLinesWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockLandedCostLinesWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

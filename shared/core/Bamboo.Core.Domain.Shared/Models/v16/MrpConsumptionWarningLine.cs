@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_consumption_warning_line")]
-public partial class MrpConsumptionWarningLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpConsumptionWarningLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class MrpConsumptionWarningLine : FullAuditedEntity<Guid>, IEntit
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("mrp_consumption_warning_id")]
     public Guid? MrpConsumptionWarningId { get; set; }
@@ -30,13 +35,13 @@ public partial class MrpConsumptionWarningLine : FullAuditedEntity<Guid>, IEntit
     public Guid? ProductId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -47,32 +52,28 @@ public partial class MrpConsumptionWarningLine : FullAuditedEntity<Guid>, IEntit
     [Column("product_expected_qty_uom")]
     public double? ProductExpectedQtyUom { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpConsumptionWarningLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MrpConsumptionWarningLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MrpConsumptionWarningId")]
-    //[InverseProperty("MrpConsumptionWarningLines")]
-    [NotMapped]
+    // [InverseProperty("MrpConsumptionWarningLine")] //Many2one
     public virtual MrpConsumptionWarning? MrpConsumptionWarning { get; set; }
 
+    // [Many2one]
     [ForeignKey("MrpProductionId")]
-    //[InverseProperty("MrpConsumptionWarningLines")]
-    [NotMapped]
+    // [InverseProperty("MrpConsumptionWarningLine")] //Many2one
     public virtual MrpProduction? MrpProduction { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("MrpConsumptionWarningLines")]
-    [NotMapped]
+    // [InverseProperty("MrpConsumptionWarningLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpConsumptionWarningLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MrpConsumptionWarningLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

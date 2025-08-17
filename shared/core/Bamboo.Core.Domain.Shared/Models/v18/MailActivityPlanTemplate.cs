@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class MailActivityPlanTemplate: FullAuditedEntity<Guid>, IEntityD
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("plan_id")]
     public Guid? PlanId { get; set; }
 
@@ -36,7 +41,7 @@ public partial class MailActivityPlanTemplate: FullAuditedEntity<Guid>, IEntityD
     public Guid? ResponsibleId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -57,33 +62,33 @@ public partial class MailActivityPlanTemplate: FullAuditedEntity<Guid>, IEntityD
     public string? Note { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    //[InverseProperty("MailActivityPlanTemplates")]
-    [NotMapped]
+    // [InverseProperty("MailActivityPlanTemplate")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailActivityPlanTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailActivityPlanTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PlanId")]
-    //[InverseProperty("MailActivityPlanTemplates")]
-    [NotMapped]
+    // [InverseProperty("MailActivityPlanTemplate")] //Many2one
     public virtual MailActivityPlan? Plan { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResponsibleId")]
-    //[InverseProperty("MailActivityPlanTemplateResponsibles")]
-    [NotMapped]
-    public virtual ResUser? Responsible { get; set; }
+    // [InverseProperty("MailActivityPlanTemplateResponsible")] //Many2one
+    public virtual ResUsers? Responsible { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailActivityPlanTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailActivityPlanTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

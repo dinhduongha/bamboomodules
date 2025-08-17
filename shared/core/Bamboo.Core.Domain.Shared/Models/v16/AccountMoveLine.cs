@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,14 +13,14 @@ namespace Bamboo.Core.Models;
 
 [Table("account_move_line")]
 //[Index("AccountId", Name = "account_move_line_account_id_index")]
-//[Index("TenantId", Name = "account_move_line_company_id_index")]
+//[Index("CompanyId", Name = "account_move_line_company_id_index")]
 //[Index("DateMaturity", Name = "account_move_line_date_maturity_index")]
 //[Index("Date", "MoveName", "Id", Name = "account_move_line_date_name_id_idx", IsDescending = new[] { true, true, false })]
 //[Index("JournalId", Name = "account_move_line_journal_id_index")]
 //[Index("MoveId", Name = "account_move_line_move_id_index")]
 //[Index("MoveName", Name = "account_move_line_move_name_index")]
 //[Index("PartnerId", "Ref", Name = "account_move_line_partner_id_ref_idx")]
-public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,6 +28,10 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
@@ -76,7 +81,6 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("full_reconcile_id")]
     public Guid? FullReconcileId { get; set; }
 
-    // v16-Compat
     [Column("account_root_id")]
     public Guid? AccountRootId { get; set; }
 
@@ -87,7 +91,7 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? ProductUomId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -104,7 +108,6 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("name")]
     public string? Name { get; set; }
 
-    // v16-Compat
     [Column("tax_audit")]
     public string? TaxAudit { get; set; }
 
@@ -116,9 +119,6 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("date")]
     public DateTime? Date { get; set; }
-
-    [Column("invoice_date")]
-    public DateTime? InvoiceDate { get; set; }
 
     [Column("date_maturity")]
     public DateTime? DateMaturity { get; set; }
@@ -172,36 +172,29 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("discount_balance")]
     public decimal? DiscountBalance { get; set; }
 
-    [Column("is_imported")]
-    public bool? IsImported { get; set; }
-
     [Column("tax_tag_invert")]
     public bool? TaxTagInvert { get; set; }
 
     [Column("reconciled")]
     public bool? Reconciled { get; set; }
 
-    // v16-Compat
     [Column("blocked")]
     public bool? Blocked { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
     [Column("discount_percentage")]
     public double? DiscountPercentage { get; set; }
 
-    // v16-Compat
-    // [Column("is_downpayment")]
-    // public bool? IsDownpayment { get; set; }
+    [Column("is_downpayment")]
+    public bool? IsDownpayment { get; set; }
 
-    // v16-Compat
-    // [Column("purchase_line_id")]
-    // public Guid? PurchaseLineId { get; set; }
+    [Column("purchase_line_id")]
+    public Guid? PurchaseLineId { get; set; }
 
     [Column("asset_category_id")]
     public Guid? AssetCategoryId { get; set; }
@@ -221,197 +214,202 @@ public partial class AccountMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("followup_date")]
     public DateTime? FollowupDate { get; set; }
 
-    [Column("is_downpayment")]
-    public bool? IsDownpayment { get; set; }
-
-    [Column("cogs_origin_id")]
-    public Guid? CogsOriginId { get; set; }
-
-    [Column("purchase_line_id")]
-    public Guid? PurchaseLineId { get; set; }
-
     [Column("expense_id")]
     public Guid? ExpenseId { get; set; }
 
     [Column("vehicle_id")]
     public Guid? VehicleId { get; set; }
 
+    [Column("is_landed_costs_line")]
+    public bool? IsLandedCostsLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
+    // [One2many]
+    [ForeignKey("MoveLineId")]
+    [InverseProperty("MoveLine")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("CreditMoveId")]
+    [InverseProperty("CreditMove")]
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("DebitMoveId")]
+    [InverseProperty("DebitMove")]
+    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitMove { get; set; }
+
+    // [Many2one]
     [ForeignKey("AssetCategoryId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountAssetCategory? AssetCategory { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CompanyCurrencyId")]
-    //[InverseProperty("AccountMoveLineCompanyCurrencies")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLineCompanyCurrency")] //Many2one
     public virtual ResCurrency? CompanyCurrency { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountMoveLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountMoveLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountMoveLineCurrencies")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLineCurrency")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("ExpenseId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual HrExpense? Expense { get; set; }
 
+    // [Many2one]
     [ForeignKey("FollowupLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual FollowupLine? FollowupLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("FullReconcileId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountFullReconcile? FullReconcile { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupTaxId")]
-    //[InverseProperty("AccountMoveLineGroupTaxes")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLineGroupTax")] //Many2one
     public virtual AccountTax? GroupTax { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [One2many]
+    [ForeignKey("AccountInvoiceLine")]
+    [InverseProperty("AccountInvoiceLineNavigation")]
+    public virtual ICollection<MembershipMembershipLine> MembershipMembershipLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountPayment? Payment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [Many2one]
     [ForeignKey("PurchaseLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual PurchaseOrderLine? PurchaseLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("ReconcileModelId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountReconcileModel? ReconcileModel { get; set; }
 
-   [ForeignKey("CogsOriginId")]
-    //[InverseProperty("InverseCogsOrigin")]
-    [NotMapped]
-    public virtual AccountMoveLine? CogsOrigin { get; set; }
+    // [One2many]
+    [ForeignKey("InvoiceLineId")]
+    [InverseProperty("InvoiceLine")]
+    public virtual ICollection<RepairFee> RepairFee { get; set; }
 
+    // [One2many]
+    [ForeignKey("InvoiceLineId")]
+    [InverseProperty("InvoiceLine")]
+    public virtual ICollection<RepairLine> RepairLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("StatementId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountBankStatement? Statement { get; set; }
 
+    // [Many2one]
     [ForeignKey("StatementLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountBankStatementLine? StatementLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("AccountMoveLineId")]
+    [InverseProperty("AccountMoveLine")]
+    public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
+
+    // [Many2one]
     [ForeignKey("TaxGroupId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountTaxGroup? TaxGroup { get; set; }
 
+    // [Many2one]
     [ForeignKey("TaxLineId")]
-    //[InverseProperty("AccountMoveLineTaxLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLineTaxLine")] //Many2one
     public virtual AccountTax? TaxLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("TaxRepartitionLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountTaxRepartitionLine? TaxRepartitionLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("VehicleId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual FleetVehicle? Vehicle { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountMoveLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountMoveLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("MoveLine")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountMoveLineId")] //Many2many
+    // [InverseProperty("AccountMoveLine")] //Many2many
+    public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
-    //[InverseProperty("CreditMove")]
-    [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileCreditMoves { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountMoveLineId")]
+    // [InverseProperty("AccountMoveLine")]
+    // public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizard { get; set; }
 
-    //[InverseProperty("DebitMove")]
-    [NotMapped]
-    public virtual ICollection<AccountPartialReconcile> AccountPartialReconcileDebitMoves { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountMoveLineId")] //Many2many
+    // [InverseProperty("AccountMoveLine")] //Many2many
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
 
-    //[InverseProperty("InvoiceLine")]
-    [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("InvoiceLineId")] //Many2many
+    // [InverseProperty("InvoiceLine")] //Many2many
+    public virtual ICollection<SaleOrderLine> OrderLine { get; set; }
 
-    //[InverseProperty("InvoiceLine")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } 
-
-    //[InverseProperty("AccountMoveLine")]
-    [NotMapped]
-    public virtual ICollection<StockValuationLayer> StockValuationLayers { get; set; } 
-
-    [ForeignKey("AccountMoveLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
-
-    [ForeignKey("AccountMoveLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
-    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizards { get; set; } 
-
-    [ForeignKey("AccountMoveLineId")]
-    //[InverseProperty("AccountMoveLines")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
-
-    [ForeignKey("InvoiceLineId")]
-    //[InverseProperty("InvoiceLines")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> OrderLines { get; set; } 
-
-    [ForeignKey("LineId")]
-    //[InverseProperty("Lines")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> Wizards { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("LineId")]
+    // [InverseProperty("Line")]
+    // public virtual ICollection<AccountPaymentRegister> Wizard { get; set; }
 }

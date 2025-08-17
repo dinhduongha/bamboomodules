@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("card_campaign")]
-public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CardCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("card_template_id")]
     public Guid? CardTemplateId { get; set; }
@@ -30,7 +35,7 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? UserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -129,7 +134,7 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public bool? ContentSubSection2Dyn { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -137,41 +142,44 @@ public partial class CardCampaign: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("image_preview")]
     public byte[]? ImagePreview { get; set; }
 
-    //[InverseProperty("Campaign")]
-    [NotMapped]
-    public virtual ICollection<CardCard> CardCards { get; set; } 
+    // [One2many]
+    [ForeignKey("CampaignId")]
+    [InverseProperty("Campaign")]
+    public virtual ICollection<CardCard> CardCard { get; set; }
 
+    // [Many2one]
     [ForeignKey("CardTemplateId")]
-    //[InverseProperty("CardCampaigns")]
-    [NotMapped]
+    // [InverseProperty("CardCampaign")] //Many2one
     public virtual CardTemplate? CardTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("CardCampaignCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CardCampaignCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LinkTrackerId")]
-    //[InverseProperty("CardCampaigns")]
-    [NotMapped]
+    // [InverseProperty("CardCampaign")] //Many2one
     public virtual LinkTracker? LinkTracker { get; set; }
 
-    //[InverseProperty("CardCampaign")]
-    [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
-
-    [ForeignKey("UserId")]
-    //[InverseProperty("CardCampaignUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("CardCampaignWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
+    // [One2many]
     [ForeignKey("CardCampaignId")]
-    //[InverseProperty("CardCampaigns")]
-    [NotMapped]
-    public virtual ICollection<CardCampaignTag> CardCampaignTags { get; set; } 
+    [InverseProperty("CardCampaign")]
+    public virtual ICollection<MailingMailing> MailingMailing { get; set; }
+
+    // [Many2one]
+    [ForeignKey("UserId")]
+    // [InverseProperty("CardCampaignUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("CardCampaignWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CardCampaignId")] //Many2many
+    // [InverseProperty("CardCampaign")] //Many2many
+    public virtual ICollection<CardCampaignTag> CardCampaignTag { get; set; }
 }

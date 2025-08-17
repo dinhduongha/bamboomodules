@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,19 +10,15 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_ui_view")]
-//[Index("InheritId", Name = "ir_ui_view_inherit_id_index")]
-//[Index("Model", Name = "ir_ui_view_model_index")]
+//[Index("InheritId", Name = "ir_ui_view__inherit_id_index")]
+//[Index("Model", Name = "ir_ui_view__model_index")]
 //[Index("Model", "InheritId", Name = "ir_ui_view_model_type_inherit_id")]
-public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrUiView: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("priority")]
     public long? Priority { get; set; }
@@ -32,7 +27,7 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? InheritId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -52,7 +47,6 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("arch_fs")]
     public string? ArchFs { get; set; }
 
-    // v16-Compat
     [Column("field_parent")]
     public string? FieldParent { get; set; }
 
@@ -61,7 +55,7 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("arch_db", TypeName = "jsonb")]
-    public StringDictionary? ArchDb { get; set; }
+    public string? ArchDb { get; set; }
 
     [Column("arch_prev")]
     public string? ArchPrev { get; set; }
@@ -73,7 +67,7 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -98,126 +92,146 @@ public partial class IrUiView: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
-    public StringDictionary? WebsiteMetaTitle { get; set; }
+    public string? WebsiteMetaTitle { get; set; }
 
     [JsonField]
     [Column("website_meta_description", TypeName = "jsonb")]
-    public StringDictionary? WebsiteMetaDescription { get; set; }
+    public string? WebsiteMetaDescription { get; set; }
 
     [JsonField]
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public StringDictionary? WebsiteMetaKeywords { get; set; }
+    public string? WebsiteMetaKeywords { get; set; }
 
     [JsonField]
     [Column("seo_name", TypeName = "jsonb")]
-    public StringDictionary? SeoName { get; set; }
+    public string? SeoName { get; set; }
 
     [Column("track")]
     public bool? Track { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrUiViewCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrUiViewCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("InheritId")]
-    //[InverseProperty("InverseInherit")]
-    [NotMapped]
+    // [InverseProperty("InverseInherit")] //Many2one
     public virtual IrUiView? Inherit { get; set; }
 
+    // [One2many]
+    [ForeignKey("InheritId")]
+    [InverseProperty("Inherit")]
+    public virtual ICollection<IrUiView> InverseInherit { get; set; }
+
+    // [One2many]
+    [ForeignKey("SearchViewId")]
+    [InverseProperty("SearchView")]
+    public virtual ICollection<IrActWindow> IrActWindowSearchView { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<IrActWindow> IrActWindowView { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<IrActWindowView> IrActWindowViewNavigation { get; set; }
+
+    // [One2many]
+    [ForeignKey("RefId")]
+    [InverseProperty("Ref")]
+    public virtual ICollection<IrUiViewCustom> IrUiViewCustom { get; set; }
+
+    // [One2many]
+    [ForeignKey("ExpressCheckoutFormViewId")]
+    [InverseProperty("ExpressCheckoutFormView")]
+    public virtual ICollection<PaymentProvider> PaymentProviderExpressCheckoutFormView { get; set; }
+
+    // [One2many]
+    [ForeignKey("InlineFormViewId")]
+    [InverseProperty("InlineFormView")]
+    public virtual ICollection<PaymentProvider> PaymentProviderInlineFormView { get; set; }
+
+    // [One2many]
+    [ForeignKey("RedirectFormViewId")]
+    [InverseProperty("RedirectFormView")]
+    public virtual ICollection<PaymentProvider> PaymentProviderRedirectFormView { get; set; }
+
+    // [One2many]
+    [ForeignKey("TokenInlineFormViewId")]
+    [InverseProperty("TokenInlineFormView")]
+    public virtual ICollection<PaymentProvider> PaymentProviderTokenInlineFormView { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<ReportLayout> ReportLayout { get; set; }
+
+    // [One2many]
+    [ForeignKey("ExternalReportLayoutId")]
+    [InverseProperty("ExternalReportLayout")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [One2many]
+    [ForeignKey("AddressViewId")]
+    [InverseProperty("AddressView")]
+    public virtual ICollection<ResCountry> ResCountry { get; set; }
+
+    // [One2many]
+    [ForeignKey("CompareViewId")]
+    [InverseProperty("CompareView")]
+    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardCompareView { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardView { get; set; }
+
+    // [Many2one]
     [ForeignKey("ThemeTemplateId")]
-    //[InverseProperty("IrUiViews")]
-    [NotMapped]
+    // [InverseProperty("IrUiView")] //Many2one
     public virtual ThemeIrUiView? ThemeTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("IrUiViews")]
-    [NotMapped]
+    // [InverseProperty("IrUiView")] //Many2one
     public virtual Website? Website { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrUiViewWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [One2many]
+    [ForeignKey("PageViewId")]
+    [InverseProperty("PageView")]
+    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeature { get; set; }
 
-    //[InverseProperty("Inherit")]
-    [NotMapped]
-    public virtual ICollection<IrUiView> InverseInherit { get; set; } 
+    // [One2many]
+    [ForeignKey("RecordViewId")]
+    [InverseProperty("RecordView")]
+    public virtual ICollection<WebsiteControllerPage> WebsiteControllerPageRecordView { get; set; }
 
-    //[InverseProperty("SearchView")]
-    [NotMapped]
-    public virtual ICollection<IrActWindow> IrActWindowSearchViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<IrActWindow> IrActWindowViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<IrActWindowView> IrActWindowViewsNavigation { get; set; } 
-
-    //[InverseProperty("Ref")]
-    [NotMapped]
-    public virtual ICollection<IrUiViewCustom> IrUiViewCustoms { get; set; } 
-
-    //[InverseProperty("ExpressCheckoutFormView")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviderExpressCheckoutFormViews { get; set; } 
-
-    //[InverseProperty("InlineFormView")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviderInlineFormViews { get; set; } 
-
-    //[InverseProperty("RedirectFormView")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviderRedirectFormViews { get; set; } 
-
-    //[InverseProperty("TokenInlineFormView")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviderTokenInlineFormViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<ReportLayout> ReportLayouts { get; set; } 
-
-    //[InverseProperty("ExternalReportLayout")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    //[InverseProperty("AddressView")]
-    [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } 
-
-    //[InverseProperty("CompareView")]
-    [NotMapped]
-    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardCompareViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<ResetViewArchWizard> ResetViewArchWizardViews { get; set; } 
-
-    //[InverseProperty("PageView")]
-    [NotMapped]
-    public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeatures { get; set; } 
-
-    //[InverseProperty("RecordView")]
-    [NotMapped]
-    public virtual ICollection<WebsiteControllerPage> WebsiteControllerPageRecordViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<WebsiteControllerPage> WebsiteControllerPageViews { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenus { get; set; } 
-
-    //[InverseProperty("View")]
-    [NotMapped]
-    public virtual ICollection<WebsitePage> WebsitePages { get; set; } 
-
+    // [One2many]
     [ForeignKey("ViewId")]
-    //[InverseProperty("Views")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> Groups { get; set; } 
+    [InverseProperty("View")]
+    public virtual ICollection<WebsiteControllerPage> WebsiteControllerPageView { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenu { get; set; }
+
+    // [One2many]
+    [ForeignKey("ViewId")]
+    [InverseProperty("View")]
+    public virtual ICollection<WebsitePage> WebsitePage { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("IrUiViewWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ViewId")] //Many2many
+    // [InverseProperty("View")] //Many2many
+    public virtual ICollection<ResGroups> Group { get; set; }
 }

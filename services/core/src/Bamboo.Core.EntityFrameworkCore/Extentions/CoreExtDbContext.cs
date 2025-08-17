@@ -112,7 +112,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountGroupTemplate> AccountGroupTemplates { get; set; }
 
-    public virtual DbSet<AccountIncoterm> AccountIncoterms { get; set; }
+    public virtual DbSet<AccountIncoterms> AccountIncoterms { get; set; }
 
     public virtual DbSet<AccountInvoiceSend> AccountInvoiceSends { get; set; }
 
@@ -252,7 +252,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<BaseImportTestsModelsCharRequired> BaseImportTestsModelsCharRequireds { get; set; }
 
-    public virtual DbSet<BaseImportTestsModelsCharState> BaseImportTestsModelsCharStates { get; set; }
+    public virtual DbSet<BaseImportTestsModelsCharStates> BaseImportTestsModelsCharStates { get; set; }
 
     public virtual DbSet<BaseImportTestsModelsCharStillreadonly> BaseImportTestsModelsCharStillreadonlies { get; set; }
 
@@ -353,7 +353,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<ChooseDeliveryPackage> ChooseDeliveryPackages { get; set; }
 
-    public virtual DbSet<ConfirmStockSm> ConfirmStockSms { get; set; }
+    public virtual DbSet<ConfirmStockSms> ConfirmStockSms { get; set; }
 
     public virtual DbSet<CouponShare> CouponShares { get; set; }
 
@@ -399,7 +399,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<CrossoveredBudget> CrossoveredBudgets { get; set; }
 
-    public virtual DbSet<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; }
+    public virtual DbSet<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
 
     public virtual DbSet<DataRecycleModel> DataRecycleModels { get; set; }
 
@@ -425,7 +425,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<DiscussGifFavorite> DiscussGifFavorites { get; set; }
 
-    public virtual DbSet<DiscussVoiceMetadatum> DiscussVoiceMetadata { get; set; }
+    public virtual DbSet<DiscussVoiceMetadata> DiscussVoiceMetadata { get; set; }
 
     public virtual DbSet<EventEvent> EventEvents { get; set; }
 
@@ -493,7 +493,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<FollowupPrint> FollowupPrints { get; set; }
 
-    public virtual DbSet<FollowupSendingResult> FollowupSendingResults { get; set; }
+    public virtual DbSet<FollowupSendingResults> FollowupSendingResults { get; set; }
 
     public virtual DbSet<GamificationBadge> GamificationBadges { get; set; }
 
@@ -605,7 +605,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrPayslip> HrPayslips { get; set; }
 
-    public virtual DbSet<HrPayslipEmployee> HrPayslipEmployees { get; set; }
+    public virtual DbSet<HrPayslipEmployees> HrPayslipEmployees { get; set; }
 
     public virtual DbSet<HrPayslipInput> HrPayslipInputs { get; set; }
 
@@ -613,7 +613,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
 
-    public virtual DbSet<HrPayslipWorkedDay> HrPayslipWorkedDays { get; set; }
+    public virtual DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
     public virtual DbSet<HrPlan> HrPlans { get; set; }
 
     public virtual DbSet<HrPlanActivityType> HrPlanActivityTypes { get; set; }
@@ -658,13 +658,13 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrActServer> IrActServers { get; set; }
 
-    public virtual DbSet<IrActUrl> IrActUrls { get; set; }
+    public virtual DbSet<IrActionsActUrl> IrActUrls { get; set; }
 
     public virtual DbSet<IrActWindow> IrActWindows { get; set; }
 
     public virtual DbSet<IrActWindowView> IrActWindowViews { get; set; }
 
-    public virtual DbSet<IrAction> IrActions { get; set; }
+    public virtual DbSet<IrActions> IrActions { get; set; }
 
     public virtual DbSet<IrActionsTodo> IrActionsTodos { get; set; }
 
@@ -688,9 +688,9 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrDemoFailureWizard> IrDemoFailureWizards { get; set; }
 
-    public virtual DbSet<IrEmbeddedAction> IrEmbeddedActions { get; set; }
+    public virtual DbSet<IrEmbeddedActions> IrEmbeddedActions { get; set; }
 
-    public virtual DbSet<IrExport> IrExports { get; set; }
+    public virtual DbSet<IrExports> IrExports { get; set; }
 
     public virtual DbSet<IrExportsLine> IrExportsLines { get; set; }
 
@@ -708,7 +708,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrModelConstraint> IrModelConstraints { get; set; }
 
-    public virtual DbSet<IrModelDatum> IrModelData { get; set; }
+    public virtual DbSet<IrModelData> IrModelData { get; set; }
 
     public virtual DbSet<IrModelFields> IrModelFields { get; set; }
 
@@ -736,7 +736,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrSequenceDateRange> IrSequenceDateRanges { get; set; }
 
-    public virtual DbSet<IrServerObjectLine> IrServerObjectLines { get; set; }
+    public virtual DbSet<IrServerObjectLines> IrServerObjectLines { get; set; }
 
     public virtual DbSet<IrUiMenu> IrUiMenus { get; set; }
 
@@ -814,7 +814,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<MailComposeMessage> MailComposeMessages { get; set; }
 
-    public virtual DbSet<MailFollower> MailFollowers { get; set; }
+    public virtual DbSet<MailFollowers> MailFollowers { get; set; }
 
     public virtual DbSet<MailGatewayAllowed> MailGatewayAlloweds { get; set; }
 
@@ -1136,7 +1136,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<RepairOrderMakeInvoice> RepairOrderMakeInvoices { get; set; }
 
-    public virtual DbSet<RepairTag> RepairTags { get; set; }
+    public virtual DbSet<RepairTags> RepairTags { get; set; }
 
     public virtual DbSet<ReportLayout> ReportLayouts { get; set; }
 
@@ -1152,7 +1152,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<ResConfigInstaller> ResConfigInstallers { get; set; }
 
-    public virtual DbSet<ResConfigSetting> ResConfigSettings { get; set; }
+    public virtual DbSet<ResConfigSettings> ResConfigSettings { get; set; }
 
     public virtual DbSet<ResCountry> ResCountries { get; set; }
 
@@ -1166,7 +1166,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<ResDeviceLog> ResDeviceLogs { get; set; }
 
-    public virtual DbSet<ResGroup> ResGroups { get; set; }
+    public virtual DbSet<ResGroups> ResGroups { get; set; }
 
     public virtual DbSet<ResLang> ResLangs { get; set; }
 
@@ -1186,9 +1186,9 @@ public partial class CoreDbContext
 
     public virtual DbSet<ResPartnerTitle> ResPartnerTitles { get; set; }
 
-    public virtual DbSet<ResUser> ResUsers { get; set; }
+    public virtual DbSet<ResUsers> ResUsers { get; set; }
 
-    public virtual DbSet<ResUsersApikey> ResUsersApikeys { get; set; }
+    public virtual DbSet<ResUsersApikeys> ResUsersApikeys { get; set; }
 
     public virtual DbSet<ResUsersApikeysDescription> ResUsersApikeysDescriptions { get; set; }
 
@@ -1218,13 +1218,13 @@ public partial class CoreDbContext
 
     public virtual DbSet<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; }
 
-    public virtual DbSet<SaleMassCancelOrder> SaleMassCancelOrders { get; set; }
+    public virtual DbSet<SaleMassCancelOrders> SaleMassCancelOrders { get; set; }
 
     public virtual DbSet<SaleOrder> SaleOrders { get; set; }
 
     public virtual DbSet<SaleOrderCancel> SaleOrderCancels { get; set; }
 
-    public virtual DbSet<SaleOrderCouponPoint> SaleOrderCouponPoints { get; set; }
+    public virtual DbSet<SaleOrderCouponPoints> SaleOrderCouponPoints { get; set; }
 
     public virtual DbSet<SaleOrderDiscount> SaleOrderDiscounts { get; set; }
 
@@ -1294,7 +1294,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<SnailmailLetterFormatError> SnailmailLetterFormatErrors { get; set; }
 
-    public virtual DbSet<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; }
+    public virtual DbSet<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
 
     public virtual DbSet<SpreadsheetDashboard> SpreadsheetDashboards { get; set; }
 
@@ -1322,7 +1322,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockLandedCost> StockLandedCosts { get; set; }
 
-    public virtual DbSet<StockLandedCostLine> StockLandedCostLines { get; set; }
+    public virtual DbSet<StockLandedCostLines> StockLandedCostLines { get; set; }
 
     public virtual DbSet<StockLocation> StockLocations { get; set; }
 
@@ -1386,7 +1386,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockTrackLine> StockTrackLines { get; set; }
 
-    public virtual DbSet<StockValuationAdjustmentLine> StockValuationAdjustmentLines { get; set; }
+    public virtual DbSet<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
 
     public virtual DbSet<StockValuationLayer> StockValuationLayers { get; set; }
 
@@ -1458,7 +1458,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<WebsiteControllerPage> WebsiteControllerPages { get; set; }
 
-    public virtual DbSet<WebsiteCustomBlockedThirdPartyDomain> WebsiteCustomBlockedThirdPartyDomains { get; set; }
+    public virtual DbSet<WebsiteCustomBlockedThirdPartyDomains> WebsiteCustomBlockedThirdPartyDomains { get; set; }
 
     public virtual DbSet<WebsiteEventMenu> WebsiteEventMenus { get; set; }
 
@@ -1468,11 +1468,11 @@ public partial class CoreDbContext
 
     public virtual DbSet<WebsitePagePropertiesBase> WebsitePagePropertiesBases { get; set; }
 
-    public virtual DbSet<WebsitePageProperty> WebsitePageProperties { get; set; }
+    public virtual DbSet<WebsitePageProperties> WebsitePageProperties { get; set; }
 
     public virtual DbSet<WebsiteRewrite> WebsiteRewrites { get; set; }
 
-    public virtual DbSet<WebsiteRobot> WebsiteRobots { get; set; }
+    public virtual DbSet<WebsiteRobots> WebsiteRobots { get; set; }
 
     public virtual DbSet<WebsiteRoute> WebsiteRoutes { get; set; }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_category")]
 //[Index("ParentId", Name = "pos_category_parent_id_index")]
-public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,84 +22,82 @@ public partial class PosCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
-    [Column("color")]
-    public long? Color { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("hour_until")]
-    public double? HourUntil { get; set; }
-
-    [Column("hour_after")]
-    public double? HourAfter { get; set; }
-
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PosCategoryCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PosCategoryCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("Parent")]
-    // [NotMapped]
-    // public virtual ICollection<PosCategory> InverseParent { get; set; } 
-
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<PosCategory> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual PosCategory? Parent { get; set; }
 
+    // [One2many]
+    [ForeignKey("IfaceStartCategId")]
+    [InverseProperty("IfaceStartCateg")]
+    public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosCategId")]
+    [InverseProperty("PosCateg")]
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosIfaceStartCategId")]
+    [InverseProperty("PosIfaceStartCateg")]
+    public virtual ICollection<ResConfigSettings> ResConfigSettingsNavigation { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PosCategoryWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PosCategoryWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<PosCategory> InverseParent { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosCategoryId")]
+    // [InverseProperty("PosCategory")]
+    // public virtual ICollection<PosConfig> PosConfig { get; set; }
 
-    //[InverseProperty("IfaceStartCateg")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("CategoryId")]
+    // [InverseProperty("Category")]
+    // public virtual ICollection<RestaurantPrinter> Printer { get; set; }
 
-    //[InverseProperty("PosCateg")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
-
-    //[InverseProperty("PosIfaceStartCateg")]
-    [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettingsNavigation { get; set; } 
-
-    [ForeignKey("PosCategoryId")]
-    //[InverseProperty("PosCategories")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
-
-    [ForeignKey("PosCategoryId")]
-    //[InverseProperty("PosCategories")]
-    [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosCategoryId")]
+    // [InverseProperty("PosCategory")]
+    // public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 }

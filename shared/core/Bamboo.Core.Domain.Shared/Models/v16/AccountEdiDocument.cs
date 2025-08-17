@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_edi_document")]
+//[Index("MoveId", Name = "account_edi_document_move_id_index")]
 //[Index("EdiFormatId", "MoveId", Name = "account_edi_document_unique_edi_document_by_move_by_format", IsUnique = true)]
-public partial class AccountEdiDocument : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountEdiDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +22,10 @@ public partial class AccountEdiDocument : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
@@ -31,7 +37,7 @@ public partial class AccountEdiDocument : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? AttachmentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -46,37 +52,33 @@ public partial class AccountEdiDocument : FullAuditedEntity<Guid>, IEntityDto<Gu
     public string? Error { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("AttachmentId")]
-    //[InverseProperty("AccountEdiDocuments")]
-    [NotMapped]
+    // [InverseProperty("AccountEdiDocument")] //Many2one
     public virtual IrAttachment? Attachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountEdiDocumentCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountEdiDocumentCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EdiFormatId")]
-    //[InverseProperty("AccountEdiDocuments")]
-    [NotMapped]
+    // [InverseProperty("AccountEdiDocument")] //Many2one
     public virtual AccountEdiFormat? EdiFormat { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("AccountEdiDocuments")]
-    [NotMapped]
+    // [InverseProperty("AccountEdiDocument")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountEdiDocumentWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountEdiDocumentWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("delivery_price_rule")]
-public partial class DeliveryPriceRule : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DeliveryPriceRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,6 +21,10 @@ public partial class DeliveryPriceRule : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -31,10 +32,10 @@ public partial class DeliveryPriceRule : FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? CarrierId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("variable")]
     public string? Variable { get; set; }
@@ -52,26 +53,26 @@ public partial class DeliveryPriceRule : FullAuditedEntity<Guid>, IEntityDto<Gui
     public decimal? ListPrice { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("max_value")]
     public double? MaxValue { get; set; }
 
     // [Many2one]
     [ForeignKey("CarrierId")]
-    // [InverseProperty("DeliveryPriceRule")] // [Many2one]
+    // [InverseProperty("DeliveryPriceRule")] //Many2one
     public virtual DeliveryCarrier? Carrier { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DeliveryPriceRuleCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DeliveryPriceRuleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DeliveryPriceRuleWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DeliveryPriceRuleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

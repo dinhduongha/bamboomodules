@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_method")]
-public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -27,7 +32,7 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? PrimaryPaymentMethodId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -40,7 +45,7 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -52,50 +57,56 @@ public partial class PaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public bool? SupportExpressCheckout { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PaymentMethodCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PaymentMethodCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("PrimaryPaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<PaymentMethod> InversePrimaryPaymentMethod { get; set; } 
-
-    //[InverseProperty("PaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } 
-
-    //[InverseProperty("PaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
-
+    // [One2many]
     [ForeignKey("PrimaryPaymentMethodId")]
-    //[InverseProperty("InversePrimaryPaymentMethod")]
-    [NotMapped]
+    [InverseProperty("PrimaryPaymentMethod")]
+    public virtual ICollection<PaymentMethod> InversePrimaryPaymentMethod { get; set; }
+
+    // [One2many]
+    [ForeignKey("PaymentMethodId")]
+    [InverseProperty("PaymentMethod")]
+    public virtual ICollection<PaymentToken> PaymentToken { get; set; }
+
+    // [One2many]
+    [ForeignKey("PaymentMethodId")]
+    [InverseProperty("PaymentMethod")]
+    public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PrimaryPaymentMethodId")]
+    // [InverseProperty("InversePrimaryPaymentMethod")] //Many2one
     public virtual PaymentMethod? PrimaryPaymentMethod { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PaymentMethodWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PaymentMethodWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("PaymentMethodId")]
-    //[InverseProperty("PaymentMethods")]
-    [NotMapped]
-    public virtual ICollection<PaymentProvider> PaymentProviders { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PaymentMethodId")] //Many2many
+    // [InverseProperty("PaymentMethod")] //Many2many
+    public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 
-    [ForeignKey("PaymentMethodId")]
-    //[InverseProperty("PaymentMethods")]
-    [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PaymentMethodId")] //Many2many
+    // [InverseProperty("PaymentMethod")] //Many2many
+    public virtual ICollection<ResCountry> ResCountry { get; set; }
 
-    [ForeignKey("PaymentMethodId")]
-    //[InverseProperty("PaymentMethods")]
-    [NotMapped]
-    public virtual ICollection<ResCurrency> ResCurrencies { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PaymentMethodId")] //Many2many
+    // [InverseProperty("PaymentMethod")] //Many2many
+    public virtual ICollection<ResCurrency> ResCurrency { get; set; }
 }

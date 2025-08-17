@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("digest_tip")]
-public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,7 +20,11 @@ public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
@@ -27,42 +32,43 @@ public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
     public Guid? GroupId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("tip_description", TypeName = "jsonb")]
     public string? TipDescription { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("DigestTipCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DigestTipCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("DigestTips")]
-    [NotMapped]
-    public virtual ResGroup? Group { get; set; }
+    // [InverseProperty("DigestTip")] //Many2one
+    public virtual ResGroups? Group { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("DigestTipWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DigestTipWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("DigestTipId")]
-    //[InverseProperty("DigestTips")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DigestTipId")] //Many2many
+    // [InverseProperty("DigestTip")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

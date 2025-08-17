@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_fiscal_position_template")]
-public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountFiscalPositionTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -33,14 +38,14 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     public Guid? CountryGroupId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("zip_from")]
     public string? ZipFrom { get; set; }
@@ -59,50 +64,49 @@ public partial class AccountFiscalPositionTemplate : FullAuditedEntity<Guid>, IE
     public bool? VatRequired { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("PositionId")]
+    [InverseProperty("Position")]
+    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplate { get; set; }
 
+    // [One2many]
+    [ForeignKey("PositionId")]
+    [InverseProperty("Position")]
+    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("ChartTemplateId")]
-    //[InverseProperty("AccountFiscalPositionTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionTemplate")] //Many2one
     public virtual AccountChartTemplate? ChartTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("AccountFiscalPositionTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionTemplate")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryGroupId")]
-    //[InverseProperty("AccountFiscalPositionTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionTemplate")] //Many2one
     public virtual ResCountryGroup? CountryGroup { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountFiscalPositionTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountFiscalPositionTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountFiscalPositionTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountFiscalPositionTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Position")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplates { get; set; } 
-
-    //[InverseProperty("Position")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplates { get; set; } 
-
-    [ForeignKey("AccountFiscalPositionTemplateId")]
-    //[InverseProperty("AccountFiscalPositionTemplates")]
-    [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountFiscalPositionTemplateId")] //Many2many
+    // [InverseProperty("AccountFiscalPositionTemplate")] //Many2many
+    public virtual ICollection<ResCountryState> ResCountryState { get; set; }
 }

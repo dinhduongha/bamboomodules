@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("digest_digest")]
-public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DigestDigest: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,8 +21,11 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -37,7 +41,7 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("kpi_res_users_connected")]
     public bool? KpiResUsersConnected { get; set; }
@@ -46,7 +50,7 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public bool? KpiMailMessageTotal { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -54,23 +58,23 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("kpi_account_total_revenue")]
     public bool? KpiAccountTotalRevenue { get; set; }
 
-    [Column("kpi_crm_lead_created")]
-    public bool? KpiCrmLeadCreated { get; set; }
-
-    [Column("kpi_crm_opportunities_won")]
-    public bool? KpiCrmOpportunitiesWon { get; set; }
-
     [Column("kpi_all_sale_total")]
     public bool? KpiAllSaleTotal { get; set; }
 
     [Column("kpi_pos_total")]
     public bool? KpiPosTotal { get; set; }
 
-    [Column("kpi_project_task_opened")]
-    public bool? KpiProjectTaskOpened { get; set; }
+    [Column("kpi_crm_lead_created")]
+    public bool? KpiCrmLeadCreated { get; set; }
+
+    [Column("kpi_crm_opportunities_won")]
+    public bool? KpiCrmOpportunitiesWon { get; set; }
 
     [Column("kpi_hr_recruitment_new_colleagues")]
     public bool? KpiHrRecruitmentNewColleagues { get; set; }
+
+    [Column("kpi_project_task_opened")]
+    public bool? KpiProjectTaskOpened { get; set; }
 
     [Column("kpi_website_sale_total")]
     public bool? KpiWebsiteSaleTotal { get; set; }
@@ -84,27 +88,29 @@ public partial class DigestDigest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("kpi_livechat_response")]
     public bool? KpiLivechatResponse { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("DigestDigests")]
-    [NotMapped]
+    // [InverseProperty("DigestDigest")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("DigestDigestCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DigestDigestCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("Digest")]
-    [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
+    // [One2many]
+    [ForeignKey("DigestId")]
+    [InverseProperty("Digest")]
+    public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("DigestDigestWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DigestDigestWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("DigestDigestId")]
-    //[InverseProperty("DigestDigests")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DigestDigestId")] //Many2many
+    // [InverseProperty("DigestDigest")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

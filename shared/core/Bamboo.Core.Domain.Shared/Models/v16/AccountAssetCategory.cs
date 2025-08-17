@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("account_asset_category")]
 //[Index("Name", Name = "account_asset_category_name_index")]
 //[Index("Type", Name = "account_asset_category_type_index")]
-public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,7 +23,10 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -48,7 +52,7 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     public long? MethodPeriod { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -88,7 +92,7 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     public bool? GroupEntries { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -96,57 +100,58 @@ public partial class AccountAssetCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("method_progress_factor")]
     public double? MethodProgressFactor { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountAnalyticId")]
-    //[InverseProperty("AccountAssetCategories")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual AccountAnalyticAccount? AccountAnalytic { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountAssetId")]
-    //[InverseProperty("AccountAssetCategoryAccountAssets")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategoryAccountAsset")] //Many2one
     public virtual AccountAccount? AccountAsset { get; set; }
 
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountDepreciationId")]
-    //[InverseProperty("AccountAssetCategoryAccountDepreciations")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategoryAccountDepreciation")] //Many2one
     public virtual AccountAccount? AccountDepreciation { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountDepreciationExpenseId")]
-    //[InverseProperty("AccountAssetCategoryAccountDepreciationExpenses")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategoryAccountDepreciationExpense")] //Many2one
     public virtual AccountAccount? AccountDepreciationExpense { get; set; }
 
-    //[InverseProperty("AssetCategory")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [One2many]
+    [ForeignKey("AssetCategoryId")]
+    [InverseProperty("AssetCategory")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAssetCategories")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAssetCategoryCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAssetCategoryCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountAssetCategories")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("AccountAssetCategories")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAssetCategoryWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAssetCategoryWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

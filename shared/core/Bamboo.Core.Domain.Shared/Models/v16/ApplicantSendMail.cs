@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? AuthorId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,42 +47,34 @@ public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? Body { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("AuthorId")]
-    //[InverseProperty("ApplicantSendMails")]
-    [NotMapped]
+    // [InverseProperty("ApplicantSendMail")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ApplicantSendMailCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ApplicantSendMailCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("TemplateId")]
-    //[InverseProperty("ApplicantSendMails")]
-    [NotMapped]
+    // [InverseProperty("ApplicantSendMail")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ApplicantSendMailWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ApplicantSendMailWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ApplicantSendMailId")]
-    //[InverseProperty("ApplicantSendMails")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
-
-    [ForeignKey("ApplicantSendMailId")]
-    //[InverseProperty("ApplicantSendMails")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ApplicantSendMailId")] //Many2many
+    // [InverseProperty("ApplicantSendMail")] //Many2many
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 }

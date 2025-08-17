@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter_productivity")]
-//[Index("TenantId", Name = "mrp_workcenter_productivity_company_id_index")]
+//[Index("CompanyId", Name = "mrp_workcenter_productivity_company_id_index")]
 //[Index("WorkcenterId", Name = "mrp_workcenter_productivity_workcenter_id_index")]
 //[Index("WorkorderId", Name = "mrp_workcenter_productivity_workorder_id_index")]
 public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
@@ -22,6 +23,10 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -36,7 +41,7 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
     public Guid? LossId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,7 +59,7 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
     public DateTime? DateEnd { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -62,50 +67,41 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
     [Column("duration")]
     public double? Duration { get; set; }
 
-    // v16-Compat
     [Column("cost_already_recorded")]
     public bool? CostAlreadyRecorded { get; set; }
 
-    [Column("account_move_line_id")]
-    public Guid? AccountMoveLineId { get; set; }
-
-    [ForeignKey("AccountMoveLineId")]
-    //[InverseProperty("MrpWorkcenterProductivities")]
-    [NotMapped]
-    public virtual AccountMoveLine? AccountMoveLine { get; set; }
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("MrpWorkcenterProductivities")]
-    [NotMapped]
+    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpWorkcenterProductivityCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MrpWorkcenterProductivityCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LossId")]
-    //[InverseProperty("MrpWorkcenterProductivities")]
-    [NotMapped]
+    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual MrpWorkcenterProductivityLoss? Loss { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("MrpWorkcenterProductivityUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("MrpWorkcenterProductivityUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkcenterId")]
-    //[InverseProperty("MrpWorkcenterProductivities")]
-    [NotMapped]
+    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual MrpWorkcenter? Workcenter { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkorderId")]
-    //[InverseProperty("MrpWorkcenterProductivities")]
-    [NotMapped]
+    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual MrpWorkorder? Workorder { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpWorkcenterProductivityWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MrpWorkcenterProductivityWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

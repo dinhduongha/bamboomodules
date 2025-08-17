@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_tax_group")]
-public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountTaxGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,90 +21,62 @@ public partial class AccountTaxGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
-
-    [Column("tax_payable_account_id")]
-    public Guid? TaxPayableAccountId { get; set; }
-
-    [Column("tax_receivable_account_id")]
-    public Guid? TaxReceivableAccountId { get; set; }
-
-    [Column("advance_tax_payment_account_id")]
-    public Guid? AdvanceTaxPaymentAccountId { get; set; }
 
     [Column("country_id")]
     public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("pos_receipt_label")]
-    public string? PosReceiptLabel { get; set; }
+    [Column("preceding_subtotal")]
+    public string? PrecedingSubtotal { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
-
-    //[Column("preceding_subtotal")]
-    [JsonField]
-    [Column("preceding_subtotal", TypeName = "jsonb")]
-    public string? PrecedingSubtotal { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    //[InverseProperty("AccountTaxGroups")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("TaxGroupId")]
+    [InverseProperty("TaxGroup")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("TaxGroupId")]
+    [InverseProperty("TaxGroup")]
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
+
+    // [One2many]
+    [ForeignKey("TaxGroupId")]
+    [InverseProperty("TaxGroup")]
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("AccountTaxGroups")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxGroup")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountTaxGroupCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountTaxGroupCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountTaxGroupWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("AdvanceTaxPaymentAccountId")]
-    //[InverseProperty("AccountTaxGroupAdvanceTaxPaymentAccounts")]
-    [NotMapped]
-    public virtual AccountAccount? AdvanceTaxPaymentAccount { get; set; }
-
-    [ForeignKey("TaxPayableAccountId")]
-    //[InverseProperty("AccountTaxGroupTaxPayableAccounts")]
-    [NotMapped]
-    public virtual AccountAccount? TaxPayableAccount { get; set; }
-
-    [ForeignKey("TaxReceivableAccountId")]
-    //[InverseProperty("AccountTaxGroupTaxReceivableAccounts")]
-    [NotMapped]
-    public virtual AccountAccount? TaxReceivableAccount { get; set; }
-
-    //[InverseProperty("TaxGroup")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
-
-    //[InverseProperty("TaxGroup")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } 
-
-    //[InverseProperty("TaxGroup")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
-
+    // [InverseProperty("AccountTaxGroupWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

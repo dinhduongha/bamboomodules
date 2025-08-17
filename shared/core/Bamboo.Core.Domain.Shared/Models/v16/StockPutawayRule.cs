@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_putaway_rule")]
-//[Index("TenantId", Name = "stock_putaway_rule_company_id_index")]
+//[Index("CompanyId", Name = "stock_putaway_rule_company_id_index")]
 //[Index("LocationInId", Name = "stock_putaway_rule_location_in_id_index")]
 public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -21,6 +22,10 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -41,65 +46,63 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? StorageCategoryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("sublocation")]
-    public string? Sublocation { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("StockPutawayRules")]
-    [NotMapped]
+    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual ProductCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockPutawayRules")]
-    [NotMapped]
+    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockPutawayRuleCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockPutawayRuleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationInId")]
-    //[InverseProperty("StockPutawayRuleLocationIns")]
-    [NotMapped]
+    // [InverseProperty("StockPutawayRuleLocationIn")] //Many2one
     public virtual StockLocation? LocationIn { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationOutId")]
-    //[InverseProperty("StockPutawayRuleLocationOuts")]
-    [NotMapped]
+    // [InverseProperty("StockPutawayRuleLocationOut")] //Many2one
     public virtual StockLocation? LocationOut { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("StockPutawayRules")]
-    [NotMapped]
+    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("StorageCategoryId")]
-    //[InverseProperty("StockPutawayRules")]
-    [NotMapped]
+    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockPutawayRuleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockPutawayRuleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("StockPutawayRuleId")]
-    //[InverseProperty("StockPutawayRules")]
-    [NotMapped]
-    public virtual ICollection<StockPackageType> StockPackageTypes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("StockPutawayRuleId")] //Many2many
+    // [InverseProperty("StockPutawayRule")] //Many2many
+    public virtual ICollection<StockPackageType> StockPackageType { get; set; }
 }

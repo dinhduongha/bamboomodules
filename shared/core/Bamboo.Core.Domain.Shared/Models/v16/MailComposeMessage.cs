@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_compose_message")]
-public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -29,16 +34,6 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
 
-    [Column("res_domain_user_id")]
-    public Guid? ResDomainUserId { get; set; }
-
-    [Column("record_alias_domain_id")]
-    public Guid? RecordAliasDomainId { get; set; }
-
-    [Column("record_company_id")]
-    public Guid? RecordCompanyId { get; set; }
-
-    // v16-Compat
     [Column("res_id")]
     public Guid? ResId { get; set; }
 
@@ -52,7 +47,7 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? MailServerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -84,37 +79,21 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("reply_to")]
     public string? ReplyTo { get; set; }
 
-    [Column("scheduled_date")]
-    public string? ScheduledDate { get; set; }
-
-    [Column("template_name")]
-    public string? TemplateName { get; set; }
-
     [Column("body")]
     public string? Body { get; set; }
 
-    [Column("res_ids")]
-    public string? ResIds { get; set; }
-
-    [Column("res_domain")]
-    public string? ResDomain { get; set; }
-
-    // v16-Compat
     [Column("active_domain")]
     public string? ActiveDomain { get; set; }
 
     [Column("email_add_signature")]
     public bool? EmailAddSignature { get; set; }
 
-    // v16-Compat
     [Column("use_active_domain")]
     public bool? UseActiveDomain { get; set; }
 
-    // v16-Compat
     [Column("is_log")]
     public bool? IsLog { get; set; }
 
-    // v16-Compat
     [Column("notify")]
     public bool? Notify { get; set; }
 
@@ -124,21 +103,11 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("auto_delete")]
     public bool? AutoDelete { get; set; }
 
-    [Column("auto_delete_keep_log")]
-    public bool? AutoDeleteKeepLog { get; set; }
-
-    [Column("force_send")]
-    public bool? ForceSend { get; set; }
-
-    [Column("use_exclusion_list")]
-    public bool? UseExclusionList { get; set; }
-
-    // v16-Compat
     [Column("auto_delete_message")]
     public bool? AutoDeleteMessage { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -152,68 +121,76 @@ public partial class MailComposeMessage : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("mass_mailing_name")]
     public string? MassMailingName { get; set; }
 
+    // [One2many]
+    [ForeignKey("ComposerId")]
+    [InverseProperty("Composer")]
+    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSend { get; set; }
+
+    // [Many2one]
     [ForeignKey("AuthorId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
+    // [Many2one]
     [ForeignKey("CampaignId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailComposeMessageCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailComposeMessageCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailActivityTypeId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailActivityType? MailActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailServerId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual IrMailServer? MailServer { get; set; }
 
+    // [Many2one]
+    [ForeignKey("MassMailingId")]
+    // [InverseProperty("MailComposeMessage")] //Many2one
+    public virtual MailingMailing? MassMailing { get; set; }
+
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailMessage? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("SubtypeId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailMessageSubtype? Subtype { get; set; }
 
+    // [Many2one]
     [ForeignKey("TemplateId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
+    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailComposeMessageWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailComposeMessageWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Composer")]
-    [NotMapped]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSends { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("WizardId")] //Many2many
+    // [InverseProperty("Wizard")] //Many2many
+    public virtual ICollection<IrAttachment> Attachment { get; set; }
 
-    [ForeignKey("WizardId")]
-    //[InverseProperty("Wizards")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailComposeMessageId")] //Many2many
+    // [InverseProperty("MailComposeMessage")] //Many2many
+    public virtual ICollection<MailingList> MailingList { get; set; }
 
-    [ForeignKey("WizardId")]
-    //[InverseProperty("Wizards")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } 
-    
-    [ForeignKey("MailComposeMessageId")]
-    //[InverseProperty("MailComposeMessages")]
-    [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } 
-
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("WizardId")] //Many2many
+    // [InverseProperty("Wizard")] //Many2many
+    public virtual ICollection<ResPartner> Partner { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_journal_group")]
-//[Index("TenantId", "Name", Name = "account_journal_group_uniq_name", IsUnique = true)]
+//[Index("CompanyId", "Name", Name = "account_journal_group_uniq_name", IsUnique = true)]
 public partial class AccountJournalGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -21,44 +22,46 @@ public partial class AccountJournalGroup: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    //public Dictionary<string, string?>? Name { get; set; }
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountJournalGroups")]
-    [NotMapped]
+    // [InverseProperty("AccountJournalGroup")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountJournalGroupCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountJournalGroupCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountJournalGroupWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountJournalGroupWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountJournalGroupId")]
-    //[InverseProperty("AccountJournalGroups")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountJournalGroupId")] //Many2many
+    // [InverseProperty("AccountJournalGroup")] //Many2many
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

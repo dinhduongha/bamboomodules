@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("calendar_event")]
 //[Index("AccessToken", Name = "calendar_event_access_token_index")]
 //[Index("OpportunityId", Name = "calendar_event_opportunity_id_index")]
-public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,7 +23,10 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -42,7 +46,7 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? RecurrenceId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -96,7 +100,7 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public DateTime? Stop { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -110,91 +114,101 @@ public partial class CalendarEvent : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("applicant_id")]
     public Guid? ApplicantId { get; set; }
 
-    [Column("candidate_id")]
-    public Guid? CandidateId { get; set; }
+    [Column("google_id")]
+    public string? GoogleId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    [Column("need_sync")]
+    public bool? NeedSync { get; set; }
 
+    [Column("microsoft_id")]
+    public string? MicrosoftId { get; set; }
+
+    [Column("microsoft_recurrence_master_id")]
+    public string? MicrosoftRecurrenceMasterId { get; set; }
+
+    [Column("need_sync_m")]
+    public bool? NeedSyncM { get; set; }
+
+    // [Many2one]
     [ForeignKey("ApplicantId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
+    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual HrApplicant? Applicant { get; set; }
 
-    [ForeignKey("CandidateId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
-    public virtual HrCandidate? Candidate { get; set; }
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<CalendarAttendee> CalendarAttendee { get; set; }
 
+    // [One2many]
+    [ForeignKey("BaseEventId")]
+    [InverseProperty("BaseEvent")]
+    public virtual ICollection<CalendarRecurrence> CalendarRecurrence { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("CalendarEventCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CalendarEventCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("MeetingId")]
+    [InverseProperty("Meeting")]
+    public virtual ICollection<HrLeave> HrLeave { get; set; }
+
+    // [One2many]
+    [ForeignKey("CalendarEventId")]
+    [InverseProperty("CalendarEvent")]
+    public virtual ICollection<MailActivity> MailActivity { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
+    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("OpportunityId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
+    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual CrmLead? Opportunity { get; set; }
 
+    // [Many2one]
     [ForeignKey("RecurrenceId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
+    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual CalendarRecurrence? Recurrence { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResModelId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
+    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("CalendarEventUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("CalendarEventUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("VideocallChannelId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
+    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual MailChannel? VideocallChannel { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("CalendarEventWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("CalendarEventWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<CalendarAttendee> CalendarAttendees { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CalendarEventId")] //Many2many
+    // [InverseProperty("CalendarEvent")] //Many2many
+    public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
-    //[InverseProperty("BaseEvent")]
-    [NotMapped]
-    public virtual ICollection<CalendarRecurrence> CalendarRecurrences { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("CalendarEventId")]
+    // [InverseProperty("CalendarEvent")]
+    // public virtual ICollection<ResPartner> ResPartner { get; set; }
 
-    //[InverseProperty("Meeting")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; set; } 
-
-    //[InverseProperty("CalendarEvent")]
-    [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; set; } 
-
-    [ForeignKey("CalendarEventId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
-    public virtual ICollection<CalendarAlarm> CalendarAlarms { get; set; } 
-
-    [ForeignKey("CalendarEventId")]
-    //[InverseProperty("CalendarEvents")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
-
-    [ForeignKey("EventId")]
-    //[InverseProperty("Events")]
-    [NotMapped]
-    public virtual ICollection<CalendarEventType> Types { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("EventId")] //Many2many
+    // [InverseProperty("Event")] //Many2many
+    public virtual ICollection<CalendarEventType> Type { get; set; }
 }

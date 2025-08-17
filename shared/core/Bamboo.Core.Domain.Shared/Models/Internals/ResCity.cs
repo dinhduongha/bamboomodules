@@ -11,7 +11,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_city")]
-public partial class ResCity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResCity: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,41 +24,46 @@ public partial class ResCity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudite
     public Guid? StateId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("zipcode")]
     public string? Zipcode { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("ResCities")] //Many2One
+    // [InverseProperty("ResCity")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResCityCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResCityCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("CityNavigation") //Many2many
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = null;
+    // [One2many]
+    [ForeignKey("CityId")]
+    [InverseProperty("CityNavigation")]
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("StateId")]
-    //[InverseProperty("ResCities")] //Many2One
+    // [InverseProperty("ResCity")] //Many2one
     public virtual ResCountryState? State { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResCityWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ResCityWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

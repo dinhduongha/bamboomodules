@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_payslip_run")]
 //[Index("State", Name = "hr_payslip_run__state_index")]
-public partial class HrPayslipRun: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrPayslipRun: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,11 +22,15 @@ public partial class HrPayslipRun: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -43,27 +48,31 @@ public partial class HrPayslipRun: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public bool? CreditNote { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrPayslipRunCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrPayslipRunCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("PayslipRun") //Many2many
-    public virtual ICollection<HrPayslip> HrPayslips { get; set; } = null;
+    // [One2many]
+    [ForeignKey("PayslipRunId")]
+    [InverseProperty("PayslipRun")]
+    public virtual ICollection<HrPayslip> HrPayslip { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("HrPayslipRuns")] //Many2One
+    // [InverseProperty("HrPayslipRun")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrPayslipRunWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrPayslipRunWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

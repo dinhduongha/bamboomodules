@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_alias")]
 //[Index("AliasName", Name = "mail_alias_alias_unique", IsUnique = true)]
-public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,13 +22,13 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("alias_domain_id")]
-    public Guid? AliasDomainId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("alias_model_id")]
     public Guid? AliasModelId { get; set; }
 
-    // v16-Compat
     [Column("alias_user_id")]
     public Guid? AliasUserId { get; set; }
 
@@ -41,7 +42,7 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? AliasParentThreadId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -49,14 +50,8 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("alias_name")]
     public string? AliasName { get; set; }
 
-    [Column("alias_full_name")]
-    public string? AliasFullName { get; set; }
-
     [Column("alias_contact")]
     public string? AliasContact { get; set; }
-
-    [Column("alias_status")]
-    public string? AliasStatus { get; set; }
 
     [JsonField]
     [Column("alias_bounced_content", TypeName = "jsonb")]
@@ -65,71 +60,69 @@ public partial class MailAlias: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("alias_defaults")]
     public string? AliasDefaults { get; set; }
 
-    [Column("alias_incoming_local")]
-    public bool? AliasIncomingLocal { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("Alias")]
-    // [NotMapped]
-    // public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
-    [ForeignKey("AliasDomainId")]
-    //[InverseProperty("MailAliases")]
-    [NotMapped]
-    public virtual MailAliasDomain? AliasDomain { get; set; }
-
+    // [Many2one]
     [ForeignKey("AliasModelId")]
-    //[InverseProperty("MailAliasAliasModels")]
-    [NotMapped]
+    // [InverseProperty("MailAliasAliasModel")] //Many2one
     public virtual IrModel? AliasModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("AliasParentModelId")]
-    //[InverseProperty("MailAliasAliasParentModels")]
-    [NotMapped]
+    // [InverseProperty("MailAliasAliasParentModel")] //Many2one
     public virtual IrModel? AliasParentModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("AliasUserId")]
-    //[InverseProperty("MailAliasAliasUsers")]
-    [NotMapped]
-    public virtual ResUser? AliasUser { get; set; }
+    // [InverseProperty("MailAliasAliasUser")] //Many2one
+    public virtual ResUsers? AliasUser { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailAliasCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailAliasCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<CrmTeam> CrmTeam { get; set; }
+
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<HrJob> HrJob { get; set; }
+
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
+
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<MailGroup> MailGroup { get; set; }
+
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategory { get; set; }
+
+    // [One2many]
+    [ForeignKey("AliasId")]
+    [InverseProperty("Alias")]
+    public virtual ICollection<ProjectProject> ProjectProject { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailAliasWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Alias")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
-
-    //[InverseProperty("Alias")]
-    [NotMapped]
-    public virtual ICollection<CrmTeam> CrmTeams { get; set; } 
-
-    //[InverseProperty("Alias")]
-    [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } 
-
-    //[InverseProperty("Alias")]
-    [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } 
-
-    //[InverseProperty("Alias")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategories { get; set; } 
-
-    //[InverseProperty("Alias")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
-
+    // [InverseProperty("MailAliasWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

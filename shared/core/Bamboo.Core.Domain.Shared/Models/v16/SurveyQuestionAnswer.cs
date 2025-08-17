@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_question_answer")]
-public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SurveyQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("question_id")]
     public Guid? QuestionId { get; set; }
@@ -30,7 +35,7 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -46,7 +51,7 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     public bool? IsCorrect { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -54,36 +59,38 @@ public partial class SurveyQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("answer_score")]
     public double? AnswerScore { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SurveyQuestionAnswerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SurveyQuestionAnswerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MatrixQuestionId")]
-    //[InverseProperty("SurveyQuestionAnswerMatrixQuestions")]
-    [NotMapped]
+    // [InverseProperty("SurveyQuestionAnswerMatrixQuestion")] //Many2one
     public virtual SurveyQuestion? MatrixQuestion { get; set; }
 
+    // [Many2one]
     [ForeignKey("QuestionId")]
-    //[InverseProperty("SurveyQuestionAnswerQuestions")]
-    [NotMapped]
+    // [InverseProperty("SurveyQuestionAnswerQuestion")] //Many2one
     public virtual SurveyQuestion? Question { get; set; }
 
-    //[InverseProperty("MatrixRow")]
-    [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineMatrixRows { get; set; } 
+    // [One2many]
+    [ForeignKey("TriggeringAnswerId")]
+    [InverseProperty("TriggeringAnswer")]
+    public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 
-    //[InverseProperty("SuggestedAnswer")]
-    [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineSuggestedAnswers { get; set; } 
+    // [One2many]
+    [ForeignKey("MatrixRowId")]
+    [InverseProperty("MatrixRow")]
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineMatrixRow { get; set; }
 
+    // [One2many]
+    [ForeignKey("SuggestedAnswerId")]
+    [InverseProperty("SuggestedAnswer")]
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineSuggestedAnswer { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SurveyQuestionAnswerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("SurveyQuestionAnswerId")]
-    //[InverseProperty("SurveyQuestionAnswers")]
-    [NotMapped]
-    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } 
+    // [InverseProperty("SurveyQuestionAnswerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

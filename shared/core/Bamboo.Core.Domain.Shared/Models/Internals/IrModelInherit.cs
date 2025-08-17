@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +10,6 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_model_inherit")]
 //[Index("ModelId", "ParentId", Name = "ir_model_inherit_uniq", IsUnique = true)]
 public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
@@ -19,9 +17,6 @@ public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -32,18 +27,18 @@ public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("parent_field_id")]
     public Guid? ParentFieldId { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("IrModelInheritModels")]
-    [NotMapped]
+    // [InverseProperty("IrModelInheritModel")] //Many2one
     public virtual IrModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("IrModelInheritParents")]
-    [NotMapped]
+    // [InverseProperty("IrModelInheritParent")] //Many2one
     public virtual IrModel? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentFieldId")]
-    //[InverseProperty("IrModelInherits")]
-    [NotMapped]
+    // [InverseProperty("IrModelInherit")] //Many2one
     public virtual IrModelFields? ParentField { get; set; }
 }

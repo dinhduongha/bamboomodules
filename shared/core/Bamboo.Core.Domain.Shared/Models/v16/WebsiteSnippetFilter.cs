@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,7 +22,11 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
@@ -35,7 +40,7 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     public long? Limit { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,13 +50,13 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -59,28 +64,28 @@ public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("product_cross_selling")]
     public bool? ProductCrossSelling { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActionServerId")]
-    //[InverseProperty("WebsiteSnippetFilters")]
-    [NotMapped]
+    // [InverseProperty("WebsiteSnippetFilter")] //Many2one
     public virtual IrActServer? ActionServer { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebsiteSnippetFilterCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("WebsiteSnippetFilterCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("FilterId")]
-    //[InverseProperty("WebsiteSnippetFilters")]
-    [NotMapped]
+    // [InverseProperty("WebsiteSnippetFilter")] //Many2one
     public virtual IrFilters? Filter { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("WebsiteSnippetFilters")]
-    [NotMapped]
+    // [InverseProperty("WebsiteSnippetFilter")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebsiteSnippetFilterWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("WebsiteSnippetFilterWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

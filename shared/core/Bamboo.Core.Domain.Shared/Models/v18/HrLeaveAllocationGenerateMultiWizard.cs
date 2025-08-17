@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class HrLeaveAllocationGenerateMultiWizard: FullAuditedEntity<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("holiday_status_id")]
     public Guid? HolidayStatusId { get; set; }
 
@@ -33,7 +38,7 @@ public partial class HrLeaveAllocationGenerateMultiWizard: FullAuditedEntity<Gui
     public Guid? AccrualPlanId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -57,7 +62,7 @@ public partial class HrLeaveAllocationGenerateMultiWizard: FullAuditedEntity<Gui
     public string? Notes { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -65,43 +70,44 @@ public partial class HrLeaveAllocationGenerateMultiWizard: FullAuditedEntity<Gui
     [Column("duration")]
     public double? Duration { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccrualPlanId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2one
     public virtual HrLeaveAccrualPlan? AccrualPlan { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2one
     public virtual HrEmployeeCategory? Category { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [Many2one]
     [ForeignKey("HolidayStatusId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2one
     public virtual HrLeaveType? HolidayStatus { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("HrLeaveAllocationGenerateMultiWizardId")]
-    //[InverseProperty("HrLeaveAllocationGenerateMultiWizards")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrLeaveAllocationGenerateMultiWizardId")] //Many2many
+    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2many
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

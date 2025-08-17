@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,7 +22,10 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -38,7 +42,7 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     public Guid? InsurerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -77,54 +81,54 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("FleetVehicleLogContracts")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CostSubtypeId")]
-    //[InverseProperty("FleetVehicleLogContractsNavigation")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleLogContractNavigation")] //Many2one
     public virtual FleetServiceType? CostSubtype { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("FleetVehicleLogContractCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("FleetVehicleLogContractCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("InsurerId")]
-    //[InverseProperty("FleetVehicleLogContracts")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual ResPartner? Insurer { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("FleetVehicleLogContracts")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("FleetVehicleLogContractUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("FleetVehicleLogContractUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("VehicleId")]
-    //[InverseProperty("FleetVehicleLogContracts")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual FleetVehicle? Vehicle { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("FleetVehicleLogContractWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("FleetVehicleLogContractWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("FleetVehicleLogContractId")]
-    //[InverseProperty("FleetVehicleLogContracts")]
-    [NotMapped]
-    public virtual ICollection<FleetServiceType> FleetServiceTypes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("FleetVehicleLogContractId")] //Many2many
+    // [InverseProperty("FleetVehicleLogContract")] //Many2many
+    public virtual ICollection<FleetServiceType> FleetServiceType { get; set; }
 }

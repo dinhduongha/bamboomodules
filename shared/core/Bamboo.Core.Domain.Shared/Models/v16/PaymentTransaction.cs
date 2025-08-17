@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_transaction")]
-//[Index("TenantId", Name = "payment_transaction_company_id_index")]
+//[Index("CompanyId", Name = "payment_transaction_company_id_index")]
 //[Index("Operation", Name = "payment_transaction_operation_index")]
 //[Index("Reference", Name = "payment_transaction_reference_uniq", IsUnique = true)]
 //[Index("State", Name = "payment_transaction_state_index")]
-public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,11 +25,12 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
-
-    [Column("payment_method_id")]
-    public Guid? PaymentMethodId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -39,11 +41,9 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("source_transaction_id")]
     public Guid? SourceTransactionId { get; set; }
 
-    // v16-Compat
     [Column("callback_model_id")]
     public Guid? CallbackModelId { get; set; }
 
-    // v16-Compat
     [Column("callback_res_id")]
     public Guid? CallbackResId { get; set; }
 
@@ -57,7 +57,7 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? PartnerCountryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -77,11 +77,9 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("landing_route")]
     public string? LandingRoute { get; set; }
 
-    // v16-Compat
     [Column("callback_method")]
     public string? CallbackMethod { get; set; }
 
-    // v16-Compat
     [Column("callback_hash")]
     public string? CallbackHash { get; set; }
 
@@ -112,7 +110,6 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("amount")]
     public decimal? Amount { get; set; }
 
-    // v16-Compat
     [Column("fees")]
     public decimal? Fees { get; set; }
 
@@ -122,7 +119,6 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("tokenize")]
     public bool? Tokenize { get; set; }
 
-    // v16-Compat
     [Column("callback_is_done")]
     public bool? CallbackIsDone { get; set; }
 
@@ -130,7 +126,7 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     public DateTime? LastStateChange { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -138,87 +134,88 @@ public partial class PaymentTransaction: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }
 
-    [Column("pos_order_id")]
-    public Guid? PosOrderId { get; set; }
-
     [Column("is_donation")]
     public bool? IsDonation { get; set; }
 
+    // [One2many]
+    [ForeignKey("PaymentTransactionId")]
+    [InverseProperty("PaymentTransaction")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
+
+    // [Many2one]
     [ForeignKey("CallbackModelId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual IrModel? CallbackModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PaymentTransactionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PaymentTransactionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [One2many]
+    [ForeignKey("SourceTransactionId")]
+    [InverseProperty("SourceTransaction")]
+    public virtual ICollection<PaymentTransaction> InverseSourceTransaction { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerCountryId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual ResCountry? PartnerCountry { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerStateId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual ResCountryState? PartnerState { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransactionNavigation")] //Many2one
     public virtual AccountPayment? Payment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProviderId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual PaymentProvider? Provider { get; set; }
 
+    // [Many2one]
     [ForeignKey("SourceTransactionId")]
-    //[InverseProperty("InverseSourceTransaction")]
-    [NotMapped]
+    // [InverseProperty("InverseSourceTransaction")] //Many2one
     public virtual PaymentTransaction? SourceTransaction { get; set; }
 
+    // [Many2one]
     [ForeignKey("TokenId")]
-    //[InverseProperty("PaymentTransactions")]
-    [NotMapped]
+    // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual PaymentToken? Token { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PaymentTransactionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PaymentTransactionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("PaymentTransaction")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("TransactionId")]
+    // [InverseProperty("Transaction")]
+    // public virtual ICollection<AccountMove> Invoice { get; set; }
 
-    //[InverseProperty("SourceTransaction")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> InverseSourceTransaction { get; set; } 
-
-    [ForeignKey("TransactionId")]
-    //[InverseProperty("Transactions")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> Invoices { get; set; } 
-
-    [ForeignKey("TransactionId")]
-    //[InverseProperty("Transactions")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("TransactionId")] //Many2many
+    // [InverseProperty("Transaction")] //Many2many
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_property")]
-//[Index("TenantId", Name = "ir_property_company_id_index")]
+//[Index("CompanyId", Name = "ir_property_company_id_index")]
 //[Index("Name", Name = "ir_property_name_index")]
 //[Index("ResId", Name = "ir_property_res_id_index")]
 //[Index("Type", Name = "ir_property_type_index")]
@@ -26,6 +24,9 @@ public partial class IrProperty: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("fields_id")]
     public Guid? FieldsId { get; set; }
 
@@ -33,7 +34,7 @@ public partial class IrProperty: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public long? ValueInteger { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -57,7 +58,7 @@ public partial class IrProperty: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime? ValueDatetime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -68,23 +69,23 @@ public partial class IrProperty: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("value_binary")]
     public byte[]? ValueBinary { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("IrProperties")]
-    [NotMapped]
+    // [InverseProperty("IrProperty")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrPropertyCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrPropertyCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("FieldsId")]
-    //[InverseProperty("IrProperties")]
-    [NotMapped]
+    // [InverseProperty("IrProperty")] //Many2one
     public virtual IrModelFields? Fields { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrPropertyWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrPropertyWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

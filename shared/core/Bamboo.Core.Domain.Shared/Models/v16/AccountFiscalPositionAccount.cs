@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,6 +22,10 @@ public partial class AccountFiscalPositionAccount: FullAuditedEntity<Guid>, IEnt
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("position_id")]
     public Guid? PositionId { get; set; }
 
@@ -31,44 +36,44 @@ public partial class AccountFiscalPositionAccount: FullAuditedEntity<Guid>, IEnt
     public Guid? AccountDestId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountDestId")]
-    //[InverseProperty("AccountFiscalPositionAccountAccountDests")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionAccountAccountDest")] //Many2one
     public virtual AccountAccount? AccountDest { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountSrcId")]
-    //[InverseProperty("AccountFiscalPositionAccountAccountSrcs")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionAccountAccountSrc")] //Many2one
     public virtual AccountAccount? AccountSrc { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountFiscalPositionAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionAccount")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountFiscalPositionAccountCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountFiscalPositionAccountCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PositionId")]
-    //[InverseProperty("AccountFiscalPositionAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountFiscalPositionAccount")] //Many2one
     public virtual AccountFiscalPosition? Position { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountFiscalPositionAccountWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountFiscalPositionAccountWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

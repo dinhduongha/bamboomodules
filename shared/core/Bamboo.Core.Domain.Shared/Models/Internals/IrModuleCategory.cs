@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,23 +10,19 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_module_category")]
-//[Index("ParentId", Name = "ir_module_category_parent_id_index")]
-public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("ParentId", Name = "ir_module_category__parent_id_index")]
+public partial class IrModuleCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    //[Column("company_id")]
-    //public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -40,14 +35,14 @@ public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
-    public StringDictionary? Description { get; set; }
+    public string? Description { get; set; }
 
     [Column("visible")]
     public bool? Visible { get; set; }
@@ -55,30 +50,33 @@ public partial class IrModuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("exclusive")]
     public bool? Exclusive { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModuleCategoryCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrModuleCategoryCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<IrModuleCategory> InverseParent { get; set; } 
-
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<IrModuleModule> IrModuleModules { get; set; } 
-
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<IrModuleCategory> InverseParent { get; set; }
+
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<IrModuleModule> IrModuleModule { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual IrModuleCategory? Parent { get; set; }
 
-    //[InverseProperty("Category")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } 
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<ResGroups> ResGroups { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModuleCategoryWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModuleCategoryWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

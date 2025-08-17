@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("lunch_supplier")]
-public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LunchSupplier: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,7 +21,10 @@ public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -34,7 +38,7 @@ public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? CronId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -97,7 +101,7 @@ public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -105,55 +109,59 @@ public partial class LunchSupplier: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("automatic_email_time")]
     public double? AutomaticEmailTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("LunchSuppliers")]
-    [NotMapped]
+    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("LunchSupplierCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("LunchSupplierCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CronId")]
-    //[InverseProperty("LunchSuppliers")]
-    [NotMapped]
+    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual IrCron? Cron { get; set; }
 
+    // [One2many]
+    [ForeignKey("SupplierId")]
+    [InverseProperty("Supplier")]
+    public virtual ICollection<LunchOrder> LunchOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("SupplierId")]
+    [InverseProperty("Supplier")]
+    public virtual ICollection<LunchProduct> LunchProduct { get; set; }
+
+    // [One2many]
+    [ForeignKey("SupplierId")]
+    [InverseProperty("Supplier")]
+    public virtual ICollection<LunchTopping> LunchTopping { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("LunchSuppliers")]
-    [NotMapped]
+    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("LunchSuppliers")]
-    [NotMapped]
+    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResponsibleId")]
-    //[InverseProperty("LunchSupplierResponsibles")]
-    [NotMapped]
-    public virtual ResUser? Responsible { get; set; }
+    // [InverseProperty("LunchSupplierResponsible")] //Many2one
+    public virtual ResUsers? Responsible { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("LunchSupplierWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("LunchSupplierWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Supplier")]
-    [NotMapped]
-    public virtual ICollection<LunchOrder> LunchOrders { get; set; } 
-
-    //[InverseProperty("Supplier")]
-    [NotMapped]
-    public virtual ICollection<LunchProduct> LunchProducts { get; set; } 
-
-    //[InverseProperty("Supplier")]
-    [NotMapped]
-    public virtual ICollection<LunchTopping> LunchToppings { get; set; } 
-
-    [ForeignKey("LunchSupplierId")]
-    //[InverseProperty("LunchSuppliers")]
-    [NotMapped]
-    public virtual ICollection<LunchLocation> LunchLocations { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("LunchSupplierId")] //Many2many
+    // [InverseProperty("LunchSupplier")] //Many2many
+    public virtual ICollection<LunchLocation> LunchLocation { get; set; }
 }

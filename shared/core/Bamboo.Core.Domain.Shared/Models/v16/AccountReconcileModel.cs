@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_reconcile_model")]
-//[Index("Name", "TenantId", Name = "account_reconcile_model_name_unique", IsUnique = true)]
-public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("Name", "CompanyId", Name = "account_reconcile_model_name_unique", IsUnique = true)]
+public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,28 +22,26 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence")]
-    public long Sequence { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
-    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("past_months_limit")]
     public long? PastMonthsLimit { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat json
-    //[Column("name")]
-    // TODO: JSON AS KEY
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    //public Dictionary<string, string?>? Name { get; set; }
+    [Column("name")]
     public string? Name { get; set; }
 
     [Column("rule_type")]
@@ -50,9 +49,6 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("matching_order")]
     public string? MatchingOrder { get; set; }
-
-    [Column("counterpart_type")]
-    public string? CounterpartType { get; set; }
 
     [Column("match_nature")]
     public string? MatchNature { get; set; }
@@ -112,7 +108,7 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     public bool? MatchPartner { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -126,50 +122,56 @@ public partial class AccountReconcileModel: FullAuditedEntity<Guid>, IEntityDto<
     [Column("payment_tolerance_param")]
     public double? PaymentToleranceParam { get; set; }
 
+    // [One2many]
+    [ForeignKey("ReconcileModelId")]
+    [InverseProperty("ReconcileModel")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ModelId")]
+    [InverseProperty("Model")]
+    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ModelId")]
+    [InverseProperty("Model")]
+    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMapping { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountReconcileModels")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModel")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountReconcileModelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountReconcileModelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("AccountReconcileModels")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModel")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountReconcileModelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountReconcileModelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("ReconcileModel")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountReconcileModelId")] //Many2many
+    // [InverseProperty("AccountReconcileModel")] //Many2many
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
-    //[InverseProperty("Model")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountReconcileModelId")] //Many2many
+    // [InverseProperty("AccountReconcileModel")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 
-    //[InverseProperty("Model")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; set; } 
-
-    [ForeignKey("AccountReconcileModelId")]
-    //[InverseProperty("AccountReconcileModels")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
-
-    [ForeignKey("AccountReconcileModelId")]
-    //[InverseProperty("AccountReconcileModels")]
-    [NotMapped]
-    public virtual ICollection<ResPartnerCategory> ResPartnerCategories { get; set; } 
-
-    [ForeignKey("AccountReconcileModelId")]
-    //[InverseProperty("AccountReconcileModels")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountReconcileModelId")] //Many2many
+    // [InverseProperty("AccountReconcileModel")] //Many2many
+    public virtual ICollection<ResPartnerCategory> ResPartnerCategory { get; set; }
 }

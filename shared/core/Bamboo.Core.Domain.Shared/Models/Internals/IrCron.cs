@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,16 +10,12 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_cron")]
-public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrCron: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("ir_actions_server_id")]
     public Guid? IrActionsServerId { get; set; }
@@ -31,7 +26,6 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("interval_number")]
     public long? IntervalNumber { get; set; }
 
-    // v16-Compat
     [Column("numbercall")]
     public long? Numbercall { get; set; }
 
@@ -42,27 +36,25 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public long? FailureCount { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat json=>character varying
     [Column("cron_name")]
     public string? CronName { get; set; }
+
+    // v16-Compat - Removed
+    //[JsonField]
+    //[Column("cron_name", TypeName = "jsonb")]
+    //public string? CronName { get; set; }
 
     [Column("interval_type")]
     public string? IntervalType { get; set; }
 
-    // v16-Compat
-    // [JsonField]
-    // [Column("cron_name", TypeName = "jsonb")]
-    // public Dictionary<string, string?>? CronName { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
-    // v16-Compat
     [Column("doall")]
     public bool? Doall { get; set; }
 
@@ -76,44 +68,48 @@ public partial class IrCron: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? FirstFailureDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrCronCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrCronCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("IrActionsServerId")]
-    //[InverseProperty("IrCrons")]
-    [NotMapped]
+    // [InverseProperty("IrCron")] //Many2one
     public virtual IrActServer? IrActionsServer { get; set; }
 
-    //[InverseProperty("Cron")]
-    [NotMapped]
-    public virtual ICollection<IrCronProgress> IrCronProgresses { get; set; } 
+    // [One2many]
+    [ForeignKey("CronId")]
+    [InverseProperty("Cron")]
+    public virtual ICollection<IrCronProgress> IrCronProgress { get; set; }
 
-    //[InverseProperty("Cron")]
-    [NotMapped]
-    public virtual ICollection<IrCronTrigger> IrCronTriggers { get; set; } 
+    // [One2many]
+    [ForeignKey("CronId")]
+    [InverseProperty("Cron")]
+    public virtual ICollection<IrCronTrigger> IrCronTrigger { get; set; }
 
-    //[InverseProperty("Cron")]
-    [NotMapped]
-    public virtual ICollection<LunchAlert> LunchAlerts { get; set; } 
+    // [One2many]
+    [ForeignKey("CronId")]
+    [InverseProperty("Cron")]
+    public virtual ICollection<LunchAlert> LunchAlert { get; set; }
 
-    //[InverseProperty("Cron")]
-    [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } 
+    // [One2many]
+    [ForeignKey("CronId")]
+    [InverseProperty("Cron")]
+    public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("IrCronUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("IrCronUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrCronWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrCronWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

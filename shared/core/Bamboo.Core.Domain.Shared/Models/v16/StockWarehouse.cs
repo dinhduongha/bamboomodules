@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_warehouse")]
-//[Index("Code", "TenantId", Name = "stock_warehouse_warehouse_code_uniq", IsUnique = true)]
-//[Index("Name", "TenantId", Name = "stock_warehouse_warehouse_name_uniq", IsUnique = true)]
-public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("Code", "CompanyId", Name = "stock_warehouse_warehouse_code_uniq", IsUnique = true)]
+//[Index("Name", "CompanyId", Name = "stock_warehouse_warehouse_name_uniq", IsUnique = true)]
+public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +22,9 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -61,15 +65,6 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("int_type_id")]
     public Guid? IntTypeId { get; set; }
 
-    [Column("qc_type_id")]
-    public Guid? QcTypeId { get; set; }
-
-    [Column("store_type_id")]
-    public Guid? StoreTypeId { get; set; }
-
-    [Column("xdock_type_id")]
-    public Guid? XdockTypeId { get; set; }
-
     [Column("return_type_id")]
     public Guid? ReturnTypeId { get; set; }
 
@@ -86,7 +81,7 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -107,19 +102,13 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("pos_type_id")]
     public Guid? PosTypeId { get; set; }
-
-    [Column("repair_type_id")]
-    public Guid? RepairTypeId { get; set; }
-
-    [Column("repair_mto_pull_id")]
-    public Guid? RepairMtoPullId { get; set; }
 
     [Column("buy_pull_id")]
     public Guid? BuyPullId { get; set; }
@@ -163,262 +152,311 @@ public partial class StockWarehouse: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("manufacture_to_resupply")]
     public bool? ManufactureToResupply { get; set; }
 
+    [Column("subcontracting_mto_pull_id")]
+    public Guid? SubcontractingMtoPullId { get; set; }
+
+    [Column("subcontracting_pull_id")]
+    public Guid? SubcontractingPullId { get; set; }
+
+    [Column("subcontracting_route_id")]
+    public Guid? SubcontractingRouteId { get; set; }
+
+    [Column("subcontracting_type_id")]
+    public Guid? SubcontractingTypeId { get; set; }
+
+    [Column("subcontracting_resupply_type_id")]
+    public Guid? SubcontractingResupplyTypeId { get; set; }
+
+    [Column("subcontracting_to_resupply")]
+    public bool? SubcontractingToResupply { get; set; }
+
+    [Column("subcontracting_dropshipping_pull_id")]
+    public Guid? SubcontractingDropshippingPullId { get; set; }
+
+    [Column("subcontracting_dropshipping_to_resupply")]
+    public bool? SubcontractingDropshippingToResupply { get; set; }
+
+    // [Many2one]
     [ForeignKey("BuyPullId")]
-    //[InverseProperty("StockWarehouseBuyPulls")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseBuyPull")] //Many2one
     public virtual StockRule? BuyPull { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockWarehouses")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouse")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockWarehouseCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockWarehouseCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CrossdockRouteId")]
-    //[InverseProperty("StockWarehouseCrossdockRoutes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseCrossdockRoute")] //Many2one
     public virtual StockRoute? CrossdockRoute { get; set; }
 
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<DeliveryCarrier> DeliveryCarrier { get; set; }
+
+    // [Many2one]
     [ForeignKey("DeliveryRouteId")]
-    //[InverseProperty("StockWarehouseDeliveryRoutes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseDeliveryRoute")] //Many2one
     public virtual StockRoute? DeliveryRoute { get; set; }
 
+    // [Many2one]
     [ForeignKey("InTypeId")]
-    //[InverseProperty("StockWarehouseInTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseInType")] //Many2one
     public virtual StockPickingType? InType { get; set; }
 
+    // [Many2one]
     [ForeignKey("IntTypeId")]
-    //[InverseProperty("StockWarehouseIntTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseIntType")] //Many2one
     public virtual StockPickingType? IntType { get; set; }
 
+    // [Many2one]
     [ForeignKey("LotStockId")]
-    //[InverseProperty("StockWarehouseLotStocks")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseLotStock")] //Many2one
     public virtual StockLocation? LotStock { get; set; }
 
+    // [Many2one]
     [ForeignKey("ManuTypeId")]
-    //[InverseProperty("StockWarehouseManuTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseManuType")] //Many2one
     public virtual StockPickingType? ManuType { get; set; }
 
+    // [Many2one]
     [ForeignKey("ManufactureMtoPullId")]
-    //[InverseProperty("StockWarehouseManufactureMtoPulls")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseManufactureMtoPull")] //Many2one
     public virtual StockRule? ManufactureMtoPull { get; set; }
 
+    // [Many2one]
     [ForeignKey("ManufacturePullId")]
-    //[InverseProperty("StockWarehouseManufacturePulls")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseManufacturePull")] //Many2one
     public virtual StockRule? ManufacturePull { get; set; }
 
+    // [Many2one]
     [ForeignKey("MtoPullId")]
-    //[InverseProperty("StockWarehouseMtoPulls")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseMtoPull")] //Many2one
     public virtual StockRule? MtoPull { get; set; }
 
+    // [Many2one]
     [ForeignKey("OutTypeId")]
-    //[InverseProperty("StockWarehouseOutTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOutType")] //Many2one
     public virtual StockPickingType? OutType { get; set; }
 
+    // [Many2one]
     [ForeignKey("PackTypeId")]
-    //[InverseProperty("StockWarehousePackTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePackType")] //Many2one
     public virtual StockPickingType? PackType { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("StockWarehouses")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouse")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PbmLocId")]
-    //[InverseProperty("StockWarehousePbmLocs")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePbmLoc")] //Many2one
     public virtual StockLocation? PbmLoc { get; set; }
 
+    // [Many2one]
     [ForeignKey("PbmMtoPullId")]
-    //[InverseProperty("StockWarehousePbmMtoPulls")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePbmMtoPull")] //Many2one
     public virtual StockRule? PbmMtoPull { get; set; }
 
+    // [Many2one]
     [ForeignKey("PbmRouteId")]
-    //[InverseProperty("StockWarehousePbmRoutes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePbmRoute")] //Many2one
     public virtual StockRoute? PbmRoute { get; set; }
 
+    // [Many2one]
     [ForeignKey("PbmTypeId")]
-    //[InverseProperty("StockWarehousePbmTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePbmType")] //Many2one
     public virtual StockPickingType? PbmType { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickTypeId")]
-    //[InverseProperty("StockWarehousePickTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePickType")] //Many2one
     public virtual StockPickingType? PickType { get; set; }
 
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
+
+    // [Many2one]
     [ForeignKey("PosTypeId")]
-    //[InverseProperty("StockWarehousePosTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehousePosType")] //Many2one
     public virtual StockPickingType? PosType { get; set; }
 
-    [ForeignKey("QcTypeId")]
-    //[InverseProperty("StockWarehouseQcTypes")]
-    [NotMapped]
-    public virtual StockPickingType? QcType { get; set; }
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
+
+    // [Many2one]
     [ForeignKey("ReceptionRouteId")]
-    //[InverseProperty("StockWarehouseReceptionRoutes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseReceptionRoute")] //Many2one
     public virtual StockRoute? ReceptionRoute { get; set; }
 
-    [ForeignKey("RepairMtoPullId")]
-    //[InverseProperty("StockWarehouseRepairMtoPulls")]
-    [NotMapped]
-    public virtual StockRule? RepairMtoPull { get; set; }
-
-    [ForeignKey("RepairTypeId")]
-    //[InverseProperty("StockWarehouseRepairTypes")]
-    [NotMapped]
-    public virtual StockPickingType? RepairType { get; set; }
-
+    // [Many2one]
     [ForeignKey("ReturnTypeId")]
-    //[InverseProperty("StockWarehouseReturnTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseReturnType")] //Many2one
     public virtual StockPickingType? ReturnType { get; set; }
 
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [Many2one]
     [ForeignKey("SamLocId")]
-    //[InverseProperty("StockWarehouseSamLocs")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseSamLoc")] //Many2one
     public virtual StockLocation? SamLoc { get; set; }
 
+    // [Many2one]
     [ForeignKey("SamRuleId")]
-    //[InverseProperty("StockWarehouseSamRules")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseSamRule")] //Many2one
     public virtual StockRule? SamRule { get; set; }
 
+    // [Many2one]
     [ForeignKey("SamTypeId")]
-    //[InverseProperty("StockWarehouseSamTypes")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseSamType")] //Many2one
     public virtual StockPickingType? SamType { get; set; }
 
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<StockLocation> StockLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<StockPickingType> StockPickingType { get; set; }
+
+    // [One2many]
+    [ForeignKey("SuppliedWhId")]
+    [InverseProperty("SuppliedWh")]
+    public virtual ICollection<StockRoute> StockRouteSuppliedWh { get; set; }
+
+    // [One2many]
+    [ForeignKey("SupplierWhId")]
+    [InverseProperty("SupplierWh")]
+    public virtual ICollection<StockRoute> StockRouteSupplierWh { get; set; }
+
+    // [One2many]
+    [ForeignKey("PropagateWarehouseId")]
+    [InverseProperty("PropagateWarehouse")]
+    public virtual ICollection<StockRule> StockRulePropagateWarehouse { get; set; }
+
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<StockRule> StockRuleWarehouse { get; set; }
+
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SubcontractingDropshippingPullId")]
+    // [InverseProperty("StockWarehouseSubcontractingDropshippingPull")] //Many2one
+    public virtual StockRule? SubcontractingDropshippingPull { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SubcontractingMtoPullId")]
+    // [InverseProperty("StockWarehouseSubcontractingMtoPull")] //Many2one
+    public virtual StockRule? SubcontractingMtoPull { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SubcontractingPullId")]
+    // [InverseProperty("StockWarehouseSubcontractingPull")] //Many2one
+    public virtual StockRule? SubcontractingPull { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SubcontractingResupplyTypeId")]
+    // [InverseProperty("StockWarehouseSubcontractingResupplyType")] //Many2one
+    public virtual StockPickingType? SubcontractingResupplyType { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SubcontractingRouteId")]
+    // [InverseProperty("StockWarehouseSubcontractingRoute")] //Many2one
+    public virtual StockRoute? SubcontractingRoute { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SubcontractingTypeId")]
+    // [InverseProperty("StockWarehouseSubcontractingType")] //Many2one
+    public virtual StockPickingType? SubcontractingType { get; set; }
+
+    // [Many2one]
     [ForeignKey("ViewLocationId")]
-    //[InverseProperty("StockWarehouseViewLocations")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseViewLocation")] //Many2one
     public virtual StockLocation? ViewLocation { get; set; }
 
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<Website> Website { get; set; }
+
+    // [Many2one]
     [ForeignKey("WhInputStockLocId")]
-    //[InverseProperty("StockWarehouseWhInputStockLocs")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseWhInputStockLoc")] //Many2one
     public virtual StockLocation? WhInputStockLoc { get; set; }
 
+    // [Many2one]
     [ForeignKey("WhOutputStockLocId")]
-    //[InverseProperty("StockWarehouseWhOutputStockLocs")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseWhOutputStockLoc")] //Many2one
     public virtual StockLocation? WhOutputStockLoc { get; set; }
 
+    // [Many2one]
     [ForeignKey("WhPackStockLocId")]
-    //[InverseProperty("StockWarehouseWhPackStockLocs")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseWhPackStockLoc")] //Many2one
     public virtual StockLocation? WhPackStockLoc { get; set; }
 
+    // [Many2one]
     [ForeignKey("WhQcStockLocId")]
-    //[InverseProperty("StockWarehouseWhQcStockLocs")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseWhQcStockLoc")] //Many2one
     public virtual StockLocation? WhQcStockLoc { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockWarehouseWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockWarehouseWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("XdockTypeId")]
-    //[InverseProperty("StockWarehouseXdockTypes")]
-    [NotMapped]
-    public virtual StockPickingType? XdockType { get; set; }
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("WarehouseId")]
+    // [InverseProperty("Warehouse")]
+    // public virtual ICollection<StockRoute> Route { get; set; }
 
-    [ForeignKey("StoreTypeId")]
-    //[InverseProperty("StockWarehouseStoreTypes")]
-    [NotMapped]
-    public virtual StockPickingType? StoreType { get; set; }
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockWarehouseId")]
+    // [InverseProperty("StockWarehouse")]
+    // public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
 
-    //[ForeignKey("ViewLocationId")]
-    //[InverseProperty("StockWarehouseViewLocations")]
-    //[NotMapped]
-    //public virtual StockLocation? ViewLocation { get; set; }
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SupplierWhId")] //Many2many
+    // [InverseProperty("SupplierWh")] //Many2many
+    public virtual ICollection<StockWarehouse> SuppliedWh { get; set; }
 
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<StockLocation> StockLocations { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } 
-
-    //[InverseProperty("SuppliedWh")]
-    [NotMapped]
-    public virtual ICollection<StockRoute> StockRouteSuppliedWhs { get; set; } 
-
-    //[InverseProperty("SupplierWh")]
-    [NotMapped]
-    public virtual ICollection<StockRoute> StockRouteSupplierWhs { get; set; } 
-
-    //[InverseProperty("PropagateWarehouse")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRulePropagateWarehouses { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRuleWarehouses { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
-    //[InverseProperty("Warehouse")]
-    [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } 
-
-    [ForeignKey("WarehouseId")]
-    //[InverseProperty("Warehouses")]
-    [NotMapped]
-    public virtual ICollection<StockRoute> Routes { get; set; } 
-
-    [ForeignKey("StockWarehouseId")]
-    //[InverseProperty("StockWarehouses")]
-    [NotMapped]
-    public virtual ICollection<StockRulesReport> StockRulesReports { get; set; } 
-
-    [ForeignKey("SupplierWhId")]
-    //[InverseProperty("SupplierWhs")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> SuppliedWhs { get; set; } 
-
-    [ForeignKey("SuppliedWhId")]
-    //[InverseProperty("SuppliedWhs")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> SupplierWhs { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SuppliedWhId")] //Many2many
+    // [InverseProperty("SuppliedWh")] //Many2many
+    public virtual ICollection<StockWarehouse> SupplierWh { get; set; }
 }

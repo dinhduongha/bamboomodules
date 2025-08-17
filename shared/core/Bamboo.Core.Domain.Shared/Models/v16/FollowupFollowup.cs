@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("followup_followup")]
-//[Index("TenantId", Name = "followup_followup_company_uniq", IsUnique = true)]
-public partial class FollowupFollowup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "followup_followup_company_uniq", IsUnique = true)]
+public partial class FollowupFollowup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,39 +22,43 @@ public partial class FollowupFollowup: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("FollowupFollowup")]
-    [NotMapped]
+    // [InverseProperty("FollowupFollowup")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("FollowupFollowupCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("FollowupFollowupCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("FollowupId")]
+    [InverseProperty("Followup")]
+    public virtual ICollection<FollowupLine> FollowupLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("FollowupId")]
+    [InverseProperty("Followup")]
+    public virtual ICollection<FollowupPrint> FollowupPrint { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("FollowupFollowupWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-    
-    //[InverseProperty("Followup")]
-    [NotMapped]
-    public virtual ICollection<FollowupLine> FollowupLines { get; set; } 
-
-    //[InverseProperty("Followup")]
-    [NotMapped]
-    public virtual ICollection<FollowupPrint> FollowupPrints { get; set; } 
-
+    // [InverseProperty("FollowupFollowupWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

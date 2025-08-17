@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement")]
+//[Index("Date", Name = "account_bank_statement_date_index")]
 //[Index("FirstLineIndex", Name = "account_bank_statement_first_line_index_index")]
-//[Index("Date", Name = "account_bank_statement__date_index")]
-//[Index("JournalId", "FirstLineIndex", Name = "account_bank_statement_first_line_index_idx")]
-//[Index("JournalId", "Date", "Id", Name = "account_bank_statement_journal_id_date_desc_id_desc_idx", IsDescending = new[] { false, true, true })]
-public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountBankStatement: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,11 +23,14 @@ public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -58,41 +60,44 @@ public partial class AccountBankStatement: FullAuditedEntity<Guid>, IEntityDto<G
     public bool? IsComplete { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("Statement")]
-    [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
+    // [One2many]
+    [ForeignKey("StatementId")]
+    [InverseProperty("Statement")]
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
-    //[InverseProperty("Statement")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [One2many]
+    [ForeignKey("StatementId")]
+    [InverseProperty("Statement")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountBankStatements")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatement")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountBankStatementCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountBankStatementCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountBankStatements")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatement")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountBankStatementWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountBankStatementWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountBankStatementId")]
-    //[InverseProperty("AccountBankStatements")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountBankStatementId")] //Many2many
+    // [InverseProperty("AccountBankStatement")] //Many2many
+    public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 }

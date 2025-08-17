@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle")]
-public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,7 +21,10 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -57,11 +61,8 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
-    [Column("vehicle_range")]
-    public long? VehicleRange { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -93,9 +94,6 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("fuel_type")]
     public string? FuelType { get; set; }
 
-    [Column("power_unit")]
-    public string? PowerUnit { get; set; }
-
     [Column("co2_standard")]
     public string? Co2Standard { get; set; }
 
@@ -105,9 +103,6 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("next_assignation_date")]
     public DateTime? NextAssignationDate { get; set; }
 
-    [Column("order_date")]
-    public DateTime? OrderDate { get; set; }
-
     [Column("acquisition_date")]
     public DateTime? AcquisitionDate { get; set; }
 
@@ -116,10 +111,6 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("first_contract_date")]
     public DateTime? FirstContractDate { get; set; }
-
-    [JsonField]
-    [Column("vehicle_properties", TypeName = "jsonb")]
-    public string? VehicleProperties { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -140,7 +131,7 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public bool? ElectricAssistance { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -172,98 +163,99 @@ public partial class FleetVehicle: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("mobility_card")]
     public string? MobilityCard { get; set; }
 
-    //[InverseProperty("Vehicle")]
-    // [NotMapped]
-    // public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [One2many]
+    [ForeignKey("VehicleId")]
+    [InverseProperty("Vehicle")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("BrandId")]
-    //[InverseProperty("FleetVehicles")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleModelBrand? Brand { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("FleetVehicles")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleModelCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("FleetVehicles")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("FleetVehicleCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("FleetVehicleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DriverId")]
-    //[InverseProperty("FleetVehicleDrivers")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleDriver")] //Many2one
     public virtual ResPartner? Driver { get; set; }
 
+    // [Many2one]
     [ForeignKey("DriverEmployeeId")]
-    //[InverseProperty("FleetVehicleDriverEmployees")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleDriverEmployee")] //Many2one
     public virtual HrEmployee? DriverEmployee { get; set; }
 
+    // [One2many]
+    [ForeignKey("VehicleId")]
+    [InverseProperty("Vehicle")]
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
+
+    // [One2many]
+    [ForeignKey("VehicleId")]
+    [InverseProperty("Vehicle")]
+    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContract { get; set; }
+
+    // [One2many]
+    [ForeignKey("VehicleId")]
+    [InverseProperty("Vehicle")]
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
+
+    // [One2many]
+    [ForeignKey("VehicleId")]
+    [InverseProperty("Vehicle")]
+    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometer { get; set; }
+
+    // [Many2one]
     [ForeignKey("FutureDriverId")]
-    //[InverseProperty("FleetVehicleFutureDrivers")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleFutureDriver")] //Many2one
     public virtual ResPartner? FutureDriver { get; set; }
 
+    // [Many2one]
     [ForeignKey("FutureDriverEmployeeId")]
-    //[InverseProperty("FleetVehicleFutureDriverEmployees")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleFutureDriverEmployee")] //Many2one
     public virtual HrEmployee? FutureDriverEmployee { get; set; }
 
+    // [Many2one]
     [ForeignKey("ManagerId")]
-    //[InverseProperty("FleetVehicleManagers")]
-    [NotMapped]
-    public virtual ResUser? Manager { get; set; }
+    // [InverseProperty("FleetVehicleManager")] //Many2one
+    public virtual ResUsers? Manager { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("FleetVehicles")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("FleetVehicles")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("StateId")]
-    //[InverseProperty("FleetVehicles")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleState? State { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("FleetVehicleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("FleetVehicleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Vehicle")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
-
-    //[InverseProperty("Vehicle")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } 
-
-    //[InverseProperty("Vehicle")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } 
-
-    //[InverseProperty("Vehicle")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
-
-    //[InverseProperty("Vehicle")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometers { get; set; } 
-
-    [ForeignKey("VehicleTagId")]
-    //[InverseProperty("VehicleTags")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleTag> Tags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("VehicleTagId")] //Many2many
+    // [InverseProperty("VehicleTag")] //Many2many
+    public virtual ICollection<FleetVehicleTag> Tag { get; set; }
 }

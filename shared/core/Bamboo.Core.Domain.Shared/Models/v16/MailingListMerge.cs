@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,11 +21,15 @@ public partial class MailingListMerge: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("dest_list_id")]
     public Guid? DestListId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,28 +44,29 @@ public partial class MailingListMerge: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? ArchiveSrcLists { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailingListMergeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailingListMergeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DestListId")]
-    //[InverseProperty("MailingListMergesNavigation")]
-    [NotMapped]
+    // [InverseProperty("MailingListMergeNavigation")] //Many2one
     public virtual MailingList? DestList { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailingListMergeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailingListMergeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MailingListMergeId")]
-    //[InverseProperty("MailingListMerges")]
-    [NotMapped]
-    public virtual ICollection<MailingList> MailingLists { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailingListMergeId")] //Many2many
+    // [InverseProperty("MailingListMerge")] //Many2many
+    public virtual ICollection<MailingList> MailingList { get; set; }
 }

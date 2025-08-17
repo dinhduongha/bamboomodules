@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("chatbot_script_step")]
-public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ChatbotScriptStep: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,14 +21,18 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
-    [Column("chatbot_script_id")] 
+    [Column("chatbot_script_id")]
     public Guid? ChatbotScriptId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -40,7 +45,7 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? Message { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -48,40 +53,44 @@ public partial class ChatbotScriptStep: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("crm_team_id")]
     public Guid? CrmTeamId { get; set; }
 
-    //[InverseProperty("ScriptStep")]
-    [NotMapped]
-    public virtual ICollection<ChatbotMessage> ChatbotMessages { get; set; } 
+    // [One2many]
+    [ForeignKey("ScriptStepId")]
+    [InverseProperty("ScriptStep")]
+    public virtual ICollection<ChatbotMessage> ChatbotMessage { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChatbotScriptId")]
-    //[InverseProperty("ChatbotScriptSteps")]
-    [NotMapped]
+    // [InverseProperty("ChatbotScriptStep")] //Many2one
     public virtual ChatbotScript? ChatbotScript { get; set; }
 
-    //[InverseProperty("ScriptStep")]
-    [NotMapped]
-    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswers { get; set; } 
+    // [One2many]
+    [ForeignKey("ScriptStepId")]
+    [InverseProperty("ScriptStep")]
+    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswer { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ChatbotScriptStepCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ChatbotScriptStepCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CrmTeamId")]
-    //[InverseProperty("ChatbotScriptSteps")]
-    [NotMapped]
+    // [InverseProperty("ChatbotScriptStep")] //Many2one
     public virtual CrmTeam? CrmTeam { get; set; }
 
-    //[InverseProperty("ChatbotCurrentStep")]
-    [NotMapped]
-    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } 
+    // [One2many]
+    [ForeignKey("ChatbotCurrentStepId")]
+    [InverseProperty("ChatbotCurrentStep")]
+    public virtual ICollection<MailChannel> MailChannel { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ChatbotScriptStepWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ChatbotScriptStepWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ChatbotScriptStepId")]
-    //[InverseProperty("ChatbotScriptSteps")]
-    [NotMapped]
-    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswersNavigation { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ChatbotScriptStepId")] //Many2many
+    // [InverseProperty("ChatbotScriptStep")] //Many2many
+    public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswerNavigation { get; set; }
 }

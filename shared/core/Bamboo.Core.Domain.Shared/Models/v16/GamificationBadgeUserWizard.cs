@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class GamificationBadgeUserWizard: FullAuditedEntity<Guid>, IEnti
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class GamificationBadgeUserWizard: FullAuditedEntity<Guid>, IEnti
     public Guid? BadgeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,7 +41,7 @@ public partial class GamificationBadgeUserWizard: FullAuditedEntity<Guid>, IEnti
     public string? Comment { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -44,28 +49,28 @@ public partial class GamificationBadgeUserWizard: FullAuditedEntity<Guid>, IEnti
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
 
+    // [Many2one]
     [ForeignKey("BadgeId")]
-    //[InverseProperty("GamificationBadgeUserWizards")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadgeUserWizard")] //Many2one
     public virtual GamificationBadge? Badge { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("GamificationBadgeUserWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("GamificationBadgeUserWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("GamificationBadgeUserWizards")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadgeUserWizard")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("GamificationBadgeUserWizardUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("GamificationBadgeUserWizardUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("GamificationBadgeUserWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("GamificationBadgeUserWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

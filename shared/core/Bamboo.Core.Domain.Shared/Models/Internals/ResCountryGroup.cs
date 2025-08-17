@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,63 +10,58 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("res_country_group")]
-public partial class ResCountryGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResCountryGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("CountryGroupId")]
+    [InverseProperty("CountryGroup")]
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPosition { get; set; }
 
+    // [One2many]
+    [ForeignKey("CountryGroupId")]
+    [InverseProperty("CountryGroup")]
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResCountryGroupCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResCountryGroupCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResCountryGroupWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ResCountryGroupWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    /// TODO: DISABLE INVERSE
-    //[InverseProperty("CountryGroup")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResCountryGroupId")]
+    // [InverseProperty("ResCountryGroup")]
+    // public virtual ICollection<ProductPricelist> Pricelist { get; set; }
 
-    //[InverseProperty("CountryGroup")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPosition> AccountFiscalPositions { get; set; } 
-
-    [ForeignKey("ResCountryGroupId")]
-    //[InverseProperty("ResCountryGroups")]
-    [NotMapped]
-    public virtual ICollection<ProductPricelist> Pricelists { get; set; } 
-
-    [ForeignKey("ResCountryGroupId")]
-    //[InverseProperty("ResCountryGroups")]
-    [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResCountryGroupId")]
+    // [InverseProperty("ResCountryGroup")]
+    // public virtual ICollection<ResCountry> ResCountry { get; set; }
 }

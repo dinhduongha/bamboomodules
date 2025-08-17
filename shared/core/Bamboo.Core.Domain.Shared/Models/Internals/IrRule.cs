@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +10,10 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_rule")]
-//[Index("ModelId", Name = "ir_rule_model_id_index")]
-//[Index("Name", Name = "ir_rule_name_index")]
-public partial class IrRule : FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("ModelId", Name = "ir_rule__model_id_index")]
+//[Index("Name", Name = "ir_rule__name_index")]
+public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,11 +22,14 @@ public partial class IrRule : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -58,29 +59,29 @@ public partial class IrRule : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? Global { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrRuleCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrRuleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("IrRules")]
-    [NotMapped]
+    // [InverseProperty("IrRule")] //Many2one
     public virtual IrModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrRuleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrRuleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // RELATIONS BEGIN - MUST HAVE ?
-    [ForeignKey("RuleGroupId")]
-    [InverseProperty("RuleGroups")]
-    public virtual ICollection<ResGroup> Groups { get; set; } 
-    // RELATIONS END
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RuleGroupId")] //Many2many
+    // [InverseProperty("RuleGroup")] //Many2many
+    public virtual ICollection<ResGroups> Groups { get; set; }
 }

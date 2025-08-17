@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("bus_presence")]
-public partial class BusPresence : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class BusPresence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +19,11 @@ public partial class BusPresence : FullAuditedEntity<Guid>, IEntityDto<Guid>, IA
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
@@ -37,13 +39,13 @@ public partial class BusPresence : FullAuditedEntity<Guid>, IEntityDto<Guid>, IA
     [Column("guest_id")]
     public Guid? GuestId { get; set; }
 
+    // [Many2one]
     [ForeignKey("GuestId")]
-    //[InverseProperty("BusPresence")]
-    [NotMapped]
+    // [InverseProperty("BusPresence")] //Many2one
     public virtual MailGuest? Guest { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("BusPresence")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("BusPresence")] //Many2one
+    public virtual ResUsers? User { get; set; }
 }

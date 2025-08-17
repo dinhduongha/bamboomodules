@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_exclusion")]
 //[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion_product_template_attribute")]
 //[Index("ProductTmplId", Name = "product_template_attribute_exclusion_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +23,10 @@ public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("product_template_attribute_value_id")]
     public Guid? ProductTemplateAttributeValueId { get; set; }
 
@@ -29,43 +34,40 @@ public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>
     public Guid? ProductTmplId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductTemplateAttributeExclusionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductTemplateAttributeExclusionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeExclusionsNavigation")]
-    [NotMapped]
-    public virtual ProductTemplateAttributeValue? ProductTemplateAttributeValue { get; set; }
+    // [InverseProperty("ProductTemplateAttributeExclusionNavigation")] //Many2one
+    public virtual ProductTemplateAttributeValue? ProductTemplateAttributeValueNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductTmplId")]
-    //[InverseProperty("ProductTemplateAttributeExclusions")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateAttributeExclusion")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductTemplateAttributeExclusionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductTemplateAttributeExclusionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ProductTemplateAttributeExclusionId")]
-    //[InverseProperty("ProductTemplateAttributeExclusions")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductTemplateAttributeExclusionId")] //Many2many
+    // [InverseProperty("ProductTemplateAttributeExclusion")] //Many2many
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

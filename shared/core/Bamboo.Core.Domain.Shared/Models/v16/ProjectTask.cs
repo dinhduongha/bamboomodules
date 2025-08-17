@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,7 +21,7 @@ namespace Bamboo.Core.Models;
 //[Index("Priority", Name = "project_task_priority_index")]
 //[Index("ProjectId", Name = "project_task_project_id_index")]
 //[Index("StageId", Name = "project_task_stage_id_index")]
-public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +30,10 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -42,7 +46,6 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
 
-    // v16-Compat
     [Column("display_project_id")]
     public Guid? DisplayProjectId { get; set; }
 
@@ -58,7 +61,6 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
-    // v16-Compat
     [Column("ancestor_id")]
     public Guid? AncestorId { get; set; }
 
@@ -68,12 +70,11 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("recurrence_id")]
     public Guid? RecurrenceId { get; set; }
 
-    // v16-Compat
     [Column("analytic_account_id")]
     public Guid? AnalyticAccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -90,32 +91,20 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("priority")]
     public string? Priority { get; set; }
 
-    [Column("state")]
-    public string? State { get; set; }
-
-    [JsonField]
-    [Column("html_field_history", TypeName = "jsonb")]
-    public string? HtmlFieldHistory { get; set; }
-
-    // v16-Compat
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
-    // v16-Compat
     [Column("partner_email")]
     public string? PartnerEmail { get; set; }
 
-    // v16-Compat
-    //[Column("partner_phone")]
-    //public string? PartnerPhone { get; set; }
+    [Column("partner_phone")]
+    public string? PartnerPhone { get; set; }
 
-    // v16-Compat
-    //[Column("email_from")]
-    //public string? EmailFrom { get; set; }
+    [Column("email_from")]
+    public string? EmailFrom { get; set; }
 
-    // v16-Compat
-    // [Column("date_deadline")]
-    // public DateTime? DateDeadline { get; set; }
+    [Column("date_deadline")]
+    public DateTime? DateDeadline { get; set; }
 
     [JsonField]
     [Column("task_properties", TypeName = "jsonb")]
@@ -133,26 +122,20 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("active")]
     public bool? Active { get; set; }
 
-    [Column("display_in_project")]
-    public bool? DisplayInProject { get; set; }
-
-    // v16-Compat
     [Column("is_closed")]
     public bool? IsClosed { get; set; }
 
-    // v16-Compat
     [Column("is_blocked")]
     public bool? IsBlocked { get; set; }
 
     [Column("recurring_task")]
     public bool? RecurringTask { get; set; }
 
-    // v16-Compat
     [Column("is_analytic_account_id_changed")]
     public bool? IsAnalyticAccountIdChanged { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -163,19 +146,12 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("date_assign", TypeName = "timestamp without time zone")]
     public DateTime? DateAssign { get; set; }
 
-    [Column("date_deadline", TypeName = "timestamp without time zone")]
-    public DateTime? DateDeadline { get; set; }
-
     [Column("date_last_stage_update", TypeName = "timestamp without time zone")]
     public DateTime? DateLastStageUpdate { get; set; }
 
     [Column("rating_last_value")]
     public double? RatingLastValue { get; set; }
 
-    [Column("allocated_hours")]
-    public double? AllocatedHours { get; set; }
-
-    // v16-Compat
     [Column("planned_hours")]
     public double? PlannedHours { get; set; }
 
@@ -191,126 +167,159 @@ public partial class ProjectTask: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("sale_line_id")]
     public Guid? SaleLineId { get; set; }
 
-    [Column("email_from")]
-    public string? EmailFrom { get; set; }
+    [Column("remaining_hours")]
+    public double? RemainingHours { get; set; }
 
-    [Column("partner_name")]
-    public string? PartnerName { get; set; }
+    [Column("effective_hours")]
+    public double? EffectiveHours { get; set; }
 
-    [Column("partner_phone")]
-    public string? PartnerPhone { get; set; }
+    [Column("total_hours_spent")]
+    public double? TotalHoursSpent { get; set; }
 
-    [Column("partner_company_name")]
-    public string? PartnerCompanyName { get; set; }
+    [Column("progress")]
+    public double? Progress { get; set; }
 
+    [Column("overtime")]
+    public double? Overtime { get; set; }
+
+    [Column("subtask_effective_hours")]
+    public double? SubtaskEffectiveHours { get; set; }
+
+    // [One2many]
+    [ForeignKey("AncestorTaskId")]
+    [InverseProperty("AncestorTask")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAncestorTask { get; set; }
+
+    // [One2many]
+    [ForeignKey("TaskId")]
+    [InverseProperty("Task")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineTask { get; set; }
+
+    // [Many2one]
     [ForeignKey("AnalyticAccountId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("AncestorId")]
-    //[InverseProperty("InverseAncestor")]
-    [NotMapped]
+    // [InverseProperty("InverseAncestor")] //Many2one
     public virtual ProjectTask? Ancestor { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProjectTaskCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProjectTaskCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DisplayProjectId")]
-    //[InverseProperty("ProjectTaskDisplayProjects")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskDisplayProject")] //Many2one
     public virtual ProjectProject? DisplayProject { get; set; }
 
+    // [Many2one]
     [ForeignKey("DisplayedImageId")]
-    //[InverseProperty("ProjectTaskDisplayedImages")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskDisplayedImage")] //Many2one
     public virtual IrAttachment? DisplayedImage { get; set; }
 
+    // [One2many]
+    [ForeignKey("TimesheetTaskId")]
+    [InverseProperty("TimesheetTask")]
+    public virtual ICollection<HrLeaveType> HrLeaveType { get; set; }
+
+    // [One2many]
+    [ForeignKey("AncestorId")]
+    [InverseProperty("Ancestor")]
+    public virtual ICollection<ProjectTask> InverseAncestor { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentId")]
+    [InverseProperty("Parent")]
+    public virtual ICollection<ProjectTask> InverseParent { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("ProjectTaskMessageMainAttachments")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskMessageMainAttachment")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("MilestoneId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual ProjectMilestone? Milestone { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual ProjectTask? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProjectId")]
-    //[InverseProperty("ProjectTaskProjects")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskProject")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
+    // [One2many]
+    [ForeignKey("TaskId")]
+    [InverseProperty("Task")]
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRel { get; set; }
+
+    // [Many2one]
     [ForeignKey("RecurrenceId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual ProjectTaskRecurrence? Recurrence { get; set; }
 
+    // [One2many]
+    [ForeignKey("LeaveTimesheetTaskId")]
+    [InverseProperty("LeaveTimesheetTask")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [Many2one]
     [ForeignKey("SaleLineId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
+    // [One2many]
+    [ForeignKey("TaskId")]
+    [InverseProperty("Task")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("StageId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual ProjectTaskType? Stage { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProjectTaskWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProjectTaskWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Ancestor")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> InverseAncestor { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("TaskId")] //Many2many
+    // [InverseProperty("Task")] //Many2many
+    public virtual ICollection<ProjectTask> DependsOn { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> InverseParent { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProjectTaskId")] //Many2many
+    // [InverseProperty("ProjectTask")] //Many2many
+    public virtual ICollection<ProjectTags> ProjectTags { get; set; }
 
-    //[InverseProperty("Task")]
-    [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } 
-
-    //[InverseProperty("Task")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
-
-    [ForeignKey("TaskId")]
-    //[InverseProperty("Tasks")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> DependsOns { get; set; } 
-
-    [ForeignKey("ProjectTaskId")]
-    //[InverseProperty("ProjectTasks")]
-    [NotMapped]
-    public virtual ICollection<ProjectTags> ProjectTags { get; set; } 
-
-    [ForeignKey("DependsOnId")]
-    //[InverseProperty("DependsOns")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> Tasks { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DependsOnId")] //Many2many
+    // [InverseProperty("DependsOn")] //Many2many
+    public virtual ICollection<ProjectTask> Task { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,10 +21,10 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("notification_id")]
-    public Guid? NotificationId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
-    // v16-Compat
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
@@ -31,7 +32,7 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? ResendWizardId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -43,33 +44,28 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? Resend { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailResendPartnerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailResendPartnerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [ForeignKey("NotificationId")]
-    //[InverseProperty("MailResendPartners")]
-    [NotMapped]
-    public virtual MailNotification? Notification { get; set; }
-
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("MailResendPartners")]
-    [NotMapped]
+    // [InverseProperty("MailResendPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResendWizardId")]
-    //[InverseProperty("MailResendPartners")]
-    [NotMapped]
+    // [InverseProperty("MailResendPartner")] //Many2one
     public virtual MailResendMessage? ResendWizard { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailResendPartnerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailResendPartnerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

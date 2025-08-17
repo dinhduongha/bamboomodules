@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("parent_wizard_id")]
     public Guid? ParentWizardId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,28 +44,28 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
     public bool? SendInvitation { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProjectShareCollaboratorWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProjectShareCollaboratorWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentWizardId")]
-    //[InverseProperty("ProjectShareCollaboratorWizards")]
-    [NotMapped]
+    // [InverseProperty("ProjectShareCollaboratorWizard")] //Many2one
     public virtual ProjectShareWizard? ParentWizard { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("ProjectShareCollaboratorWizards")]
-    [NotMapped]
+    // [InverseProperty("ProjectShareCollaboratorWizard")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProjectShareCollaboratorWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProjectShareCollaboratorWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_attribute")]
+//[Index("CategoryId", Name = "product_attribute_category_id_index")]
 //[Index("Sequence", Name = "product_attribute_sequence_index")]
-public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttribute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,11 +23,15 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -38,13 +44,10 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
-
-    [Column("active")]
-    public bool? Active { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -52,34 +55,42 @@ public partial class ProductAttribute : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("visibility")]
     public string? Visibility { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    [Column("category_id")]
+    public Guid? CategoryId { get; set; }
 
+    // [Many2one]
+    [ForeignKey("CategoryId")]
+    // [InverseProperty("ProductAttribute")] //Many2one
+    public virtual ProductAttributeCategory? Category { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductAttributeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductAttributeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("AttributeId")]
+    [InverseProperty("Attribute")]
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValue { get; set; }
+
+    // [One2many]
+    [ForeignKey("AttributeId")]
+    [InverseProperty("Attribute")]
+    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("AttributeId")]
+    [InverseProperty("Attribute")]
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductAttributeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductAttributeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Attribute")]
-    [NotMapped]
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; set; } 
-
-    //[InverseProperty("Attribute")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLines { get; set; } 
-
-    //[InverseProperty("Attribute")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
-
-    [ForeignKey("ProductAttributeId")]
-    //[InverseProperty("ProductAttributes")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductAttributeId")] //Many2many
+    // [InverseProperty("ProductAttribute")] //Many2many
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

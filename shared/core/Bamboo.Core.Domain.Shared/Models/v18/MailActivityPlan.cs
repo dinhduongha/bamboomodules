@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_activity_plan")]
-public partial class MailActivityPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailActivityPlan: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,14 @@ public partial class MailActivityPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,7 +43,7 @@ public partial class MailActivityPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -47,41 +51,44 @@ public partial class MailActivityPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("MailActivityPlans")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("MailActivityPlan")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailActivityPlanCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailActivityPlanCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("MailActivityPlans")]
-    [NotMapped]
+    // [InverseProperty("MailActivityPlan")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
-    //[InverseProperty("Plan")]
-    [NotMapped]
-    public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplates { get; set; } 
+    // [One2many]
+    [ForeignKey("PlanId")]
+    [InverseProperty("Plan")]
+    public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplate { get; set; }
 
-    //[InverseProperty("Plan")]
-    [NotMapped]
-    public virtual ICollection<MailActivitySchedule> MailActivitySchedulesNavigation { get; set; } 
+    // [One2many]
+    [ForeignKey("PlanId")]
+    [InverseProperty("Plan")]
+    public virtual ICollection<MailActivitySchedule> MailActivityScheduleNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResModelId")]
-    //[InverseProperty("MailActivityPlans")]
-    [NotMapped]
+    // [InverseProperty("MailActivityPlan")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailActivityPlanWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailActivityPlanWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MailActivityPlanId")]
-    //[InverseProperty("MailActivityPlans")]
-    [NotMapped]
-    public virtual ICollection<MailActivitySchedule> MailActivitySchedules { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailActivityPlanId")]
+    // [InverseProperty("MailActivityPlan")]
+    // public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
 }

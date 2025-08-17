@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_channel_tag")]
-//[Index("GroupId", Name = "slide_channel_tag__group_id_index")]
-//[Index("GroupSequence", Name = "slide_channel_tag__group_sequence_index")]
-//[Index("Sequence", Name = "slide_channel_tag__sequence_index")]
+//[Index("GroupId", Name = "slide_channel_tag_group_id_index")]
+//[Index("Sequence", Name = "slide_channel_tag_sequence_index")]
 public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -23,8 +23,12 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
@@ -36,38 +40,39 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public long? Color { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SlideChannelTagCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SlideChannelTagCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("SlideChannelTags")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelTag")] //Many2one
     public virtual SlideChannelTagGroup? Group { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SlideChannelTagWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SlideChannelTagWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("TagId")]
-    //[InverseProperty("Tags")]
-    [NotMapped]
-    public virtual ICollection<SlideChannel> Channels { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("TagId")]
+    // [InverseProperty("Tag")]
+    // public virtual ICollection<SlideChannel> Channel { get; set; }
 }

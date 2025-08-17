@@ -32,7 +32,7 @@ namespace Bamboo.Core.Application
     */
     public class DataSeedService : ApplicationService, IDataSeedService, ITransientDependency
     {
-        private readonly IRepository<IrModelDatum, Guid> _irModelDataRepository;
+        private readonly IRepository<IrModelData, Guid> _irModelDataRepository;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly ICurrentTenant _currentTenant;
         private readonly IServiceProvider _serviceProvider;
@@ -44,7 +44,7 @@ namespace Bamboo.Core.Application
         private readonly Dictionary<string, Guid?> relateInserted = new Dictionary<string, Guid?>();
 
         public DataSeedService(
-            IRepository<IrModelDatum, Guid> irModelDataRepository,
+            IRepository<IrModelData, Guid> irModelDataRepository,
             IUnitOfWorkManager unitOfWorkManager,
             ICurrentTenant currentTenant,
             IServiceProvider serviceProvider,
@@ -180,7 +180,7 @@ namespace Bamboo.Core.Application
                     }
                     var existingXmlIds = existingRecords.Select(r => r.Name).ToHashSet();
                     var entitiesToInsert = new List<object>();
-                    var irModelDataToInsert = new List<IrModelDatum>();
+                    var irModelDataToInsert = new List<IrModelData>();
 
                     foreach (var (record, isNoUpdate) in records)
                     {
@@ -194,7 +194,7 @@ namespace Bamboo.Core.Application
                         if (entity != null)
                         {
                             entitiesToInsert.Add(entity);
-                            irModelDataToInsert.Add(new IrModelDatum
+                            irModelDataToInsert.Add(new IrModelData
                             {
                                 Module = moduleName,
                                 Model = model,
@@ -431,7 +431,7 @@ namespace Bamboo.Core.Application
             {
                 progress = false;
                 var entitiesToUpdate = new List<object>();
-                var irModelDataToInsert = new List<IrModelDatum>();
+                var irModelDataToInsert = new List<IrModelData>();
                 int recorIdx = 0;
                 foreach (var relation in pendingRelations)
                 {
@@ -546,7 +546,7 @@ namespace Bamboo.Core.Application
                     if (!relation.Fields.Any())
                     {
                         entitiesToUpdate.Add(relation.Entity);
-                        irModelDataToInsert.Add(new IrModelDatum
+                        irModelDataToInsert.Add(new IrModelData
                         {
                             Module = relation.Module,
                             Model = model,

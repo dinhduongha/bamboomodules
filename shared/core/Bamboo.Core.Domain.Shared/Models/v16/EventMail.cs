@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_mail")]
-public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -29,14 +34,11 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("interval_nbr")]
     public long? IntervalNbr { get; set; }
 
-    [Column("last_registration_id")]
-    public Guid? LastRegistrationId { get; set; }
-
     [Column("mail_count_done")]
     public long? MailCountDone { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -60,32 +62,28 @@ public partial class EventMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public DateTime? ScheduledDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventMailCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventMailCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EventId")]
-    //[InverseProperty("EventMails")]
-    [NotMapped]
+    // [InverseProperty("EventMail")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
-    //[InverseProperty("Scheduler")]
-    [NotMapped]
-    public virtual ICollection<EventMailRegistration> EventMailRegistrations { get; set; } 
+    // [One2many]
+    [ForeignKey("SchedulerId")]
+    [InverseProperty("Scheduler")]
+    public virtual ICollection<EventMailRegistration> EventMailRegistration { get; set; }
 
-    [ForeignKey("LastRegistrationId")]
-    //[InverseProperty("EventMails")]
-    [NotMapped]
-    public virtual EventRegistration? LastRegistration { get; set; }
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventMailWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventMailWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

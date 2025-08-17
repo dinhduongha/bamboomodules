@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_valuation_layer_revaluation")]
-public partial class StockValuationLayerRevaluation : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +20,9 @@ public partial class StockValuationLayerRevaluation : FullAuditedEntity<Guid>, I
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -34,10 +34,10 @@ public partial class StockValuationLayerRevaluation : FullAuditedEntity<Guid>, I
     public Guid? AccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("reason")]
     public string? Reason { get; set; }
@@ -49,38 +49,38 @@ public partial class StockValuationLayerRevaluation : FullAuditedEntity<Guid>, I
     public decimal? AddedValue { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
+    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountJournalId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
+    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual AccountJournal? AccountJournal { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
+    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockValuationLayerRevaluationCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockValuationLayerRevaluationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] // [Many2one]
+    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockValuationLayerRevaluationWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockValuationLayerRevaluationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

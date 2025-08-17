@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class AccountReconcileModelPartnerMapping: FullAuditedEntity<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class AccountReconcileModelPartnerMapping: FullAuditedEntity<Guid
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,32 +44,28 @@ public partial class AccountReconcileModelPartnerMapping: FullAuditedEntity<Guid
     public string? NarrationRegex { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountReconcileModelPartnerMappingCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountReconcileModelPartnerMappingCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("AccountReconcileModelPartnerMappings")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelPartnerMapping")] //Many2one
     public virtual AccountReconcileModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountReconcileModelPartnerMappings")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelPartnerMapping")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountReconcileModelPartnerMappingWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountReconcileModelPartnerMappingWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

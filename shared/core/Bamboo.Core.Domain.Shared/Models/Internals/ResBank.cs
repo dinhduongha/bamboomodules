@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,17 +10,13 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("res_bank")]
-//[Index("Bic", Name = "res_bank_bic_index")]
-public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+//[Index("Bic", Name = "res_bank__bic_index")]
+public partial class ResBank: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("state")]
     public Guid? State { get; set; }
@@ -30,7 +25,7 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudit
     public Guid? Country { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -63,34 +58,33 @@ public partial class ResBank : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudit
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("Country")]
-    //[InverseProperty("ResBanks")]
-    [NotMapped]
+    // [InverseProperty("ResBank")] //Many2one
     public virtual ResCountry? CountryNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResBankCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResBankCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("BankId")]
+    [InverseProperty("Bank")]
+    public virtual ICollection<ResPartnerBank> ResPartnerBank { get; set; }
+
+    // [Many2one]
     [ForeignKey("State")]
-    //[InverseProperty("ResBanks")]
-    [NotMapped]
+    // [InverseProperty("ResBank")] //Many2one
     public virtual ResCountryState? StateNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResBankWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("Bank")]
-    [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } 
-
+    // [InverseProperty("ResBankWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

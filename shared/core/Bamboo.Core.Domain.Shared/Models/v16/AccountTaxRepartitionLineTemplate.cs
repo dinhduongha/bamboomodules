@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_tax_repartition_line_template")]
-public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountTaxRepartitionLineTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -30,7 +35,7 @@ public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>
     public Guid? RefundTaxId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,7 +47,7 @@ public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>
     public bool? UseInTaxClosing { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -50,47 +55,46 @@ public partial class AccountTaxRepartitionLineTemplate : FullAuditedEntity<Guid>
     [Column("factor_percent")]
     public double? FactorPercent { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxRepartitionLineTemplate")] //Many2one
     public virtual AccountAccountTemplate? Account { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountTaxRepartitionLineTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("InvoiceTaxId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplateInvoiceTaxes")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxRepartitionLineTemplateInvoiceTax")] //Many2one
     public virtual AccountTaxTemplate? InvoiceTax { get; set; }
 
+    // [Many2one]
     [ForeignKey("RefundTaxId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplateRefundTaxes")]
-    [NotMapped]
+    // [InverseProperty("AccountTaxRepartitionLineTemplateRefundTax")] //Many2one
     public virtual AccountTaxTemplate? RefundTax { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountTaxRepartitionLineTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountTaxRepartitionLineTemplateId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplates")]
-    [NotMapped]
-    public virtual ICollection<AccountAccountTag> AccountAccountTags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountTaxRepartitionLineTemplateId")] //Many2many
+    // [InverseProperty("AccountTaxRepartitionLineTemplate")] //Many2many
+    public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
-    [ForeignKey("AccountTaxRepartitionLineTemplateId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplates")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressions { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountTaxRepartitionLineTemplateId")] //Many2many
+    // [InverseProperty("AccountTaxRepartitionLineTemplate")] //Many2many
+    public virtual ICollection<AccountReportExpression> AccountReportExpression { get; set; }
 
-    //[ForeignKey("AccountTaxRepartitionLineTemplateId")]
-    //[InverseProperty("AccountTaxRepartitionLineTemplatesNavigation")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExpression> AccountReportExpressionsNavigation { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountTaxRepartitionLineTemplateId")] //Many2many
+    // [InverseProperty("AccountTaxRepartitionLineTemplateNavigation")] //Many2many
+    public virtual ICollection<AccountReportExpression> AccountReportExpressionNavigation { get; set; }
 }

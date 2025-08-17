@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("utm_medium")]
 //[Index("Name", Name = "utm_medium_unique_name", IsUnique = true)]
-public partial class UtmMedium: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class UtmMedium: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,9 +21,13 @@ public partial class UtmMedium: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -34,51 +39,58 @@ public partial class UtmMedium: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("UtmMediumCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("UtmMediumCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
+
+    // [One2many]
+    [ForeignKey("UtmMediumId")]
+    [InverseProperty("UtmMedium")]
+    public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
+
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<LinkTracker> LinkTracker { get; set; }
+
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<MailingMailing> MailingMailing { get; set; }
+
+    // [One2many]
+    [ForeignKey("MediumId")]
+    [InverseProperty("Medium")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("UtmMediumWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
-
-    //[InverseProperty("UtmMedium")]
-    [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } 
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<LinkTracker> LinkTrackers { get; set; } 
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
-
-    //[InverseProperty("Medium")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
-
+    // [InverseProperty("UtmMediumWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

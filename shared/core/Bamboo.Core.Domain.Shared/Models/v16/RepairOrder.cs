@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,12 +12,12 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("repair_order")]
-//[Index("TenantId", Name = "repair_order_company_id_index")]
+//[Index("CompanyId", Name = "repair_order_company_id_index")]
 //[Index("InvoiceMethod", Name = "repair_order_invoice_method_index")]
 //[Index("LocationId", Name = "repair_order_location_id_index")]
 //[Index("Name", Name = "repair_order_name", IsUnique = true)]
 //[Index("PartnerId", Name = "repair_order_partner_id_index")]
-public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,18 +26,12 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
-
-    [Column("partner_id")]
-    public Guid? PartnerId { get; set; }
-
-    [Column("user_id")]
-    public Guid? UserId { get; set; }
-
-    [Column("move_id")]
-    public Guid? MoveId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -44,64 +39,41 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("product_uom")]
     public Guid? ProductUom { get; set; }
 
-    [Column("lot_id")]
-    public Guid? LotId { get; set; }
+    [Column("partner_id")]
+    public Guid? PartnerId { get; set; }
 
-    [Column("picking_type_id")]
-    public Guid? PickingTypeId { get; set; }
-
-    [Column("procurement_group_id")]
-    public Guid? ProcurementGroupId { get; set; }
-
-    // v16-Compat
     [Column("address_id")]
     public Guid? AddressId { get; set; }
 
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
-    [Column("product_location_src_id")]
-    public Guid? ProductLocationSrcId { get; set; }
+    [Column("lot_id")]
+    public Guid? LotId { get; set; }
 
-    [Column("product_location_dest_id")]
-    public Guid? ProductLocationDestId { get; set; }
-
-    [Column("location_dest_id")]
-    public Guid? LocationDestId { get; set; }
-
-    [Column("parts_location_id")]
-    public Guid? PartsLocationId { get; set; }
-
-    [Column("recycle_location_id")]
-    public Guid? RecycleLocationId { get; set; }
-
-    // v16-Compat
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
 
-    // v16-Compat
     [Column("partner_invoice_id")]
     public Guid? PartnerInvoiceId { get; set; }
 
-    // v16-Compat
     [Column("invoice_id")]
     public Guid? InvoiceId { get; set; }
 
-    // v16-Compat
-    // [Column("move_id")]
-    // public Guid? MoveId { get; set; }
+    [Column("move_id")]
+    public Guid? MoveId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
-
-    [Column("sale_order_line_id")]
-    public Guid? SaleOrderLineId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -109,183 +81,162 @@ public partial class RepairOrder : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("name")]
     public string? Name { get; set; }
 
-    // v16-Compat
     [Column("description")]
     public string? Description { get; set; }
 
     [Column("state")]
     public string? State { get; set; }
 
-    // v16-Compat
     [Column("invoice_method")]
     public string? InvoiceMethod { get; set; }
 
     [Column("priority")]
     public string? Priority { get; set; }
 
-    [JsonField]
-    [Column("repair_properties", TypeName = "jsonb")]
-    public string? RepairProperties { get; set; }
+    [Column("schedule_date")]
+    public DateTime? ScheduleDate { get; set; }
 
-    // v16-Compat
-    // [Column("schedule_date")]
-    // public DateTime? ScheduleDate { get; set; }
-
-    // v16-Compat
     [Column("guarantee_limit")]
     public DateTime? GuaranteeLimit { get; set; }
 
     [Column("internal_notes")]
     public string? InternalNotes { get; set; }
 
-    // v16-Compat
     [Column("quotation_notes")]
     public string? QuotationNotes { get; set; }
 
     [Column("product_qty")]
     public decimal? ProductQty { get; set; }
 
-    [Column("under_warranty")]
-    public bool? UnderWarranty { get; set; }
-
-    [Column("is_parts_available")]
-    public bool? IsPartsAvailable { get; set; }
-
-    [Column("is_parts_late")]
-    public bool? IsPartsLate { get; set; }
-
-    [Column("schedule_date", TypeName = "timestamp without time zone")]
-    public DateTime? ScheduleDate { get; set; }
-
-    // v16-Compat
     [Column("invoiced")]
     public bool? Invoiced { get; set; }
 
-    // v16-Compat
     [Column("repaired")]
     public bool? Repaired { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
     [Column("amount_untaxed")]
     public double? AmountUntaxed { get; set; }
 
-    // v16-Compat
     [Column("amount_tax")]
     public double? AmountTax { get; set; }
 
-    // v16-Compat
     [Column("amount_total")]
     public double? AmountTotal { get; set; }
 
+    // [Many2one]
     [ForeignKey("AddressId")]
-    //[InverseProperty("RepairOrderAddresses")]
-    [NotMapped]
+    // [InverseProperty("RepairOrderAddress")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("RepairOrderCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("RepairOrderCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("InvoiceId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual AccountMove? Invoice { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [Many2one]
     [ForeignKey("LotId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual StockMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("RepairOrderPartners")]
-    [NotMapped]
+    // [InverseProperty("RepairOrderPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerInvoiceId")]
-    //[InverseProperty("RepairOrderPartnerInvoices")]
-    [NotMapped]
+    // [InverseProperty("RepairOrderPartnerInvoice")] //Many2one
     public virtual ResPartner? PartnerInvoice { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
+    // [Many2one]
     [ForeignKey("PricelistId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual ProductPricelist? Pricelist { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUom")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual UomUom? ProductUomNavigation { get; set; }
 
+    // [One2many]
+    [ForeignKey("RepairId")]
+    [InverseProperty("Repair")]
+    public virtual ICollection<RepairFee> RepairFee { get; set; }
+
+    // [One2many]
+    [ForeignKey("RepairId")]
+    [InverseProperty("Repair")]
+    public virtual ICollection<RepairLine> RepairLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("SaleOrderId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
+    // [One2many]
+    [ForeignKey("RepairId")]
+    [InverseProperty("Repair")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("RepairId")]
+    [InverseProperty("Repair")]
+    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepair { get; set; }
+
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("RepairOrderUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("RepairOrderUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("RepairOrderWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("RepairOrderWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Repair")]
-    [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; set; } 
-
-    //[InverseProperty("Repair")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } 
-
-    //[InverseProperty("Repair")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
-
-    //[InverseProperty("Repair")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyRepair> StockWarnInsufficientQtyRepairs { get; set; } 
-
-    [ForeignKey("RepairOrderId")]
-    //[InverseProperty("RepairOrders")]
-    [NotMapped]
-    public virtual ICollection<RepairTag> RepairTags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RepairOrderId")] //Many2many
+    // [InverseProperty("RepairOrder")] //Many2many
+    public virtual ICollection<RepairTags> RepairTags { get; set; }
 }

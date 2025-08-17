@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_leave_accrual_level")]
-public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -44,18 +49,14 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("yearly_day")]
     public long? YearlyDay { get; set; }
 
-    // v16-Compat
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
     [Column("postpone_max_days")]
     public long? PostponeMaxDays { get; set; }
 
-    [Column("accrual_validity_count")]
-    public long? AccrualValidityCount { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -84,77 +85,43 @@ public partial class HrLeaveAccrualLevel : FullAuditedEntity<Guid>, IEntityDto<G
     [Column("action_with_unused_accruals")]
     public string? ActionWithUnusedAccruals { get; set; }
 
-    [Column("accrual_validity_type")]
-    public string? AccrualValidityType { get; set; }
-
     [Column("added_value")]
     public decimal? AddedValue { get; set; }
 
-    [Column("maximum_leave")]
-    public decimal? MaximumLeave { get; set; }
-
-    [Column("maximum_leave_yearly")]
-    public decimal? MaximumLeaveYearly { get; set; }
-
-    [Column("cap_accrued_time")]
-    public bool? CapAccruedTime { get; set; }
-
-    [Column("cap_accrued_time_yearly")]
-    public bool? CapAccruedTimeYearly { get; set; }
-
-    [Column("accrual_validity")]
-    public bool? AccrualValidity { get; set; }
-
-    // v16-Compat
     [Column("is_based_on_worked_time")]
     public bool? IsBasedOnWorkedTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("frequency_hourly_source")]
-    public string? FrequencyHourlySource { get; set; }
+    [Column("maximum_leave")]
+    public double? MaximumLeave { get; set; }
 
-    // v16-Compat
-    // [Column("added_value")]
-    // public double? AddedValue { get; set; }
-
-    // v16-Compat
-    // [Column("maximum_leave")]
-    // public double? MaximumLeave { get; set; }
-
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("AccrualPlanId")]
-    //[InverseProperty("HrLeaveAccrualLevels")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveAccrualLevel")] //Many2one
     public virtual HrLeaveAccrualPlan? AccrualPlan { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrLeaveAccrualLevelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrLeaveAccrualLevelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual HrLeaveAccrualLevel? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrLeaveAccrualLevelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    // v16-Compat
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; set; } 
-
+    // [InverseProperty("HrLeaveAccrualLevelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

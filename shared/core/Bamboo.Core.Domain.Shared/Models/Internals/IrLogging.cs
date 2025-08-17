@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,22 +10,18 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_logging")]
-//[Index("Dbname", Name = "ir_logging_dbname_index")]
-//[Index("Level", Name = "ir_logging_level_index")]
-//[Index("Type", Name = "ir_logging_type_index")]
-public partial class IrLogging: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("Dbname", Name = "ir_logging__dbname_index")]
+//[Index("Level", Name = "ir_logging__level_index")]
+//[Index("Type", Name = "ir_logging__type_index")]
+public partial class IrLogging: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -56,7 +51,7 @@ public partial class IrLogging: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? Message { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }

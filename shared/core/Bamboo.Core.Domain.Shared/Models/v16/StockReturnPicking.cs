@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_return_picking")]
-public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockReturnPicking: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,76 +21,69 @@ public partial class StockReturnPicking : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
 
-    // v16-Compat
     [Column("original_location_id")]
     public Guid? OriginalLocationId { get; set; }
 
-    // v16-Compat
     [Column("parent_location_id")]
     public Guid? ParentLocationId { get; set; }
 
-    // v16-Compat
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
     [Column("move_dest_exists")]
     public bool? MoveDestExists { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockReturnPickingCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockReturnPickingCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("StockReturnPickingLocations")]
-    [NotMapped]
+    // [InverseProperty("StockReturnPickingLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("OriginalLocationId")]
-    //[InverseProperty("StockReturnPickingOriginalLocations")]
-    [NotMapped]
+    // [InverseProperty("StockReturnPickingOriginalLocation")] //Many2one
     public virtual StockLocation? OriginalLocation { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("ParentLocationId")]
-    //[InverseProperty("StockReturnPickingParentLocations")]
-    [NotMapped]
+    // [InverseProperty("StockReturnPickingParentLocation")] //Many2one
     public virtual StockLocation? ParentLocation { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingId")]
-    //[InverseProperty("StockReturnPickings")]
-    [NotMapped]
+    // [InverseProperty("StockReturnPicking")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
-    //[InverseProperty("Wizard")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLines { get; set; } 
+    // [One2many]
+    [ForeignKey("WizardId")]
+    [InverseProperty("Wizard")]
+    public virtual ICollection<StockReturnPickingLine> StockReturnPickingLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockReturnPickingWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockReturnPickingWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

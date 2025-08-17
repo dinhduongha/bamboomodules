@@ -25,8 +25,8 @@ namespace Bamboo.Core.Application
     {
         private readonly ICurrentUser _currentUser;
         private readonly ICurrentTenant _currentTenant;
-        private readonly IRepository<ResUser, Guid> _resUserRepository;
-        private readonly IRepository<ResGroup, Guid> _resGroupRepository;
+        private readonly IRepository<ResUsers, Guid> _resUserRepository;
+        private readonly IRepository<ResGroups, Guid> _resGroupRepository;
         private readonly IRepository<IrModel, Guid> _modelRepository;
         private readonly IRepository<IrModelFields, Guid> _fieldRepository;
         private readonly IMemoryCache _memoryCache;
@@ -36,8 +36,8 @@ namespace Bamboo.Core.Application
         public DomainParser(
             ICurrentUser currentUser,
             ICurrentTenant currentTenant,
-            IRepository<ResUser, Guid> resUserRepository,
-            IRepository<ResGroup, Guid> resGroupRepository,
+            IRepository<ResUsers, Guid> resUserRepository,
+            IRepository<ResGroups, Guid> resGroupRepository,
             IRepository<IrModel, Guid> modelRepository,
             IRepository<IrModelFields, Guid> fieldRepository,
             IMemoryCache memoryCache,

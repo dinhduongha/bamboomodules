@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_scrap")]
-public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockScrap: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,7 +21,10 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -39,7 +43,6 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("owner_id")]
     public Guid? OwnerId { get; set; }
 
-    // v16-Compat
     [Column("move_id")]
     public Guid? MoveId { get; set; }
 
@@ -53,7 +56,7 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? ScrapLocationId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -70,14 +73,11 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("scrap_qty")]
     public decimal? ScrapQty { get; set; }
 
-    [Column("should_replenish")]
-    public bool? ShouldReplenish { get; set; }
-
     [Column("date_done", TypeName = "timestamp without time zone")]
     public DateTime? DateDone { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -88,94 +88,83 @@ public partial class StockScrap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("workorder_id")]
     public Guid? WorkorderId { get; set; }
 
-    [Column("bom_id")]
-    public Guid? BomId { get; set; }
-
-    [ForeignKey("BomId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
-    public virtual MrpBom? Bom { get; set; }
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockScrapCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockScrapCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("StockScrapLocations")]
-    [NotMapped]
+    // [InverseProperty("StockScrapLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [Many2one]
     [ForeignKey("LotId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual StockMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("OwnerId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual ResPartner? Owner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PackageId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual StockQuantPackage? Package { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductionId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual MrpProduction? Production { get; set; }
 
+    // [Many2one]
     [ForeignKey("ScrapLocationId")]
-    //[InverseProperty("StockScrapScrapLocations")]
-    [NotMapped]
+    // [InverseProperty("StockScrapScrapLocation")] //Many2one
     public virtual StockLocation? ScrapLocation { get; set; }
 
+    // [One2many]
+    [ForeignKey("ScrapId")]
+    [InverseProperty("Scrap")]
+    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrap { get; set; }
+
+    // [Many2one]
     [ForeignKey("WorkorderId")]
-    //[InverseProperty("StockScraps")]
-    [NotMapped]
+    // [InverseProperty("StockScrap")] //Many2one
     public virtual MrpWorkorder? Workorder { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockScrapWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Scrap")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScraps { get; set; } 
-
-
+    // [InverseProperty("StockScrapWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

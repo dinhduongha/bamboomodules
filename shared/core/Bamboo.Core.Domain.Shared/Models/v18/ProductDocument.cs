@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("ir_attachment_id")]
     public Guid? IrAttachmentId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,7 +41,7 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -50,28 +55,30 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("shown_on_product_page")]
     public bool? ShownOnProductPage { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductDocumentCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductDocumentCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("IrAttachmentId")]
-    //[InverseProperty("ProductDocuments")]
-    [NotMapped]
+    // [InverseProperty("ProductDocument")] //Many2one
     public virtual IrAttachment? IrAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductDocumentWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductDocumentWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ProductDocumentId")]
-    //[InverseProperty("ProductDocuments")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductDocumentId")]
+    // [InverseProperty("ProductDocument")]
+    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
-    [ForeignKey("ProductDocumentId")]
-    //[InverseProperty("ProductDocuments")]
-    [NotMapped]
-    public virtual ICollection<SalePdfFormField> SalePdfFormFields { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductDocumentId")] //Many2many
+    // [InverseProperty("ProductDocument")] //Many2many
+    public virtual ICollection<SalePdfFormField> SalePdfFormField { get; set; }
 }

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -16,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("delivery_zip_prefix")]
 //[Index("Name", Name = "delivery_zip_prefix_name_uniq", IsUnique = true)]
-public partial class DeliveryZipPrefix : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DeliveryZipPrefix: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,34 +22,38 @@ public partial class DeliveryZipPrefix : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DeliveryZipPrefixCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DeliveryZipPrefixCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DeliveryZipPrefixWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DeliveryZipPrefixWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // [One2many]
-    [ForeignKey("ZipPrefixId")]
-    // [NotMapped] // One2many
-    // [InverseProperty("ZipPrefix")]  //[One2many]
-    public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ZipPrefixId")]
+    // [InverseProperty("ZipPrefix")]
+    // public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
 }

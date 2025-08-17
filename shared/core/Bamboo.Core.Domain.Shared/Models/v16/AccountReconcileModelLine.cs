@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,11 +21,15 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -33,15 +38,12 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat json
-    //[Column("label")]
-    [JsonField]
-    [Column("label", TypeName = "jsonb")]
+    [Column("label")]
     public string? Label { get; set; }
 
     [Column("amount_type")]
@@ -58,7 +60,7 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     public bool? ForceTaxIncluded { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -66,38 +68,39 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("amount")]
     public double? Amount { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("AccountReconcileModelLines")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountReconcileModelLines")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountReconcileModelLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountReconcileModelLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountReconcileModelLines")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("AccountReconcileModelLines")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual AccountReconcileModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountReconcileModelLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountReconcileModelLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountReconcileModelLineId")]
-    //[InverseProperty("AccountReconcileModelLines")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountReconcileModelLineId")] //Many2many
+    // [InverseProperty("AccountReconcileModelLine")] //Many2many
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

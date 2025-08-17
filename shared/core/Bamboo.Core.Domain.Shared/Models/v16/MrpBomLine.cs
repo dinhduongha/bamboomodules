@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,9 +13,9 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_bom_line")]
 //[Index("BomId", Name = "mrp_bom_line_bom_id_index")]
-//[Index("TenantId", Name = "mrp_bom_line_company_id_index")]
+//[Index("CompanyId", Name = "mrp_bom_line_company_id_index")]
 //[Index("ProductTmplId", Name = "mrp_bom_line_product_tmpl_id_index")]
-public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpBomLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +23,10 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -42,7 +47,7 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? OperationId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,7 +59,7 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public bool? ManualConsumption { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -62,52 +67,54 @@ public partial class MrpBomLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("cost_share")]
     public decimal? CostShare { get; set; }
 
+    // [Many2one]
     [ForeignKey("BomId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
+    // [InverseProperty("MrpBomLine")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
+    // [InverseProperty("MrpBomLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpBomLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MrpBomLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("OperationId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
+    // [InverseProperty("MrpBomLine")] //Many2one
     public virtual MrpRoutingWorkcenter? Operation { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
+    // [InverseProperty("MrpBomLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductTmplId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
+    // [InverseProperty("MrpBomLine")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
+    // [InverseProperty("MrpBomLine")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
-    //[InverseProperty("BomLine")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
+    // [One2many]
+    [ForeignKey("BomLineId")]
+    [InverseProperty("BomLine")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpBomLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MrpBomLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MrpBomLineId")]
-    //[InverseProperty("MrpBomLines")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValues { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MrpBomLineId")] //Many2many
+    // [InverseProperty("MrpBomLine")] //Many2many
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

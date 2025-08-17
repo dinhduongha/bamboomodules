@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_picking_type")]
-//[Index("TenantId", Name = "stock_picking_type_company_id_index")]
-public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "stock_picking_type_company_id_index")]
+public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -49,7 +54,7 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     public long? ReservationDaysBeforePriority { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -63,31 +68,15 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("reservation_method")]
     public string? ReservationMethod { get; set; }
 
-    [Column("product_label_format")]
-    public string? ProductLabelFormat { get; set; }
-
-    [Column("lot_label_format")]
-    public string? LotLabelFormat { get; set; }
-
-    [Column("package_label_to_print")]
-    public string? PackageLabelToPrint { get; set; }
-
     [Column("barcode")]
     public string? Barcode { get; set; }
 
     [Column("create_backorder")]
     public string? CreateBackorder { get; set; }
 
-    [Column("move_type")]
-    public string? MoveType { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
-
-    [JsonField]
-    [Column("picking_properties_definition", TypeName = "jsonb")]
-    public string? PickingPropertiesDefinition { get; set; }
+    public string? Name { get; set; }
 
     [Column("show_entire_packs")]
     public bool? ShowEntirePacks { get; set; }
@@ -107,230 +96,209 @@ public partial class StockPickingType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("show_operations")]
     public bool? ShowOperations { get; set; }
 
-    // v16-Compat
     [Column("show_reserved")]
     public bool? ShowReserved { get; set; }
 
     [Column("auto_show_reception_report")]
     public bool? AutoShowReceptionReport { get; set; }
 
-    [Column("auto_print_delivery_slip")]
-    public bool? AutoPrintDeliverySlip { get; set; }
-
-    [Column("auto_print_return_slip")]
-    public bool? AutoPrintReturnSlip { get; set; }
-
-    [Column("auto_print_product_labels")]
-    public bool? AutoPrintProductLabels { get; set; }
-
-    [Column("auto_print_lot_labels")]
-    public bool? AutoPrintLotLabels { get; set; }
-
-    [Column("auto_print_reception_report")]
-    public bool? AutoPrintReceptionReport { get; set; }
-
-    [Column("auto_print_reception_report_labels")]
-    public bool? AutoPrintReceptionReportLabels { get; set; }
-
-    [Column("auto_print_packages")]
-    public bool? AutoPrintPackages { get; set; }
-
-    [Column("auto_print_package_label")]
-    public bool? AutoPrintPackageLabel { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("analytic_costs")]
-    public bool? AnalyticCosts { get; set; }
-
-    [Column("default_product_location_src_id")]
-    public Guid? DefaultProductLocationSrcId { get; set; }
-
-    [Column("default_product_location_dest_id")]
-    public Guid? DefaultProductLocationDestId { get; set; }
-
-    [Column("default_remove_location_dest_id")]
-    public Guid? DefaultRemoveLocationDestId { get; set; }
-
-    [Column("default_recycle_location_dest_id")]
-    public Guid? DefaultRecycleLocationDestId { get; set; }
-
-    [JsonField]
-    [Column("repair_properties_definition", TypeName = "jsonb")]
-    public string? RepairPropertiesDefinition { get; set; }
-
     [Column("is_repairable")]
     public bool? IsRepairable { get; set; }
-
-    [Column("mrp_product_label_to_print")]
-    public string? MrpProductLabelToPrint { get; set; }
-
-    [Column("done_mrp_lot_label_to_print")]
-    public string? DoneMrpLotLabelToPrint { get; set; }
-
-    [Column("generated_mrp_lot_label_to_print")]
-    public string? GeneratedMrpLotLabelToPrint { get; set; }
 
     [Column("use_create_components_lots")]
     public bool? UseCreateComponentsLots { get; set; }
 
-    // v16-Compat
     [Column("use_auto_consume_components_lots")]
     public bool? UseAutoConsumeComponentsLots { get; set; }
 
-    [Column("auto_print_done_production_order")]
-    public bool? AutoPrintDoneProductionOrder { get; set; }
+    [Column("batch_max_lines")]
+    public long? BatchMaxLines { get; set; }
 
-    [Column("auto_print_done_mrp_product_labels")]
-    public bool? AutoPrintDoneMrpProductLabels { get; set; }
+    [Column("batch_max_pickings")]
+    public long? BatchMaxPickings { get; set; }
 
-    [Column("auto_print_done_mrp_lot")]
-    public bool? AutoPrintDoneMrpLot { get; set; }
+    [Column("auto_batch")]
+    public bool? AutoBatch { get; set; }
 
-    [Column("auto_print_mrp_reception_report")]
-    public bool? AutoPrintMrpReceptionReport { get; set; }
+    [Column("batch_group_by_partner")]
+    public bool? BatchGroupByPartner { get; set; }
 
-    [Column("auto_print_mrp_reception_report_labels")]
-    public bool? AutoPrintMrpReceptionReportLabels { get; set; }
+    [Column("batch_group_by_destination")]
+    public bool? BatchGroupByDestination { get; set; }
 
-    [Column("auto_print_generated_mrp_lot")]
-    public bool? AutoPrintGeneratedMrpLot { get; set; }
+    [Column("batch_group_by_src_loc")]
+    public bool? BatchGroupBySrcLoc { get; set; }
 
+    [Column("batch_group_by_dest_loc")]
+    public bool? BatchGroupByDestLoc { get; set; }
+
+    [Column("batch_auto_confirm")]
+    public bool? BatchAutoConfirm { get; set; }
+
+    [Column("batch_max_weight")]
+    public long? BatchMaxWeight { get; set; }
+
+    [Column("batch_group_by_carrier")]
+    public bool? BatchGroupByCarrier { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockPickingTypes")]
-    [NotMapped]
+    // [InverseProperty("StockPickingType")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockPickingTypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockPickingTypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefaultLocationDestId")]
-    //[InverseProperty("StockPickingTypeDefaultLocationDests")]
-    [NotMapped]
+    // [InverseProperty("StockPickingTypeDefaultLocationDest")] //Many2one
     public virtual StockLocation? DefaultLocationDest { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefaultLocationSrcId")]
-    //[InverseProperty("StockPickingTypeDefaultLocationSrcs")]
-    [NotMapped]
+    // [InverseProperty("StockPickingTypeDefaultLocationSrc")] //Many2one
     public virtual StockLocation? DefaultLocationSrc { get; set; }
 
-    [ForeignKey("DefaultProductLocationDestId")]
-    //[InverseProperty("StockPickingTypeDefaultProductLocationDests")]
-    [NotMapped]
-    public virtual StockLocation? DefaultProductLocationDest { get; set; }
-
-    [ForeignKey("DefaultProductLocationSrcId")]
-    //[InverseProperty("StockPickingTypeDefaultProductLocationSrcs")]
-    [NotMapped]
-    public virtual StockLocation? DefaultProductLocationSrc { get; set; }
-
-    [ForeignKey("DefaultRecycleLocationDestId")]
-    //[InverseProperty("StockPickingTypeDefaultRecycleLocationDests")]
-    [NotMapped]
-    public virtual StockLocation? DefaultRecycleLocationDest { get; set; }
-
-    [ForeignKey("DefaultRemoveLocationDestId")]
-    //[InverseProperty("StockPickingTypeDefaultRemoveLocationDests")]
-    [NotMapped]
-    public virtual StockLocation? DefaultRemoveLocationDest { get; set; }
-
+    // [One2many]
     [ForeignKey("ReturnPickingTypeId")]
-    //[InverseProperty("InverseReturnPickingType")]
-    [NotMapped]
+    [InverseProperty("ReturnPickingType")]
+    public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<MrpBom> MrpBom { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
+
+    // [One2many]
+    [ForeignKey("DropshipSubcontractorPickTypeId")]
+    [InverseProperty("DropshipSubcontractorPickType")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ReturnPickingTypeId")]
+    // [InverseProperty("InverseReturnPickingType")] //Many2one
     public virtual StockPickingType? ReturnPickingType { get; set; }
 
+    // [Many2one]
     [ForeignKey("SequenceId")]
-    //[InverseProperty("StockPickingTypes")]
-    [NotMapped]
+    // [InverseProperty("StockPickingType")] //Many2one
     public virtual IrSequence? SequenceNavigation { get; set; }
 
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<StockPicking> StockPicking { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingTypeId")]
+    [InverseProperty("PickingType")]
+    public virtual ICollection<StockRule> StockRule { get; set; }
+
+    // [One2many]
+    [ForeignKey("InTypeId")]
+    [InverseProperty("InType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseInType { get; set; }
+
+    // [One2many]
+    [ForeignKey("IntTypeId")]
+    [InverseProperty("IntType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseIntType { get; set; }
+
+    // [One2many]
+    [ForeignKey("ManuTypeId")]
+    [InverseProperty("ManuType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseManuType { get; set; }
+
+    // [One2many]
+    [ForeignKey("OutTypeId")]
+    [InverseProperty("OutType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseOutType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PackTypeId")]
+    [InverseProperty("PackType")]
+    public virtual ICollection<StockWarehouse> StockWarehousePackType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PbmTypeId")]
+    [InverseProperty("PbmType")]
+    public virtual ICollection<StockWarehouse> StockWarehousePbmType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickTypeId")]
+    [InverseProperty("PickType")]
+    public virtual ICollection<StockWarehouse> StockWarehousePickType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosTypeId")]
+    [InverseProperty("PosType")]
+    public virtual ICollection<StockWarehouse> StockWarehousePosType { get; set; }
+
+    // [One2many]
+    [ForeignKey("ReturnTypeId")]
+    [InverseProperty("ReturnType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseReturnType { get; set; }
+
+    // [One2many]
+    [ForeignKey("SamTypeId")]
+    [InverseProperty("SamType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseSamType { get; set; }
+
+    // [One2many]
+    [ForeignKey("SubcontractingResupplyTypeId")]
+    [InverseProperty("SubcontractingResupplyType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingResupplyType { get; set; }
+
+    // [One2many]
+    [ForeignKey("SubcontractingTypeId")]
+    [InverseProperty("SubcontractingType")]
+    public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingType { get; set; }
+
+    // [Many2one]
     [ForeignKey("WarehouseId")]
-    //[InverseProperty("StockPickingTypes")]
-    [NotMapped]
+    // [InverseProperty("StockPickingType")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockPickingTypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    /// TODO: DISABLE INVERSE
-    //[InverseProperty("ReturnPickingType")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } 
-
-    //[InverseProperty("PickingType")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } 
-
-    //[InverseProperty("InType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseInTypes { get; set; } 
-
-    //[InverseProperty("IntType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseIntTypes { get; set; } 
-
-    //[InverseProperty("ManuType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseManuTypes { get; set; } 
-
-    //[InverseProperty("OutType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseOutTypes { get; set; } 
-
-    //[InverseProperty("PackType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePackTypes { get; set; } 
-
-    //[InverseProperty("PbmType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePbmTypes { get; set; } 
-
-    //[InverseProperty("PickType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePickTypes { get; set; } 
-
-    //[InverseProperty("PosType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehousePosTypes { get; set; } 
-
-    //[InverseProperty("ReturnType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseReturnTypes { get; set; } 
-
-    //[InverseProperty("SamType")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouseSamTypes { get; set; } 
-
+    // [InverseProperty("StockPickingTypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

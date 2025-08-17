@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -14,8 +15,10 @@ namespace Bamboo.Core.Models;
 //[Index("AccountId", Name = "account_analytic_line_account_id_index")]
 //[Index("Date", Name = "account_analytic_line_date_index")]
 //[Index("MoveLineId", Name = "account_analytic_line_move_line_id_index")]
+//[Index("OrderId", Name = "account_analytic_line_order_id_index")]
+//[Index("ProjectId", Name = "account_analytic_line_project_id_index")]
 //[Index("UserId", Name = "account_analytic_line_user_id_index")]
-public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,11 +27,15 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("account_id")]
-    public Guid? AccountId { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
+
+    [Column("account_id")]
+    public Guid? AccountId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -39,12 +46,11 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
-    // v16-Compat
     [Column("plan_id")]
     public Guid? PlanId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -62,19 +68,13 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public decimal? Amount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("unit_amount")]
     public double? UnitAmount { get; set; }
-
-    [Column("x_plan2_id")]
-    public Guid? XPlan2Id { get; set; }
-
-    [Column("x_plan3_id")]
-    public Guid? XPlan3Id { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -97,112 +97,174 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("so_line")]
     public Guid? SoLine { get; set; }
 
+    [Column("task_id")]
+    public Guid? TaskId { get; set; }
+
+    [Column("ancestor_task_id")]
+    public Guid? AncestorTaskId { get; set; }
+
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
+
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
+
+    [Column("department_id")]
+    public Guid? DepartmentId { get; set; }
+
+    [Column("manager_id")]
+    public Guid? ManagerId { get; set; }
+
+    [Column("holiday_id")]
+    public Guid? HolidayId { get; set; }
+
+    [Column("global_leave_id")]
+    public Guid? GlobalLeaveId { get; set; }
+
+    [Column("timesheet_invoice_id")]
+    public Guid? TimesheetInvoiceId { get; set; }
+
+    [Column("order_id")]
+    public Guid? OrderId { get; set; }
+
+    [Column("timesheet_invoice_type")]
+    public string? TimesheetInvoiceType { get; set; }
+
+    [Column("is_so_line_edited")]
+    public bool? IsSoLineEdited { get; set; }
+
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountAnalyticAccount? Account { get; set; }
 
+    // [Many2one]
+    [ForeignKey("AncestorTaskId")]
+    // [InverseProperty("AccountAnalyticLineAncestorTask")] //Many2one
+    public virtual ProjectTask? AncestorTask { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAnalyticLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAnalyticLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
+    [ForeignKey("DepartmentId")]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
+    public virtual HrDepartment? Department { get; set; }
+
+    // [Many2one]
+    [ForeignKey("EmployeeId")]
+    // [InverseProperty("AccountAnalyticLineEmployee")] //Many2one
+    public virtual HrEmployee? Employee { get; set; }
+
+    // [Many2one]
     [ForeignKey("GeneralAccountId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountAccount? GeneralAccount { get; set; }
 
+    // [Many2one]
+    [ForeignKey("GlobalLeaveId")]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
+    public virtual ResourceCalendarLeaves? GlobalLeave { get; set; }
+
+    // [Many2one]
+    [ForeignKey("HolidayId")]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
+    public virtual HrLeave? Holiday { get; set; }
+
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
+    [ForeignKey("ManagerId")]
+    // [InverseProperty("AccountAnalyticLineManager")] //Many2one
+    public virtual HrEmployee? Manager { get; set; }
+
+    // [Many2one]
     [ForeignKey("MoveLineId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountMoveLine? MoveLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("MoAnalyticAccountLineId")]
+    [InverseProperty("MoAnalyticAccountLine")]
+    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("WcAnalyticAccountLineId")]
+    [InverseProperty("WcAnalyticAccountLine")]
+    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLine { get; set; }
+
+    // [Many2one]
+    [ForeignKey("OrderId")]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
+    public virtual SaleOrder? Order { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("PlanId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountAnalyticPlan? Plan { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [Many2one]
+    [ForeignKey("ProjectId")]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
+    public virtual ProjectProject? Project { get; set; }
+
+    // [Many2one]
     [ForeignKey("SoLine")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual SaleOrderLine? SoLineNavigation { get; set; }
 
-    //[InverseProperty("AnalyticAccountLine")]
-    //public virtual ICollection<StockMove> StockMoves { get; set; } 
+    // [One2many]
+    [ForeignKey("AnalyticAccountLineId")]
+    [InverseProperty("AnalyticAccountLine")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
 
-    // [ForeignKey("AccountAnalyticLineId")]
-    // //[InverseProperty("AnalyticAccountLine")]
-    // [NotMapped]
-    // public virtual ICollection<StockMove> StockMoves { get; set; } 
+    // [Many2one]
+    [ForeignKey("TaskId")]
+    // [InverseProperty("AccountAnalyticLineTask")] //Many2one
+    public virtual ProjectTask? Task { get; set; }
 
+    // [Many2one]
+    [ForeignKey("TimesheetInvoiceId")]
+    // [InverseProperty("AccountAnalyticLine")] //Many2one
+    public virtual AccountMove? TimesheetInvoice { get; set; }
+
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("AccountAnalyticLineUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("AccountAnalyticLineUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAnalyticLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    [ForeignKey("XPlan2Id")]
-    //[InverseProperty("AccountAnalyticLineXPlan2s")]
-    [NotMapped]
-    public virtual AccountAnalyticAccount? XPlan2 { get; set; }
-
-    [ForeignKey("XPlan3Id")]
-    //[InverseProperty("AccountAnalyticLineXPlan3s")]
-    [NotMapped]
-    public virtual AccountAnalyticAccount? XPlan3 { get; set; }
-
-    // v16-Compat
-    //[InverseProperty("MoAnalyticAccountLine")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLines { get; set; } 
-
-    // v16-Compat
-    //[InverseProperty("WcAnalyticAccountLine")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLines { get; set; } 
-
-    [ForeignKey("AccountAnalyticLineId")]
-    //[InverseProperty("AccountAnalyticLines")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
-
-    [ForeignKey("AccountAnalyticLineId")]
-    //[InverseProperty("AccountAnalyticLinesNavigation")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkordersNavigation { get; set; } 
+    // [InverseProperty("AccountAnalyticLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

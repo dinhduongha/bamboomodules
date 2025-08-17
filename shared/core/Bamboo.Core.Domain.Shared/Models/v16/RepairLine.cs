@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("repair_line")]
-//[Index("TenantId", Name = "repair_line_company_id_index")]
+//[Index("CompanyId", Name = "repair_line_company_id_index")]
 //[Index("LocationDestId", Name = "repair_line_location_dest_id_index")]
 //[Index("LocationId", Name = "repair_line_location_id_index")]
 //[Index("RepairId", Name = "repair_line_repair_id_index")]
-public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +24,10 @@ public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("repair_id")]
     public Guid? RepairId { get; set; }
@@ -49,7 +54,7 @@ public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? LotId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -79,68 +84,69 @@ public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public bool? Invoiced { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("RepairLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("RepairLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("InvoiceLineId")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual AccountMoveLine? InvoiceLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("RepairLineLocations")]
-    [NotMapped]
+    // [InverseProperty("RepairLineLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationDestId")]
-    //[InverseProperty("RepairLineLocationDests")]
-    [NotMapped]
+    // [InverseProperty("RepairLineLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
+    // [Many2one]
     [ForeignKey("LotId")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual StockMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUom")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual UomUom? ProductUomNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("RepairId")]
-    //[InverseProperty("RepairLines")]
-    [NotMapped]
+    // [InverseProperty("RepairLine")] //Many2one
     public virtual RepairOrder? Repair { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("RepairLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("RepairLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("RepairOperationLineId")]
-    //[InverseProperty("RepairOperationLines")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RepairOperationLineId")] //Many2many
+    // [InverseProperty("RepairOperationLine")] //Many2many
+    public virtual ICollection<AccountTax> Tax { get; set; }
 }

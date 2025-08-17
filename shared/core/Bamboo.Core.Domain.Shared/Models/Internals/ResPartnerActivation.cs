@@ -11,23 +11,20 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("res_partner_activation")]
-public partial class ResPartnerActivation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerActivation: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -36,20 +33,23 @@ public partial class ResPartnerActivation: FullAuditedEntity<Guid>, IEntityDto<G
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResPartnerActivationCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResPartnerActivationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("ActivationNavigation") //Many2many
-    public virtual ICollection<ResPartner> ResPartners { get; set; } = null;
+    // [One2many]
+    [ForeignKey("Activation")]
+    [InverseProperty("ActivationNavigation")]
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResPartnerActivationWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ResPartnerActivationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

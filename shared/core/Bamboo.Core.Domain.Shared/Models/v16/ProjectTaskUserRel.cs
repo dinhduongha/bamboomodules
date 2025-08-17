@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -14,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("TaskId", "UserId", Name = "project_task_user_rel_project_personal_stage_unique", IsUnique = true)]
 //[Index("TaskId", Name = "project_task_user_rel_task_id_index")]
 //[Index("UserId", Name = "project_task_user_rel_user_id_index")]
-public partial class ProjectTaskUserRel : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectTaskUserRel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +23,10 @@ public partial class ProjectTaskUserRel : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("task_id")]
     public Guid? TaskId { get; set; }
@@ -33,43 +38,39 @@ public partial class ProjectTaskUserRel : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? StageId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProjectTaskUserRelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProjectTaskUserRelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("StageId")]
-    //[InverseProperty("ProjectTaskUserRels")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskUserRel")] //Many2one
     public virtual ProjectTaskType? Stage { get; set; }
 
+    // [Many2one]
     [ForeignKey("TaskId")]
-    //[InverseProperty("ProjectTaskUserRels")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskUserRel")] //Many2one
     public virtual ProjectTask? Task { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("ProjectTaskUserRelUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("ProjectTaskUserRelUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProjectTaskUserRelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProjectTaskUserRelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

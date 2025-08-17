@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_mining_request")]
-public partial class CrmIapLeadMiningRequest : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmIapLeadMiningRequest: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class CrmIapLeadMiningRequest : FullAuditedEntity<Guid>, IEntityD
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("lead_number")]
     public long? LeadNumber { get; set; }
@@ -45,7 +50,7 @@ public partial class CrmIapLeadMiningRequest : FullAuditedEntity<Guid>, IEntityD
     public Guid? SeniorityId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -72,71 +77,73 @@ public partial class CrmIapLeadMiningRequest : FullAuditedEntity<Guid>, IEntityD
     public bool? FilterOnSize { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("CrmIapLeadMiningRequestCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CrmIapLeadMiningRequestCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("LeadMiningRequest")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
+    // [One2many]
+    [ForeignKey("LeadMiningRequestId")]
+    [InverseProperty("LeadMiningRequest")]
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
 
+    // [Many2one]
     [ForeignKey("PreferredRoleId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2one
     public virtual CrmIapLeadRole? PreferredRole { get; set; }
 
+    // [Many2one]
     [ForeignKey("SeniorityId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2one
     public virtual CrmIapLeadSeniority? Seniority { get; set; }
 
+    // [Many2one]
     [ForeignKey("TeamId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("CrmIapLeadMiningRequestUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("CrmIapLeadMiningRequestUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("CrmIapLeadMiningRequestWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("CrmIapLeadMiningRequestWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("CrmIapLeadMiningRequestId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
-    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustries { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustry { get; set; }
 
-    [ForeignKey("CrmIapLeadMiningRequestId")]
-    //[InverseProperty("CrmIapLeadMiningRequestsNavigation")]
-    [NotMapped]
-    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRoles { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
+    // [InverseProperty("CrmIapLeadMiningRequestNavigation")] //Many2many
+    public virtual ICollection<CrmIapLeadRole> CrmIapLeadRole { get; set; }
 
-    [ForeignKey("CrmIapLeadMiningRequestId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
-    public virtual ICollection<CrmTag> CrmTags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    public virtual ICollection<CrmTag> CrmTag { get; set; }
 
-    [ForeignKey("CrmIapLeadMiningRequestId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
-    public virtual ICollection<ResCountry> ResCountries { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    public virtual ICollection<ResCountry> ResCountry { get; set; }
 
-    [ForeignKey("CrmIapLeadMiningRequestId")]
-    //[InverseProperty("CrmIapLeadMiningRequests")]
-    [NotMapped]
-    public virtual ICollection<ResCountryState> ResCountryStates { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
+    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    public virtual ICollection<ResCountryState> ResCountryState { get; set; }
 }

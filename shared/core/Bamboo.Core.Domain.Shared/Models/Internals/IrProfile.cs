@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,17 +10,13 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_profile")]
-//[Index("Session", Name = "ir_profile_session_index")]
-public partial class IrProfile: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("Session", Name = "ir_profile__session_index")]
+public partial class IrProfile: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    //[Column("company_id")]
-    //public Guid? TenantId { get; set; }
 
     [Column("sql_count")]
     public long? SqlCount { get; set; }
@@ -51,7 +46,7 @@ public partial class IrProfile: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? Qweb { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("duration")]
     public double? Duration { get; set; }

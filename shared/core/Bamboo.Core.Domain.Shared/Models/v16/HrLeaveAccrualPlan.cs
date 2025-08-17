@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_leave_accrual_plan")]
-public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeaveAccrualPlan: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,14 +21,15 @@ public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("time_off_type_id")]
     public Guid? TimeOffTypeId { get; set; }
 
-    [Column("carryover_day")]
-    public long? CarryoverDay { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -38,55 +40,34 @@ public partial class HrLeaveAccrualPlan : FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("transition_mode")]
     public string? TransitionMode { get; set; }
 
-    [Column("accrued_gain_time")]
-    public string? AccruedGainTime { get; set; }
-
-    [Column("carryover_date")]
-    public string? CarryoverDate { get; set; }
-
-    [Column("carryover_month")]
-    public string? CarryoverMonth { get; set; }
-
-    [Column("added_value_type")]
-    public string? AddedValueType { get; set; }
-
-    [Column("active")]
-    public bool? Active { get; set; }
-
-    [Column("is_based_on_worked_time")]
-    public bool? IsBasedOnWorkedTime { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrLeaveAccrualPlanCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrLeaveAccrualPlanCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("AccrualPlanId")]
+    [InverseProperty("AccrualPlan")]
+    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevel { get; set; }
+
+    // [One2many]
+    [ForeignKey("AccrualPlanId")]
+    [InverseProperty("AccrualPlan")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("TimeOffTypeId")]
-    //[InverseProperty("HrLeaveAccrualPlans")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveAccrualPlan")] //Many2one
     public virtual HrLeaveType? TimeOffType { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrLeaveAccrualPlanWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("AccrualPlan")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevels { get; set; } 
-
-    //[InverseProperty("AccrualPlan")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
-
+    // [InverseProperty("HrLeaveAccrualPlanWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

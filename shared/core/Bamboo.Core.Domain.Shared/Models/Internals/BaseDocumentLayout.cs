@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("base_document_layout")]
-public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,17 +20,20 @@ public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("report_layout_id")]
     public Guid? ReportLayoutId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -40,23 +41,23 @@ public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("from_invoice")]
     public bool? FromInvoice { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("BaseDocumentLayouts")]
-    [NotMapped]
+    // [InverseProperty("BaseDocumentLayout")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BaseDocumentLayoutCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("BaseDocumentLayoutCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ReportLayoutId")]
-    //[InverseProperty("BaseDocumentLayouts")]
-    [NotMapped]
+    // [InverseProperty("BaseDocumentLayout")] //Many2one
     public virtual ReportLayout? ReportLayout { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BaseDocumentLayoutWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("BaseDocumentLayoutWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,12 +12,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_picking")]
-//[Index("TenantId", Name = "stock_picking_company_id_index")]
-//[Index("Name", "TenantId", Name = "stock_picking_name_uniq", IsUnique = true)]
+//[Index("BatchId", Name = "stock_picking_batch_id_index")]
+//[Index("CompanyId", Name = "stock_picking_company_id_index")]
+//[Index("Name", "CompanyId", Name = "stock_picking_name_uniq", IsUnique = true)]
 //[Index("PickingTypeId", Name = "stock_picking_picking_type_id_index")]
+//[Index("PosOrderId", Name = "stock_picking_pos_order_id_index")]
+//[Index("PosSessionId", Name = "stock_picking_pos_session_id_index")]
 //[Index("ScheduledDate", Name = "stock_picking_scheduled_date_index")]
 //[Index("State", Name = "stock_picking_state_index")]
-public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPicking: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,15 +29,15 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("backorder_id")]
     public Guid? BackorderId { get; set; }
-
-    [Column("return_id")]
-    public Guid? ReturnId { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
@@ -57,7 +61,7 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? OwnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -77,10 +81,6 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("priority")]
     public string? Priority { get; set; }
 
-    [JsonField]
-    [Column("picking_properties", TypeName = "jsonb")]
-    public string? PickingProperties { get; set; }
-
     [Column("note")]
     public string? Note { get; set; }
 
@@ -93,7 +93,6 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("is_locked")]
     public bool? IsLocked { get; set; }
 
-    // v16-Compat
     [Column("immediate_transfer")]
     public bool? ImmediateTransfer { get; set; }
 
@@ -110,7 +109,7 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime? DateDone { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -124,8 +123,11 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("sale_id")]
     public Guid? SaleId { get; set; }
 
-    [Column("project_id")]
-    public Guid? ProjectId { get; set; }
+    [Column("website_id")]
+    public Guid? WebsiteId { get; set; }
+
+    [Column("weight")]
+    public decimal? Weight { get; set; }
 
     [Column("carrier_id")]
     public Guid? CarrierId { get; set; }
@@ -133,180 +135,208 @@ public partial class StockPicking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("carrier_tracking_ref")]
     public string? CarrierTrackingRef { get; set; }
 
-    [Column("weight")]
-    public decimal? Weight { get; set; }
-
     [Column("carrier_price")]
     public double? CarrierPrice { get; set; }
 
-    [Column("website_id")]
-    public Guid? WebsiteId { get; set; }
+    [Column("batch_id")]
+    public Guid? BatchId { get; set; }
 
+    // [Many2one]
     [ForeignKey("BackorderId")]
-    //[InverseProperty("InverseBackorder")]
-    [NotMapped]
+    // [InverseProperty("InverseBackorder")] //Many2one
     public virtual StockPicking? Backorder { get; set; }
 
+    // [Many2one]
+    [ForeignKey("BatchId")]
+    // [InverseProperty("StockPicking")] //Many2one
+    public virtual StockPickingBatch? Batch { get; set; }
+
+    // [Many2one]
     [ForeignKey("CarrierId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual DeliveryCarrier? Carrier { get; set; }
 
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<ChooseDeliveryPackage> ChooseDeliveryPackage { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockPickingCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockPickingCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual ProcurementGroup? Group { get; set; }
 
+    // [One2many]
+    [ForeignKey("BackorderId")]
+    [InverseProperty("Backorder")]
+    public virtual ICollection<StockPicking> InverseBackorder { get; set; }
+
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("StockPickingLocations")]
-    [NotMapped]
+    // [InverseProperty("StockPickingLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationDestId")]
-    //[InverseProperty("StockPickingLocationDests")]
-    [NotMapped]
+    // [InverseProperty("StockPickingLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("OwnerId")]
-    //[InverseProperty("StockPickingOwners")]
-    [NotMapped]
+    // [InverseProperty("StockPickingOwner")] //Many2one
     public virtual ResPartner? Owner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("StockPickingPartners")]
-    [NotMapped]
+    // [InverseProperty("StockPickingPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingTypeId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
+    // [Many2one]
     [ForeignKey("PosOrderId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual PosOrder? PosOrder { get; set; }
 
+    // [Many2one]
     [ForeignKey("PosSessionId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual PosSession? PosSession { get; set; }
 
-    [ForeignKey("ProjectId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ProjectProject? Project { get; set; }
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
-    [ForeignKey("ReturnId")]
-    //[InverseProperty("InverseReturn")]
-    [NotMapped]
-    public virtual StockPicking? Return { get; set; }
-
+    // [Many2one]
     [ForeignKey("SaleId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual SaleOrder? Sale { get; set; }
 
-    [ForeignKey("UserId")]
-    //[InverseProperty("StockPickingUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockPackageDestination> StockPackageDestination { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockPackageLevel> StockPackageLevel { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockReturnPicking> StockReturnPicking { get; set; }
+
+    // [One2many]
+    [ForeignKey("PickingId")]
+    [InverseProperty("Picking")]
+    public virtual ICollection<StockScrap> StockScrap { get; set; }
+
+    // [Many2one]
+    [ForeignKey("UserId")]
+    // [InverseProperty("StockPickingUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
+
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
+    // [InverseProperty("StockPicking")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockPickingWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockPickingWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    /// TODO: DISABLE INVERSE COLLECTIONS
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<ConfirmStockSms> ConfirmStockSms { get; set; }
 
-    //[InverseProperty("Backorder")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> InverseBackorder { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<LotLabelLayout> LotLabelLayout { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<PickingLabelType> PickingLabelType { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmation { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockPackageDestination> StockPackageDestinations { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<StockImmediateTransfer> StockImmediateTransfer { get; set; }
 
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockPackageLevel> StockPackageLevels { get; set; } 
-
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockReturnPicking> StockReturnPickings { get; set; } 
-
-    //[InverseProperty("Picking")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } 
-
-    [ForeignKey("StockPickingId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ICollection<ConfirmStockSm> ConfirmStockSms { get; set; } 
-
-    [ForeignKey("StockPickingId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ICollection<LotLabelLayout> LotLabelLayouts { get; set; } 
-
-    [ForeignKey("StockPickingId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ICollection<PickingLabelType> PickingLabelTypes { get; set; } 
-
-    [ForeignKey("StockPickingId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
-
-    [ForeignKey("StockPickingId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmations { get; set; } 
-
-    [ForeignKey("StockPickingId")]
-    //[InverseProperty("StockPickings")]
-    [NotMapped]
-    public virtual ICollection<StockImmediateTransfer> StockImmediateTransfers { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockPickingId")]
+    // [InverseProperty("StockPicking")]
+    // public virtual ICollection<StockLandedCost> StockLandedCost { get; set; }
 }

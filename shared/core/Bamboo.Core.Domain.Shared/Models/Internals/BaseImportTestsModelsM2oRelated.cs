@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,41 +10,47 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("base_import_tests_models_m2o_related")]
-public partial class BaseImportTestsModelsM2oRelated: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class BaseImportTestsModelsM2oRelated: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("value")]
     public Guid? Value { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("Value")]
+    [InverseProperty("ValueNavigation")]
+    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2o { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BaseImportTestsModelsM2oRelatedCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("BaseImportTestsModelsM2oRelatedCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BaseImportTestsModelsM2oRelatedWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("ValueNavigation")]
-    [NotMapped]
-    public virtual ICollection<BaseImportTestsModelsM2o> BaseImportTestsModelsM2os { get; } 
-
+    // [InverseProperty("BaseImportTestsModelsM2oRelatedWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

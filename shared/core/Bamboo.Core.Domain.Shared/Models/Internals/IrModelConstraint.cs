@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,21 +10,17 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_model_constraint")]
-//[Index("Model", Name = "ir_model_constraint_model_index")]
-//[Index("Module", Name = "ir_model_constraint_module_index")]
+//[Index("Model", Name = "ir_model_constraint__model_index")]
+//[Index("Module", Name = "ir_model_constraint__module_index")]
+//[Index("Name", Name = "ir_model_constraint__name_index")]
+//[Index("Type", Name = "ir_model_constraint__type_index")]
 //[Index("Name", "Module", Name = "ir_model_constraint_module_name_uniq", IsUnique = true)]
-//[Index("Name", Name = "ir_model_constraint_name_index")]
-//[Index("Type", Name = "ir_model_constraint_type_index")]
-public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("model")]
     public Guid? Model { get; set; }
@@ -34,7 +29,7 @@ public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? Module { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -50,31 +45,31 @@ public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [JsonField]
     [Column("message", TypeName = "jsonb")]
-    public StringDictionary? Message { get; set; }
+    public string? Message { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModelConstraintCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrModelConstraintCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("Model")]
-    //[InverseProperty("IrModelConstraints")]
-    [NotMapped]
+    // [InverseProperty("IrModelConstraint")] //Many2one
     public virtual IrModel? ModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("Module")]
-    //[InverseProperty("IrModelConstraints")]
-    [NotMapped]
+    // [InverseProperty("IrModelConstraint")] //Many2one
     public virtual IrModuleModule? ModuleNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModelConstraintWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModelConstraintWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

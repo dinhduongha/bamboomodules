@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_report_expression")]
-public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReportExpression: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,15 @@ public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityD
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("report_line_id")]
     public Guid? ReportLineId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -60,44 +65,40 @@ public partial class AccountReportExpression : FullAuditedEntity<Guid>, IEntityD
     public bool? Auditable { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("TargetReportExpression")]
-    [NotMapped]
-    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValues { get; set; } 
+    // [One2many]
+    [ForeignKey("TargetReportExpressionId")]
+    [InverseProperty("TargetReportExpression")]
+    public virtual ICollection<AccountReportExternalValue> AccountReportExternalValue { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountReportExpressionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountReportExpressionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ReportLineId")]
-    //[InverseProperty("AccountReportExpressions")]
-    [NotMapped]
+    // [InverseProperty("AccountReportExpression")] //Many2one
     public virtual AccountReportLine? ReportLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountReportExpressionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountReportExpressionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // v16-Compat
-    [ForeignKey("AccountReportExpressionId")]
-    //[InverseProperty("AccountReportExpressions")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountReportExpressionId")]
+    // [InverseProperty("AccountReportExpression")]
+    // public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplate { get; set; }
 
-    // v16-Compat
-    [ForeignKey("AccountReportExpressionId")]
-    //[InverseProperty("AccountReportExpressionsNavigation")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplatesNavigation { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountReportExpressionId")]
+    // [InverseProperty("AccountReportExpressionNavigation")]
+    // public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateNavigation { get; set; }
 }

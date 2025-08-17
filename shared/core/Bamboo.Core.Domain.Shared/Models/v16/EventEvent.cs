@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_event")]
-//[Index("IsPublished", Name = "event_event__is_published_index")]
-//[Index("WebsiteId", Name = "event_event__website_id_index")]
-public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("IsPublished", Name = "event_event_is_published_index")]
+//[Index("WebsiteId", Name = "event_event_website_id_index")]
+public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,7 +23,10 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -48,7 +52,7 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -62,23 +66,13 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("date_tz")]
     public string? DateTz { get; set; }
 
-    [Column("lang")]
-    public string? Lang { get; set; }
-
-    [Column("badge_format")]
-    public string? BadgeFormat { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
-
-    [JsonField]
-    [Column("registration_properties_definition", TypeName = "jsonb")]
-    public string? RegistrationPropertiesDefinition { get; set; }
 
     [JsonField]
     [Column("ticket_instructions", TypeName = "jsonb")]
@@ -103,7 +97,7 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime? DateEnd { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -116,9 +110,6 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
-
-    [Column("website_visibility")]
-    public string? WebsiteVisibility { get; set; }
 
     [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
@@ -164,113 +155,176 @@ public partial class EventEvent: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("community_menu")]
     public bool? CommunityMenu { get; set; }
 
+    [Column("booth_menu")]
+    public bool? BoothMenu { get; set; }
+
+    [Column("exhibitor_menu")]
+    public bool? ExhibitorMenu { get; set; }
+
+    [Column("website_track")]
+    public bool? WebsiteTrack { get; set; }
+
+    [Column("website_track_proposal")]
+    public bool? WebsiteTrackProposal { get; set; }
+
+    [Column("meeting_room_allow_creation")]
+    public bool? MeetingRoomAllowCreation { get; set; }
+
+    // [Many2one]
     [ForeignKey("AddressId")]
-    //[InverseProperty("EventEventAddresses")]
-    [NotMapped]
+    // [InverseProperty("EventEventAddress")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
-    [ForeignKey("CompanyId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("EventEvent")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
+    // [InverseProperty("EventEvent")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventEventCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventEventCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
-    [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("AccountAccounts")]
-    [NotMapped]
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-    
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<EventEventConfigurator> EventEventConfigurators { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventBooth> EventBooth { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<EventEventTicket> EventEventTickets { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventBoothConfigurator> EventBoothConfigurator { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual EventLeadRequest? EventLeadRequest { get; set; }
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventEventConfigurator> EventEventConfigurator { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<EventLeadRule> EventLeadRules { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventEventTicket> EventEventTicket { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<EventMail> EventMails { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<EventQuestion> EventQuestions { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventMail> EventMail { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventMeetingRoom> EventMeetingRoom { get; set; }
 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventQuestion> EventQuestion { get; set; }
+
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventQuiz> EventQuiz { get; set; }
+
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventSponsor> EventSponsor { get; set; }
+
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<EventTrack> EventTrack { get; set; }
+
+    // [Many2one]
     [ForeignKey("EventTypeId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
+    // [InverseProperty("EventEvent")] //Many2one
     public virtual EventType? EventType { get; set; }
 
+    // [Many2one]
     [ForeignKey("MenuId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
+    // [InverseProperty("EventEvent")] //Many2one
     public virtual WebsiteMenu? Menu { get; set; }
 
+    // [Many2one]
+    [ForeignKey("MessageMainAttachmentId")]
+    // [InverseProperty("EventEvent")] //Many2one
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+
+    // [Many2one]
     [ForeignKey("OrganizerId")]
-    //[InverseProperty("EventEventOrganizers")]
-    [NotMapped]
+    // [InverseProperty("EventEventOrganizer")] //Many2one
     public virtual ResPartner? Organizer { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("StageId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
+    // [InverseProperty("EventEvent")] //Many2one
     public virtual EventStage? Stage { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("EventEventUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("EventEventUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
+    // [InverseProperty("EventEvent")] //Many2one
     public virtual Website? Website { get; set; }
 
-    //[InverseProperty("Event")]
-    [NotMapped]
-    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenus { get; set; } 
+    // [One2many]
+    [ForeignKey("EventId")]
+    [InverseProperty("Event")]
+    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenu { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventEventWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventEventWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("EventEventId")]
-    //[InverseProperty("EventEvents")]
-    [NotMapped]
-    public virtual ICollection<EventTag> EventTags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("EventEventId")] //Many2many
+    // [InverseProperty("EventEvent")] //Many2many
+    public virtual ICollection<EventTag> EventTag { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("EventEventId")] //Many2many
+    // [InverseProperty("EventEvent")] //Many2many
+    public virtual ICollection<EventTrackTag> EventTrackTag { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("EventEventId")] //Many2many
+    // [InverseProperty("EventEventNavigation")] //Many2many
+    public virtual ICollection<EventTrackTag> EventTrackTagNavigation { get; set; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,23 +10,19 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_module_module_exclusion")]
-//[Index("Name", Name = "ir_module_module_exclusion_name_index")]
-public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("Name", Name = "ir_module_module_exclusion__name_index")]
+public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    //[Column("company_id")]
-    //public Guid? TenantId { get; set; }
-
     [Column("module_id")]
     public Guid? ModuleId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,23 +31,23 @@ public partial class IrModuleModuleExclusion: FullAuditedEntity<Guid>, IEntityDt
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModuleModuleExclusionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrModuleModuleExclusionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModuleId")]
-    //[InverseProperty("IrModuleModuleExclusions")]
-    [NotMapped]
+    // [InverseProperty("IrModuleModuleExclusion")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModuleModuleExclusionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModuleModuleExclusionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

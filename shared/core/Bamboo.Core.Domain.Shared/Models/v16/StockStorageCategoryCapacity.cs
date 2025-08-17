@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -14,7 +15,7 @@ namespace Bamboo.Core.Models;
 //[Index("StorageCategoryId", Name = "stock_storage_category_capacity_storage_category_id_index")]
 //[Index("PackageTypeId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_package_type", IsUnique = true)]
 //[Index("ProductId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_product", IsUnique = true)]
-public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockStorageCategoryCapacity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +23,10 @@ public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEn
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("storage_category_id")]
     public Guid? StorageCategoryId { get; set; }
@@ -33,13 +38,13 @@ public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEn
     public Guid? PackageTypeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -47,32 +52,28 @@ public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEn
     [Column("quantity")]
     public double? Quantity { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockStorageCategoryCapacityCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockStorageCategoryCapacityCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PackageTypeId")]
-    //[InverseProperty("StockStorageCategoryCapacities")]
-    [NotMapped]
+    // [InverseProperty("StockStorageCategoryCapacity")] //Many2one
     public virtual StockPackageType? PackageType { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("StockStorageCategoryCapacities")]
-    [NotMapped]
+    // [InverseProperty("StockStorageCategoryCapacity")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("StorageCategoryId")]
-    //[InverseProperty("StockStorageCategoryCapacities")]
-    [NotMapped]
+    // [InverseProperty("StockStorageCategoryCapacity")] //Many2one
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockStorageCategoryCapacityWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockStorageCategoryCapacityWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

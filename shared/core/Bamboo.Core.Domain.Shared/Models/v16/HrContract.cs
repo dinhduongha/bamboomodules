@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("hr_contract")]
 //[Index("DateStart", Name = "hr_contract_date_start_index")]
 //[Index("ResourceCalendarId", Name = "hr_contract_resource_calendar_id_index")]
-public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrContract: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,7 +23,10 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -48,7 +52,7 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? HrResponsibleId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -81,68 +85,85 @@ public partial class HrContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("work_entry_source")]
+    public string? WorkEntrySource { get; set; }
+
+    [Column("last_generation_date")]
+    public DateTime? LastGenerationDate { get; set; }
+
+    [Column("date_generated_from", TypeName = "timestamp without time zone")]
+    public DateTime? DateGeneratedFrom { get; set; }
+
+    [Column("date_generated_to", TypeName = "timestamp without time zone")]
+    public DateTime? DateGeneratedTo { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContractTypeId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual HrContractType? ContractType { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrContractCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrContractCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
-    //[InverseProperty("Contract")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
+    // [One2many]
+    [ForeignKey("ContractId")]
+    [InverseProperty("Contract")]
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
+    // [Many2one]
     [ForeignKey("HrResponsibleId")]
-    //[InverseProperty("HrContractHrResponsibles")]
-    [NotMapped]
-    public virtual ResUser? HrResponsible { get; set; }
+    // [InverseProperty("HrContractHrResponsible")] //Many2one
+    public virtual ResUsers? HrResponsible { get; set; }
 
+    // [One2many]
+    [ForeignKey("ContractId")]
+    [InverseProperty("Contract")]
+    public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
+
+    // [Many2one]
     [ForeignKey("JobId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual HrJob? Job { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResourceCalendarId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
+    // [Many2one]
     [ForeignKey("StructureTypeId")]
-    //[InverseProperty("HrContracts")]
-    [NotMapped]
+    // [InverseProperty("HrContract")] //Many2one
     public virtual HrPayrollStructureType? StructureType { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrContractWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrContractWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

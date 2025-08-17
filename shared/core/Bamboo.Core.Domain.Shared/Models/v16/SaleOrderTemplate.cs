@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sale_order_template")]
-public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,8 +21,8 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence")]
-    public long? Sequence { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }
@@ -30,7 +31,7 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     public long? NumberOfDays { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,10 +43,6 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 
-    [JsonField]
-    [Column("journal_id", TypeName = "jsonb")]
-    public string? JournalId { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -56,52 +53,48 @@ public partial class SaleOrderTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? RequirePayment { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("prepayment_percent")]
-    public double? PrepaymentPercent { get; set; }
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("SaleOrderTemplates")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderTemplateNavigation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SaleOrderTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SaleOrderTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailTemplateId")]
-    //[InverseProperty("SaleOrderTemplates")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderTemplate")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("SaleOrderTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("SaleOrderTemplate")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    //[InverseProperty("SaleOrderTemplate")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; } 
-
-    //[InverseProperty("SaleOrderTemplate")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; } 
-
-    //[InverseProperty("SaleOrderTemplate")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
-
+    // [One2many]
     [ForeignKey("SaleOrderTemplateId")]
-    //[InverseProperty("SaleOrderTemplates")]
-    [NotMapped]
-    public virtual ICollection<QuotationDocument> QuotationDocuments { get; set; } 
+    [InverseProperty("SaleOrderTemplate")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [One2many]
+    [ForeignKey("SaleOrderTemplateId")]
+    [InverseProperty("SaleOrderTemplate")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("SaleOrderTemplateId")]
+    [InverseProperty("SaleOrderTemplate")]
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("SaleOrderTemplateId")]
+    [InverseProperty("SaleOrderTemplate")]
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOption { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("SaleOrderTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

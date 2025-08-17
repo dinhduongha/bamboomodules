@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("report_layout")]
-public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ReportLayout: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +20,10 @@ public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("view_id")]
     public Guid? ViewId { get; set; }
 
@@ -29,7 +31,7 @@ public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -44,27 +46,28 @@ public partial class ReportLayout : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("ReportLayout")]
-    [NotMapped]
-    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayouts { get; set; } 
+    // [One2many]
+    [ForeignKey("ReportLayoutId")]
+    [InverseProperty("ReportLayout")]
+    public virtual ICollection<BaseDocumentLayout> BaseDocumentLayout { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ReportLayoutCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ReportLayoutCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ViewId")]
-    //[InverseProperty("ReportLayouts")]
-    [NotMapped]
+    // [InverseProperty("ReportLayout")] //Many2one
     public virtual IrUiView? View { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ReportLayoutWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ReportLayoutWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

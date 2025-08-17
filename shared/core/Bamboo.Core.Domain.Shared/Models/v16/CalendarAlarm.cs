@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("calendar_alarm")]
-public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarAlarm: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("duration")]
     public long? Duration { get; set; }
@@ -30,7 +35,7 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? MailTemplateId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -43,13 +48,13 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("body")]
     public string? Body { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -57,35 +62,29 @@ public partial class CalendarAlarm : FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
 
-    [Column("sms_notify_responsible")]
-    public bool? SmsNotifyResponsible { get; set; }
-
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("CalendarAlarmCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CalendarAlarmCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailTemplateId")]
-    //[InverseProperty("CalendarAlarms")]
-    [NotMapped]
+    // [InverseProperty("CalendarAlarm")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    //[InverseProperty("CalendarAlarms")]
-    [NotMapped]
+    // [InverseProperty("CalendarAlarm")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("CalendarAlarmWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("CalendarAlarmWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("CalendarAlarmId")]
-    //[InverseProperty("CalendarAlarms")]
-    [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("CalendarAlarmId")]
+    // [InverseProperty("CalendarAlarm")]
+    // public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 }

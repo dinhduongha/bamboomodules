@@ -19,7 +19,11 @@ public partial class ChangePasswordUser: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
 
@@ -27,7 +31,7 @@ public partial class ChangePasswordUser: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? UserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,28 +43,28 @@ public partial class ChangePasswordUser: FullAuditedEntity<Guid>, IEntityDto<Gui
     public string? NewPasswd { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ChangePasswordUserCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ChangePasswordUserCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("ChangePasswordUserUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("ChangePasswordUserUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("WizardId")]
-    //[InverseProperty("ChangePasswordUsers")]
-    [NotMapped]
+    // [InverseProperty("ChangePasswordUser")] //Many2one
     public virtual ChangePasswordWizard? Wizard { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ChangePasswordUserWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ChangePasswordUserWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -17,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("delivery_carrier")]
 //[Index("IsPublished", Name = "delivery_carrier_is_published_index")]
 //[Index("WebsiteId", Name = "delivery_carrier_website_id_index")]
-public partial class DeliveryCarrier : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,6 +22,10 @@ public partial class DeliveryCarrier : FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -36,10 +37,10 @@ public partial class DeliveryCarrier : FullAuditedAggregateRoot<Guid>, IEntityDt
     public long? ShippingInsurance { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("delivery_type")]
     public string? DeliveryType { get; set; }
@@ -77,10 +78,10 @@ public partial class DeliveryCarrier : FullAuditedAggregateRoot<Guid>, IEntityDt
     public bool? GetReturnLabelFromPortal { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("margin")]
     public double? Margin { get; set; }
@@ -100,75 +101,71 @@ public partial class DeliveryCarrier : FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("warehouse_id")]
     public Guid? WarehouseId { get; set; }
 
-
-    // [Many2many]
-    //[NotMapped] // Many2many
-    // [InverseProperty("Carrier")] // Many2many
-    //public virtual ICollection<ChooseDeliveryCarrier> ChooseDeliveryCarrier { get; set; }
+    // [One2many]
+    [ForeignKey("CarrierId")]
+    [InverseProperty("Carrier")]
+    public virtual ICollection<ChooseDeliveryCarrier> ChooseDeliveryCarrier { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("DeliveryCarrier")] // [Many2one]
+    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DeliveryCarrierCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DeliveryCarrierCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-
-    // [Many2many]
-    [NotMapped] // Many2many
-    // [InverseProperty("Carrier")] // Many2many
+    // [One2many]
+    [ForeignKey("CarrierId")]
+    [InverseProperty("Carrier")]
     public virtual ICollection<DeliveryPriceRule> DeliveryPriceRule { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("DeliveryCarrier")] // [Many2one]
+    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
-
-    // [Many2many]
-    [NotMapped] // Many2many
-    // [InverseProperty("Carrier")] // Many2many
+    // [One2many]
+    [ForeignKey("CarrierId")]
+    [InverseProperty("Carrier")]
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
-
-    // [Many2many]
-    [NotMapped] // Many2many
-    // [InverseProperty("Carrier")] // Many2many
+    // [One2many]
+    [ForeignKey("CarrierId")]
+    [InverseProperty("Carrier")]
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("DeliveryCarrier")] // [Many2one]
+    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("DeliveryCarrier")] // [Many2one]
+    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DeliveryCarrierWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DeliveryCarrierWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // [One2many]
-    [ForeignKey("CarrierId")]
-    // [NotMapped] // One2many
-    // [InverseProperty("Carrier")]  //[One2many]
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CarrierId")] //Many2many
+    // [InverseProperty("Carrier")] //Many2many
     public virtual ICollection<ResCountry> Country { get; set; }
 
-    // [One2many]
-    [ForeignKey("CarrierId")]
-    // [NotMapped] // One2many
-    // [InverseProperty("Carrier")]  //[One2many]
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CarrierId")] //Many2many
+    // [InverseProperty("Carrier")] //Many2many
     public virtual ICollection<ResCountryState> State { get; set; }
 
-    // [One2many]
-    [ForeignKey("CarrierId")]
-    // [NotMapped] // One2many
-    // [InverseProperty("Carrier")]  //[One2many]
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CarrierId")] //Many2many
+    // [InverseProperty("Carrier")] //Many2many
     public virtual ICollection<DeliveryZipPrefix> ZipPrefix { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -16,7 +17,7 @@ namespace Bamboo.Core.Models;
 //[Index("AttributeLineId", "ProductAttributeValueId", Name = "product_template_attribute_value_attribute_value_unique", IsUnique = true)]
 //[Index("ProductAttributeValueId", Name = "product_template_attribute_value_product_attribute_value_id_ind")]
 //[Index("ProductTmplId", Name = "product_template_attribute_value_product_tmpl_id_index")]
-public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,6 +25,10 @@ public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IE
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("product_attribute_value_id")]
     public Guid? ProductAttributeValueId { get; set; }
@@ -41,7 +46,7 @@ public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IE
     public long? Color { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -53,85 +58,90 @@ public partial class ProductTemplateAttributeValue : FullAuditedEntity<Guid>, IE
     public bool? PtavActive { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("AttributeId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductAttribute? Attribute { get; set; }
 
+    // [Many2one]
     [ForeignKey("AttributeLineId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductTemplateAttributeLine? AttributeLine { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductTemplateAttributeValueCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductTemplateAttributeValueCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("CustomProductTemplateAttributeValueId")]
+    [InverseProperty("CustomProductTemplateAttributeValue")]
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValue { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProductAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductAttributeValue? ProductAttributeValue { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProductTemplateAttributeValueId")]
+    [InverseProperty("ProductTemplateAttributeValueNavigation")]
+    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionNavigation { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProductTmplId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductTemplateAttributeValueWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductTemplateAttributeValueWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("CustomProductTemplateAttributeValue")]
-    [NotMapped]
-    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValues { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
-    //[InverseProperty("ProductTemplateAttributeValue")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionsNavigation { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenters { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusion { get; set; }
 
-    [ForeignKey("TemplateAttributeValueId")]
-    //[InverseProperty("TemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<StockMove> Moves { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
-
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusions { get; set; } 
-
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    //[InverseProperty("ProductTemplateAttributeValues")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateAttributeValueId")]
+    // [InverseProperty("ProductTemplateAttributeValue")]
+    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 }

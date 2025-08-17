@@ -67,12 +67,12 @@ public partial class IrModelFieldAccess: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("CreatorId")]
     //[InverseProperty("IrModelAccessCreateUs")]
     [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    public virtual ResUsers? CreateU { get; set; }
 
     [ForeignKey("GroupId")]
     //[InverseProperty("IrModelAccesses")]
     [NotMapped]
-    public virtual ResGroup? Group { get; set; }
+    public virtual ResGroups? Group { get; set; }
 
     [ForeignKey("ModelId")]
     //[InverseProperty("IrModelAccesses")]
@@ -87,5 +87,5 @@ public partial class IrModelFieldAccess: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelAccessWriteUs")]
     [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    public virtual ResUsers? WriteU { get; set; }
 }

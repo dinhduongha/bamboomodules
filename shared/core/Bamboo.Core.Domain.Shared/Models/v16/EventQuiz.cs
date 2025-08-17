@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
+
+namespace Bamboo.Core.Models;
+
+[Table("event_quiz")]
+public partial class EventQuiz: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+{
+    [Key]
+    [Column("id")]
+    public Guid Id { get => base.Id; set => base.Id = value; }
+
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
+    [Column("event_track_id")]
+    public Guid? EventTrackId { get; set; }
+
+    [Column("event_id")]
+    public Guid? EventId { get; set; }
+
+    [Column("create_uid")]
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
+
+    [Column("write_uid")]
+    public override Guid? LastModifierId { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    [Column("repeatable")]
+    public bool? Repeatable { get; set; }
+
+    [Column("create_date", TypeName = "timestamp without time zone")]
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
+
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public override DateTime? LastModificationTime { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("EventQuizCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("EventId")]
+    // [InverseProperty("EventQuiz")] //Many2one
+    public virtual EventEvent? Event { get; set; }
+
+    // [One2many]
+    [ForeignKey("QuizId")]
+    [InverseProperty("Quiz")]
+    public virtual ICollection<EventQuizQuestion> EventQuizQuestion { get; set; }
+
+    // [Many2one]
+    [ForeignKey("EventTrackId")]
+    // [InverseProperty("EventQuiz")] //Many2one
+    public virtual EventTrack? EventTrack { get; set; }
+
+    // [One2many]
+    [ForeignKey("QuizId")]
+    [InverseProperty("Quiz")]
+    public virtual ICollection<EventTrack> EventTrackNavigation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("EventQuizWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+}

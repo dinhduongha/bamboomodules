@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_sms")]
 //[Index("MailMessageId", Name = "sms_sms_mail_message_id_index")]
-public partial class SmsSms : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +22,10 @@ public partial class SmsSms : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
@@ -28,13 +33,10 @@ public partial class SmsSms : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? MailMessageId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("uuid")]
-    public string? Uuid { get; set; }
 
     [Column("number")]
     public string? Number { get; set; }
@@ -48,11 +50,8 @@ public partial class SmsSms : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("body")]
     public string? Body { get; set; }
 
-    [Column("to_delete")]
-    public bool? ToDelete { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -60,38 +59,38 @@ public partial class SmsSms : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("mailing_id")]
     public Guid? MailingId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SmsSmCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SmsSmsCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailMessageId")]
-    //[InverseProperty("SmsSms")]
-    [NotMapped]
+    // [InverseProperty("SmsSms")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
+    // [One2many]
+    [ForeignKey("SmsId")]
+    [InverseProperty("Sms")]
+    public virtual ICollection<MailNotification> MailNotification { get; set; }
+
+    // [Many2one]
     [ForeignKey("MailingId")]
-    //[InverseProperty("SmsSms")]
-    [NotMapped]
+    // [InverseProperty("SmsSms")] //Many2one
     public virtual MailingMailing? Mailing { get; set; }
 
+    // [One2many]
+    [ForeignKey("SmsSmsId")]
+    [InverseProperty("SmsSms")]
+    public virtual ICollection<MailingTrace> MailingTrace { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("SmsSms")]
-    [NotMapped]
+    // [InverseProperty("SmsSms")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SmsSmWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    // v16-Compat
-    //[InverseProperty("Sms")]
-    [NotMapped]
-    public virtual ICollection<MailNotification> MailNotifications { get; set; } 
-
+    // [InverseProperty("SmsSmsWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

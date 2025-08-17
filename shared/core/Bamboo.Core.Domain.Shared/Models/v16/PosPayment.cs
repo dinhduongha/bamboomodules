@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_payment")]
+//[Index("PosOrderId", Name = "pos_payment_pos_order_id_index")]
 //[Index("SessionId", Name = "pos_payment_session_id_index")]
 public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -20,6 +22,10 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("pos_order_id")]
     public Guid? PosOrderId { get; set; }
@@ -34,7 +40,7 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? AccountMoveId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,26 +51,8 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("card_type")]
     public string? CardType { get; set; }
 
-    [Column("card_brand")]
-    public string? CardBrand { get; set; }
-
-    [Column("card_no")]
-    public string? CardNo { get; set; }
-
     [Column("cardholder_name")]
     public string? CardholderName { get; set; }
-
-    [Column("payment_ref_no")]
-    public string? PaymentRefNo { get; set; }
-
-    [Column("payment_method_authcode")]
-    public string? PaymentMethodAuthcode { get; set; }
-
-    [Column("payment_method_issuer_bank")]
-    public string? PaymentMethodIssuerBank { get; set; }
-
-    [Column("payment_method_payment_mode")]
-    public string? PaymentMethodPaymentMode { get; set; }
 
     [Column("transaction_id")]
     public string? TransactionId { get; set; }
@@ -74,9 +62,6 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("ticket")]
     public string? Ticket { get; set; }
-
-    [Column("uuid")]
-    public string? Uuid { get; set; }
 
     [Column("amount")]
     public decimal? Amount { get; set; }
@@ -88,49 +73,43 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public DateTime? PaymentDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("online_account_payment_id")]
-    public Guid? OnlineAccountPaymentId { get; set; }
-
-    [Column("employee_id")]
-    public Guid? EmployeeId { get; set; }
-
+    // [Many2one]
     [ForeignKey("AccountMoveId")]
-    //[InverseProperty("PosPayments")]
-    [NotMapped]
+    // [InverseProperty("PosPayment")] //Many2one
     public virtual AccountMove? AccountMove { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PosPayments")]
-    [NotMapped]
+    // [InverseProperty("PosPayment")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PosPaymentCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PosPaymentCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentMethodId")]
-    //[InverseProperty("PosPayments")]
-    [NotMapped]
+    // [InverseProperty("PosPayment")] //Many2one
     public virtual PosPaymentMethod? PaymentMethod { get; set; }
 
+    // [Many2one]
     [ForeignKey("PosOrderId")]
-    //[InverseProperty("PosPayments")]
-    [NotMapped]
+    // [InverseProperty("PosPayment")] //Many2one
     public virtual PosOrder? PosOrder { get; set; }
 
+    // [Many2one]
     [ForeignKey("SessionId")]
-    //[InverseProperty("PosPayments")]
-    [NotMapped]
+    // [InverseProperty("PosPayment")] //Many2one
     public virtual PosSession? Session { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PosPaymentWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PosPaymentWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

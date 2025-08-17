@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +10,14 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("res_partner_category")]
-//[Index("ParentId", Name = "res_partner_category_parent_id_index")]
-//[Index("ParentPath", Name = "res_partner_category_parent_path_index")]
-public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("ParentId", Name = "res_partner_category__parent_id_index")]
+//[Index("ParentPath", Name = "res_partner_category__parent_path_index")]
+public partial class ResPartnerCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -31,7 +26,7 @@ public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,65 +36,69 @@ public partial class ResPartnerCategory : FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("PartnerCategoryId")]
+    [InverseProperty("PartnerCategory")]
+    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResPartnerCategoryCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResPartnerCategoryCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<ResPartnerCategory> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual ResPartnerCategory? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResPartnerCategoryWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ResPartnerCategoryWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("PartnerCategory")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")]
+    // [InverseProperty("ResPartnerCategory")]
+    // public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<ResPartnerCategory> InverseParent { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")]
+    // [InverseProperty("ResPartnerCategory")]
+    // public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplate { get; set; }
 
-    // v16-Compat
-    [ForeignKey("ResPartnerCategoryId")]
-    //[InverseProperty("ResPartnerCategories")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")]
+    // [InverseProperty("ResPartnerCategory")]
+    // public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
 
-    [ForeignKey("ResPartnerCategoryId")]
-    //[InverseProperty("ResPartnerCategories")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")]
+    // [InverseProperty("ResPartnerCategory")]
+    // public virtual ICollection<MailingContact> MailingContact { get; set; }
 
-    [ForeignKey("ResPartnerCategoryId")]
-    //[InverseProperty("ResPartnerCategories")]
-    [NotMapped]
-    public virtual ICollection<MailingContact> MailingContacts { get; set; } 
-
-    [ForeignKey("CategoryId")]
-    //[InverseProperty("Categories")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } 
-
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CategoryId")] //Many2many
+    // [InverseProperty("Category")] //Many2many
+    public virtual ICollection<ResPartner> Partner { get; set; }
 }

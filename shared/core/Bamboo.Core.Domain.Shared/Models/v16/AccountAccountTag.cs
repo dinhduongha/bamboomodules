@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -9,9 +10,8 @@ using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
-// Copy-To-Tenants (?)
+
 [Table("account_account_tag")]
-//[Index("Name", "Applicability", "CountryId", Name = "account_account_tag_name_uniq", IsUnique = true)]
 public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -21,6 +21,10 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("color")]
     public long? Color { get; set; }
 
@@ -28,19 +32,17 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("applicability")]
-    public string? Applicability { get; set; }
-
-    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    //public Dictionary<string, string?>? Name { get; set; }
     public string? Name { get; set; }
+
+    [Column("applicability")]
+    public string? Applicability { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -49,60 +51,59 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? TaxNegate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
+    // [InverseProperty("AccountAccountTag")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAccountTagCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAccountTagCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAccountTagWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAccountTagWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // v16-Compat
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountTagId")]
+    // [InverseProperty("AccountAccountTag")]
+    // public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountTagId")]
+    // [InverseProperty("AccountAccountTag")]
+    // public virtual ICollection<AccountAccountTemplate> AccountAccountTemplate { get; set; }
 
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountTagId")]
+    // [InverseProperty("AccountAccountTag")]
+    // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
-    // v16-Compat
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountTagId")]
+    // [InverseProperty("AccountAccountTag")]
+    // public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
 
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountTagId")]
+    // [InverseProperty("AccountAccountTag")]
+    // public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplate { get; set; }
 
-    [ForeignKey("AccountAccountTagId")]
-    //[InverseProperty("AccountAccountTags")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountTagId")]
+    // [InverseProperty("AccountAccountTag")]
+    // public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

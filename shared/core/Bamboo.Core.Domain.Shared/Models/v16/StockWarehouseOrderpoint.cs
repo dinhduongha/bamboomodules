@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,10 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_warehouse_orderpoint")]
-//[Index("TenantId", Name = "stock_warehouse_orderpoint_company_id_index")]
+//[Index("CompanyId", Name = "stock_warehouse_orderpoint_company_id_index")]
 //[Index("LocationId", Name = "stock_warehouse_orderpoint_location_id_index")]
-//[Index("ProductId", "LocationId", "TenantId", Name = "stock_warehouse_orderpoint_product_location_check", IsUnique = true)]
-public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("ProductId", "LocationId", "CompanyId", Name = "stock_warehouse_orderpoint_product_location_check", IsUnique = true)]
+//[Index("WarehouseId", Name = "stock_warehouse_orderpoint_warehouse_id_index")]
+public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +24,10 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("warehouse_id")]
     public Guid? WarehouseId { get; set; }
@@ -42,7 +48,7 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     public Guid? RouteId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -65,18 +71,14 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [Column("qty_multiple")]
     public decimal? QtyMultiple { get; set; }
 
-    // v16-Compat
     [Column("qty_to_order")]
     public decimal? QtyToOrder { get; set; }
-
-    [Column("qty_to_order_manual")]
-    public decimal? QtyToOrderManual { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -87,9 +89,6 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [Column("vendor_id")]
     public Guid? VendorId { get; set; }
 
-    [Column("product_supplier_id")]
-    public Guid? ProductSupplierId { get; set; }
-
     [Column("purchase_visibility_days")]
     public double? PurchaseVisibilityDays { get; set; }
 
@@ -99,91 +98,89 @@ public partial class StockWarehouseOrderpoint: FullAuditedEntity<Guid>, IEntityD
     [Column("manufacturing_visibility_days")]
     public double? ManufacturingVisibilityDays { get; set; }
 
+    // [Many2one]
     [ForeignKey("BomId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("StockWarehouseOrderpointCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("StockWarehouseOrderpointCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ProcurementGroup? Group { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [One2many]
+    [ForeignKey("OrderpointId")]
+    [InverseProperty("Orderpoint")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductCategoryId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ProductCategory? ProductCategory { get; set; }
 
-    [ForeignKey("ProductSupplierId")]
-    //[InverseProperty("StockWarehouseOrderpointProductSuppliers")]
-    [NotMapped]
-    public virtual ResPartner? ProductSupplier { get; set; }
+    // [One2many]
+    [ForeignKey("OrderpointId")]
+    [InverseProperty("Orderpoint")]
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("RouteId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual StockRoute? Route { get; set; }
 
+    // [One2many]
+    [ForeignKey("OrderpointId")]
+    [InverseProperty("Orderpoint")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("OrderpointId")]
+    [InverseProperty("Orderpoint")]
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfo { get; set; }
+
+    // [Many2one]
     [ForeignKey("SupplierId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ProductSupplierinfo? Supplier { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("VendorId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    //[InverseProperty("StockWarehouseOrderpointVendors")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ResPartner? Vendor { get; set; }
 
+    // [Many2one]
     [ForeignKey("WarehouseId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
+    // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("StockWarehouseOrderpointWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("StockWarehouseOrderpointWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Orderpoint")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
-
-    //[InverseProperty("Orderpoint")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
-
-    //[InverseProperty("Orderpoint")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
-
-    //[InverseProperty("Orderpoint")]
-    [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } 
-
-    [ForeignKey("StockWarehouseOrderpointId")]
-    //[InverseProperty("StockWarehouseOrderpoints")]
-    [NotMapped]
-    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnoozes { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockWarehouseOrderpointId")]
+    // [InverseProperty("StockWarehouseOrderpoint")]
+    // public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnooze { get; set; }
 }

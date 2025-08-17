@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_expense")]
 //[Index("State", Name = "hr_expense_state_index")]
-public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -33,20 +38,17 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
 
-    [Column("sheet_id")]
-    public Guid? SheetId { get; set; }
-
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
-
-    [Column("vendor_id")]
-    public Guid? VendorId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
 
+    [Column("sheet_id")]
+    public Guid? SheetId { get; set; }
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,11 +56,11 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("state")]
-    public string? State { get; set; }
-
     [Column("payment_mode")]
     public string? PaymentMode { get; set; }
+
+    [Column("state")]
+    public string? State { get; set; }
 
     [Column("reference")]
     public string? Reference { get; set; }
@@ -88,23 +90,8 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("amount_tax_company")]
     public decimal? AmountTaxCompany { get; set; }
 
-    [Column("tax_amount_currency")]
-    public decimal? TaxAmountCurrency { get; set; }
-
-    [Column("tax_amount")]
-    public decimal? TaxAmount { get; set; }
-
-    [Column("total_amount_currency")]
-    public decimal? TotalAmountCurrency { get; set; }
-
-    [Column("untaxed_amount_currency")]
-    public decimal? UntaxedAmountCurrency { get; set; }
-
     [Column("total_amount")]
     public decimal? TotalAmount { get; set; }
-
-    [Column("price_unit")]
-    public decimal? PriceUnit { get; set; }
 
     [Column("untaxed_amount")]
     public decimal? UntaxedAmount { get; set; }
@@ -119,7 +106,7 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public bool? Sample { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -127,85 +114,96 @@ public partial class HrExpense: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
+    // [One2many]
+    [ForeignKey("ExpenseId")]
+    [InverseProperty("Expense")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrExpenseCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrExpenseCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [One2many]
+    [ForeignKey("ExpenseId")]
+    [InverseProperty("Expense")]
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplit { get; set; }
+
+    // [One2many]
+    [ForeignKey("ExpenseId")]
+    [InverseProperty("Expense")]
+    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizard { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
+    // [One2many]
+    [ForeignKey("ExpenseId")]
+    [InverseProperty("Expense")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("SheetId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
+    // [InverseProperty("HrExpense")] //Many2one
     public virtual HrExpenseSheet? Sheet { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrExpenseWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrExpenseWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Expense")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrExpenseId")]
+    // [InverseProperty("HrExpense")]
+    // public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicate { get; set; }
 
-    //[InverseProperty("Expense")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseSplitWizard> HrExpenseSplitWizards { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrExpenseId")]
+    // [InverseProperty("HrExpense")]
+    // public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
 
-    //[InverseProperty("Expense")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } 
-
-    [ForeignKey("HrExpenseId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicates { get; set; } 
-
-    [ForeignKey("HrExpenseId")]
-    //[InverseProperty("HrExpenses")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; } 
-
-    [ForeignKey("ExpenseId")]
-    //[InverseProperty("Expenses")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> Taxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ExpenseId")] //Many2many
+    // [InverseProperty("Expense")] //Many2many
+    public virtual ICollection<AccountTax> Tax { get; set; }
 }

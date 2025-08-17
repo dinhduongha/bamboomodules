@@ -6,7 +6,7 @@ namespace Bamboo.Core.Domain.Shared.Attributes;
 public class ModuleAttribute : Attribute
 {
     public string Name { get; }
-    public string[] Depends { get; }
+    public string[] Depends { get; set; }
     public ModuleAttribute(string name, params string[] depends)
     {
         Name = name;

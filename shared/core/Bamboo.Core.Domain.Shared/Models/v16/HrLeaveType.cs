@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_leave_type")]
-public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -29,7 +34,6 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("icon_id")]
     public Guid? IconId { get; set; }
 
-    // v16-Compat
     [Column("responsible_id")]
     public Guid? ResponsibleId { get; set; }
 
@@ -39,16 +43,12 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("allocation_notif_subtype_id")]
     public Guid? AllocationNotifSubtypeId { get; set; }
 
-    [Column("max_allowed_negative")]
-    public long? MaxAllowedNegative { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
     [Column("color_name")]
     public string? ColorName { get; set; }
 
@@ -72,7 +72,7 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_calendar_meeting")]
     public bool? CreateCalendarMeeting { get; set; }
@@ -80,23 +80,14 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("active")]
     public bool? Active { get; set; }
 
-    [Column("show_on_dashboard")]
-    public bool? ShowOnDashboard { get; set; }
-
     [Column("unpaid")]
     public bool? Unpaid { get; set; }
-
-    [Column("include_public_holidays_in_duration")]
-    public bool? IncludePublicHolidaysInDuration { get; set; }
 
     [Column("support_document")]
     public bool? SupportDocument { get; set; }
 
-    [Column("allows_negative")]
-    public bool? AllowsNegative { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -104,59 +95,80 @@ public partial class HrLeaveType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("overtime_deductible")]
     public bool? OvertimeDeductible { get; set; }
 
+    [Column("work_entry_type_id")]
+    public Guid? WorkEntryTypeId { get; set; }
+
+    [Column("timesheet_project_id")]
+    public Guid? TimesheetProjectId { get; set; }
+
+    [Column("timesheet_task_id")]
+    public Guid? TimesheetTaskId { get; set; }
+
+    [Column("timesheet_generate")]
+    public bool? TimesheetGenerate { get; set; }
+
+    // [Many2one]
     [ForeignKey("AllocationNotifSubtypeId")]
-    //[InverseProperty("HrLeaveTypeAllocationNotifSubtypes")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveTypeAllocationNotifSubtype")] //Many2one
     public virtual MailMessageSubtype? AllocationNotifSubtype { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrLeaveTypes")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveType")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrLeaveTypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrLeaveTypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("HolidayStatusId")]
+    [InverseProperty("HolidayStatus")]
+    public virtual ICollection<HrLeave> HrLeave { get; set; }
+
+    // [One2many]
+    [ForeignKey("TimeOffTypeId")]
+    [InverseProperty("TimeOffType")]
+    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlan { get; set; }
+
+    // [One2many]
+    [ForeignKey("HolidayStatusId")]
+    [InverseProperty("HolidayStatus")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("IconId")]
-    //[InverseProperty("HrLeaveTypes")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveType")] //Many2one
     public virtual IrAttachment? Icon { get; set; }
 
+    // [Many2one]
     [ForeignKey("LeaveNotifSubtypeId")]
-    //[InverseProperty("HrLeaveTypeLeaveNotifSubtypes")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveTypeLeaveNotifSubtype")] //Many2one
     public virtual MailMessageSubtype? LeaveNotifSubtype { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResponsibleId")]
-    //[InverseProperty("HrLeaveTypeResponsibles")]
-    [NotMapped]
-    public virtual ResUser? Responsible { get; set; }
+    // [InverseProperty("HrLeaveTypeResponsible")] //Many2one
+    public virtual ResUsers? Responsible { get; set; }
 
+    // [Many2one]
+    [ForeignKey("TimesheetProjectId")]
+    // [InverseProperty("HrLeaveType")] //Many2one
+    public virtual ProjectProject? TimesheetProject { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TimesheetTaskId")]
+    // [InverseProperty("HrLeaveType")] //Many2one
+    public virtual ProjectTask? TimesheetTask { get; set; }
+
+    // [Many2one]
+    [ForeignKey("WorkEntryTypeId")]
+    // [InverseProperty("HrLeaveType")] //Many2one
+    public virtual HrWorkEntryType? WorkEntryType { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrLeaveTypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    // ForeignKey???
-    //[InverseProperty("TimeOffType")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlans { get; set; } 
-
-    // ForeignKey???
-    //[InverseProperty("HolidayStatus")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
-
-    // ForeignKey???
-    //[InverseProperty("HolidayStatus")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; set; } 
-
-    [ForeignKey("HrLeaveTypeId")]
-    //[InverseProperty("HrLeaveTypes")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
-
+    // [InverseProperty("HrLeaveTypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

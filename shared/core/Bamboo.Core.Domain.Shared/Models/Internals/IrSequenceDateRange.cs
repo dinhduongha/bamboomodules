@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,16 +10,12 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_sequence_date_range")]
-public partial class IrSequenceDateRange: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrSequenceDateRange: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("sequence_id")]
     public Guid? SequenceId { get; set; }
@@ -29,7 +24,7 @@ public partial class IrSequenceDateRange: FullAuditedEntity<Guid>, IEntityDto<Gu
     public long? NumberNext { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,23 +36,23 @@ public partial class IrSequenceDateRange: FullAuditedEntity<Guid>, IEntityDto<Gu
     public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrSequenceDateRangeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrSequenceDateRangeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("SequenceId")]
-    //[InverseProperty("IrSequenceDateRanges")]
-    [NotMapped]
+    // [InverseProperty("IrSequenceDateRange")] //Many2one
     public virtual IrSequence? Sequence { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrSequenceDateRangeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrSequenceDateRangeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

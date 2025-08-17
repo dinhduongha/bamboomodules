@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_sequence")]
-public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrSequence: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +19,10 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("number_next")]
     public long? NumberNext { get; set; }
@@ -32,7 +34,7 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public long? Padding { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -59,50 +61,53 @@ public partial class IrSequence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public bool? UseDateRange { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("SecureSequenceId")]
+    [InverseProperty("SecureSequence")]
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("IrSequences")]
-    [NotMapped]
+    // [InverseProperty("IrSequence")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrSequenceCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrSequenceCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("SequenceId")]
+    [InverseProperty("Sequence")]
+    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRange { get; set; }
+
+    // [One2many]
+    [ForeignKey("SequenceId")]
+    [InverseProperty("Sequence")]
+    public virtual ICollection<PosConfig> PosConfigSequence { get; set; }
+
+    // [One2many]
+    [ForeignKey("SequenceLineId")]
+    [InverseProperty("SequenceLine")]
+    public virtual ICollection<PosConfig> PosConfigSequenceLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("BatchPaymentSequenceId")]
+    [InverseProperty("BatchPaymentSequence")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [One2many]
+    [ForeignKey("SequenceId")]
+    [InverseProperty("SequenceNavigation")]
+    public virtual ICollection<StockPickingType> StockPickingType { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrSequenceWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Sequence")]
-    [NotMapped]
-    public virtual ICollection<IrSequenceDateRange> IrSequenceDateRanges { get; set; } 
-
-    //[InverseProperty("SequenceLine")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigSequenceLines { get; set; } 
-
-    //[InverseProperty("Sequence")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigSequences { get; set; } 
-
-    //[InverseProperty("BatchPaymentSequence")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    // v16-Compat
-    //[InverseProperty("SecureSequence")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; } 
-
-
-    //[InverseProperty("SequenceNavigation")]
-    [NotMapped]
-    public virtual ICollection<StockPickingType> StockPickingTypes { get; set; } 
-
+    // [InverseProperty("IrSequenceWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

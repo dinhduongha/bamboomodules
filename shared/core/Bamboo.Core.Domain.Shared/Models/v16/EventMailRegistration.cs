@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class EventMailRegistration: FullAuditedEntity<Guid>, IEntityDto<
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("scheduler_id")]
     public Guid? SchedulerId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class EventMailRegistration: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? RegistrationId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,28 +44,28 @@ public partial class EventMailRegistration: FullAuditedEntity<Guid>, IEntityDto<
     public DateTime? ScheduledDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventMailRegistrationCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventMailRegistrationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("RegistrationId")]
-    //[InverseProperty("EventMailRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventMailRegistration")] //Many2one
     public virtual EventRegistration? Registration { get; set; }
 
+    // [Many2one]
     [ForeignKey("SchedulerId")]
-    //[InverseProperty("EventMailRegistrations")]
-    [NotMapped]
+    // [InverseProperty("EventMailRegistration")] //Many2one
     public virtual EventMail? Scheduler { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventMailRegistrationWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventMailRegistrationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

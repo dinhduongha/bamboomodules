@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_plan")]
-public partial class HrPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrPlan: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,14 @@ public partial class HrPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,37 +40,38 @@ public partial class HrPlan: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrPlans")]
-    [NotMapped]
+    // [InverseProperty("HrPlan")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrPlanCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrPlanCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrPlans")]
-    [NotMapped]
+    // [InverseProperty("HrPlan")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [One2many]
+    [ForeignKey("PlanId")]
+    [InverseProperty("Plan")]
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PlanId")]
+    [InverseProperty("Plan")]
+    public virtual ICollection<HrPlanWizard> HrPlanWizard { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrPlanWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-    
-    //[InverseProperty("Plan")]
-    [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypes { get; set; } 
-
-    //[InverseProperty("Plan")]
-    [NotMapped]
-    public virtual ICollection<HrPlanWizard> HrPlanWizards { get; set; } 
-
+    // [InverseProperty("HrPlanWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +16,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateTo", "DateFrom", Name = "hr_leave_date_to_date_from_index")]
 //[Index("EmployeeId", Name = "hr_leave_employee_id_index")]
 //[Index("UserId", Name = "hr_leave_user_id_index")]
-public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +24,10 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -36,7 +41,6 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("holiday_status_id")]
     public Guid? HolidayStatusId { get; set; }
 
-    // v16-Compat
     [Column("holiday_allocation_id")]
     public Guid? HolidayAllocationId { get; set; }
 
@@ -49,21 +53,15 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
 
-    [Column("resource_calendar_id")]
-    public Guid? ResourceCalendarId { get; set; }
-
     [Column("meeting_id")]
     public Guid? MeetingId { get; set; }
 
-    // v16-Compat
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
-    // v16-Compat
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
-    // v16-Compat
     [Column("mode_company_id")]
     public Guid? ModeCompanyId { get; set; }
 
@@ -74,7 +72,7 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? SecondApproverId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -91,13 +89,11 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("holiday_type")]
     public string? HolidayType { get; set; }
 
-    // v16-Compat data: character varying => double precision
     [Column("request_hour_from")]
-    public double? RequestHourFrom { get; set; }
+    public string? RequestHourFrom { get; set; }
 
-    // v16-Compat data: character varying => double precision
     [Column("request_hour_to")]
-    public double? RequestHourTo { get; set; }
+    public string? RequestHourTo { get; set; }
 
     [Column("request_date_from_period")]
     public string? RequestDateFromPeriod { get; set; }
@@ -133,7 +129,7 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -141,121 +137,122 @@ public partial class HrLeave : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("number_of_days")]
     public double? NumberOfDays { get; set; }
 
-    [Column("number_of_hours")]
-    public double? NumberOfHours { get; set; }
-
-    // [Column("request_hour_from")]
-    // public double? RequestHourFrom { get; set; }
-
-    // [Column("request_hour_to")]
-    // public double? RequestHourTo { get; set; }
-
     [Column("overtime_id")]
     public Guid? OvertimeId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("HolidayId")]
+    [InverseProperty("Holiday")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual HrEmployeeCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrLeaveCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrLeaveCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrLeaveEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveEmployee")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeCompanyId")]
-    //[InverseProperty("HrLeaveEmployeeCompanies")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveEmployeeCompany")] //Many2one
     public virtual ResCompany? EmployeeCompany { get; set; }
 
+    // [Many2one]
     [ForeignKey("FirstApproverId")]
-    //[InverseProperty("HrLeaveFirstApprovers")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveFirstApprover")] //Many2one
     public virtual HrEmployee? FirstApprover { get; set; }
 
+    // [Many2one]
     [ForeignKey("HolidayAllocationId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual HrLeaveAllocation? HolidayAllocation { get; set; }
 
+    // [Many2one]
     [ForeignKey("HolidayStatusId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual HrLeaveType? HolidayStatus { get; set; }
 
+    // [One2many]
+    [ForeignKey("LeaveId")]
+    [InverseProperty("Leave")]
+    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeave { get; set; }
+
+    // [One2many]
+    [ForeignKey("LeaveId")]
+    [InverseProperty("Leave")]
+    public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentId")]
+    [InverseProperty("Parent")]
+    public virtual ICollection<HrLeave> InverseParent { get; set; }
+
+    // [Many2one]
     [ForeignKey("ManagerId")]
-    //[InverseProperty("HrLeaveManagers")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveManager")] //Many2one
     public virtual HrEmployee? Manager { get; set; }
 
+    // [Many2one]
     [ForeignKey("MeetingId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual CalendarEvent? Meeting { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModeCompanyId")]
-    //[InverseProperty("HrLeaveModeCompanies")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveModeCompany")] //Many2one
     public virtual ResCompany? ModeCompany { get; set; }
 
+    // [Many2one]
     [ForeignKey("OvertimeId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
+    // [InverseProperty("HrLeave")] //Many2one
     public virtual HrAttendanceOvertime? Overtime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual HrLeave? Parent { get; set; }
 
+    // [One2many]
+    [ForeignKey("HolidayId")]
+    [InverseProperty("Holiday")]
+    public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
+
+    // [Many2one]
     [ForeignKey("SecondApproverId")]
-    //[InverseProperty("HrLeaveSecondApprovers")]
-    [NotMapped]
+    // [InverseProperty("HrLeaveSecondApprover")] //Many2one
     public virtual HrEmployee? SecondApprover { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("HrLeaveUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("HrLeaveUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrLeaveWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrLeaveWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Leave")]
-    [NotMapped]
-    public virtual ICollection<HrHolidaysCancelLeave> HrHolidaysCancelLeaves { get; set; } 
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> InverseParent { get; set; } 
-
-    //[InverseProperty("Holiday")]
-    [NotMapped]
-    public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; } 
-
-    [ForeignKey("HrLeaveId")]
-    //[InverseProperty("HrLeaves")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrLeaveId")] //Many2many
+    // [InverseProperty("HrLeave")] //Many2many
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

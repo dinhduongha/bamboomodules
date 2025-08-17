@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -19,7 +20,11 @@ public partial class PrivacyLookupWizardLine: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
 
@@ -30,7 +35,7 @@ public partial class PrivacyLookupWizardLine: FullAuditedEntity<Guid>, IEntityDt
     public Guid? ResModelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,28 +59,28 @@ public partial class PrivacyLookupWizardLine: FullAuditedEntity<Guid>, IEntityDt
     public bool? IsUnlinked { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PrivacyLookupWizardLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PrivacyLookupWizardLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResModelId")]
-    //[InverseProperty("PrivacyLookupWizardLines")]
-    [NotMapped]
+    // [InverseProperty("PrivacyLookupWizardLine")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("WizardId")]
-    //[InverseProperty("PrivacyLookupWizardLines")]
-    [NotMapped]
+    // [InverseProperty("PrivacyLookupWizardLine")] //Many2one
     public virtual PrivacyLookupWizard? Wizard { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PrivacyLookupWizardLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PrivacyLookupWizardLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

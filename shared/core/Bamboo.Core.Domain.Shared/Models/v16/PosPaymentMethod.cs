@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_payment_method")]
-public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosPaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,8 +21,9 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence")]
-    public long? Sequence { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("outstanding_account_id")]
     public Guid? OutstandingAccountId { get; set; }
@@ -33,7 +35,7 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,15 +43,9 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("use_payment_terminal")]
     public string? UsePaymentTerminal { get; set; }
 
-    [Column("payment_method_type")]
-    public string? PaymentMethodType { get; set; }
-
-    [Column("qr_code_method")]
-    public string? QrCodeMethod { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("is_cash_count")]
     public bool? IsCashCount { get; set; }
@@ -61,62 +57,59 @@ public partial class PosPaymentMethod: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("is_online_payment")]
-    public bool? IsOnlinePayment { get; set; }
+    // [One2many]
+    [ForeignKey("PosPaymentMethodId")]
+    [InverseProperty("PosPaymentMethod")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
-    //[InverseProperty("PosPaymentMethod")]
-    // [NotMapped]
-    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PosPaymentMethods")]
-    [NotMapped]
+    // [InverseProperty("PosPaymentMethod")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PosPaymentMethodCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PosPaymentMethodCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("PosPaymentMethods")]
-    [NotMapped]
+    // [InverseProperty("PosPaymentMethod")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("OutstandingAccountId")]
-    //[InverseProperty("PosPaymentMethodOutstandingAccounts")]
-    [NotMapped]
+    // [InverseProperty("PosPaymentMethodOutstandingAccount")] //Many2one
     public virtual AccountAccount? OutstandingAccount { get; set; }
 
+    // [One2many]
+    [ForeignKey("PaymentMethodId")]
+    [InverseProperty("PaymentMethod")]
+    public virtual ICollection<PosMakePayment> PosMakePayment { get; set; }
+
+    // [One2many]
+    [ForeignKey("PaymentMethodId")]
+    [InverseProperty("PaymentMethod")]
+    public virtual ICollection<PosPayment> PosPayment { get; set; }
+
+    // [Many2one]
     [ForeignKey("ReceivableAccountId")]
-    //[InverseProperty("PosPaymentMethodReceivableAccounts")]
-    [NotMapped]
+    // [InverseProperty("PosPaymentMethodReceivableAccount")] //Many2one
     public virtual AccountAccount? ReceivableAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PosPaymentMethodWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PosPaymentMethodWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("PosPaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
-    //[InverseProperty("PaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<PosMakePayment> PosMakePayments { get; set; } 
-
-    //[InverseProperty("PaymentMethod")]
-    [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; set; } 
-
-    [ForeignKey("PosPaymentMethodId")]
-    //[InverseProperty("PosPaymentMethods")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosPaymentMethodId")]
+    // [InverseProperty("PosPaymentMethod")]
+    // public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

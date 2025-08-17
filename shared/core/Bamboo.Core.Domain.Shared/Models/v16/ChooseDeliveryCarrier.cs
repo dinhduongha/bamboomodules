@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class ChooseDeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("order_id")]
     public Guid? OrderId { get; set; }
 
@@ -27,19 +32,16 @@ public partial class ChooseDeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? CarrierId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("weight_uom_name")]
-    public string? WeightUomName { get; set; }
 
     [Column("delivery_message")]
     public string? DeliveryMessage { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -50,23 +52,23 @@ public partial class ChooseDeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<
     [Column("display_price")]
     public double? DisplayPrice { get; set; }
 
+    // [Many2one]
     [ForeignKey("CarrierId")]
-    //[InverseProperty("ChooseDeliveryCarriers")]
-    [NotMapped]
+    // [InverseProperty("ChooseDeliveryCarrier")] //Many2one
     public virtual DeliveryCarrier? Carrier { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ChooseDeliveryCarrierCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ChooseDeliveryCarrierCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("OrderId")]
-    //[InverseProperty("ChooseDeliveryCarriers")]
-    [NotMapped]
+    // [InverseProperty("ChooseDeliveryCarrier")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ChooseDeliveryCarrierWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ChooseDeliveryCarrierWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

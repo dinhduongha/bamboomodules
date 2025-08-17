@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_goal_definition")]
-public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationGoalDefinition: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -36,7 +41,7 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
     public Guid? ActionId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -61,7 +66,7 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("suffix", TypeName = "jsonb")]
@@ -80,56 +85,59 @@ public partial class GamificationGoalDefinition: FullAuditedEntity<Guid>, IEntit
     public bool? BatchMode { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActionId")]
-    //[InverseProperty("GamificationGoalDefinitions")]
-    [NotMapped]
+    // [InverseProperty("GamificationGoalDefinition")] //Many2one
     public virtual IrActWindow? Action { get; set; }
 
+    // [Many2one]
     [ForeignKey("BatchDistinctiveField")]
-    //[InverseProperty("GamificationGoalDefinitionBatchDistinctiveFieldNavigations")]
-    [NotMapped]
+    // [InverseProperty("GamificationGoalDefinitionBatchDistinctiveFieldNavigation")] //Many2one
     public virtual IrModelFields? BatchDistinctiveFieldNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("GamificationGoalDefinitionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("GamificationGoalDefinitionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("FieldId")]
-    //[InverseProperty("GamificationGoalDefinitionFields")]
-    [NotMapped]
+    // [InverseProperty("GamificationGoalDefinitionField")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
+    // [Many2one]
     [ForeignKey("FieldDateId")]
-    //[InverseProperty("GamificationGoalDefinitionFieldDates")]
-    [NotMapped]
+    // [InverseProperty("GamificationGoalDefinitionFieldDate")] //Many2one
     public virtual IrModelFields? FieldDate { get; set; }
 
-    //[InverseProperty("Definition")]
-    [NotMapped]
-    public virtual ICollection<GamificationChallengeLine> GamificationChallengeLines { get; set; } 
+    // [One2many]
+    [ForeignKey("DefinitionId")]
+    [InverseProperty("Definition")]
+    public virtual ICollection<GamificationChallengeLine> GamificationChallengeLine { get; set; }
 
-    //[InverseProperty("Definition")]
-    [NotMapped]
-    public virtual ICollection<GamificationGoal> GamificationGoals { get; set; } 
+    // [One2many]
+    [ForeignKey("DefinitionId")]
+    [InverseProperty("Definition")]
+    public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("GamificationGoalDefinitions")]
-    [NotMapped]
+    // [InverseProperty("GamificationGoalDefinition")] //Many2one
     public virtual IrModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("GamificationGoalDefinitionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("GamificationGoalDefinitionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("GamificationGoalDefinitionId")]
-    //[InverseProperty("GamificationGoalDefinitions")]
-    [NotMapped]
-    public virtual ICollection<GamificationBadge> GamificationBadges { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("GamificationGoalDefinitionId")]
+    // [InverseProperty("GamificationGoalDefinition")]
+    // public virtual ICollection<GamificationBadge> GamificationBadge { get; set; }
 }

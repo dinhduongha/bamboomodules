@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_event_ticket")]
-public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventEventTicket: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,8 +21,9 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence")]
-    public long? Sequence { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
@@ -30,7 +32,7 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public long? SeatsMax { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -38,12 +40,9 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("event_id")]
     public Guid? EventId { get; set; }
 
-    [Column("color")]
-    public string? Color { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -53,7 +52,7 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? SeatsLimited { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -70,48 +69,48 @@ public partial class EventEventTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("price")]
     public decimal? Price { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventEventTicketCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventEventTicketCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EventId")]
-    //[InverseProperty("EventEventTickets")]
-    [NotMapped]
+    // [InverseProperty("EventEventTicket")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
-    //[InverseProperty("EventTicket")]
-    [NotMapped]
-    public virtual ICollection<EventEventConfigurator> EventEventConfigurators { get; set; } 
+    // [One2many]
+    [ForeignKey("EventTicketId")]
+    [InverseProperty("EventTicket")]
+    public virtual ICollection<EventEventConfigurator> EventEventConfigurator { get; set; }
 
-    //[InverseProperty("EventTicket")]
-    [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
+    // [One2many]
+    [ForeignKey("EventTicketId")]
+    [InverseProperty("EventTicket")]
+    public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
+    // [Many2one]
     [ForeignKey("EventTypeId")]
-    //[InverseProperty("EventEventTickets")]
-    [NotMapped]
+    // [InverseProperty("EventEventTicket")] //Many2one
     public virtual EventType? EventType { get; set; }
 
-    //[InverseProperty("EventTicket")]
-    [NotMapped]
-    public virtual ICollection<PosOrderLine> PosOrderLines { get; set; } 
-
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("EventEventTickets")]
-    [NotMapped]
+    // [InverseProperty("EventEventTicket")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
-    //[InverseProperty("EventTicket")]
-    [NotMapped]
-    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLines { get; set; } 
+    // [One2many]
+    [ForeignKey("EventTicketId")]
+    [InverseProperty("EventTicket")]
+    public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
-    //[InverseProperty("EventTicket")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
+    // [One2many]
+    [ForeignKey("EventTicketId")]
+    [InverseProperty("EventTicket")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventEventTicketWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventEventTicketWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

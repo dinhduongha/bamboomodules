@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,19 +10,22 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("base_language_install")]
-public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    //[Column("company_id")]
-    //public Guid? TenantId { get; set; }
+    [Column("company_id")]
+    public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -32,28 +34,30 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
     public bool? Overwrite { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("BaseLanguageInstallCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("BaseLanguageInstallCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BaseLanguageInstallWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("BaseLanguageInstallWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("LanguageWizardId")]
-    //[InverseProperty("LanguageWizards")]
-    [NotMapped]
-    public virtual ICollection<ResLang> Langs { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("LanguageWizardId")] //Many2many
+    // [InverseProperty("LanguageWizard")] //Many2many
+    public virtual ICollection<ResLang> Lang { get; set; }
 
-    [ForeignKey("BaseLanguageInstallId")]
-    //[InverseProperty("BaseLanguageInstalls")]
-    [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("BaseLanguageInstallId")] //Many2many
+    // [InverseProperty("BaseLanguageInstall")] //Many2many
+    public virtual ICollection<Website> Website { get; set; }
 }

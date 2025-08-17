@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("res_id")]
     public Guid? ResId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? AuthorId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -51,33 +56,35 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
     public DateTime? ScheduledDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("AuthorId")]
-    //[InverseProperty("MailScheduledMessages")]
-    [NotMapped]
+    // [InverseProperty("MailScheduledMessage")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailScheduledMessageCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailScheduledMessageCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailScheduledMessageWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailScheduledMessageWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ScheduledMessageId")]
-    //[InverseProperty("ScheduledMessages")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ScheduledMessageId")] //Many2many
+    // [InverseProperty("ScheduledMessage")] //Many2many
+    public virtual ICollection<IrAttachment> Attachment { get; set; }
 
-    [ForeignKey("MailScheduledMessageId")]
-    //[InverseProperty("MailScheduledMessagesNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailScheduledMessageId")] //Many2many
+    // [InverseProperty("MailScheduledMessageNavigation")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

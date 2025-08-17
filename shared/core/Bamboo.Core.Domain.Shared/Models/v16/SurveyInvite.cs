@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_invite")]
-//[Index("AuthorId", Name = "survey_invite__author_id_index")]
+//[Index("AuthorId", Name = "survey_invite_author_id_index")]
 public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -20,6 +21,10 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -34,7 +39,7 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? SurveyId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -61,48 +66,58 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public DateTime? Deadline { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("applicant_id")]
+    public Guid? ApplicantId { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ApplicantId")]
+    // [InverseProperty("SurveyInvite")] //Many2one
+    public virtual HrApplicant? Applicant { get; set; }
+
+    // [Many2one]
     [ForeignKey("AuthorId")]
-    //[InverseProperty("SurveyInvites")]
-    [NotMapped]
+    // [InverseProperty("SurveyInvite")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SurveyInviteCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SurveyInviteCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailServerId")]
-    //[InverseProperty("SurveyInvites")]
-    [NotMapped]
+    // [InverseProperty("SurveyInvite")] //Many2one
     public virtual IrMailServer? MailServer { get; set; }
 
+    // [Many2one]
     [ForeignKey("SurveyId")]
-    //[InverseProperty("SurveyInvites")]
-    [NotMapped]
+    // [InverseProperty("SurveyInvite")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
+    // [Many2one]
     [ForeignKey("TemplateId")]
-    //[InverseProperty("SurveyInvites")]
-    [NotMapped]
+    // [InverseProperty("SurveyInvite")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SurveyInviteWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SurveyInviteWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("WizardId")]
-    //[InverseProperty("Wizards1")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> Attachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("WizardId")] //Many2many
+    // [InverseProperty("WizardNavigation")] //Many2many
+    public virtual ICollection<IrAttachment> Attachment { get; set; }
 
-    [ForeignKey("InviteId")]
-    //[InverseProperty("Invites")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("InviteId")] //Many2many
+    // [InverseProperty("Invite")] //Many2many
+    public virtual ICollection<ResPartner> Partner { get; set; }
 }

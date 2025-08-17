@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("followup_line")]
 //[Index("FollowupId", "Delay", Name = "followup_line_days_uniq", IsUnique = true)]
-public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FollowupLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("followup_id")]
     public Guid? FollowupId { get; set; }
@@ -34,7 +39,7 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? EmailTemplateId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -59,48 +64,43 @@ public partial class FollowupLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public bool? ManualAction { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    //[InverseProperty("FollowupLine")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [One2many]
+    [ForeignKey("FollowupLineId")]
+    [InverseProperty("FollowupLine")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("FollowupLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("FollowupLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmailTemplateId")]
-    //[InverseProperty("FollowupLines")]
-    [NotMapped]
+    // [InverseProperty("FollowupLine")] //Many2one
     public virtual MailTemplate? EmailTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("FollowupId")]
-    //[InverseProperty("FollowupLines")]
-    [NotMapped]
+    // [InverseProperty("FollowupLine")] //Many2one
     public virtual FollowupFollowup? Followup { get; set; }
 
+    // [Many2one]
     [ForeignKey("ManualActionResponsibleId")]
-    //[InverseProperty("FollowupLineManualActionResponsibles")]
-    [NotMapped]
-    public virtual ResUser? ManualActionResponsible { get; set; }
+    // [InverseProperty("FollowupLineManualActionResponsible")] //Many2one
+    public virtual ResUsers? ManualActionResponsible { get; set; }
 
+    // [One2many]
+    [ForeignKey("LatestFollowupLevelIdWithoutLit")]
+    [InverseProperty("LatestFollowupLevelIdWithoutLitNavigation")]
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("FollowupLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-   // v16-Compat
-    //[InverseProperty("LatestFollowupLevelIdWithoutLitNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
-
+    // [InverseProperty("FollowupLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

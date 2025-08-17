@@ -24,8 +24,8 @@ namespace Bamboo.Core.Application
         private readonly IRepository<IrModelFieldAccess, Guid> _fieldAccessRepository;
         private readonly IRepository<IrRule, Guid> _ruleRepository;
         private readonly ICurrentUser _currentUser;
-        private readonly IRepository<ResUser, Guid> _resUserRepository;
-        private readonly IRepository<ResGroup, Guid> _resGroupRepository;
+        private readonly IRepository<ResUsers, Guid> _resUserRepository;
+        private readonly IRepository<ResGroups, Guid> _resGroupRepository;
         private readonly IMemoryCache _memoryCache;
         private readonly DomainParser _domainParser;
 
@@ -36,8 +36,8 @@ namespace Bamboo.Core.Application
             IRepository<IrModelFieldAccess, Guid> fieldAccessRepository,
             IRepository<IrRule, Guid> ruleRepository,
             ICurrentUser currentUser,
-            IRepository<ResUser, Guid> resUserRepository,
-            IRepository<ResGroup, Guid> resGroupRepository,
+            IRepository<ResUsers, Guid> resUserRepository,
+            IRepository<ResGroups, Guid> resGroupRepository,
             IMemoryCache memoryCache,
             DomainParser domainParser)
         {

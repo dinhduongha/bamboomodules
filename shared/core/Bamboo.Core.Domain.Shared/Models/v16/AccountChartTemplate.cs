@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_chart_template")]
-public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountChartTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -102,14 +107,14 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public Guid? PropertyCashBasisBaseAccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("bank_account_code_prefix")]
     public string? BankAccountCodePrefix { get; set; }
@@ -130,7 +135,7 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     public bool? UseStornoAccounting { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -138,184 +143,188 @@ public partial class AccountChartTemplate : FullAuditedEntity<Guid>, IEntityDto<
     [Column("spoken_languages")]
     public string? SpokenLanguages { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplate { get; set; }
 
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplate { get; set; }
+
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("AccountJournalEarlyPayDiscountGainAccountId")]
-    //[InverseProperty("AccountChartTemplateAccountJournalEarlyPayDiscountGainAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateAccountJournalEarlyPayDiscountGainAccount")] //Many2one
     public virtual AccountAccountTemplate? AccountJournalEarlyPayDiscountGainAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountJournalEarlyPayDiscountLossAccountId")]
-    //[InverseProperty("AccountChartTemplateAccountJournalEarlyPayDiscountLossAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateAccountJournalEarlyPayDiscountLossAccount")] //Many2one
     public virtual AccountAccountTemplate? AccountJournalEarlyPayDiscountLossAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountJournalPaymentCreditAccountId")]
-    //[InverseProperty("AccountChartTemplateAccountJournalPaymentCreditAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateAccountJournalPaymentCreditAccount")] //Many2one
     public virtual AccountAccountTemplate? AccountJournalPaymentCreditAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountJournalPaymentDebitAccountId")]
-    //[InverseProperty("AccountChartTemplateAccountJournalPaymentDebitAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateAccountJournalPaymentDebitAccount")] //Many2one
     public virtual AccountAccountTemplate? AccountJournalPaymentDebitAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("AccountJournalSuspenseAccountId")]
-    //[InverseProperty("AccountChartTemplateAccountJournalSuspenseAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateAccountJournalSuspenseAccount")] //Many2one
     public virtual AccountAccountTemplate? AccountJournalSuspenseAccount { get; set; }
 
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplate { get; set; }
+
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<AccountReport> AccountReport { get; set; }
+
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("AccountChartTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplate")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountChartTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountChartTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountChartTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplate")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefaultCashDifferenceExpenseAccountId")]
-    //[InverseProperty("AccountChartTemplateDefaultCashDifferenceExpenseAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateDefaultCashDifferenceExpenseAccount")] //Many2one
     public virtual AccountAccountTemplate? DefaultCashDifferenceExpenseAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefaultCashDifferenceIncomeAccountId")]
-    //[InverseProperty("AccountChartTemplateDefaultCashDifferenceIncomeAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateDefaultCashDifferenceIncomeAccount")] //Many2one
     public virtual AccountAccountTemplate? DefaultCashDifferenceIncomeAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefaultPosReceivableAccountId")]
-    //[InverseProperty("AccountChartTemplateDefaultPosReceivableAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateDefaultPosReceivableAccount")] //Many2one
     public virtual AccountAccountTemplate? DefaultPosReceivableAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("ExpenseCurrencyExchangeAccountId")]
-    //[InverseProperty("AccountChartTemplateExpenseCurrencyExchangeAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateExpenseCurrencyExchangeAccount")] //Many2one
     public virtual AccountAccountTemplate? ExpenseCurrencyExchangeAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("IncomeCurrencyExchangeAccountId")]
-    //[InverseProperty("AccountChartTemplateIncomeCurrencyExchangeAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplateIncomeCurrencyExchangeAccount")] //Many2one
     public virtual AccountAccountTemplate? IncomeCurrencyExchangeAccount { get; set; }
 
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<AccountChartTemplate> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual AccountChartTemplate? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAccountExpenseId")]
-    //[InverseProperty("AccountChartTemplatePropertyAccountExpenses")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAccountExpense")] //Many2one
     public virtual AccountAccountTemplate? PropertyAccountExpense { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAccountExpenseCategId")]
-    //[InverseProperty("AccountChartTemplatePropertyAccountExpenseCategs")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAccountExpenseCateg")] //Many2one
     public virtual AccountAccountTemplate? PropertyAccountExpenseCateg { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAccountIncomeId")]
-    //[InverseProperty("AccountChartTemplatePropertyAccountIncomes")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAccountIncome")] //Many2one
     public virtual AccountAccountTemplate? PropertyAccountIncome { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAccountIncomeCategId")]
-    //[InverseProperty("AccountChartTemplatePropertyAccountIncomeCategs")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAccountIncomeCateg")] //Many2one
     public virtual AccountAccountTemplate? PropertyAccountIncomeCateg { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAccountPayableId")]
-    //[InverseProperty("AccountChartTemplatePropertyAccountPayables")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAccountPayable")] //Many2one
     public virtual AccountAccountTemplate? PropertyAccountPayable { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAccountReceivableId")]
-    //[InverseProperty("AccountChartTemplatePropertyAccountReceivables")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAccountReceivable")] //Many2one
     public virtual AccountAccountTemplate? PropertyAccountReceivable { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyAdvanceTaxPaymentAccountId")]
-    //[InverseProperty("AccountChartTemplatePropertyAdvanceTaxPaymentAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyAdvanceTaxPaymentAccount")] //Many2one
     public virtual AccountAccountTemplate? PropertyAdvanceTaxPaymentAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyCashBasisBaseAccountId")]
-    //[InverseProperty("AccountChartTemplatePropertyCashBasisBaseAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyCashBasisBaseAccount")] //Many2one
     public virtual AccountAccountTemplate? PropertyCashBasisBaseAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyStockAccountInputCategId")]
-    //[InverseProperty("AccountChartTemplatePropertyStockAccountInputCategs")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyStockAccountInputCateg")] //Many2one
     public virtual AccountAccountTemplate? PropertyStockAccountInputCateg { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyStockAccountOutputCategId")]
-    //[InverseProperty("AccountChartTemplatePropertyStockAccountOutputCategs")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyStockAccountOutputCateg")] //Many2one
     public virtual AccountAccountTemplate? PropertyStockAccountOutputCateg { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyStockValuationAccountId")]
-    //[InverseProperty("AccountChartTemplatePropertyStockValuationAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyStockValuationAccount")] //Many2one
     public virtual AccountAccountTemplate? PropertyStockValuationAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyTaxPayableAccountId")]
-    //[InverseProperty("AccountChartTemplatePropertyTaxPayableAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyTaxPayableAccount")] //Many2one
     public virtual AccountAccountTemplate? PropertyTaxPayableAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("PropertyTaxReceivableAccountId")]
-    //[InverseProperty("AccountChartTemplatePropertyTaxReceivableAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountChartTemplatePropertyTaxReceivableAccount")] //Many2one
     public virtual AccountAccountTemplate? PropertyTaxReceivableAccount { get; set; }
 
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [One2many]
+    [ForeignKey("ChartTemplateId")]
+    [InverseProperty("ChartTemplate")]
+    public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountChartTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplates { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<AccountGroupTemplate> AccountGroupTemplates { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<AccountReport> AccountReports { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } 
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<AccountChartTemplate> InverseParent { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    //[InverseProperty("ChartTemplate")]
-    [NotMapped]
-    public virtual ICollection<ResConfigSetting> ResConfigSettings { get; set; } 
-
+    // [InverseProperty("AccountChartTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

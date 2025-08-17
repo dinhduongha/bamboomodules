@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,19 +10,15 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_model_relation")]
-//[Index("Model", Name = "ir_model_relation_model_index")]
-//[Index("Module", Name = "ir_model_relation_module_index")]
-//[Index("Name", Name = "ir_model_relation_name_index")]
-public partial class IrModelRelation: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("Model", Name = "ir_model_relation__model_index")]
+//[Index("Module", Name = "ir_model_relation__module_index")]
+//[Index("Name", Name = "ir_model_relation__name_index")]
+public partial class IrModelRelation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("model")]
     public Guid? Model { get; set; }
@@ -32,7 +27,7 @@ public partial class IrModelRelation: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? Module { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -44,25 +39,25 @@ public partial class IrModelRelation: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModelRelationCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrModelRelationCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("Model")]
-    //[InverseProperty("IrModelRelations")]
-    [NotMapped]
+    // [InverseProperty("IrModelRelation")] //Many2one
     public virtual IrModel? ModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("Module")]
-    //[InverseProperty("IrModelRelations")]
-    [NotMapped]
+    // [InverseProperty("IrModelRelation")] //Many2one
     public virtual IrModuleModule? ModuleNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModelRelationWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModelRelationWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

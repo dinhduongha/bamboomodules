@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_analytic_account")]
 //[Index("Code", Name = "account_analytic_account_code_index")]
-public partial class AccountAnalyticAccount : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +22,10 @@ public partial class AccountAnalyticAccount : FullAuditedEntity<Guid>, IEntityDt
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -35,156 +39,122 @@ public partial class AccountAnalyticAccount : FullAuditedEntity<Guid>, IEntityDt
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("code")]
-    public string? Code { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("AccountId")]
+    [InverseProperty("Account")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("AccountAnalyticId")]
+    [InverseProperty("AccountAnalytic")]
+    public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
+
+    // [One2many]
+    [ForeignKey("AccountAnalyticId")]
+    [InverseProperty("AccountAnalytic")]
+    public virtual ICollection<AccountAssetCategory> AccountAssetCategory { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticAccount")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAnalyticAccountCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAnalyticAccountCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticAccount")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [One2many]
+    [ForeignKey("CostsHourAccountId")]
+    [InverseProperty("CostsHourAccount")]
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticAccount")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PlanId")]
-    //[InverseProperty("AccountAnalyticAccountPlans")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticAccountPlan")] //Many2one
     public virtual AccountAnalyticPlan? Plan { get; set; }
 
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<ProjectProject> ProjectProject { get; set; }
+
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+
+    // [Many2one]
     [ForeignKey("RootPlanId")]
-    //[InverseProperty("AccountAnalyticAccountRootPlans")]
-    [NotMapped]
+    // [InverseProperty("AccountAnalyticAccountRootPlan")] //Many2one
     public virtual AccountAnalyticPlan? RootPlan { get; set; }
 
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAnalyticAccountWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAnalyticAccountWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Account")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAccounts { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticAccountId")]
+    // [InverseProperty("AccountAnalyticAccount")]
+    // public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
-    //[InverseProperty("XPlan2")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2s { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticAccountId")]
+    // [InverseProperty("AccountAnalyticAccount")]
+    // public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
-    //[InverseProperty("XPlan3")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3s { get; set; } 
-
-    //[InverseProperty("AccountAnalytic")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
-
-    //[InverseProperty("AccountAnalytic")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } 
-
-    //[InverseProperty("Account")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
-
-    //[InverseProperty("AccountAnalytic")]
-    //[NotMapped]
-    //public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
-
-    //[InverseProperty("AccountAnalytic")]
-    //[NotMapped]
-    //public virtual ICollection<AccountAssetCategory> AccountAssetCategories { get; set; } 
-
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } 
-
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
-    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReports { get; set; } 
-
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
-    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } 
-
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<CrossoveredBudgetLine> CrossoveredBudgetLines { get; set; } 
-
-
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
-
-    //[InverseProperty("Account")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectAccounts { get; set; } 
-
-    //[InverseProperty("XPlan2")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectXPlan2s { get; set; } 
-
-    //[InverseProperty("XPlan3")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjectXPlan3s { get; set; } 
-
-
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
-
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
-
-    // RELATIONS BEGIN - MUST HAVE
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
-
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    //[InverseProperty("AnalyticAccount")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
-
-    [ForeignKey("AccountAnalyticAccountId")]
-    //[InverseProperty("AccountAnalyticAccounts")]
-    //[InverseProperty("CostsHourAccount")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenters { get; set; } 
-    // RELATIONS END
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticAccountId")]
+    // [InverseProperty("AccountAnalyticAccount")]
+    // public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
 }

@@ -25,12 +25,14 @@ public class ModelAttribute : Attribute
 {
     public string Name { get; }
     public string[] Depends { get; }
-    public bool IsTransient { get; }
-    public ModelAttribute(string name, string[]? depends = null, bool isTransient = false)
+    public bool IsTransient { get; set; }
+    public bool IsAuto { get; set; }
+    public ModelAttribute(string name, string[]? depends = null, bool isTransient = false, bool isAuto = false)
     {
         Name = name;
         Depends = depends ?? Array.Empty<string>();
         IsTransient = isTransient;
+        IsAuto = isAuto;
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,6 +22,10 @@ public partial class HrCandidateSkill: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("candidate_id")]
     public Guid? CandidateId { get; set; }
 
@@ -34,44 +39,44 @@ public partial class HrCandidateSkill: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? SkillTypeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CandidateId")]
-    //[InverseProperty("HrCandidateSkills")]
-    [NotMapped]
+    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrCandidate? Candidate { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrCandidateSkillCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrCandidateSkillCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("SkillId")]
-    //[InverseProperty("HrCandidateSkills")]
-    [NotMapped]
+    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrSkill? Skill { get; set; }
 
+    // [Many2one]
     [ForeignKey("SkillLevelId")]
-    //[InverseProperty("HrCandidateSkills")]
-    [NotMapped]
+    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrSkillLevel? SkillLevel { get; set; }
 
+    // [Many2one]
     [ForeignKey("SkillTypeId")]
-    //[InverseProperty("HrCandidateSkills")]
-    [NotMapped]
+    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrSkillType? SkillType { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrCandidateSkillWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrCandidateSkillWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

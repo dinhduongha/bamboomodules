@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -10,11 +11,9 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-// May-Copy-To-Tenants
 [Table("mail_activity_type")]
-//[Index("CreateUid", Name = "mail_activity_type__create_uid_index")]
-//[Index("CreationTime", Name = "mail_activity_type_create_uid_index")]
-public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CreateUid", Name = "mail_activity_type_create_uid_index")]
+public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,11 +22,15 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("delay_count")]
     public long? DelayCount { get; set; }
@@ -64,7 +67,7 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("summary", TypeName = "jsonb")]
@@ -77,83 +80,92 @@ public partial class MailActivityType : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("active")]
     public bool? Active { get; set; }
 
-    [Column("keep_done")]
-    public bool? KeepDone { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("SaleActivityTypeId")]
+    [InverseProperty("SaleActivityType")]
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailActivityTypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailActivityTypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DefaultUserId")]
-    //[InverseProperty("MailActivityTypeDefaultUsers")]
-    [NotMapped]
-    public virtual ResUser? DefaultUser { get; set; }
+    // [InverseProperty("MailActivityTypeDefaultUser")] //Many2one
+    public virtual ResUsers? DefaultUser { get; set; }
 
+    // [One2many]
+    [ForeignKey("ActivityTypeId")]
+    [InverseProperty("ActivityType")]
+    public virtual ICollection<HrPlanActivityType> HrPlanActivityType { get; set; }
+
+    // [One2many]
     [ForeignKey("TriggeredNextTypeId")]
-    //[InverseProperty("InverseTriggeredNextType")]
-    [NotMapped]
+    [InverseProperty("TriggeredNextType")]
+    public virtual ICollection<MailActivityType> InverseTriggeredNextType { get; set; }
+
+    // [One2many]
+    [ForeignKey("ActivityTypeId")]
+    [InverseProperty("ActivityType")]
+    public virtual ICollection<IrActServer> IrActServer { get; set; }
+
+    // [One2many]
+    [ForeignKey("ActivityTypeId")]
+    [InverseProperty("ActivityType")]
+    public virtual ICollection<MailActivity> MailActivityActivityType { get; set; }
+
+    // [One2many]
+    [ForeignKey("PreviousActivityTypeId")]
+    [InverseProperty("PreviousActivityType")]
+    public virtual ICollection<MailActivity> MailActivityPreviousActivityType { get; set; }
+
+    // [One2many]
+    [ForeignKey("RecommendedActivityTypeId")]
+    [InverseProperty("RecommendedActivityType")]
+    public virtual ICollection<MailActivity> MailActivityRecommendedActivityType { get; set; }
+
+    // [One2many]
+    [ForeignKey("MailActivityTypeId")]
+    [InverseProperty("MailActivityType")]
+    public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
+
+    // [One2many]
+    [ForeignKey("MailActivityTypeId")]
+    [InverseProperty("MailActivityType")]
+    public virtual ICollection<MailMessage> MailMessage { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TriggeredNextTypeId")]
+    // [InverseProperty("InverseTriggeredNextType")] //Many2one
     public virtual MailActivityType? TriggeredNextType { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailActivityTypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailActivityTypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("SaleActivityType")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("RecommendedId")] //Many2many
+    // [InverseProperty("Recommended")] //Many2many
+    public virtual ICollection<MailActivityType> Activity { get; set; }
 
-    //[InverseProperty("ActivityType")]
-    [NotMapped]
-    public virtual ICollection<HrPlanActivityType> HrPlanActivityTypes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailActivityTypeId")] //Many2many
+    // [InverseProperty("MailActivityType")] //Many2many
+    public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
-    //[InverseProperty("TriggeredNextType")]
-    [NotMapped]
-    public virtual ICollection<MailActivityType> InverseTriggeredNextType { get; set; } 
-
-    //[InverseProperty("ActivityType")]
-    [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } 
-
-    //[InverseProperty("ActivityType")]
-    [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityActivityTypes { get; set; } 
-
-    //[InverseProperty("PreviousActivityType")]
-    [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityPreviousActivityTypes { get; set; } 
-
-    //[InverseProperty("RecommendedActivityType")]
-    [NotMapped]
-    public virtual ICollection<MailActivity> MailActivityRecommendedActivityTypes { get; set; } 
-
-    //[InverseProperty("MailActivityType")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
-
-    //[InverseProperty("MailActivityType")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } 
-
-    [ForeignKey("RecommendedId")]
-    //[InverseProperty("Recommendeds")]
-    [NotMapped]
-    public virtual ICollection<MailActivityType> Activities { get; set; } 
-
-    [ForeignKey("MailActivityTypeId")]
-    //[InverseProperty("MailActivityTypes")]
-    [NotMapped]
-    public virtual ICollection<MailTemplate> MailTemplates { get; set; } 
-
-    [ForeignKey("ActivityId")]
-    //[InverseProperty("Activities")]
-    [NotMapped]
-    public virtual ICollection<MailActivityType> Recommendeds { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ActivityId")] //Many2many
+    // [InverseProperty("Activity")] //Many2many
+    public virtual ICollection<MailActivityType> Recommended { get; set; }
 }

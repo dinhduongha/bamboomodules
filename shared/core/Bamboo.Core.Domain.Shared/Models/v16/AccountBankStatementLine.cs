@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,10 +13,9 @@ namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement_line")]
 //[Index("InternalIndex", Name = "account_bank_statement_line_internal_index_index")]
+//[Index("MoveId", Name = "account_bank_statement_line_move_id_index")]
 //[Index("UniqueImportId", Name = "account_bank_statement_line_unique_import_id", IsUnique = true)]
-//[Index("MoveId", Name = "account_bank_statement_line__move_id_index")]
-//[Index("JournalId", "CompanyId", "InternalIndex", Name = "account_bank_statement_line_main_idx")]
-public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,11 +24,12 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("move_id")]
     public Guid? MoveId { get; set; }
-
-    [Column("journal_id")]
-    public Guid? JournalId { get; set; }
 
     [Column("statement_id")]
     public Guid? StatementId { get; set; }
@@ -46,7 +47,7 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     public Guid? ForeignCurrencyId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -66,10 +67,6 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("internal_index")]
     public string? InternalIndex { get; set; }
 
-    [JsonField]
-    [Column("transaction_details", TypeName = "jsonb")]
-    public string? TransactionDetails { get; set; }
-
     [Column("amount")]
     public decimal? Amount { get; set; }
 
@@ -80,7 +77,7 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     public bool? IsReconciled { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -91,78 +88,62 @@ public partial class AccountBankStatementLine : FullAuditedEntity<Guid>, IEntity
     [Column("pos_session_id")]
     public Guid? PosSessionId { get; set; }
 
-    // v16-Compat
     [Column("unique_import_id")]
     public string? UniqueImportId { get; set; }
 
-    [Column("employee_id")]
-    public Guid? EmployeeId { get; set; }
+    // [One2many]
+    [ForeignKey("StatementLineId")]
+    [InverseProperty("StatementLine")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
 
-    //[InverseProperty("StatementLine")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [One2many]
+    [ForeignKey("StatementLineId")]
+    [InverseProperty("StatementLine")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
-    //[InverseProperty("StatementLine")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
-
-    [ForeignKey("TenantId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountBankStatementLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountBankStatementLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountBankStatementLineCurrencies")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatementLineCurrency")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
-    [ForeignKey("EmployeeId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
-    public virtual HrEmployee? Employee { get; set; }
-
+    // [Many2one]
     [ForeignKey("ForeignCurrencyId")]
-    //[InverseProperty("AccountBankStatementLineForeignCurrencies")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatementLineForeignCurrency")] //Many2one
     public virtual ResCurrency? ForeignCurrency { get; set; }
 
-    [ForeignKey("JournalId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
-    public virtual AccountJournal? Journal { get; set; }
-
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PosSessionId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual PosSession? PosSession { get; set; }
 
+    // [Many2one]
     [ForeignKey("StatementId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual AccountBankStatement? Statement { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountBankStatementLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountBankStatementLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountBankStatementLineId")]
-    //[InverseProperty("AccountBankStatementLines")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountBankStatementLineId")] //Many2many
+    // [InverseProperty("AccountBankStatementLine")] //Many2many
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -18,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("NotificationType", Name = "mail_notification_notification_type_index")]
 //[Index("ResPartnerId", Name = "mail_notification_res_partner_id_index")]
 //[Index("ResPartnerId", "IsRead", "NotificationStatus", "MailMessageId", Name = "mail_notification_res_partner_id_is_read_notification_status_ma")]
-public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +27,11 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
 
@@ -57,10 +62,6 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("read_date", TypeName = "timestamp without time zone")]
     public DateTime? ReadDate { get; set; }
 
-    [Column("sms_id_int")]
-    public Guid? SmsIdInt { get; set; }
-
-    // v16-Compat
     [Column("sms_id")]
     public Guid? SmsId { get; set; }
 
@@ -70,42 +71,44 @@ public partial class MailNotification: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("letter_id")]
     public Guid? LetterId { get; set; }
 
+    // [Many2one]
     [ForeignKey("AuthorId")]
-    //[InverseProperty("MailNotificationAuthors")]
-    [NotMapped]
+    // [InverseProperty("MailNotificationAuthor")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
+    // [Many2one]
     [ForeignKey("LetterId")]
-    //[InverseProperty("MailNotifications")]
-    [NotMapped]
+    // [InverseProperty("MailNotification")] //Many2one
     public virtual SnailmailLetter? Letter { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailMailId")]
-    //[InverseProperty("MailNotifications")]
-    [NotMapped]
+    // [InverseProperty("MailNotification")] //Many2one
     public virtual MailMail? MailMail { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailMessageId")]
-    //[InverseProperty("MailNotifications")]
-    [NotMapped]
+    // [InverseProperty("MailNotification")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResPartnerId")]
-    //[InverseProperty("MailNotificationResPartners")]
-    [NotMapped]
+    // [InverseProperty("MailNotificationResPartner")] //Many2one
     public virtual ResPartner? ResPartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("SmsId")]
-    //[InverseProperty("MailNotifications")]
-    [NotMapped]
+    // [InverseProperty("MailNotification")] //Many2one
     public virtual SmsSms? Sms { get; set; }
 
-    //[InverseProperty("Notification")]
-    [NotMapped]
-    public virtual ICollection<SmsResendRecipient> SmsResendRecipients { get; set; } 
+    // [One2many]
+    [ForeignKey("NotificationId")]
+    [InverseProperty("Notification")]
+    public virtual ICollection<SmsResendRecipient> SmsResendRecipient { get; set; }
 
-    [ForeignKey("MailNotificationId")]
-    //[InverseProperty("MailNotifications")]
-    [NotMapped]
-    public virtual ICollection<MailResendMessage> MailResendMessages { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailNotificationId")]
+    // [InverseProperty("MailNotification")]
+    // public virtual ICollection<MailResendMessage> MailResendMessage { get; set; }
 }

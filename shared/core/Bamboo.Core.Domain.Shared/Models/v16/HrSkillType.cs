@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_skill_type")]
-public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class HrSkillType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,58 +21,57 @@ public partial class HrSkillType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("color")]
-    public long? Color { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat json
-    //[Column("name")]
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
-
-    [Column("active")]
-    public bool? Active { get; set; }
+    [Column("name")]
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrSkillTypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrSkillTypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("SkillTypeId")]
+    [InverseProperty("SkillType")]
+    public virtual ICollection<HrApplicantSkill> HrApplicantSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillTypeId")]
+    [InverseProperty("SkillType")]
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillTypeId")]
+    [InverseProperty("SkillType")]
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLog { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillTypeId")]
+    [InverseProperty("SkillType")]
+    public virtual ICollection<HrSkill> HrSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillTypeId")]
+    [InverseProperty("SkillType")]
+    public virtual ICollection<HrSkillLevel> HrSkillLevel { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrSkillTypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("SkillType")]
-    [NotMapped]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkills { get; set; } 
-
-    //[InverseProperty("SkillType")]
-    [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } 
-
-    //[InverseProperty("SkillType")]
-    [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; set; } 
-
-    //[InverseProperty("SkillType")]
-    [NotMapped]
-    public virtual ICollection<HrSkillLevel> HrSkillLevels { get; set; } 
-
-    //[InverseProperty("SkillType")]
-    [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; set; } 
-
+    // [InverseProperty("HrSkillTypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

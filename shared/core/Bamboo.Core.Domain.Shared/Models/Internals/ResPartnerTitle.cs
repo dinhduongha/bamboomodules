@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,63 +10,55 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-// Must-Copy-To-Tenants
-[Module("base")]
 [Table("res_partner_title")]
-public partial class ResPartnerTitle : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerTitle: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("shortcut", TypeName = "jsonb")]
     public string? Shortcut { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResPartnerTitleCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResPartnerTitleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("Title")]
+    [InverseProperty("TitleNavigation")]
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
+
+    // [One2many]
+    [ForeignKey("TitleId")]
+    [InverseProperty("Title")]
+    public virtual ICollection<MailingContact> MailingContact { get; set; }
+
+    // [One2many]
+    [ForeignKey("Title")]
+    [InverseProperty("TitleNavigation")]
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResPartnerTitleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("TitleNavigation")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
-
-    //[InverseProperty("Title")]
-    [NotMapped]
-    public virtual ICollection<MailingContact> MailingContacts { get; set; } 
-
-    //[InverseProperty("TitleNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
+    // [InverseProperty("ResPartnerTitleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

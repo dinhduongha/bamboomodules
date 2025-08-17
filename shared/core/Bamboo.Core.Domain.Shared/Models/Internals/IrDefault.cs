@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +10,10 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_default")]
-//[Index("TenantId", Name = "ir_default_company_id_index")]
-//[Index("FieldId", Name = "ir_default_field_id_index")]
-//[Index("UserId", Name = "ir_default_user_id_index")]
+//[Index("CompanyId", Name = "ir_default__company_id_index")]
+//[Index("FieldId", Name = "ir_default__field_id_index")]
+//[Index("UserId", Name = "ir_default__user_id_index")]
 public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -25,6 +23,10 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("field_id")]
     public Guid? FieldId { get; set; }
 
@@ -32,7 +34,7 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? UserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -44,33 +46,33 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public string? JsonValue { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("IrDefaults")]
-    [NotMapped]
+    // [InverseProperty("IrDefault")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrDefaultCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrDefaultCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("FieldId")]
-    //[InverseProperty("IrDefaults")]
-    [NotMapped]
+    // [InverseProperty("IrDefault")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("IrDefaultUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("IrDefaultUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrDefaultWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrDefaultWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

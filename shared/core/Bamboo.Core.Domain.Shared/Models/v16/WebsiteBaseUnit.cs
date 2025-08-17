@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_base_unit")]
-public partial class WebsiteBaseUnit: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteBaseUnit: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,39 +20,44 @@ public partial class WebsiteBaseUnit: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
     
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebsiteBaseUnitCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("WebsiteBaseUnitCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("BaseUnitId")]
+    [InverseProperty("BaseUnit")]
+    public virtual ICollection<ProductProduct> ProductProduct { get; set; }
+
+    // [One2many]
+    [ForeignKey("BaseUnitId")]
+    [InverseProperty("BaseUnit")]
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebsiteBaseUnitWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("BaseUnit")]
-    [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
-
-    //[InverseProperty("BaseUnit")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplates { get; set; } 
-
+    // [InverseProperty("WebsiteBaseUnitWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

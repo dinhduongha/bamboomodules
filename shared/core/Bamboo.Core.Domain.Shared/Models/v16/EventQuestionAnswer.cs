@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_question_answer")]
-public partial class EventQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class EventQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("question_id")]
     public Guid? QuestionId { get; set; }
 
@@ -27,37 +32,38 @@ public partial class EventQuestionAnswer: FullAuditedEntity<Guid>, IEntityDto<Gu
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventQuestionAnswerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventQuestionAnswerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("ValueAnswer")]
-    [NotMapped]
-    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswers { get; set; } 
+    // [One2many]
+    [ForeignKey("ValueAnswerId")]
+    [InverseProperty("ValueAnswer")]
+    public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
+    // [Many2one]
     [ForeignKey("QuestionId")]
-    //[InverseProperty("EventQuestionAnswers")]
-    [NotMapped]
+    // [InverseProperty("EventQuestionAnswer")] //Many2one
     public virtual EventQuestion? Question { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventQuestionAnswerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventQuestionAnswerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

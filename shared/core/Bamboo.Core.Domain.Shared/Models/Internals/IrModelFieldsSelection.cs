@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +10,14 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_model_fields_selection")]
-//[Index("FieldId", Name = "ir_model_fields_selection_field_id_index")]
+//[Index("FieldId", Name = "ir_model_fields_selection__field_id_index")]
 //[Index("FieldId", "Value", Name = "ir_model_fields_selection_selection_field_uniq", IsUnique = true)]
-public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrModelFieldsSelection: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }
@@ -31,7 +26,7 @@ public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,30 +36,36 @@ public partial class IrModelFieldsSelection: FullAuditedEntity<Guid>, IEntityDto
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModelFieldsSelectionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [One2many]
+    [ForeignKey("TrgSelectionFieldId")]
+    [InverseProperty("TrgSelectionField")]
+    public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("IrModelFieldsSelectionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
     [ForeignKey("FieldId")]
-    //[InverseProperty("IrModelFieldsSelections")]
-    [NotMapped]
+    // [InverseProperty("IrModelFieldsSelection")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
-    //[InverseProperty("SelectionValueNavigation")]
-    [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } 
+    // [One2many]
+    [ForeignKey("SelectionValue")]
+    [InverseProperty("SelectionValueNavigation")]
+    public virtual ICollection<IrActServer> IrActServer { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModelFieldsSelectionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModelFieldsSelectionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

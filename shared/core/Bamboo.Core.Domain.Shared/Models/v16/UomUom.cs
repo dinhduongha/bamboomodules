@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("uom_uom")]
-public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class UomUom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,15 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -34,7 +39,7 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("factor")]
     public decimal? Factor { get; set; }
@@ -46,125 +51,166 @@ public partial class UomUom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("timesheet_widget")]
+    public string? TimesheetWidget { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("AssociatedUomId")]
+    [InverseProperty("AssociatedUom")]
+    public virtual ICollection<BarcodeRule> BarcodeRule { get; set; }
+
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("UomUoms")]
-    [NotMapped]
+    // [InverseProperty("UomUom")] //Many2one
     public virtual UomCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("UomUomCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("UomUomCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<HrExpense> HrExpense { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<MrpBom> MrpBom { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+
+    // [One2many]
+    [ForeignKey("UomId")]
+    [InverseProperty("Uom")]
+    public virtual ICollection<ProductTemplate> ProductTemplateUom { get; set; }
+
+    // [One2many]
+    [ForeignKey("UomPoId")]
+    [InverseProperty("UomPo")]
+    public virtual ICollection<ProductTemplate> ProductTemplateUomPo { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUom")]
+    [InverseProperty("ProductUomNavigation")]
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<PurchaseRequisitionLine> PurchaseRequisitionLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUom")]
+    [InverseProperty("ProductUomNavigation")]
+    public virtual ICollection<RepairFee> RepairFee { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUom")]
+    [InverseProperty("ProductUomNavigation")]
+    public virtual ICollection<RepairLine> RepairLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUom")]
+    [InverseProperty("ProductUomNavigation")]
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProjectTimeModeId")]
+    [InverseProperty("ProjectTimeMode")]
+    public virtual ICollection<ResCompany> ResCompanyProjectTimeMode { get; set; }
+
+    // [One2many]
+    [ForeignKey("TimesheetEncodeUomId")]
+    [InverseProperty("TimesheetEncodeUom")]
+    public virtual ICollection<ResCompany> ResCompanyTimesheetEncodeUom { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUom")]
+    [InverseProperty("ProductUomNavigation")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("UomId")]
+    [InverseProperty("Uom")]
+    public virtual ICollection<SaleOrderOption> SaleOrderOption { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("UomId")]
+    [InverseProperty("Uom")]
+    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOption { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<StockLot> StockLot { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUom")]
+    [InverseProperty("ProductUomNavigation")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductUomId")]
+    [InverseProperty("ProductUom")]
+    public virtual ICollection<StockScrap> StockScrap { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("UomUomWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
-
-    //[InverseProperty("AssociatedUom")]
-    [NotMapped]
-    public virtual ICollection<BarcodeRule> BarcodeRules { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproducts { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<MrpBomLine> MrpBomLines { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<MrpBom> MrpBoms { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<MrpUnbuild> MrpUnbuilds { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<MrpWorkorder> MrpWorkorders { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
-
-    //[InverseProperty("UomPo")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplateUomPos { get; set; } 
-
-    //[InverseProperty("Uom")]
-    [NotMapped]
-    public virtual ICollection<ProductTemplate> ProductTemplateUoms { get; set; } 
-
-    //[InverseProperty("ProductUomNavigation")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
-
-    //[InverseProperty("ProductUomNavigation")]
-    [NotMapped]
-    public virtual ICollection<RepairFee> RepairFees { get; set; } 
-
-    //[InverseProperty("ProductUomNavigation")]
-    [NotMapped]
-    public virtual ICollection<RepairLine> RepairLines { get; set; } 
-
-    //[InverseProperty("ProductUomNavigation")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrders { get; set; } 
-
-    //[InverseProperty("ProductUomNavigation")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
-
-    //[InverseProperty("Uom")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderOption> SaleOrderOptions { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; } 
-
-    //[InverseProperty("Uom")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<StockLot> StockLots { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
-
-    //[InverseProperty("ProductUomNavigation")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
-
-    //[InverseProperty("ProductUom")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } 
-
+    // [InverseProperty("UomUomWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

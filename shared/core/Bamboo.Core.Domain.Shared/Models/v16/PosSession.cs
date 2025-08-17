@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -16,7 +17,7 @@ namespace Bamboo.Core.Models;
 //[Index("State", Name = "pos_session_state_index")]
 //[Index("Name", Name = "pos_session_uniq_name", IsUnique = true)]
 //[Index("UserId", Name = "pos_session_user_id_index")]
-public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,7 +26,10 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -48,13 +52,10 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? MoveId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("access_token")]
-    public string? AccessToken { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -64,9 +65,6 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("opening_notes")]
     public string? OpeningNotes { get; set; }
-
-    [Column("closing_notes")]
-    public string? ClosingNotes { get; set; }
 
     [Column("cash_register_balance_end_real")]
     public decimal? CashRegisterBalanceEndReal { get; set; }
@@ -90,79 +88,76 @@ public partial class PosSession : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public DateTime? StopAt { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("employee_id")]
-    public Guid? EmployeeId { get; set; }
+    [Column("closing_notes")]
+    public string? ClosingNotes { get; set; }
 
-    //[InverseProperty("PosSession")]
-    // [NotMapped]
-    // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
+    // [One2many]
+    [ForeignKey("PosSessionId")]
+    [InverseProperty("PosSession")]
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
-    //[InverseProperty("PosSession")]
-    // [NotMapped]
-    // public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
+    // [One2many]
+    [ForeignKey("PosSessionId")]
+    [InverseProperty("PosSession")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CashJournalId")]
-    //[InverseProperty("PosSessions")]
-    [NotMapped]
+    // [InverseProperty("PosSession")] //Many2one
     public virtual AccountJournal? CashJournal { get; set; }
 
+    // [Many2one]
     [ForeignKey("ConfigId")]
-    //[InverseProperty("PosSessions")]
-    [NotMapped]
+    // [InverseProperty("PosSession")] //Many2one
     public virtual PosConfig? Config { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PosSessionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PosSessionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("PosSessions")]
-    [NotMapped]
+    // [InverseProperty("PosSession")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("PosSessions")]
-    [NotMapped]
+    // [InverseProperty("PosSession")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [One2many]
+    [ForeignKey("PosSessionId")]
+    [InverseProperty("PosSession")]
+    public virtual ICollection<PosDailySalesReportsWizard> PosDailySalesReportsWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("SessionId")]
+    [InverseProperty("Session")]
+    public virtual ICollection<PosOrder> PosOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("SessionId")]
+    [InverseProperty("Session")]
+    public virtual ICollection<PosPayment> PosPayment { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosSessionId")]
+    [InverseProperty("PosSession")]
+    public virtual ICollection<StockPicking> StockPicking { get; set; }
+
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("PosSessionUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("PosSessionUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PosSessionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("PosSession")]
-    [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
-
-    //[InverseProperty("PosSession")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
-    //[InverseProperty("Session")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } 
-
-    //[InverseProperty("Session")]
-    [NotMapped]
-    public virtual ICollection<PosPayment> PosPayments { get; set; } 
-
-    //[InverseProperty("PosSession")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } 
-
+    // [InverseProperty("PosSessionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

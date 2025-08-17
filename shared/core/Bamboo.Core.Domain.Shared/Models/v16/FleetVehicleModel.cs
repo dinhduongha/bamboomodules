@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_model")]
-public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("brand_id")]
     public Guid? BrandId { get; set; }
@@ -41,11 +46,8 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("horsepower")]
     public long? Horsepower { get; set; }
 
-    [Column("vehicle_range")]
-    public long? VehicleRange { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -68,13 +70,6 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("default_fuel_type")]
     public string? DefaultFuelType { get; set; }
 
-    [Column("power_unit")]
-    public string? PowerUnit { get; set; }
-
-    [JsonField]
-    [Column("vehicle_properties_definition", TypeName = "jsonb")]
-    public string? VehiclePropertiesDefinition { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -85,7 +80,7 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     public bool? ElectricAssistance { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -96,36 +91,34 @@ public partial class FleetVehicleModel : FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("horsepower_tax")]
     public double? HorsepowerTax { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("BrandId")]
-    //[InverseProperty("FleetVehicleModels")]
-    [NotMapped]
-    public virtual FleetVehicleModelBrand? Brand { get; set; } = null!;
+    // [InverseProperty("FleetVehicleModel")] //Many2one
+    public virtual FleetVehicleModelBrand? Brand { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("FleetVehicleModels")]
-    [NotMapped]
+    // [InverseProperty("FleetVehicleModel")] //Many2one
     public virtual FleetVehicleModelCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("FleetVehicleModelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("FleetVehicleModelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("FleetVehicleModelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Model")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicles { get; set; } 
-
+    // [One2many]
     [ForeignKey("ModelId")]
-    //[InverseProperty("Models")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> Partners { get; set; } 
+    [InverseProperty("Model")]
+    public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("FleetVehicleModelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ModelId")] //Many2many
+    // [InverseProperty("Model")] //Many2many
+    public virtual ICollection<ResPartner> Partner { get; set; }
 }

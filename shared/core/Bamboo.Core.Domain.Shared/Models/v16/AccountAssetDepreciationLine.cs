@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("account_asset_depreciation_line")]
 //[Index("DepreciationDate", Name = "account_asset_depreciation_line_depreciation_date_index")]
 //[Index("Name", Name = "account_asset_depreciation_line_name_index")]
-public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAssetDepreciationLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,8 +23,12 @@ public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEn
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
-    public long Sequence { get; set; }
+    public long? Sequence { get; set; }
 
     [Column("asset_id")]
     public Guid? AssetId { get; set; }
@@ -32,7 +37,7 @@ public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEn
     public Guid? MoveId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -59,33 +64,28 @@ public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEn
     public bool? MovePostedCheck { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("AssetId")]
-    //[InverseProperty("AccountAssetDepreciationLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetDepreciationLine")] //Many2one
     public virtual AccountAssetAsset? Asset { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAssetDepreciationLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAssetDepreciationLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoveId")]
-    //[InverseProperty("AccountAssetDepreciationLines")]
-    [NotMapped]
+    // [InverseProperty("AccountAssetDepreciationLine")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAssetDepreciationLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAssetDepreciationLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
@@ -28,9 +33,6 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("partner_bank_id")]
     public Guid? PartnerBankId { get; set; }
-
-    [Column("custom_user_currency_id")]
-    public Guid? CustomUserCurrencyId { get; set; }
 
     [Column("source_currency_id")]
     public Guid? SourceCurrencyId { get; set; }
@@ -45,16 +47,13 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     public Guid? WriteoffAccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [Column("communication")]
     public string? Communication { get; set; }
-
-    [Column("installments_mode")]
-    public string? InstallmentsMode { get; set; }
 
     [Column("payment_type")]
     public string? PaymentType { get; set; }
@@ -74,9 +73,6 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("amount")]
     public decimal? Amount { get; set; }
 
-    [Column("custom_user_amount")]
-    public decimal? CustomUserAmount { get; set; }
-
     [Column("source_amount")]
     public decimal? SourceAmount { get; set; }
 
@@ -93,7 +89,7 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     public bool? CanGroupPayments { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -101,68 +97,64 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("payment_token_id")]
     public Guid? PaymentTokenId { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountPaymentRegisterCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountPaymentRegisterCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("AccountPaymentRegisterCurrencies")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegisterCurrency")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
-    [ForeignKey("CustomUserCurrencyId")]
-    //[InverseProperty("AccountPaymentRegisterCustomUserCurrencies")]
-    [NotMapped]
-    public virtual ResCurrency? CustomUserCurrency { get; set; }
-
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerBankId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual ResPartnerBank? PartnerBank { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentMethodLineId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual AccountPaymentMethodLine? PaymentMethodLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentTokenId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual PaymentToken? PaymentToken { get; set; }
 
+    // [Many2one]
     [ForeignKey("SourceCurrencyId")]
-    //[InverseProperty("AccountPaymentRegisterSourceCurrencies")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegisterSourceCurrency")] //Many2one
     public virtual ResCurrency? SourceCurrency { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountPaymentRegisterWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountPaymentRegisterWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
+    // [Many2one]
     [ForeignKey("WriteoffAccountId")]
-    //[InverseProperty("AccountPaymentRegisters")]
-    [NotMapped]
+    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual AccountAccount? WriteoffAccount { get; set; }
 
-    [ForeignKey("WizardId")]
-    //[InverseProperty("Wizards")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> Lines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("WizardId")] //Many2many
+    // [InverseProperty("Wizard")] //Many2many
+    public virtual ICollection<AccountMoveLine> Line { get; set; }
 }

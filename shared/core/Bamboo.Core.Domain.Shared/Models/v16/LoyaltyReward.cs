@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("loyalty_reward")]
-public partial class LoyaltyReward : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LoyaltyReward: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +20,10 @@ public partial class LoyaltyReward : FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("program_id")]
     public Guid? ProgramId { get; set; }
@@ -46,10 +47,10 @@ public partial class LoyaltyReward : FullAuditedAggregateRoot<Guid>, IEntityDto<
     public long? RewardProductQty { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("reward_type")]
     public string? RewardType { get; set; }
@@ -77,10 +78,10 @@ public partial class LoyaltyReward : FullAuditedAggregateRoot<Guid>, IEntityDto<
     public bool? ClearWallet { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     [Column("discount")]
     public double? Discount { get; set; }
@@ -90,76 +91,73 @@ public partial class LoyaltyReward : FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LoyaltyReward")] // [Many2one]
+    // [InverseProperty("LoyaltyReward")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyRewardCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("LoyaltyRewardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DiscountLineProductId")]
-    // [InverseProperty("LoyaltyRewardDiscountLineProduct")] // [Many2one]
+    // [InverseProperty("LoyaltyRewardDiscountLineProduct")] //Many2one
     public virtual ProductProduct? DiscountLineProduct { get; set; }
 
     // [Many2one]
     [ForeignKey("DiscountProductCategoryId")]
-    // [InverseProperty("LoyaltyReward")] // [Many2one]
+    // [InverseProperty("LoyaltyReward")] //Many2one
     public virtual ProductCategory? DiscountProductCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("DiscountProductTagId")]
-    // [InverseProperty("LoyaltyRewardDiscountProductTag")] // [Many2one]
+    // [InverseProperty("LoyaltyRewardDiscountProductTag")] //Many2one
     public virtual ProductTag? DiscountProductTag { get; set; }
 
-
-    // [Many2many]
-    [NotMapped] // Many2many
-    // [InverseProperty("Reward")] // Many2many
+    // [One2many]
+    [ForeignKey("RewardId")]
+    [InverseProperty("Reward")]
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("LoyaltyReward")] // [Many2one]
+    // [InverseProperty("LoyaltyReward")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardProductId")]
-    // [InverseProperty("LoyaltyRewardRewardProduct")] // [Many2one]
+    // [InverseProperty("LoyaltyRewardRewardProduct")] //Many2one
     public virtual ProductProduct? RewardProduct { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardProductTagId")]
-    // [InverseProperty("LoyaltyRewardRewardProductTag")] // [Many2one]
+    // [InverseProperty("LoyaltyRewardRewardProductTag")] //Many2one
     public virtual ProductTag? RewardProductTag { get; set; }
 
+    // [One2many]
+    [ForeignKey("SelectedRewardId")]
+    [InverseProperty("SelectedReward")]
+    public virtual ICollection<SaleLoyaltyRewardWizard> SaleLoyaltyRewardWizard { get; set; }
 
-    // [Many2many]
-    //[NotMapped] // Many2many
-    // [InverseProperty("SelectedReward")] // Many2many
-    //public virtual ICollection<SaleLoyaltyRewardWizard> SaleLoyaltyRewardWizard { get; set; }
-
-
-    // [Many2many]
-    [NotMapped] // Many2many
-    // [InverseProperty("Reward")] // Many2many
+    // [One2many]
+    [ForeignKey("RewardId")]
+    [InverseProperty("Reward")]
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyRewardWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("LoyaltyRewardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    // [One2many]
-    [ForeignKey("LoyaltyRewardId")]
-    // [NotMapped] // One2many
-    // [InverseProperty("LoyaltyReward")]  //[One2many]
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("LoyaltyRewardId")] //Many2many
+    // [InverseProperty("LoyaltyReward")] //Many2many
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
-    // [One2many]
-    [ForeignKey("LoyaltyRewardId")]
-    // [NotMapped] // One2many
-    // [InverseProperty("LoyaltyReward")]  //[One2many]
-    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("LoyaltyRewardId")]
+    // [InverseProperty("LoyaltyReward")]
+    // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

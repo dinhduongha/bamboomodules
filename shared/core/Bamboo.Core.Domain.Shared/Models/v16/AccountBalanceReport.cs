@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,8 +21,11 @@ public partial class AccountBalanceReport: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,43 +43,47 @@ public partial class AccountBalanceReport: FullAuditedEntity<Guid>, IEntityDto<G
     public DateTime? DateTo { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountBalanceReports")]
-    [NotMapped]
+    // [InverseProperty("AccountBalanceReport")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountBalanceReportCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountBalanceReportCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountBalanceReportWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountBalanceReportWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountBalanceReportId")]
-    //[InverseProperty("AccountBalanceReports")]
-    [NotMapped]
-    public virtual ICollection<AccountAccount> AccountAccounts { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountBalanceReportId")] //Many2many
+    // [InverseProperty("AccountBalanceReport")] //Many2many
+    public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 
-    [ForeignKey("AccountBalanceReportId")]
-    //[InverseProperty("AccountBalanceReports")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountBalanceReportId")] //Many2many
+    // [InverseProperty("AccountBalanceReport")] //Many2many
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
-    [ForeignKey("AccountId")]
-    //[InverseProperty("Accounts")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> Journals { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountId")] //Many2many
+    // [InverseProperty("Account")] //Many2many
+    public virtual ICollection<AccountJournal> Journal { get; set; }
 
-    [ForeignKey("AccountBalanceReportId")]
-    //[InverseProperty("AccountBalanceReports")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountBalanceReportId")] //Many2many
+    // [InverseProperty("AccountBalanceReport")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

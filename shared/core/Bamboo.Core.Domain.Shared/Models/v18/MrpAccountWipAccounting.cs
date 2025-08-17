@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_account_wip_accounting")]
-public partial class MrpAccountWipAccounting: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpAccountWipAccounting: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,15 @@ public partial class MrpAccountWipAccounting: FullAuditedEntity<Guid>, IEntityDt
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -39,32 +44,34 @@ public partial class MrpAccountWipAccounting: FullAuditedEntity<Guid>, IEntityDt
     public DateTime? ReversalDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpAccountWipAccountingCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MrpAccountWipAccountingCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("MrpAccountWipAccountings")]
-    [NotMapped]
+    // [InverseProperty("MrpAccountWipAccounting")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
-    //[InverseProperty("WipAccounting")]
-    [NotMapped]
-    public virtual ICollection<MrpAccountWipAccountingLine> MrpAccountWipAccountingLines { get; set; } 
+    // [One2many]
+    [ForeignKey("WipAccountingId")]
+    [InverseProperty("WipAccounting")]
+    public virtual ICollection<MrpAccountWipAccountingLine> MrpAccountWipAccountingLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpAccountWipAccountingWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MrpAccountWipAccountingWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MrpAccountWipAccountingId")]
-    //[InverseProperty("MrpAccountWipAccountings")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MrpAccountWipAccountingId")] //Many2many
+    // [InverseProperty("MrpAccountWipAccounting")] //Many2many
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 }

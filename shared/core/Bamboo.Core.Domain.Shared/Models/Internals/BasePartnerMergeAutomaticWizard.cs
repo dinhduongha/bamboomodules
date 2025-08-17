@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +10,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("base_partner_merge_automatic_wizard")]
-public partial class BasePartnerMergeAutomaticWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class BasePartnerMergeAutomaticWizard: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +19,10 @@ public partial class BasePartnerMergeAutomaticWizard : FullAuditedEntity<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("number_group")]
     public long? NumberGroup { get; set; }
@@ -35,7 +37,7 @@ public partial class BasePartnerMergeAutomaticWizard : FullAuditedEntity<Guid>, 
     public long? MaximumGroup { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -65,38 +67,39 @@ public partial class BasePartnerMergeAutomaticWizard : FullAuditedEntity<Guid>, 
     public bool? ExcludeJournalItem { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("CreatorId")]
-    //[InverseProperty("BasePartnerMergeAutomaticWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [One2many]
+    [ForeignKey("WizardId")]
+    [InverseProperty("Wizard")]
+    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLine { get; set; }
 
+    // [Many2one]
+    [ForeignKey("CreatorId")]
+    // [InverseProperty("BasePartnerMergeAutomaticWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
     [ForeignKey("CurrentLineId")]
-    //[InverseProperty("BasePartnerMergeAutomaticWizards")]
-    [NotMapped]
+    // [InverseProperty("BasePartnerMergeAutomaticWizard")] //Many2one
     public virtual BasePartnerMergeLine? CurrentLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("DstPartnerId")]
-    //[InverseProperty("BasePartnerMergeAutomaticWizards")]
-    [NotMapped]
+    // [InverseProperty("BasePartnerMergeAutomaticWizard")] //Many2one
     public virtual ResPartner? DstPartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("BasePartnerMergeAutomaticWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("BasePartnerMergeAutomaticWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("BasePartnerMergeAutomaticWizardId")]
-    //[InverseProperty("BasePartnerMergeAutomaticWizardsNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
-    
-    //[InverseProperty("Wizard")]
-    [NotMapped]
-    public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLines { get; set; } 
-
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("BasePartnerMergeAutomaticWizardId")] //Many2many
+    // [InverseProperty("BasePartnerMergeAutomaticWizardNavigation")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

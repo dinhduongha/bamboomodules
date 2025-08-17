@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
 
@@ -36,7 +41,7 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? ActivityUserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -60,48 +65,49 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
     public string? Note { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    //[InverseProperty("MailActivitySchedules")]
-    [NotMapped]
+    // [InverseProperty("MailActivitySchedule")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
+    // [Many2one]
     [ForeignKey("ActivityUserId")]
-    //[InverseProperty("MailActivityScheduleActivityUsers")]
-    [NotMapped]
-    public virtual ResUser? ActivityUser { get; set; }
+    // [InverseProperty("MailActivityScheduleActivityUser")] //Many2one
+    public virtual ResUsers? ActivityUser { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailActivityScheduleCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailActivityScheduleCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("PlanId")]
-    //[InverseProperty("MailActivitySchedulesNavigation")]
-    [NotMapped]
+    // [InverseProperty("MailActivityScheduleNavigation")] //Many2one
     public virtual MailActivityPlan? Plan { get; set; }
 
+    // [Many2one]
     [ForeignKey("PlanOnDemandUserId")]
-    //[InverseProperty("MailActivitySchedulePlanOnDemandUsers")]
-    [NotMapped]
-    public virtual ResUser? PlanOnDemandUser { get; set; }
+    // [InverseProperty("MailActivitySchedulePlanOnDemandUser")] //Many2one
+    public virtual ResUsers? PlanOnDemandUser { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResModelId")]
-    //[InverseProperty("MailActivitySchedules")]
-    [NotMapped]
+    // [InverseProperty("MailActivitySchedule")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailActivityScheduleWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailActivityScheduleWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MailActivityScheduleId")]
-    //[InverseProperty("MailActivitySchedules")]
-    [NotMapped]
-    public virtual ICollection<MailActivityPlan> MailActivityPlans { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailActivityScheduleId")] //Many2many
+    // [InverseProperty("MailActivitySchedule")] //Many2many
+    public virtual ICollection<MailActivityPlan> MailActivityPlan { get; set; }
 }

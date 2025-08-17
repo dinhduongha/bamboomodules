@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_team")]
-//[Index("TenantId", Name = "crm_team_company_id_index")]
-public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "crm_team_company_id_index")]
+public partial class CrmTeam: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +22,10 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -35,31 +39,29 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public long? Color { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
     [Column("use_quotations")]
     public bool? UseQuotations { get; set; }
 
-    // v16-Compat
-    // [Column("invoiced_target")]
-    // public double? InvoicedTarget { get; set; }
+    [Column("invoiced_target")]
+    public double? InvoicedTarget { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }
@@ -80,109 +82,134 @@ public partial class CrmTeam: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("assignment_optout")]
     public bool? AssignmentOptout { get; set; }
 
-    [Column("invoiced_target")]
-    public double? InvoicedTarget { get; set; }
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
 
-    //[InverseProperty("Team")]
-    // [NotMapped]
-    // public virtual ICollection<AccountMove> AccountMoves { get; set; } 
-
+    // [Many2one]
     [ForeignKey("AliasId")]
-    //[InverseProperty("CrmTeams")]
-    [NotMapped]
+    // [InverseProperty("CrmTeam")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
+    // [One2many]
+    [ForeignKey("CrmTeamId")]
+    [InverseProperty("CrmTeam")]
+    public virtual ICollection<ChatbotScriptStep> ChatbotScriptStep { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("CrmTeams")]
-    [NotMapped]
+    // [InverseProperty("CrmTeam")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("CrmTeamCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CrmTeamCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartner { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequency { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunity { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<CrmStage> CrmStage { get; set; }
+
+    // [One2many]
+    [ForeignKey("CrmTeamId")]
+    [InverseProperty("CrmTeam")]
+    public virtual ICollection<CrmTeamMember> CrmTeamMember { get; set; }
+
+    // [One2many]
+    [ForeignKey("LeadSalesTeamId")]
+    [InverseProperty("LeadSalesTeam")]
+    public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("CrmTeams")]
-    [NotMapped]
+    // [InverseProperty("CrmTeam")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    [ForeignKey("UserId")]
-    //[InverseProperty("CrmTeamUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [One2many]
+    [ForeignKey("CrmTeamId")]
+    [InverseProperty("CrmTeam")]
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("CrmTeamWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [One2many]
+    [ForeignKey("CrmTeamId")]
+    [InverseProperty("CrmTeam")]
+    public virtual ICollection<PosOrder> PosOrder { get; set; }
 
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequests { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmLeadScoringFrequency> CrmLeadScoringFrequencies { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmMergeOpportunity> CrmMergeOpportunities { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<CrmStage> CrmStages { get; set; } 
-
-    //[InverseProperty("CrmTeam")]
-    [NotMapped]
-    public virtual ICollection<CrmTeamMember> CrmTeamMembers { get; set; } 
-
-    //[InverseProperty("CrmTeam")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
-
-    //[InverseProperty("CrmTeam")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
-
-    //[InverseProperty("SaleTeam")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
-
-    //[InverseProperty("Team")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
-
-    //[InverseProperty("CrmDefaultTeam")]
-    [NotMapped]
-    public virtual ICollection<Website> WebsiteCrmDefaultTeams { get; set; } 
-
-    //[InverseProperty("Salesteam")]
-    [NotMapped]
-    public virtual ICollection<Website> WebsiteSalesteams { get; set; } 
-
+    // [One2many]
     [ForeignKey("TeamId")]
-    //[InverseProperty("Teams")]
-    [NotMapped]
-    public virtual ICollection<ResUser> Users { get; set; } 
+    [InverseProperty("Team")]
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
+
+    // [One2many]
+    [ForeignKey("SaleTeamId")]
+    [InverseProperty("SaleTeam")]
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
+
+    // [One2many]
+    [ForeignKey("TeamId")]
+    [InverseProperty("Team")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [Many2one]
+    [ForeignKey("UserId")]
+    // [InverseProperty("CrmTeamUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
+
+    // [One2many]
+    [ForeignKey("CrmDefaultTeamId")]
+    [InverseProperty("CrmDefaultTeam")]
+    public virtual ICollection<Website> WebsiteCrmDefaultTeam { get; set; }
+
+    // [One2many]
+    [ForeignKey("SalesteamId")]
+    [InverseProperty("Salesteam")]
+    public virtual ICollection<Website> WebsiteSalesteam { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("CrmTeamWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("TeamId")] //Many2many
+    // [InverseProperty("Team")] //Many2many
+    public virtual ICollection<ResUsers> UserNavigation { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("procurement_group")]
-public partial class ProcurementGroup : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProcurementGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,11 +21,15 @@ public partial class ProcurementGroup : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,7 +41,7 @@ public partial class ProcurementGroup : FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? MoveType { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -47,65 +52,68 @@ public partial class ProcurementGroup : FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("sale_id")]
     public Guid? SaleId { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProcurementGroupCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProcurementGroupCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProcurementGroupId")]
+    [InverseProperty("ProcurementGroup")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("ProcurementGroups")]
-    [NotMapped]
+    // [InverseProperty("ProcurementGroup")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
-    [ForeignKey("PosOrderId")]
-    //[InverseProperty("ProcurementGroups")]
-    [NotMapped]
-    public virtual PosOrder? PosOrder { get; set; }
+    // [One2many]
+    [ForeignKey("ProcurementGroupId")]
+    [InverseProperty("ProcurementGroup")]
+    public virtual ICollection<PosOrder> PosOrder { get; set; }
 
+    // [Many2one]
+    [ForeignKey("PosOrderId")]
+    // [InverseProperty("ProcurementGroupNavigation")] //Many2one
+    public virtual PosOrder? PosOrderNavigation { get; set; }
+
+    // [One2many]
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
+
+    // [Many2one]
     [ForeignKey("SaleId")]
-    //[InverseProperty("ProcurementGroups")]
-    [NotMapped]
+    // [InverseProperty("ProcurementGroup")] //Many2one
     public virtual SaleOrder? Sale { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProcurementGroupId")]
+    [InverseProperty("ProcurementGroupNavigation")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<StockPicking> StockPicking { get; set; }
+
+    // [One2many]
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<StockRule> StockRule { get; set; }
+
+    // [One2many]
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProcurementGroupWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("ProcurementGroup")]
-    [NotMapped]
-    public virtual ICollection<MrpProduction> MrpProductions { get; set; } 
-
-    //[InverseProperty("ProcurementGroup")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } 
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } 
-
-    //[InverseProperty("ProcurementGroup")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrders { get; set; } 
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoves { get; set; } 
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } 
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } 
-
-    //[InverseProperty("Group")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
+    // [InverseProperty("ProcurementGroupWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

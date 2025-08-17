@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("website_visitor")]
 //[Index("AccessToken", Name = "website_visitor_access_token_unique", IsUnique = true)]
-public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -37,7 +42,7 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public long? VisitCount { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -49,7 +54,7 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public string? Timezone { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("last_connection_datetime", TypeName = "timestamp without time zone")]
     public DateTime? LastConnectionDatetime { get; set; }
@@ -60,61 +65,64 @@ public partial class WebsiteVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("livechat_operator_id")]
     public Guid? LivechatOperatorId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("WebsiteVisitors")]
-    [NotMapped]
+    // [InverseProperty("WebsiteVisitor")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebsiteVisitorCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("WebsiteVisitorCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("VisitorId")]
+    [InverseProperty("Visitor")]
+    public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+
+    // [One2many]
+    [ForeignKey("VisitorId")]
+    [InverseProperty("Visitor")]
+    public virtual ICollection<EventTrackVisitor> EventTrackVisitor { get; set; }
+
+    // [Many2one]
     [ForeignKey("LangId")]
-    //[InverseProperty("WebsiteVisitors")]
-    [NotMapped]
+    // [InverseProperty("WebsiteVisitor")] //Many2one
     public virtual ResLang? Lang { get; set; }
 
+    // [Many2one]
     [ForeignKey("LivechatOperatorId")]
-    //[InverseProperty("WebsiteVisitorLivechatOperators")]
-    [NotMapped]
+    // [InverseProperty("WebsiteVisitorLivechatOperator")] //Many2one
     public virtual ResPartner? LivechatOperator { get; set; }
 
-    // v16-Compat
-    // [ForeignKey("PartnerId")]
-    // //[InverseProperty("WebsiteVisitors")]
-    // [NotMapped]
-    // public virtual ResPartner? Partner { get; set; }
+    // [One2many]
+    [ForeignKey("LivechatVisitorId")]
+    [InverseProperty("LivechatVisitor")]
+    public virtual ICollection<MailChannel> MailChannel { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("WebsiteVisitorPartners")]
-    [NotMapped]
+    // [InverseProperty("WebsiteVisitorPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("WebsiteVisitors")]
-    [NotMapped]
+    // [InverseProperty("WebsiteVisitor")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [One2many]
+    [ForeignKey("VisitorId")]
+    [InverseProperty("Visitor")]
+    public virtual ICollection<WebsiteTrack> WebsiteTrack { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebsiteVisitorWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("WebsiteVisitorWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("LivechatVisitor")]
-    [NotMapped]
-    public virtual ICollection<DiscussChannel> DiscussChannels { get; set; } 
-
-    //[InverseProperty("Visitor")]
-    [NotMapped]
-    public virtual ICollection<EventRegistration> EventRegistrations { get; set; } 
-
-    //[InverseProperty("Visitor")]
-    [NotMapped]
-    public virtual ICollection<WebsiteTrack> WebsiteTracks { get; set; } 
-
-    [ForeignKey("WebsiteVisitorId")]
-    //[InverseProperty("WebsiteVisitors")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("WebsiteVisitorId")]
+    // [InverseProperty("WebsiteVisitor")]
+    // public virtual ICollection<CrmLead> CrmLead { get; set; }
 }

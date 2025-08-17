@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,9 +13,9 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_job")]
 //[Index("IsPublished", Name = "hr_job_is_published_index")]
-//[Index("Name", "TenantId", "DepartmentId", Name = "hr_job_name_company_uniq", IsUnique = true)]
+//[Index("Name", "CompanyId", "DepartmentId", Name = "hr_job_name_company_uniq", IsUnique = true)]
 //[Index("WebsiteId", Name = "hr_job_website_id_index")]
-public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,11 +24,15 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("sequence")]
-    public long? Sequence { get; set; }
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("expected_employees")]
     public long? ExpectedEmployees { get; set; }
@@ -38,9 +43,8 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("no_of_recruitment")]
     public long? NoOfRecruitment { get; set; }
 
-    // v16-Compat
-    // [Column("no_of_hired_employee")]
-    // public long? NoOfHiredEmployee { get; set; }
+    [Column("no_of_hired_employee")]
+    public long? NoOfHiredEmployee { get; set; }
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
@@ -49,20 +53,16 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     public Guid? ContractTypeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // TODO: JSON AS KEY
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
-    // v16-Compat json
-    //[Column("description")]
-    [JsonField]
-    [Column("description", TypeName = "jsonb")]
+    [Column("description")]
     public string? Description { get; set; }
 
     [Column("requirements")]
@@ -72,7 +72,7 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -89,41 +89,17 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
-    // v16-Compat
     [Column("hr_responsible_id")]
     public Guid? HrResponsibleId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
 
-    [Column("industry_id")]
-    public Guid? IndustryId { get; set; }
-
-    [Column("no_of_hired_employee")]
-    public long? NoOfHiredEmployee { get; set; }
-
-    [Column("date_from")]
-    public DateTime? DateFrom { get; set; }
-
-    [Column("date_to")]
-    public DateTime? DateTo { get; set; }
-
-    [JsonField]
-    [Column("job_properties", TypeName = "jsonb")]
-    public string? JobProperties { get; set; }
-
-    [JsonField]
-    [Column("applicant_properties_definition", TypeName = "jsonb")]
-    public string? ApplicantPropertiesDefinition { get; set; }
-
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
-
-    [Column("published_date")]
-    public DateTime? PublishedDate { get; set; }
 
     [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
@@ -152,104 +128,115 @@ public partial class HrJob: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTen
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
+    [Column("survey_id")]
+    public Guid? SurveyId { get; set; }
+
+    // [Many2one]
     [ForeignKey("AddressId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
+    // [Many2one]
     [ForeignKey("AliasId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContractTypeId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual HrContractType? ContractType { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrJobCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrJobCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
-    [ForeignKey("HrResponsibleId")]
-    //[InverseProperty("HrJobHrResponsibles")]
-    [NotMapped]
-    public virtual ResUser? HrResponsible { get; set; }
+    // [One2many]
+    [ForeignKey("JobId")]
+    [InverseProperty("Job")]
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
+    // [One2many]
+    [ForeignKey("JobId")]
+    [InverseProperty("Job")]
+    public virtual ICollection<HrContract> HrContract { get; set; }
+
+    // [One2many]
+    [ForeignKey("JobId")]
+    [InverseProperty("Job")]
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("JobId")]
+    [InverseProperty("Job")]
+    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
+
+    // [Many2one]
+    [ForeignKey("HrResponsibleId")]
+    // [InverseProperty("HrJobHrResponsible")] //Many2one
+    public virtual ResUsers? HrResponsible { get; set; }
+
+    // [Many2one]
     [ForeignKey("ManagerId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual HrEmployee? Manager { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    [ForeignKey("UserId")]
-    //[InverseProperty("HrJobUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [Many2one]
+    [ForeignKey("SurveyId")]
+    // [InverseProperty("HrJob")] //Many2one
+    public virtual SurveySurvey? Survey { get; set; }
 
+    // [Many2one]
+    [ForeignKey("UserId")]
+    // [InverseProperty("HrJobUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
+
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
+    // [InverseProperty("HrJob")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrJobWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrJobWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Job")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrJobId")]
+    // [InverseProperty("HrJob")]
+    // public virtual ICollection<HrRecruitmentStage> HrRecruitmentStage { get; set; }
 
-    //[InverseProperty("Job")]
-    [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrJobId")] //Many2many
+    // [InverseProperty("HrJob")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 
-    //[InverseProperty("Job")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrJobId")] //Many2many
+    // [InverseProperty("HrJobNavigation")] //Many2many
+    public virtual ICollection<ResUsers> ResUsersNavigation { get; set; }
 
-    //[InverseProperty("Job")]
-    [NotMapped]
-    public virtual ICollection<HrRecruitmentSource> HrRecruitmentSources { get; set; } 
-
-    [ForeignKey("HrJobId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
-    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStages { get; set; } 
-
-    [ForeignKey("HrJobId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; set; } 
-
-    //[ForeignKey("HrJobId")]
-    //[InverseProperty("HrJobs")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
-
-    //[ForeignKey("HrJobId")]
-    //[InverseProperty("HrJobsNavigation")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsersNavigation { get; set; } 
-
-    [ForeignKey("JobId")]
-    //[InverseProperty("Jobs")]
-    [NotMapped]
-    public virtual ICollection<ResUser> Users { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("JobId")] //Many2many
+    // [InverseProperty("Job")] //Many2many
+    public virtual ICollection<ResUsers> UserNavigation { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
 
@@ -36,7 +41,7 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? CurrencyId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,10 +53,6 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 
-    [Column("total_amount_currency")]
-    public decimal? TotalAmountCurrency { get; set; }
-
-    // v16-Compat
     [Column("total_amount")]
     public decimal? TotalAmount { get; set; }
 
@@ -59,7 +60,7 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public bool? ProductHasCost { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -67,53 +68,54 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrExpenseSplitCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrExpenseSplitCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("ExpenseId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual HrExpense? Expense { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
+    // [Many2one]
     [ForeignKey("WizardId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
+    // [InverseProperty("HrExpenseSplit")] //Many2one
     public virtual HrExpenseSplitWizard? Wizard { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrExpenseSplitWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrExpenseSplitWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("HrExpenseSplitId")]
-    //[InverseProperty("HrExpenseSplits")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrExpenseSplitId")] //Many2many
+    // [InverseProperty("HrExpenseSplit")] //Many2many
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

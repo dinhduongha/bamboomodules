@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mailing_list")]
-public partial class MailingList: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailingList: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,8 +21,12 @@ public partial class MailingList: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,54 +41,57 @@ public partial class MailingList: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public bool? IsPublic { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailingListCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailingListCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("MailingList")]
-    [NotMapped]
-    public virtual ICollection<MailingContactToList> MailingContactToLists { get; set; } 
+    // [One2many]
+    [ForeignKey("ListId")]
+    [InverseProperty("List")]
+    public virtual ICollection<MailingContactListRel> MailingContactListRel { get; set; }
 
-    //[InverseProperty("DestList")]
-    [NotMapped]
-    public virtual ICollection<MailingListMerge> MailingListMergesNavigation { get; set; } 
+    // [One2many]
+    [ForeignKey("MailingListId")]
+    [InverseProperty("MailingList")]
+    public virtual ICollection<MailingContactToList> MailingContactToList { get; set; }
 
-    //[InverseProperty("List")]
-    [NotMapped]
-    public virtual ICollection<MailingSubscription> MailingSubscriptions { get; set; } 
+    // [One2many]
+    [ForeignKey("DestListId")]
+    [InverseProperty("DestList")]
+    public virtual ICollection<MailingListMerge> MailingListMergeNavigation { get; set; }
 
-    //[InverseProperty("Newsletter")]
-    [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } 
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailingListWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailingListWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("MailingListId")]
-    //[InverseProperty("MailingLists")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailingListId")]
+    // [InverseProperty("MailingList")]
+    // public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
-    [ForeignKey("MailingListId")]
-    //[InverseProperty("MailingLists")]
-    [NotMapped]
-    public virtual ICollection<MailingContactImport> MailingContactImports { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailingListId")]
+    // [InverseProperty("MailingList")]
+    // public virtual ICollection<MailingContactImport> MailingContactImport { get; set; }
 
-    [ForeignKey("MailingListId")]
-    //[InverseProperty("MailingLists")]
-    [NotMapped]
-    public virtual ICollection<MailingListMerge> MailingListMerges { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailingListId")]
+    // [InverseProperty("MailingList")]
+    // public virtual ICollection<MailingListMerge> MailingListMerge { get; set; }
 
-    [ForeignKey("MailingListId")]
-    //[InverseProperty("MailingLists")]
-    [NotMapped]
-    public virtual ICollection<MailingMailing> MailingMailings { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailingListId")] //Many2many
+    // [InverseProperty("MailingList")] //Many2many
+    public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 }

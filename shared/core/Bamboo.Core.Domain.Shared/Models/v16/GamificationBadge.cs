@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_badge")]
-//[Index("IsPublished", Name = "gamification_badge__is_published_index")]
-public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("IsPublished", Name = "gamification_badge_is_published_index")]
+public partial class GamificationBadge: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +22,10 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -29,7 +33,7 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     public long? RuleMaxNumber { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,7 +46,7 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -55,7 +59,7 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? RuleMax { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -66,72 +70,81 @@ public partial class GamificationBadge: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("survey_id")]
     public Guid? SurveyId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("GamificationBadgeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("GamificationBadgeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
+    // [One2many]
+    [ForeignKey("BadgeId")]
+    [InverseProperty("Badge")]
+    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUser { get; set; }
+
+    // [One2many]
+    [ForeignKey("BadgeId")]
+    [InverseProperty("Badge")]
+    public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("RewardId")]
+    [InverseProperty("Reward")]
+    public virtual ICollection<GamificationChallenge> GamificationChallengeReward { get; set; }
+
+    // [One2many]
+    [ForeignKey("RewardFirstId")]
+    [InverseProperty("RewardFirst")]
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardFirst { get; set; }
+
+    // [One2many]
+    [ForeignKey("RewardSecondId")]
+    [InverseProperty("RewardSecond")]
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardSecond { get; set; }
+
+    // [One2many]
+    [ForeignKey("RewardThirdId")]
+    [InverseProperty("RewardThird")]
+    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardThird { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("...")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadge")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    //[InverseProperty("Badge")]
-    [NotMapped]
-    public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizards { get; set; } 
-
-    //[InverseProperty("Badge")]
-    [NotMapped]
-    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUsers { get; set; } 
-
-    //[InverseProperty("RewardFirst")]
-    [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardFirsts { get; set; } 
-
-    //[InverseProperty("RewardSecond")]
-    [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardSeconds { get; set; } 
-
-    //[InverseProperty("RewardThird")]
-    [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewardThirds { get; set; } 
-
-    //[InverseProperty("Reward")]
-    [NotMapped]
-    public virtual ICollection<GamificationChallenge> GamificationChallengeRewards { get; set; } 
-
+    // [Many2one]
     [ForeignKey("SurveyId")]
-    //[InverseProperty("GamificationBadges")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadge")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
-    //[InverseProperty("CertificationBadge")]
-    [NotMapped]
+    // [Many2one]
+    // [InverseProperty("CertificationBadge")] //Many2one
     public virtual SurveySurvey? SurveySurvey { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("GamificationBadgeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("GamificationBadgeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("Badge2Id")]
-    //[InverseProperty("Badge2s")]
-    [NotMapped]
-    public virtual ICollection<GamificationBadge> Badge1s { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("Badge2Id")] //Many2many
+    // [InverseProperty("Badge2")] //Many2many
+    public virtual ICollection<GamificationBadge> Badge1 { get; set; }
 
-    [ForeignKey("Badge1Id")]
-    //[InverseProperty("Badge1s")]
-    [NotMapped]
-    public virtual ICollection<GamificationBadge> Badge2s { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("Badge1Id")] //Many2many
+    // [InverseProperty("Badge1")] //Many2many
+    public virtual ICollection<GamificationBadge> Badge2 { get; set; }
 
-    [ForeignKey("GamificationBadgeId")]
-    //[InverseProperty("GamificationBadges")]
-    [NotMapped]
-    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitions { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("GamificationBadgeId")] //Many2many
+    // [InverseProperty("GamificationBadge")] //Many2many
+    public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinition { get; set; }
 
-    [ForeignKey("GamificationBadgeId")]
-    //[InverseProperty("GamificationBadges")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("GamificationBadgeId")] //Many2many
+    // [InverseProperty("GamificationBadge")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

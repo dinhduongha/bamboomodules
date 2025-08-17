@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_link_preview")]
-//[Index("CreationTime", Name = "mail_link_preview_create_date_index")]
+//[Index("CreateDate", Name = "mail_link_preview_create_date_index")]
 //[Index("MessageId", Name = "mail_link_preview_message_id_index")]
 public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -22,11 +23,15 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_id")]
     public Guid? MessageId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -40,9 +45,6 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("og_title")]
     public string? OgTitle { get; set; }
 
-    [Column("og_site_name")]
-    public string? OgSiteName { get; set; }
-
     [Column("og_image")]
     public string? OgImage { get; set; }
 
@@ -55,27 +57,24 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("og_description")]
     public string? OgDescription { get; set; }
 
-    [Column("is_hidden")]
-    public bool? IsHidden { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MailLinkPreviewCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MailLinkPreviewCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageId")]
-    //[InverseProperty("MailLinkPreviews")]
-    [NotMapped]
+    // [InverseProperty("MailLinkPreview")] //Many2one
     public virtual MailMessage? Message { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MailLinkPreviewWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MailLinkPreviewWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

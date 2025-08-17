@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,11 +21,14 @@ public partial class AccountAutomaticEntryWizard: FullAuditedEntity<Guid>, IEnti
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("destination_account_id")]
     public Guid? DestinationAccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -42,7 +46,7 @@ public partial class AccountAutomaticEntryWizard: FullAuditedEntity<Guid>, IEnti
     public decimal? TotalAmount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -50,28 +54,29 @@ public partial class AccountAutomaticEntryWizard: FullAuditedEntity<Guid>, IEnti
     [Column("percentage")]
     public double? Percentage { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountAutomaticEntryWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountAutomaticEntryWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountAutomaticEntryWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountAutomaticEntryWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DestinationAccountId")]
-    //[InverseProperty("AccountAutomaticEntryWizards")]
-    [NotMapped]
+    // [InverseProperty("AccountAutomaticEntryWizard")] //Many2one
     public virtual AccountAccount? DestinationAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountAutomaticEntryWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountAutomaticEntryWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountAutomaticEntryWizardId")]
-    //[InverseProperty("AccountAutomaticEntryWizards")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountAutomaticEntryWizardId")] //Many2many
+    // [InverseProperty("AccountAutomaticEntryWizard")] //Many2many
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 }

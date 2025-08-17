@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,11 +13,11 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_employee")]
 //[Index("Barcode", Name = "hr_employee_barcode_uniq", IsUnique = true)]
-//[Index("TenantId", Name = "hr_employee_company_id_index")]
+//[Index("CompanyId", Name = "hr_employee_company_id_index")]
 //[Index("ResourceCalendarId", Name = "hr_employee_resource_calendar_id_index")]
 //[Index("ResourceId", Name = "hr_employee_resource_id_index")]
-//[Index("UserId", "TenantId", Name = "hr_employee_user_uniq", IsUnique = true)]
-public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("UserId", "CompanyId", Name = "hr_employee_user_uniq", IsUnique = true)]
+public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -24,6 +25,10 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("resource_id")]
     public Guid? ResourceId { get; set; }
@@ -64,12 +69,6 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("address_home_id")]
     public Guid? AddressHomeId { get; set; }
 
-    [Column("private_state_id")]
-    public Guid? PrivateStateId { get; set; }
-
-    [Column("private_country_id")]
-    public Guid? PrivateCountryId { get; set; } 
-
     [Column("country_id")]
     public Guid? CountryId { get; set; }
 
@@ -82,9 +81,6 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("bank_account_id")]
     public Guid? BankAccountId { get; set; }
 
-    [Column("distance_home_work")]
-    public long? DistanceHomeWork { get; set; }
-
     [Column("km_home_work")]
     public long? KmHomeWork { get; set; }
 
@@ -92,7 +88,7 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? DepartureReasonId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -111,27 +107,6 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("work_email")]
     public string? WorkEmail { get; set; }
-
-    [Column("private_street")]
-    public string? PrivateStreet { get; set; }
-
-    [Column("private_street2")]
-    public string? PrivateStreet2 { get; set; }
-
-    [Column("private_city")]
-    public string? PrivateCity { get; set; }
-
-    [Column("private_zip")]
-    public string? PrivateZip { get; set; }
-
-    [Column("private_phone")]
-    public string? PrivatePhone { get; set; }
-
-    [Column("private_email")]
-    public string? PrivateEmail { get; set; }
-
-    [Column("lang")]
-    public string? Lang { get; set; }
 
     [Column("employee_type")]
     public string? EmployeeType { get; set; }
@@ -181,20 +156,11 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("emergency_phone")]
     public string? EmergencyPhone { get; set; }
 
-    [Column("distance_home_work_unit")]
-    public string? DistanceHomeWorkUnit { get; set; }
-
-    // [Column("employee_type")]
-    // public string? EmployeeType { get; set; }
-
     [Column("barcode")]
     public string? Barcode { get; set; }
 
     [Column("pin")]
     public string? Pin { get; set; }
-
-    [Column("private_car_plate")]
-    public string? PrivateCarPlate { get; set; }
 
     [Column("spouse_birthdate")]
     public DateTime? SpouseBirthdate { get; set; }
@@ -211,10 +177,6 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("departure_date")]
     public DateTime? DepartureDate { get; set; }
 
-    [JsonField]
-    [Column("employee_properties", TypeName = "jsonb")]
-    public string? EmployeeProperties { get; set; }
-
     [Column("additional_note")]
     public string? AdditionalNote { get; set; }
 
@@ -227,26 +189,17 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("active")]
     public bool? Active { get; set; }
 
-    [Column("is_flexible")]
-    public bool? IsFlexible { get; set; }
-
-    [Column("is_fully_flexible")]
-    public bool? IsFullyFlexible { get; set; }
-
     [Column("work_permit_scheduled_activity")]
     public bool? WorkPermitScheduledActivity { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("contract_id")]
     public Guid? ContractId { get; set; }
-
-    [Column("legal_name")]
-    public string? LegalName { get; set; }
 
     [Column("vehicle")]
     public string? Vehicle { get; set; }
@@ -257,8 +210,11 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("contract_warning")]
     public bool? ContractWarning { get; set; }
 
-    [Column("attendance_manager_id")]
-    public Guid? AttendanceManagerId { get; set; }
+    [Column("expense_manager_id")]
+    public Guid? ExpenseManagerId { get; set; }
+
+    [Column("leave_manager_id")]
+    public Guid? LeaveManagerId { get; set; }
 
     [Column("last_attendance_id")]
     public Guid? LastAttendanceId { get; set; }
@@ -269,291 +225,369 @@ public partial class HrEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("last_check_out", TypeName = "timestamp without time zone")]
     public DateTime? LastCheckOut { get; set; }
 
-    [Column("expense_manager_id")]
-    public Guid? ExpenseManagerId { get; set; }
-
-    [Column("leave_manager_id")]
-    public Guid? LeaveManagerId { get; set; }
-
     [Column("mobility_card")]
     public string? MobilityCard { get; set; }
-    [ForeignKey("PrivateCountryId")]
-    //[InverseProperty("HrEmployeePrivateCountries")]
-    [NotMapped]
-    public virtual ResCountry? PrivateCountry { get; set; }
 
-    [ForeignKey("PrivateStateId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
-    public virtual ResCountryState? PrivateState { get; set; }
+    [Column("hr_presence_state_display")]
+    public string? HrPresenceStateDisplay { get; set; }
 
+    [Column("email_sent")]
+    public bool? EmailSent { get; set; }
+
+    [Column("ip_connected")]
+    public bool? IpConnected { get; set; }
+
+    [Column("manually_set_present")]
+    public bool? ManuallySetPresent { get; set; }
+
+    [Column("hourly_cost")]
+    public decimal? HourlyCost { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("ManagerId")]
+    [InverseProperty("Manager")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineManager { get; set; }
+
+    // [Many2one]
     [ForeignKey("AddressId")]
-    //[InverseProperty("HrEmployeeAddresses")]
-    [NotMapped]
+    // [InverseProperty("HrEmployeeAddress")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
+    // [Many2one]
     [ForeignKey("AddressHomeId")]
-    //[InverseProperty("HrEmployeeAddressHomes")]
-    [NotMapped]
+    // [InverseProperty("HrEmployeeAddressHome")] //Many2one
     public virtual ResPartner? AddressHome { get; set; }
 
+    // [Many2one]
     [ForeignKey("BankAccountId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResPartnerBank? BankAccount { get; set; }
 
+    // [Many2one]
     [ForeignKey("CoachId")]
-    //[InverseProperty("InverseCoach")]
-    [NotMapped]
+    // [InverseProperty("InverseCoach")] //Many2one
     public virtual HrEmployee? Coach { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("ContractId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("HrEmployeeCountries")]
-    [NotMapped]
+    // [InverseProperty("HrEmployeeCountry")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryOfBirth")]
-    //[InverseProperty("HrEmployeeCountryOfBirthNavigations")]
-    [NotMapped]
+    // [InverseProperty("HrEmployeeCountryOfBirthNavigation")] //Many2one
     public virtual ResCountry? CountryOfBirthNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrEmployeeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrEmployeeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartmentId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartureReasonId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrDepartureReason? DepartureReason { get; set; }
 
+    // [Many2one]
     [ForeignKey("ExpenseManagerId")]
-    //[InverseProperty("HrEmployeeExpenseManagers")]
-    [NotMapped]
-    public virtual ResUser? ExpenseManager { get; set; }
+    // [InverseProperty("HrEmployeeExpenseManager")] //Many2one
+    public virtual ResUsers? ExpenseManager { get; set; }
 
+    // [One2many]
+    [ForeignKey("DriverEmployeeId")]
+    [InverseProperty("DriverEmployee")]
+    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
+
+    // [One2many]
+    [ForeignKey("DriverEmployeeId")]
+    [InverseProperty("DriverEmployee")]
+    public virtual ICollection<FleetVehicle> FleetVehicleDriverEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("FutureDriverEmployeeId")]
+    [InverseProperty("FutureDriverEmployee")]
+    public virtual ICollection<FleetVehicle> FleetVehicleFutureDriverEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("PurchaserEmployeeId")]
+    [InverseProperty("PurchaserEmployee")]
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<GamificationBadgeUser> GamificationBadgeUser { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmpId")]
+    [InverseProperty("Emp")]
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrAttendance> HrAttendance { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertime { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrContract> HrContract { get; set; }
+
+    // [One2many]
+    [ForeignKey("ManagerId")]
+    [InverseProperty("Manager")]
+    public virtual ICollection<HrDepartment> HrDepartment { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrDepartureWizard> HrDepartureWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLog { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrExpense> HrExpense { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrExpenseSplit> HrExpenseSplit { get; set; }
+
+    // [One2many]
+    [ForeignKey("ManagerId")]
+    [InverseProperty("Manager")]
+    public virtual ICollection<HrJob> HrJob { get; set; }
+
+    // [One2many]
+    [ForeignKey("ApproverId")]
+    [InverseProperty("Approver")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationApprover { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("ManagerId")]
+    [InverseProperty("Manager")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationManager { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrLeave> HrLeaveEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("FirstApproverId")]
+    [InverseProperty("FirstApprover")]
+    public virtual ICollection<HrLeave> HrLeaveFirstApprover { get; set; }
+
+    // [One2many]
+    [ForeignKey("ManagerId")]
+    [InverseProperty("Manager")]
+    public virtual ICollection<HrLeave> HrLeaveManager { get; set; }
+
+    // [One2many]
+    [ForeignKey("SecondApproverId")]
+    [InverseProperty("SecondApprover")]
+    public virtual ICollection<HrLeave> HrLeaveSecondApprover { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrUserWorkEntryEmployee> HrUserWorkEntryEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
+
+    // [One2many]
+    [ForeignKey("CoachId")]
+    [InverseProperty("Coach")]
+    public virtual ICollection<HrEmployee> InverseCoach { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentId")]
+    [InverseProperty("Parent")]
+    public virtual ICollection<HrEmployee> InverseParent { get; set; }
+
+    // [Many2one]
     [ForeignKey("JobId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrJob? Job { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastAttendanceId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrAttendance? LastAttendance { get; set; }
 
+    // [Many2one]
     [ForeignKey("LeaveManagerId")]
-    //[InverseProperty("HrEmployeeLeaveManagers")]
-    [NotMapped]
-    public virtual ResUser? LeaveManager { get; set; }
+    // [InverseProperty("HrEmployeeLeaveManager")] //Many2one
+    public virtual ResUsers? LeaveManager { get; set; }
 
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual HrEmployee? Parent { get; set; }
 
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<PosOrder> PosOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<ProjectCreateSaleOrderLine> ProjectCreateSaleOrderLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
+
+    // [Many2one]
     [ForeignKey("ResourceId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResourceResource? Resource { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResourceCalendarId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("HrEmployeeUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("HrEmployeeUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkContactId")]
-    //[InverseProperty("HrEmployeeWorkContacts")]
-    [NotMapped]
+    // [InverseProperty("HrEmployeeWorkContact")] //Many2one
     public virtual ResPartner? WorkContact { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkLocationId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
+    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrEmployeeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrEmployeeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("EmpId")] //Many2many
+    // [InverseProperty("Emp")] //Many2many
+    public virtual ICollection<HrEmployeeCategory> Category { get; set; }
 
-    //[InverseProperty("DriverEmployee")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PlanWizardId")]
+    // [InverseProperty("PlanWizard")]
+    // public virtual ICollection<HrPlanWizard> Employee { get; set; }
 
-    //[InverseProperty("DriverEmployee")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleDriverEmployees { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    // public virtual ICollection<HrLeave> HrLeave { get; set; }
 
-    //[InverseProperty("FutureDriverEmployee")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleFutureDriverEmployees { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    // public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
 
-    //[InverseProperty("PurchaserEmployee")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrEmployeeId")] //Many2many
+    // [InverseProperty("HrEmployee")] //Many2many
+    public virtual ICollection<HrSkill> HrSkill { get; set; }
 
-    //[InverseProperty("Emp")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    // public virtual ICollection<HrWorkEntryRegenerationWizard> HrWorkEntryRegenerationWizard { get; set; }
 
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertimes { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    // public virtual ICollection<PosConfig> PosConfig { get; set; }
 
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrAttendance> HrAttendances { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrContract> HrContracts { get; set; } 
-
-    //[InverseProperty("Manager")]
-    [NotMapped]
-    public virtual ICollection<HrDepartment> HrDepartments { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrDepartureWizard> HrDepartureWizards { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrEmployeeSkill> HrEmployeeSkills { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseSplit> HrExpenseSplits { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrExpense> HrExpenses { get; set; } 
-
-    //[InverseProperty("Manager")]
-    [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } 
-
-    //[InverseProperty("Approver")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationApprovers { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationEmployees { get; set; } 
-
-    //[InverseProperty("Manager")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationManagers { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveEmployees { get; set; } 
-
-    //[InverseProperty("FirstApprover")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveFirstApprovers { get; set; } 
-
-    //[InverseProperty("Manager")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveManagers { get; set; } 
-
-    //[InverseProperty("SecondApprover")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaveSecondApprovers { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } 
-
-    //[InverseProperty("Coach")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> InverseCoach { get; set; } 
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> InverseParent { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } 
-
-    //[InverseProperty("Employee")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } 
-
-    [ForeignKey("EmpId")]
-    //[InverseProperty("Emps")]
-    [NotMapped]
-    public virtual ICollection<HrEmployeeCategory> Categories { get; set; } 
-
-    [ForeignKey("PlanWizardId")]
-    //[InverseProperty("PlanWizards")]
-    [NotMapped]
-    public virtual ICollection<HrPlanWizard> Employees { get; set; } 
-
-    [ForeignKey("HrEmployeeId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocations { get; set; } 
-
-    [ForeignKey("HrEmployeeId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
-    public virtual ICollection<HrLeave> HrLeaves { get; set; } 
-
-    [ForeignKey("HrEmployeeId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
-    public virtual ICollection<HrSkill> HrSkills { get; set; } 
-
-    [ForeignKey("HrEmployeeId")]
-    //[InverseProperty("HrEmployees")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
-
-    [ForeignKey("EmpId")]
-    //[InverseProperty("Emps")]
-    [NotMapped]
-    public virtual ICollection<HrHolidaysSummaryEmployee> Sums { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("EmpId")]
+    // [InverseProperty("Emp")]
+    // public virtual ICollection<HrHolidaysSummaryEmployee> Sum { get; set; }
 }

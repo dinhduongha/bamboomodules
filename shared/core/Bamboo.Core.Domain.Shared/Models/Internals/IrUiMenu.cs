@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +10,14 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_ui_menu")]
-//[Index("ParentId", Name = "ir_ui_menu_parent_id_index")]
-//[Index("ParentPath", Name = "ir_ui_menu_parent_path_index")]
-public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("ParentId", Name = "ir_ui_menu__parent_id_index")]
+//[Index("ParentPath", Name = "ir_ui_menu__parent_path_index")]
+public partial class IrUiMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -31,7 +26,7 @@ public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -47,42 +42,45 @@ public partial class IrUiMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrUiMenuCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrUiMenuCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    [InverseProperty("Parent")]
+    public virtual ICollection<IrUiMenu> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual IrUiMenu? Parent { get; set; }
 
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrUiMenuWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<IrUiMenu> InverseParent { get; set; } 
-
-    //[InverseProperty("Menu")]
-    [NotMapped]
-    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreates { get; set; } 
-
+    // [One2many]
     [ForeignKey("MenuId")]
-    //[InverseProperty("Menus")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> Gids { get; set; } 
+    [InverseProperty("Menu")]
+    public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreate { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("IrUiMenuWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MenuId")] //Many2many
+    // [InverseProperty("Menu")] //Many2many
+    public virtual ICollection<ResGroups> Gid { get; set; }
 }

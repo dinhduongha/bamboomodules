@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,14 +12,14 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("purchase_order")]
-//[Index("TenantId", Name = "purchase_order_company_id_index")]
+//[Index("CompanyId", Name = "purchase_order_company_id_index")]
 //[Index("DateApprove", Name = "purchase_order_date_approve_index")]
 //[Index("DateOrder", Name = "purchase_order_date_order_index")]
 //[Index("DatePlanned", Name = "purchase_order_date_planned_index")]
 //[Index("Priority", Name = "purchase_order_priority_index")]
 //[Index("State", Name = "purchase_order_state_index")]
 //[Index("UserId", Name = "purchase_order_user_id_index")]
-public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +28,10 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -56,7 +60,7 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? UserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -94,20 +98,11 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("amount_total")]
     public decimal? AmountTotal { get; set; }
 
-    [Column("amount_total_cc")]
-    public decimal? AmountTotalCc { get; set; }
-
-    [Column("currency_rate")]
-    public decimal? CurrencyRate { get; set; }
-
     [Column("mail_reminder_confirmed")]
     public bool? MailReminderConfirmed { get; set; }
 
     [Column("mail_reception_confirmed")]
     public bool? MailReceptionConfirmed { get; set; }
-
-    [Column("mail_reception_declined")]
-    public bool? MailReceptionDeclined { get; set; }
 
     [Column("date_order", TypeName = "timestamp without time zone")]
     public DateTime? DateOrder { get; set; }
@@ -122,17 +117,13 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public DateTime? DateCalendarStart { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("project_id")]
-    public Guid? ProjectId { get; set; }
-
-    // v16-Compat
-    // [Column("currency_rate")]
-    // public double? CurrencyRate { get; set; }
+    [Column("currency_rate")]
+    public double? CurrencyRate { get; set; }
 
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
@@ -149,82 +140,121 @@ public partial class PurchaseOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("effective_date", TypeName = "timestamp without time zone")]
     public DateTime? EffectiveDate { get; set; }
 
+    [Column("requisition_id")]
+    public Guid? RequisitionId { get; set; }
+
+    [Column("purchase_group_id")]
+    public Guid? PurchaseGroupId { get; set; }
+
+    [Column("report_grids")]
+    public bool? ReportGrids { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("PurchaseOrderCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("PurchaseOrderCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("DestAddressId")]
-    //[InverseProperty("PurchaseOrderDestAddresses")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrderDestAddress")] //Many2one
     public virtual ResPartner? DestAddress { get; set; }
 
+    // [Many2one]
     [ForeignKey("FiscalPositionId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual AccountFiscalPosition? FiscalPosition { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual ProcurementGroup? Group { get; set; }
 
+    // [Many2one]
     [ForeignKey("IncotermId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
-    public virtual AccountIncoterm? Incoterm { get; set; }
+    // [InverseProperty("PurchaseOrder")] //Many2one
+    public virtual AccountIncoterms? Incoterm { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("PurchaseOrderPartners")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrderPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("PaymentTermId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual AccountPaymentTerm? PaymentTerm { get; set; }
 
+    // [Many2one]
     [ForeignKey("PickingTypeId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
+    // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
+    // [Many2one]
+    [ForeignKey("PurchaseGroupId")]
+    // [InverseProperty("PurchaseOrder")] //Many2one
+    public virtual PurchaseOrderGroup? PurchaseGroup { get; set; }
+
+    // [One2many]
+    [ForeignKey("OrderId")]
+    [InverseProperty("Order")]
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("OriginPoId")]
+    [InverseProperty("OriginPo")]
+    public virtual ICollection<PurchaseRequisitionCreateAlternative> PurchaseRequisitionCreateAlternative { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RequisitionId")]
+    // [InverseProperty("PurchaseOrder")] //Many2one
+    public virtual PurchaseRequisition? Requisition { get; set; }
+
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("PurchaseOrderUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("PurchaseOrderUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("PurchaseOrderWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("PurchaseOrderWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Order")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PurchaseOrderId")] //Many2many
+    // [InverseProperty("PurchaseOrder")] //Many2many
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
 
-    [ForeignKey("PurchaseOrderId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PurchaseOrderId")]
+    // [InverseProperty("PurchaseOrder")]
+    // public virtual ICollection<PurchaseRequisitionAlternativeWarning> PurchaseRequisitionAlternativeWarning { get; set; }
 
-    [ForeignKey("PurchaseOrderId")]
-    //[InverseProperty("PurchaseOrders")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickings { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PurchaseOrderId")]
+    // [InverseProperty("PurchaseOrderNavigation")]
+    // public virtual ICollection<PurchaseRequisitionAlternativeWarning> PurchaseRequisitionAlternativeWarningNavigation { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PurchaseOrderId")] //Many2many
+    // [InverseProperty("PurchaseOrder")] //Many2many
+    public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

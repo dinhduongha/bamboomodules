@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_supplierinfo")]
-//[Index("TenantId", Name = "product_supplierinfo_company_id_index")]
+//[Index("CompanyId", Name = "product_supplierinfo_company_id_index")]
 //[Index("ProductTmplId", Name = "product_supplierinfo_product_tmpl_id_index")]
-public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,6 +22,10 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -41,7 +46,7 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     public long? Delay { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -64,60 +69,63 @@ public partial class ProductSupplierinfo: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("price")]
     public decimal? Price { get; set; }
 
-    [Column("discount")]
-    public decimal? Discount { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("purchase_requisition_line_id")]
+    public Guid? PurchaseRequisitionLineId { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ProductSupplierinfos")]
-    [NotMapped]
+    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProductSupplierinfoCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProductSupplierinfoCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("ProductSupplierinfos")]
-    [NotMapped]
+    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("ProductSupplierinfos")]
-    [NotMapped]
+    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("ProductSupplierinfos")]
-    [NotMapped]
+    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
-    //[InverseProperty("Supplier")]
-    [NotMapped]
-    public virtual ICollection<ProductReplenish> ProductReplenishes { get; set; } 
-
+    // [Many2one]
     [ForeignKey("ProductTmplId")]
-    //[InverseProperty("ProductSupplierinfos")]
-    [NotMapped]
+    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
+    // [Many2one]
+    [ForeignKey("PurchaseRequisitionLineId")]
+    // [InverseProperty("ProductSupplierinfo")] //Many2one
+    public virtual PurchaseRequisitionLine? PurchaseRequisitionLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("SupplierId")]
+    [InverseProperty("Supplier")]
+    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProductSupplierinfoWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProductSupplierinfoWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Supplier")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
-    [ForeignKey("ProductSupplierinfoId")]
-    //[InverseProperty("ProductSupplierinfos")]
-    [NotMapped]
-    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfos { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductSupplierinfoId")]
+    // [InverseProperty("ProductSupplierinfo")]
+    // public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfo { get; set; }
 }

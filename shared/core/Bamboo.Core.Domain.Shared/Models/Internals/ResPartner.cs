@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,19 +10,19 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("res_partner")]
-//[Index("CommercialPartnerId", Name = "res_partner_commercial_partner_id_index")]
-//[Index("TenantId", Name = "res_partner_company_id_index")]
+//[Index("CommercialPartnerId", Name = "res_partner__commercial_partner_id_index")]
+//[Index("CompanyId", Name = "res_partner__company_id_index")]
+//[Index("CompleteName", Name = "res_partner__complete_name_index")]
 //[Index("Date", Name = "res_partner_date_index")]
 //[Index("DisplayName", Name = "res_partner_display_name_index")]
-//[Index("IsPublished", Name = "res_partner_is_published_index")]
-//[Index("Name", Name = "res_partner_name_index")]
-//[Index("ParentId", Name = "res_partner_parent_id_index")]
-//[Index("Ref", Name = "res_partner_ref_index")]
-//[Index("Vat", Name = "res_partner_vat_index")]
-//[Index("WebsiteId", Name = "res_partner_website_id_index")]
-public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("IsPublished", Name = "res_partner__is_published_index")]
+//[Index("Name", Name = "res_partner__name_index")]
+//[Index("ParentId", Name = "res_partner__parent_id_index")]
+//[Index("Ref", Name = "res_partner__ref_index")]
+//[Index("Vat", Name = "res_partner__vat_index")]
+//[Index("WebsiteId", Name = "res_partner__website_id_index")]
+public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -32,8 +31,11 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -63,7 +65,7 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? CommercialPartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -71,7 +73,6 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("complete_name")]
     public string? CompleteName { get; set; }
 
-    // v16-Compat
     [Column("display_name")]
     public string? DisplayName { get; set; }
 
@@ -130,7 +131,6 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("barcode", TypeName = "jsonb")]
     public string? Barcode { get; set; }
 
-    // v16-Compat
     [Column("date")]
     public DateTime? Date { get; set; }
 
@@ -158,7 +158,6 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -168,22 +167,19 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("email_normalized")]
     public string? EmailNormalized { get; set; }
 
-    // v16-Compat
-    [Column("signup_token")]
-    public string? SignupToken { get; set; }
-
     [Column("signup_type")]
     public string? SignupType { get; set; }
+
+    [Column("signup_expiration", TypeName = "timestamp without time zone")]
+    public DateTime? SignupExpiration { get; set; }
+
+    [Column("signup_token")]
+    public string? SignupToken { get; set; }
 
     [JsonField]
     [Column("specific_property_product_pricelist", TypeName = "jsonb")]
     public string? SpecificPropertyProductPricelist { get; set; }
 
-    // v16-Compat
-    [Column("signup_expiration", TypeName = "timestamp without time zone")]
-    public DateTime? SignupExpiration { get; set; }
-
-    // v16-Compat
     [Column("team_id")]
     public Guid? TeamId { get; set; }
 
@@ -263,14 +259,6 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("property_inbound_payment_method_line_id", TypeName = "jsonb")]
     public string? PropertyInboundPaymentMethodLineId { get; set; }
 
-    // v16-Compat
-    //[Column("invoice_warn_msg")]
-    //public string? InvoiceWarnMsg { get; set; }
-
-    // v16-Compat
-    //[Column("debit_limit")]
-    //public decimal? DebitLimit { get; set; }
-
     [Column("invoice_warn_msg")]
     public string? InvoiceWarnMsg { get; set; }
 
@@ -283,25 +271,6 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("peppol_eas")]
     public string? PeppolEas { get; set; }
 
-    [Column("payment_responsible_id")]
-    public Guid? PaymentResponsibleId { get; set; }
-
-    [Column("latest_followup_sequence")]
-    public long? LatestFollowupSequence { get; set; }
-
-    [Column("payment_next_action_date")]
-    public DateTime? PaymentNextActionDate { get; set; }
-
-    [Column("payment_note")]
-    public string? PaymentNote { get; set; }
-
-    [Column("payment_next_action")]
-    public string? PaymentNextAction { get; set; }
-
-    [Column("calendar_last_notif_ack", TypeName = "timestamp without time zone")]
-    public DateTime? CalendarLastNotifAck { get; set; }
-
-    // v16-Compat
     [Column("last_time_entries_checked", TypeName = "timestamp without time zone")]
     public DateTime? LastTimeEntriesChecked { get; set; }
 
@@ -325,6 +294,9 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("picking_warn_msg")]
     public string? PickingWarnMsg { get; set; }
 
+    [Column("calendar_last_notif_ack", TypeName = "timestamp without time zone")]
+    public DateTime? CalendarLastNotifAck { get; set; }
+
     [Column("buyer_id")]
     public Guid? BuyerId { get; set; }
 
@@ -346,43 +318,29 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("purchase_warn_msg")]
     public string? PurchaseWarnMsg { get; set; }
 
+    [Column("payment_responsible_id")]
+    public Guid? PaymentResponsibleId { get; set; }
+
+    [Column("latest_followup_sequence")]
+    public long? LatestFollowupSequence { get; set; }
+
+    [Column("latest_followup_level_id_without_lit")]
+    public Guid? LatestFollowupLevelIdWithoutLit { get; set; }
+
+    [Column("payment_next_action_date")]
+    public DateTime? PaymentNextActionDate { get; set; }
+
+    [Column("payment_note")]
+    public string? PaymentNote { get; set; }
+
+    [Column("payment_next_action")]
+    public string? PaymentNextAction { get; set; }
+
     [Column("plan_to_change_car")]
     public bool? PlanToChangeCar { get; set; }
 
     [Column("plan_to_change_bike")]
     public bool? PlanToChangeBike { get; set; }
-
-    // v16-Compat
-    //[Column("purchase_warn_msg")]
-    //public string? PurchaseWarnMsg { get; set; }
-
-    // v16-Compat
-    //[Column("payment_responsible_id")]
-    //public Guid? PaymentResponsibleId { get; set; }
-
-    // v16-Compat
-    //[Column("latest_followup_sequence")]
-    //public long? LatestFollowupSequence { get; set; }
-
-    // v16-Compat
-    [Column("latest_followup_level_id_without_lit")]
-    public Guid? LatestFollowupLevelIdWithoutLit { get; set; }
-
-    // v16-Compat
-    //[Column("payment_next_action_date")]
-    //public DateTime? PaymentNextActionDate { get; set; }
-
-    // v16-Compat
-    //[Column("payment_note")]
-    //public string? PaymentNote { get; set; }
-
-    // v16-Compat
-    //[Column("payment_next_action")]
-    //public string? PaymentNextAction { get; set; }
-
-    // v16-Compat
-    //[Column("calendar_last_notif_ack", TypeName = "timestamp without time zone")]
-    //public DateTime? CalendarLastNotifAck { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -421,570 +379,1068 @@ public partial class ResPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("website_short_description", TypeName = "jsonb")]
     public string? WebsiteShortDescription { get; set; }
 
-    // v16-Compat
-    // [Column("plan_to_change_car")]
-    // public bool? PlanToChangeCar { get; set; }
+    [Column("associate_member")]
+    public Guid? AssociateMember { get; set; }
 
-    // v16-Compat
-    // [Column("plan_to_change_bike")]
-    // public bool? PlanToChangeBike { get; set; }
+    [Column("membership_state")]
+    public string? MembershipState { get; set; }
 
-    // v16-Compat
+    [Column("membership_start")]
+    public DateTime? MembershipStart { get; set; }
+
+    [Column("membership_stop")]
+    public DateTime? MembershipStop { get; set; }
+
+    [Column("membership_cancel")]
+    public DateTime? MembershipCancel { get; set; }
+
+    [Column("membership_amount")]
+    public decimal? MembershipAmount { get; set; }
+
+    [Column("free_member")]
+    public bool? FreeMember { get; set; }
+
+    [Column("city_id")]
+    public Guid? CityId { get; set; }
+
+    [Column("street_name")]
+    public string? StreetName { get; set; }
+
+    [Column("street_number")]
+    public string? StreetNumber { get; set; }
+
+    [Column("street_number2")]
+    public string? StreetNumber2 { get; set; }
+
+    [JsonField]
+    [Column("property_stock_subcontractor", TypeName = "jsonb")]
+    public string? PropertyStockSubcontractor { get; set; }
+
+    [Column("date_localization")]
+    public DateTime? DateLocalization { get; set; }
+
+    [Column("partner_weight")]
+    public long? PartnerWeight { get; set; }
+
+    [Column("grade_id")]
+    public Guid? GradeId { get; set; }
+
+    [Column("grade_sequence")]
+    public long? GradeSequence { get; set; }
+
+    [Column("activation")]
+    public Guid? Activation { get; set; }
+
+    [Column("assigned_partner_id")]
+    public Guid? AssignedPartnerId { get; set; }
+
+    [Column("implemented_partner_count")]
+    public long? ImplementedPartnerCount { get; set; }
+
+    [Column("date_partnership")]
+    public DateTime? DatePartnership { get; set; }
+
+    [Column("date_review")]
+    public DateTime? DateReview { get; set; }
+
+    [Column("date_review_next")]
+    public DateTime? DateReviewNext { get; set; }
+
+    [Column("vies_valid")]
+    public bool? ViesValid { get; set; }
+
+    // [Column("city_id")]
+    // public Guid? CityId { get; set; }
+
+    [JsonField]
+    [Column("peppol_verification_state", TypeName = "jsonb")]
+    public string? PeppolVerificationState { get; set; }
+
+    // [Column("street_name")]
+    // public string? StreetName { get; set; }
+
+    // [Column("street_number")]
+    // public string? StreetNumber { get; set; }
+
+    // [Column("street_number2")]
+    // public string? StreetNumber2 { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountAutopostBillsWizard> AccountAutopostBillsWizard { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("CommercialPartnerId")]
+    // [InverseProperty("CommercialPartner")]
+    // public virtual ICollection<AccountMove> AccountMoveCommercialPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountMove> AccountMovePartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerShippingId")]
+    // [InverseProperty("PartnerShipping")]
+    // public virtual ICollection<AccountMove> AccountMovePartnerShipping { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountPayment> AccountPayment { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMapping { get; set; }
+
+    // [Many2one]
+    [ForeignKey("Activation")]
+    // [InverseProperty("ResPartner")] //Many2one
+    public virtual ResPartnerActivation? ActivationNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AssignedPartnerId")]
+    // [InverseProperty("InverseAssignedPartner")] //Many2one
+    public virtual ResPartner? AssignedPartner { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AssociateMember")]
+    // [InverseProperty("InverseAssociateMemberNavigation")] //Many2one
+    public virtual ResPartner? AssociateMemberNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("DstPartnerId")]
+    // [InverseProperty("DstPartner")]
+    // public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizard { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<BillToPoWizard> BillToPoWizard { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<BlogPost> BlogPost { get; set; }
+
+    // [Many2one]
+    [ForeignKey("BuyerId")]
+    // [InverseProperty("ResPartnerBuyer")] //Many2one
+    public virtual ResUsers? Buyer { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CalendarAttendee> CalendarAttendee { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CalendarFilters> CalendarFilters { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OperatorPartnerId")]
+    // [InverseProperty("OperatorPartner")]
+    // public virtual ICollection<ChatbotScript> ChatbotScript { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CityId")]
+    // [InverseProperty("ResPartner")] //Many2one
+    public virtual ResCity? CityNavigation { get; set; }
+
+    // [Many2one]
     [ForeignKey("CommercialPartnerId")]
-    //[InverseProperty("InverseCommercialPartner")]
-    [NotMapped]
+    // [InverseProperty("InverseCommercialPartner")] //Many2one
     public virtual ResPartner? CommercialPartner { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResPartnerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResPartnerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerAssignedId")]
+    // [InverseProperty("PartnerAssigned")]
+    // public virtual ICollection<CrmLeadAssignation> CrmLeadAssignation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CrmLeadForwardToPartner> CrmLeadForwardToPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CrmLead> CrmLeadPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerAssignedId")]
+    // [InverseProperty("PartnerAssigned")]
+    // public virtual ICollection<CrmLead> CrmLeadPartnerAssigned { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<CrmQuotationPartner> CrmQuotationPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("LivechatOperatorId")]
+    // [InverseProperty("LivechatOperator")]
+    // public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<EventBooth> EventBooth { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<EventBoothRegistration> EventBoothRegistration { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressId")]
+    // [InverseProperty("Address")]
+    // public virtual ICollection<EventEvent> EventEventAddress { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OrganizerId")]
+    // [InverseProperty("Organizer")]
+    // public virtual ICollection<EventEvent> EventEventOrganizer { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<EventSponsor> EventSponsor { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<EventTrack> EventTrack { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<EventTrackVisitor> EventTrackVisitor { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("DriverId")]
+    // [InverseProperty("Driver")]
+    // public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("DriverId")]
+    // [InverseProperty("Driver")]
+    // public virtual ICollection<FleetVehicle> FleetVehicleDriver { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("FutureDriverId")]
+    // [InverseProperty("FutureDriver")]
+    // public virtual ICollection<FleetVehicle> FleetVehicleFutureDriver { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("InsurerId")]
+    // [InverseProperty("Insurer")]
+    // public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContract { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PurchaserId")]
+    // [InverseProperty("Purchaser")]
+    // public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServicesPurchaser { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("VendorId")]
+    // [InverseProperty("Vendor")]
+    // public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServicesVendor { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
+
+    // [Many2one]
+    [ForeignKey("GradeId")]
+    // [InverseProperty("ResPartner")] //Many2one
+    public virtual ResPartnerGrade? Grade { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<HrCandidate> HrCandidate { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<HrContributionRegister> HrContributionRegister { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressId")]
+    // [InverseProperty("Address")]
+    // public virtual ICollection<HrEmployee> HrEmployeeAddress { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressHomeId")]
+    // [InverseProperty("AddressHome")]
+    // public virtual ICollection<HrEmployee> HrEmployeeAddressHome { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("WorkContactId")]
+    // [InverseProperty("WorkContact")]
+    // public virtual ICollection<HrEmployee> HrEmployeeWorkContact { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("VendorId")]
+    // [InverseProperty("Vendor")]
+    // public virtual ICollection<HrExpense> HrExpense { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressId")]
+    // [InverseProperty("Address")]
+    // public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressId")]
+    // [InverseProperty("Address")]
+    // public virtual ICollection<HrJob> HrJob { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressId")]
+    // [InverseProperty("Address")]
+    // public virtual ICollection<HrWorkLocation> HrWorkLocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("IndustryId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResPartnerIndustry? Industry { get; set; }
 
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AssignedPartnerId")]
+    // [InverseProperty("AssignedPartner")]
+    // public virtual ICollection<ResPartner> InverseAssignedPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AssociateMember")]
+    // [InverseProperty("AssociateMemberNavigation")]
+    // public virtual ICollection<ResPartner> InverseAssociateMemberNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("CommercialPartnerId")]
+    // [InverseProperty("CommercialPartner")]
+    // public virtual ICollection<ResPartner> InverseCommercialPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("ParentId")]
+    // [InverseProperty("Parent")]
+    // public virtual ICollection<ResPartner> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("InvoiceTemplatePdfReportId")]
+    // [InverseProperty("ResPartner")] //Many2one
+    public virtual IrActReportXml? InvoiceTemplatePdfReport { get; set; }
+
+    // [Many2one]
     [ForeignKey("LatestFollowupLevelIdWithoutLit")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual FollowupLine? LatestFollowupLevelIdWithoutLitNavigation { get; set; }
 
-    // v16-Compat
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<LoyaltyCard> LoyaltyCard { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("RequestPartnerId")]
+    // [InverseProperty("RequestPartner")]
+    // public virtual ICollection<MailActivity> MailActivity { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("LivechatOperatorId")]
+    // [InverseProperty("LivechatOperator")]
+    // public virtual ICollection<MailChannel> MailChannel { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailChannelMember> MailChannelMember { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailFollowers> MailFollowers { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailGroupMember> MailGroupMember { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<MailMessage> MailMessage { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailMessageReaction> MailMessageReaction { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<MailNotification> MailNotificationAuthor { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<MailNotification> MailNotificationResPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailPushDevice> MailPushDevice { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<MailScheduledMessage> MailScheduledMessage { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("Partner")]
+    // [InverseProperty("PartnerNavigation")]
+    // public virtual ICollection<MembershipMembershipLine> MembershipMembershipLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("SubcontractorId")]
+    // [InverseProperty("Subcontractor")]
+    // public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual ResPartner? Parent { get; set; }
 
-    [ForeignKey("PaymentResponsibleId")]
-    //[InverseProperty("ResPartnerPaymentResponsibles")]
-    [NotMapped]
-    public virtual ResUser? PaymentResponsible { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PaymentLinkWizard> PaymentLinkWizard { get; set; }
 
+    // [Many2one]
+    [ForeignKey("PaymentResponsibleId")]
+    // [InverseProperty("ResPartnerPaymentResponsible")] //Many2one
+    public virtual ResUsers? PaymentResponsible { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PaymentToken> PaymentToken { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PortalWizardUser> PortalWizardUser { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PosOrder> PosOrder { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProcurementGroup> ProcurementGroup { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProductWishlist> ProductWishlist { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProjectCollaborator> ProjectCollaborator { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProjectCreateSaleOrder> ProjectCreateSaleOrder { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProjectProject> ProjectProject { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProjectShareCollaboratorWizard> ProjectShareCollaboratorWizard { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("DestAddressId")]
+    // [InverseProperty("DestAddress")]
+    // public virtual ICollection<PurchaseOrder> PurchaseOrderDestAddress { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PurchaseOrder> PurchaseOrderPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("VendorId")]
+    // [InverseProperty("Vendor")]
+    // public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<PurchaseRequisitionCreateAlternative> PurchaseRequisitionCreateAlternative { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<RatingRating> RatingRatingPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PublisherId")]
+    // [InverseProperty("Publisher")]
+    // public virtual ICollection<RatingRating> RatingRatingPublisher { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("RatedPartnerId")]
+    // [InverseProperty("RatedPartner")]
+    // public virtual ICollection<RatingRating> RatingRatingRatedPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<RecurringPayment> RecurringPayment { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<RecurringPaymentLine> RecurringPaymentLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AddressId")]
+    // [InverseProperty("Address")]
+    // public virtual ICollection<RepairOrder> RepairOrderAddress { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<RepairOrder> RepairOrderPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerInvoiceId")]
+    // [InverseProperty("PartnerInvoice")]
+    // public virtual ICollection<RepairOrder> RepairOrderPartnerInvoice { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ResCompany> ResCompany { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSync { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ResPartnerBank> ResPartnerBank { get; set; }
+
+    // [Many2one]
+    // [InverseProperty("Partner")] //Many2one
+    public virtual ResPartnerIap? ResPartnerIap { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ResUsers> ResUsers { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("GuestId")]
+    // [InverseProperty("Guest")]
+    // public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumesGuest { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumesPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<SaleOrderCancel> SaleOrderCancel { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OrderPartnerId")]
+    // [InverseProperty("OrderPartner")]
+    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SaleOrder> SaleOrderPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerInvoiceId")]
+    // [InverseProperty("PartnerInvoice")]
+    // public virtual ICollection<SaleOrder> SaleOrderPartnerInvoice { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerShippingId")]
+    // [InverseProperty("PartnerShipping")]
+    // public virtual ICollection<SaleOrder> SaleOrderPartnerShipping { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SlideChannelPartner> SlideChannelPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SmsSms> SmsSms { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
+
+    // [Many2one]
     [ForeignKey("StateId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCountryState? State { get; set; }
 
-    // v16-Compat
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OwnerId")]
+    // [InverseProperty("Owner")]
+    // public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<StockMove> StockMovePartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("RestrictPartnerId")]
+    // [InverseProperty("RestrictPartner")]
+    // public virtual ICollection<StockMove> StockMoveRestrictPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("DriverId")]
+    // [InverseProperty("Driver")]
+    // public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OwnerId")]
+    // [InverseProperty("Owner")]
+    // public virtual ICollection<StockPicking> StockPickingOwner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<StockPicking> StockPickingPartner { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OwnerId")]
+    // [InverseProperty("Owner")]
+    // public virtual ICollection<StockQuant> StockQuant { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerAddressId")]
+    // [InverseProperty("PartnerAddress")]
+    // public virtual ICollection<StockRule> StockRule { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("OwnerId")]
+    // [InverseProperty("Owner")]
+    // public virtual ICollection<StockScrap> StockScrap { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("ProductSupplierId")]
+    // [InverseProperty("ProductSupplier")]
+    // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointProductSupplier { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("VendorId")]
+    // [InverseProperty("Vendor")]
+    // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointVendor { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("VendorId")]
+    // [InverseProperty("Vendor")]
+    // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("AuthorId")]
+    // [InverseProperty("Author")]
+    // public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
+
+    // [Many2one]
     [ForeignKey("TeamId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
+    // [Many2one]
     [ForeignKey("Title")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResPartnerTitle? TitleNavigation { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("ResPartnerUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("ResPartnerUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
+    // [InverseProperty("ResPartner")] //Many2one
     public virtual Website? WebsiteNavigation { get; set; }
 
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("LivechatOperatorId")]
+    // [InverseProperty("LivechatOperator")]
+    // public virtual ICollection<WebsiteVisitor> WebsiteVisitorLivechatOperator { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<WebsiteVisitor> WebsiteVisitorPartner { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResPartnerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    /// TODO: DISABLE INVERSE
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccounts { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModels { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLines { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountAssetAsset> AccountAssetAssets { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLines { get; set; } 
-
-    //[InverseProperty("CommercialPartner")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoveCommercialPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountMoveLine> AccountMoveLines { get; set; } 
-
-    //[InverseProperty("PartnerShipping")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMovePartnerShippings { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMovePartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; set; } 
-
-    //[InverseProperty("Author")]
-    [NotMapped]
-    public virtual ICollection<ApplicantSendMail> ApplicantSendMails { get; set; } 
-
-    //[InverseProperty("DstPartner")]
-    [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizards { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<CalendarAttendee> CalendarAttendees { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<CalendarFilters> CalendarFilters { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMasses { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<CrmQuotationPartner> CrmQuotationPartners { get; set; } 
-
-    //[InverseProperty("Driver")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLogs { get; set; } 
-
-    //[InverseProperty("Driver")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleDrivers { get; set; } 
-
-    //[InverseProperty("FutureDriver")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicle> FleetVehicleFutureDrivers { get; set; } 
-
-    //[InverseProperty("Insurer")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContracts { get; set; } 
-
-    //[InverseProperty("Purchaser")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServicePurchasers { get; set; } 
-
-    //[InverseProperty("Vendor")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServiceVendors { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<HrApplicant> HrApplicants { get; set; } 
-
-    //[InverseProperty("AddressHome")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeAddressHomes { get; set; } 
-
-    //[InverseProperty("Address")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeAddresses { get; set; } 
-
-    //[InverseProperty("WorkContact")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployeeWorkContacts { get; set; } 
-
-    //[InverseProperty("Address")]
-    [NotMapped]
-    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; } 
-
-    //[InverseProperty("Address")]
-    [NotMapped]
-    public virtual ICollection<HrJob> HrJobs { get; set; } 
-
-    //[InverseProperty("Address")]
-    [NotMapped]
-    public virtual ICollection<HrWorkLocation> HrWorkLocations { get; set; } 
-
-    //[InverseProperty("CommercialPartner")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> InverseCommercialPartner { get; set; } 
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> InverseParent { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<LunchSupplier> LunchSuppliers { get; set; } 
-
-    //[InverseProperty("RequestPartner")]
-    [NotMapped]
-    public virtual ICollection<MailActivity> MailActivities { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<MailChannelMember> MailChannelMembers { get; set; } 
-
-    //[InverseProperty("Author")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> MailComposeMessages { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<MailFollower> MailFollowers { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<MailMessageReaction> MailMessageReactions { get; set; } 
-
-    //[InverseProperty("Author")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages { get; set; } 
-
-    //[InverseProperty("Author")]
-    [NotMapped]
-    public virtual ICollection<MailNotification> MailNotificationAuthors { get; set; } 
-
-    //[InverseProperty("ResPartner")]
-    [NotMapped]
-    public virtual ICollection<MailNotification> MailNotificationResPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<MailResendPartner> MailResendPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<MaintenanceEquipment> MaintenanceEquipments { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PaymentLinkWizard> PaymentLinkWizards { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PaymentToken> PaymentTokens { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PortalWizardUser> PortalWizardUsers { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ProcurementGroup> ProcurementGroups { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ProductSupplierinfo> ProductSupplierinfos { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ProjectCollaborator> ProjectCollaborators { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> ProjectProjects { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
-
-    //[InverseProperty("DestAddress")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderDestAddresses { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLines { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<PurchaseOrder> PurchaseOrderPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingPartners { get; set; } 
-
-    //[InverseProperty("Publisher")]
-    [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingPublishers { get; set; } 
-
-    //[InverseProperty("RatedPartner")]
-    [NotMapped]
-    public virtual ICollection<RatingRating> RatingRatingRatedPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<RecurringPaymentLine> RecurringPaymentLines { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<RecurringPayment> RecurringPayments { get; set; } 
-
-    //[InverseProperty("Address")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderAddresses { get; set; } 
-
-    //[InverseProperty("PartnerInvoice")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderPartnerInvoices { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<RepairOrder> RepairOrderPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ResCompany> ResCompanies { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSyncs { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ResPartnerBank> ResPartnerBanks { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
-
-    //[InverseProperty("Guest")]
-    [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumeGuests { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumePartners { get; set; } 
-
-    //[InverseProperty("Author")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderCancel> SaleOrderCancels { get; set; } 
-
-    //[InverseProperty("OrderPartner")]
-    [NotMapped]
-    public virtual ICollection<SaleOrderLine> SaleOrderLines { get; set; } 
-
-    //[InverseProperty("PartnerInvoice")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderPartnerInvoices { get; set; } 
-
-    //[InverseProperty("PartnerShipping")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderPartnerShippings { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<SaleOrder> SaleOrderPartners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<SmsSms> SmsSms { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetterMissingRequiredField> SnailmailLetterMissingRequiredFields { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<SnailmailLetter> SnailmailLetters { get; set; } 
-
-    //[InverseProperty("Owner")]
-    [NotMapped]
-    public virtual ICollection<StockMoveLine> StockMoveLines { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMovePartners { get; set; } 
-
-    //[InverseProperty("RestrictPartner")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveRestrictPartners { get; set; } 
-
-    //[InverseProperty("Owner")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingOwners { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<StockPicking> StockPickingPartners { get; set; } 
-
-    //[InverseProperty("Owner")]
-    [NotMapped]
-    public virtual ICollection<StockQuant> StockQuants { get; set; } 
-
-    //[InverseProperty("PartnerAddress")]
-    [NotMapped]
-    public virtual ICollection<StockRule> StockRules { get; set; } 
-
-    //[InverseProperty("Owner")]
-    [NotMapped]
-    public virtual ICollection<StockScrap> StockScraps { get; set; } 
-
-    //[InverseProperty("Vendor")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoints { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<StockWarehouse> StockWarehouses { get; set; } 
-
-    //[InverseProperty("Partner")]
-    [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalances { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountBalanceReport> AccountBalanceReports { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReports { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReports { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountReconcileModel> AccountReconcileModels { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedgers { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedgers { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardsNavigation { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } 
-
-    [ForeignKey("PartnerId")]
-    //[InverseProperty("Partners")]
-    [NotMapped]
-    public virtual ICollection<ResPartnerCategory> Categories { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<IrActServer> IrActServers { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<MailMail> MailMails { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartnersNavigation")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessages1 { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<MailMessage> MailMessagesNavigation { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<MailWizardInvite> MailWizardInvites { get; set; } 
-
-    [ForeignKey("PartnerId")]
-    //[InverseProperty("Partners")]
-    [NotMapped]
-    public virtual ICollection<FleetVehicleModel> Models { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<PortalShare> PortalShares { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<PortalWizard> PortalWizards { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<ProductProduct> ProductProducts { get; set; } 
-
-    [ForeignKey("ResPartnerId")]
-    //[InverseProperty("ResPartners")]
-    [NotMapped]
-    public virtual ICollection<ProjectShareWizard> ProjectShareWizards { get; set; } 
-
-    [ForeignKey("PartnerId")]
-    //[InverseProperty("Partners")]
-    [NotMapped]
-    public virtual ICollection<MailComposeMessage> Wizards { get; set; } 
-   
+    // [InverseProperty("ResPartnerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalance { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReport { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplate { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedger { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardNavigation { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ResPartnerId")] //Many2many
+    // [InverseProperty("ResPartner")] //Many2many
+    public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<ResPartnerCategory> Category { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<SurveyInvite> Invite { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<IrActServer> IrActServer { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("PartnerNavigation")]
+    // public virtual ICollection<CrmLead> Lead { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<MailMail> MailMail { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartnerNavigation")]
+    // public virtual ICollection<MailMessage> MailMessage1 { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<MailMessage> MailMessageNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<MailScheduledMessage> MailScheduledMessageNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<MailWizardInvite> MailWizardInvite { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<FleetVehicleModel> Model { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<MrpBom> MrpBom { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<PortalShare> PortalShare { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<PortalWizard> PortalWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<ProductProduct> ProductProduct { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<ProjectShareWizard> ProjectShareWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")]
+    // [InverseProperty("ResPartner")]
+    // public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PartnerId")] //Many2many
+    // [InverseProperty("Partner")] //Many2many
+    public virtual ICollection<ResPartnerTag> Tag { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")]
+    // [InverseProperty("Partner")]
+    // public virtual ICollection<MailComposeMessage> Wizard { get; set; }
 }

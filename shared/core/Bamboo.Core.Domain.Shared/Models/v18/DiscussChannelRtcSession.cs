@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("discuss_channel_rtc_session")]
 //[Index("WriteDate", Name = "discuss_channel_rtc_session__write_date_index")]
 //[Index("ChannelMemberId", Name = "discuss_channel_rtc_session_channel_member_unique", IsUnique = true)]
-public partial class DiscussChannelRtcSession: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DiscussChannelRtcSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,6 +23,10 @@ public partial class DiscussChannelRtcSession: FullAuditedEntity<Guid>, IEntityD
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("channel_member_id")]
     public Guid? ChannelMemberId { get; set; }
 
@@ -29,7 +34,7 @@ public partial class DiscussChannelRtcSession: FullAuditedEntity<Guid>, IEntityD
     public Guid? ChannelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -50,29 +55,30 @@ public partial class DiscussChannelRtcSession: FullAuditedEntity<Guid>, IEntityD
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
+    // [Many2one]
     [ForeignKey("ChannelId")]
-    //[InverseProperty("DiscussChannelRtcSessions")]
-    [NotMapped]
+    // [InverseProperty("DiscussChannelRtcSession")] //Many2one
     public virtual DiscussChannel? Channel { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChannelMemberId")]
-    //[InverseProperty("DiscussChannelRtcSession")]
-    [NotMapped]
+    // [InverseProperty("DiscussChannelRtcSession")] //Many2one
     public virtual DiscussChannelMember? ChannelMember { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("DiscussChannelRtcSessionCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DiscussChannelRtcSessionCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("RtcInvitingSession")]
-    [NotMapped]
-    public virtual ICollection<DiscussChannelMember> DiscussChannelMembers { get; set; } 
+    // [One2many]
+    [ForeignKey("RtcInvitingSessionId")]
+    [InverseProperty("RtcInvitingSession")]
+    public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("DiscussChannelRtcSessionWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DiscussChannelRtcSessionWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_salary_rule_category")]
-public partial class HrSalaryRuleCategory: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrSalaryRuleCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,57 +21,67 @@ public partial class HrSalaryRuleCategory: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("code")]
     public string? Code { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("HrSalaryRuleCategories")] //Many2One
+    // [InverseProperty("HrSalaryRuleCategory")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrSalaryRuleCategoryCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrSalaryRuleCategoryCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("Category") //Many2many
-    public virtual ICollection<HrPayslipLine> HrPayslipLines { get; set; } = null;
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("Category") //Many2many
-    public virtual ICollection<HrSalaryRule> HrSalaryRules { get; set; } = null;
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<HrSalaryRule> HrSalaryRule { get; set; }
 
-    [NotMapped]//Many2many
-    //[InverseProperty("Parent") //Many2many
-    public virtual ICollection<HrSalaryRuleCategory> InverseParent { get; set; } = null;
-
+    // [One2many]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")] //Many2One
+    [InverseProperty("Parent")]
+    public virtual ICollection<HrSalaryRuleCategory> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual HrSalaryRuleCategory? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrSalaryRuleCategoryWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrSalaryRuleCategoryWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

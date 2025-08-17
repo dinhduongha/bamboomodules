@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,25 +10,18 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("res_lang")]
 //[Index("Code", Name = "res_lang_code_uniq", IsUnique = true)]
 //[Index("Name", Name = "res_lang_name_uniq", IsUnique = true)]
 //[Index("UrlCode", Name = "res_lang_url_code_uniq", IsUnique = true)]
-public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ResLang: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    //[Column("company_id")]
-    //public Guid? TenantId { get; set; }
-
-    [Column("sequence", TypeName = "bigserial")]
-    public long? Sequence { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -74,55 +66,67 @@ public partial class ResLang: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudite
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("LangId")]
+    [InverseProperty("Lang")]
+    public virtual ICollection<ChatRoom> ChatRoom { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResLangCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResLangCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("LangId")]
+    [InverseProperty("Lang")]
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
+
+    // [One2many]
+    [ForeignKey("SelfOrderingDefaultLanguageId")]
+    [InverseProperty("SelfOrderingDefaultLanguage")]
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultLangId")]
+    [InverseProperty("DefaultLang")]
+    public virtual ICollection<Website> Website { get; set; }
+
+    // [One2many]
+    [ForeignKey("LangId")]
+    [InverseProperty("Lang")]
+    public virtual ICollection<WebsiteVisitor> WebsiteVisitor { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResLangWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ResLangWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    /// TODO: DISABLE INVERSE
-    //[InverseProperty("Lang")]
-    [NotMapped]
-    public virtual ICollection<CrmLead> CrmLeads { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("LangId")]
+    // [InverseProperty("Lang")]
+    // public virtual ICollection<BaseLanguageInstall> LanguageWizard { get; set; }
 
-    //[InverseProperty("SelfOrderingDefaultLanguage")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigs { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResLangId")]
+    // [InverseProperty("ResLang")]
+    // public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 
-    //[InverseProperty("Lang")]
-    [NotMapped]
-    public virtual ICollection<WebsiteVisitor> WebsiteVisitors { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResLangId")]
+    // [InverseProperty("ResLang")]
+    // public virtual ICollection<ResUsersSettings> ResUsersSettings { get; set; }
 
-    //[InverseProperty("DefaultLang")]
-    [NotMapped]
-    public virtual ICollection<Website> Websites { get; set; } 
-
-    [ForeignKey("LangId")]
-    //[InverseProperty("Langs")]
-    [NotMapped]
-    public virtual ICollection<BaseLanguageInstall> LanguageWizards { get; set; } 
-
-    [ForeignKey("ResLangId")]
-    //[InverseProperty("ResLangs")]
-    [NotMapped]
-    public virtual ICollection<PosConfig> PosConfigsNavigation { get; set; } 
-
-    [ForeignKey("ResLangId")]
-    //[InverseProperty("ResLangs")]
-    [NotMapped]
-    public virtual ICollection<ResUsersSettings> ResUsersSettings { get; set; } 
-
-    [ForeignKey("LangId")]
-    //[InverseProperty("Langs")]
-    [NotMapped]
-    public virtual ICollection<Website> WebsitesNavigation { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("LangId")]
+    // [InverseProperty("Lang")]
+    // public virtual ICollection<Website> WebsiteNavigation { get; set; }
 }

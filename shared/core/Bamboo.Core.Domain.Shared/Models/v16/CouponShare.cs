@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("coupon_share")]
-public partial class CouponShare : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CouponShare: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +20,10 @@ public partial class CouponShare : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -34,42 +35,42 @@ public partial class CouponShare : FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? ProgramId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("redirect")]
     public string? Redirect { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
     [ForeignKey("CouponId")]
-    // [InverseProperty("CouponShare")] // [Many2one]
+    // [InverseProperty("CouponShare")] //Many2one
     public virtual LoyaltyCard? Coupon { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CouponShareCreateU")] // [Many2one]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("CouponShareCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("CouponShare")] // [Many2one]
+    // [InverseProperty("CouponShare")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("CouponShare")] // [Many2one]
+    // [InverseProperty("CouponShare")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CouponShareWriteU")] // [Many2one]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("CouponShareWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

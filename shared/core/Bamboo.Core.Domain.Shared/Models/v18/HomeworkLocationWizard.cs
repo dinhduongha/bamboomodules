@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class HomeworkLocationWizard: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("work_location_id")]
     public Guid? WorkLocationId { get; set; }
 
@@ -27,10 +32,10 @@ public partial class HomeworkLocationWizard: FullAuditedEntity<Guid>, IEntityDto
     public Guid? EmployeeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
-    public Guid? LastModifierId { get; set; }
+    public override Guid? LastModifierId { get; set; }
 
     [Column("date")]
     public DateTime? Date { get; set; }
@@ -39,24 +44,28 @@ public partial class HomeworkLocationWizard: FullAuditedEntity<Guid>, IEntityDto
     public bool? Weekly { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
-    public DateTime? LastModificationTime { get; set; }
+    public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HomeworkLocationWizardCreateUs")] //Many2One
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HomeworkLocationWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HomeworkLocationWizards")] //Many2One
+    // [InverseProperty("HomeworkLocationWizard")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("WorkLocationId")]
-    //[InverseProperty("HomeworkLocationWizards")] //Many2One
+    // [InverseProperty("HomeworkLocationWizard")] //Many2one
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HomeworkLocationWizardWriteUs")] //Many2One
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HomeworkLocationWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

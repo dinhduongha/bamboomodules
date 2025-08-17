@@ -338,7 +338,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(AccountFullReconcile));
         lstTypes.Add(typeof(AccountGroup));
         lstTypes.Add(typeof(AccountGroupTemplate));
-        lstTypes.Add(typeof(AccountIncoterm));
+        lstTypes.Add(typeof(AccountIncoterms));
         lstTypes.Add(typeof(AccountInvoiceSend));
         lstTypes.Add(typeof(AccountJournal));
         lstTypes.Add(typeof(AccountJournalGroup));
@@ -394,7 +394,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(BaseImportTestsModelsCharNoreadonly));
         lstTypes.Add(typeof(BaseImportTestsModelsCharReadonly));
         lstTypes.Add(typeof(BaseImportTestsModelsCharRequired));
-        lstTypes.Add(typeof(BaseImportTestsModelsCharState));
+        lstTypes.Add(typeof(BaseImportTestsModelsCharStates));
         lstTypes.Add(typeof(BaseImportTestsModelsCharStillreadonly));
         lstTypes.Add(typeof(BaseImportTestsModelsComplex));
         lstTypes.Add(typeof(BaseImportTestsModelsFloat));
@@ -429,7 +429,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(ChangePasswordUser));
         lstTypes.Add(typeof(ChangePasswordWizard));
         lstTypes.Add(typeof(ChangeProductionQty));
-        lstTypes.Add(typeof(ConfirmStockSm));
+        lstTypes.Add(typeof(ConfirmStockSms));
         lstTypes.Add(typeof(CrmIapLeadHelpers));
         lstTypes.Add(typeof(CrmIapLeadIndustry));
         lstTypes.Add(typeof(CrmIapLeadMiningRequest));
@@ -451,7 +451,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(CrmTeam));
         lstTypes.Add(typeof(CrmTeamMember));
         lstTypes.Add(typeof(CrossoveredBudget));
-        lstTypes.Add(typeof(CrossoveredBudgetLine));
+        lstTypes.Add(typeof(CrossoveredBudgetLines));
         lstTypes.Add(typeof(DecimalPrecision));
         lstTypes.Add(typeof(DigestDigest));
         lstTypes.Add(typeof(DigestTip));
@@ -470,7 +470,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(FollowupFollowup));
         lstTypes.Add(typeof(FollowupLine));
         lstTypes.Add(typeof(FollowupPrint));
-        lstTypes.Add(typeof(FollowupSendingResult));
+        lstTypes.Add(typeof(FollowupSendingResults));
         lstTypes.Add(typeof(HrApplicant));
         lstTypes.Add(typeof(HrApplicantCategory));
         lstTypes.Add(typeof(HrApplicantRefuseReason));
@@ -518,10 +518,10 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrActClient));
         lstTypes.Add(typeof(IrActReportXml));
         lstTypes.Add(typeof(IrActServer));
-        lstTypes.Add(typeof(IrActUrl));
+        lstTypes.Add(typeof(IrActionsActUrl));
         lstTypes.Add(typeof(IrActWindow));
         lstTypes.Add(typeof(IrActWindowView));
-        lstTypes.Add(typeof(IrAction));
+        lstTypes.Add(typeof(IrActions));
         lstTypes.Add(typeof(IrActionsTodo));
         lstTypes.Add(typeof(IrAsset));
         lstTypes.Add(typeof(IrAttachment));
@@ -532,7 +532,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrDemo));
         lstTypes.Add(typeof(IrDemoFailure));
         lstTypes.Add(typeof(IrDemoFailureWizard));
-        lstTypes.Add(typeof(IrExport));
+        lstTypes.Add(typeof(IrExports));
         lstTypes.Add(typeof(IrExportsLine));
         lstTypes.Add(typeof(IrFilters));
         lstTypes.Add(typeof(IrLogging));
@@ -540,7 +540,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrModel));
         lstTypes.Add(typeof(IrModelAccess));
         lstTypes.Add(typeof(IrModelConstraint));
-        lstTypes.Add(typeof(IrModelDatum));
+        lstTypes.Add(typeof(IrModelData));
         lstTypes.Add(typeof(IrModelFields));
         lstTypes.Add(typeof(IrModelFieldsSelection));
         lstTypes.Add(typeof(IrModelRelation));
@@ -553,7 +553,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrRule));
         lstTypes.Add(typeof(IrSequence));
         lstTypes.Add(typeof(IrSequenceDateRange));
-        lstTypes.Add(typeof(IrServerObjectLine));
+        lstTypes.Add(typeof(IrServerObjectLines));
         lstTypes.Add(typeof(IrUiMenu));
         lstTypes.Add(typeof(IrUiView));
         lstTypes.Add(typeof(IrUiViewCustom));
@@ -575,7 +575,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(MailChannelMember));
         lstTypes.Add(typeof(MailChannelRtcSession));
         lstTypes.Add(typeof(MailComposeMessage));
-        lstTypes.Add(typeof(MailFollower));
+        lstTypes.Add(typeof(MailFollowers));
         lstTypes.Add(typeof(MailGatewayAllowed));
         lstTypes.Add(typeof(MailGuest));
         lstTypes.Add(typeof(MailIceServer));
@@ -697,20 +697,20 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(RepairLine));
         lstTypes.Add(typeof(RepairOrder));
         lstTypes.Add(typeof(RepairOrderMakeInvoice));
-        lstTypes.Add(typeof(RepairTag));
+        lstTypes.Add(typeof(RepairTags));
         lstTypes.Add(typeof(ReportLayout));
         lstTypes.Add(typeof(ReportPaperformat));
         lstTypes.Add(typeof(ResBank));
         lstTypes.Add(typeof(ResCompany));
         lstTypes.Add(typeof(ResConfig));
         lstTypes.Add(typeof(ResConfigInstaller));
-        lstTypes.Add(typeof(ResConfigSetting));
+        lstTypes.Add(typeof(ResConfigSettings));
         lstTypes.Add(typeof(ResCountry));
         lstTypes.Add(typeof(ResCountryGroup));
         lstTypes.Add(typeof(ResCountryState));
         lstTypes.Add(typeof(ResCurrency));
         lstTypes.Add(typeof(ResCurrencyRate));
-        lstTypes.Add(typeof(ResGroup));
+        lstTypes.Add(typeof(ResGroups));
         lstTypes.Add(typeof(ResLang));
         lstTypes.Add(typeof(ResPartner));
         lstTypes.Add(typeof(ResPartnerAutocompleteSync));
@@ -718,8 +718,8 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(ResPartnerCategory));
         lstTypes.Add(typeof(ResPartnerIndustry));
         lstTypes.Add(typeof(ResPartnerTitle));
-        lstTypes.Add(typeof(ResUser));
-        lstTypes.Add(typeof(ResUsersApikey));
+        lstTypes.Add(typeof(ResUsers));
+        lstTypes.Add(typeof(ResUsersApikeys));
         lstTypes.Add(typeof(ResUsersApikeysDescription));
         lstTypes.Add(typeof(ResUsersDeletion));
         lstTypes.Add(typeof(ResUsersIdentitycheck));
@@ -750,7 +750,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(SnailmailConfirmInvoice));
         lstTypes.Add(typeof(SnailmailLetter));
         lstTypes.Add(typeof(SnailmailLetterFormatError));
-        lstTypes.Add(typeof(SnailmailLetterMissingRequiredField));
+        lstTypes.Add(typeof(SnailmailLetterMissingRequiredFields));
         lstTypes.Add(typeof(SpreadsheetDashboard));
         lstTypes.Add(typeof(SpreadsheetDashboardGroup));
         lstTypes.Add(typeof(StockAssignSerial));
@@ -820,7 +820,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(WebsiteMenu));
         lstTypes.Add(typeof(WebsitePage));
         lstTypes.Add(typeof(WebsiteRewrite));
-        lstTypes.Add(typeof(WebsiteRobot));
+        lstTypes.Add(typeof(WebsiteRobots));
         lstTypes.Add(typeof(WebsiteRoute));
         lstTypes.Add(typeof(WebsiteSaleExtraField));
         lstTypes.Add(typeof(WebsiteSnippetFilter));

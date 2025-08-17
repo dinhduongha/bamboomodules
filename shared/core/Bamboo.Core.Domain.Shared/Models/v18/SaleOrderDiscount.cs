@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,11 +21,15 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -36,7 +41,7 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
     public decimal? DiscountAmount { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -44,23 +49,24 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("discount_percentage")]
     public double? DiscountPercentage { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SaleOrderDiscountCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SaleOrderDiscountCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderId")]
-    //[InverseProperty("SaleOrderDiscounts")]
-    [NotMapped]
+    // [InverseProperty("SaleOrderDiscount")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SaleOrderDiscountWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SaleOrderDiscountWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("SaleOrderDiscountId")]
-    //[InverseProperty("SaleOrderDiscounts")]
-    [NotMapped]
-    public virtual ICollection<AccountTax> AccountTaxes { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SaleOrderDiscountId")] //Many2many
+    // [InverseProperty("SaleOrderDiscount")] //Many2many
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

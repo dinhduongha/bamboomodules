@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_unbuild")]
-//[Index("TenantId", Name = "mrp_unbuild_company_id_index")]
-public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("CompanyId", Name = "mrp_unbuild_company_id_index")]
+public partial class MrpUnbuild: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -21,7 +22,10 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -47,7 +51,7 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? LocationDestId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -59,7 +63,7 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public string? State { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -67,71 +71,73 @@ public partial class MrpUnbuild: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("product_qty")]
     public double? ProductQty { get; set; }
 
+    // [Many2one]
     [ForeignKey("BomId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MrpUnbuildCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MrpUnbuildCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationId")]
-    //[InverseProperty("MrpUnbuildLocations")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuildLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
+    // [Many2one]
     [ForeignKey("LocationDestId")]
-    //[InverseProperty("MrpUnbuildLocationDests")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuildLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
+    // [Many2one]
     [ForeignKey("LotId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("MoId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual MrpProduction? Mo { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("ProductUomId")]
-    //[InverseProperty("MrpUnbuilds")]
-    [NotMapped]
+    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [One2many]
+    [ForeignKey("ConsumeUnbuildId")]
+    [InverseProperty("ConsumeUnbuild")]
+    public virtual ICollection<StockMove> StockMoveConsumeUnbuild { get; set; }
+
+    // [One2many]
+    [ForeignKey("UnbuildId")]
+    [InverseProperty("Unbuild")]
+    public virtual ICollection<StockMove> StockMoveUnbuild { get; set; }
+
+    // [One2many]
+    [ForeignKey("UnbuildId")]
+    [InverseProperty("Unbuild")]
+    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuild { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MrpUnbuildWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("ConsumeUnbuild")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveConsumeUnbuilds { get; set; } 
-
-    //[InverseProperty("Unbuild")]
-    [NotMapped]
-    public virtual ICollection<StockMove> StockMoveUnbuilds { get; set; } 
-
-    //[InverseProperty("Unbuild")]
-    [NotMapped]
-    public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuilds { get; set; } 
-
+    // [InverseProperty("MrpUnbuildWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

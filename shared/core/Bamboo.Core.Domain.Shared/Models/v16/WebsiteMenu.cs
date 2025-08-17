@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("website_menu")]
 //[Index("ParentId", Name = "website_menu_parent_id_index")]
 //[Index("ParentPath", Name = "website_menu_parent_path_index")]
-public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,11 +23,12 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("page_id")]
     public Guid? PageId { get; set; }
-
-    [Column("controller_page_id")]
-    public Guid? ControllerPageId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -38,7 +40,7 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -57,7 +59,7 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("mega_menu_content", TypeName = "jsonb")]
@@ -67,48 +69,58 @@ public partial class WebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public bool? NewWindow { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("ControllerPageId")]
-    //[InverseProperty("WebsiteMenus")]
-    [NotMapped]
-    public virtual WebsiteControllerPage? ControllerPage { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("WebsiteMenuCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("WebsiteMenuCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("MenuId")]
+    [InverseProperty("Menu")]
+    public virtual ICollection<EventEvent> EventEvent { get; set; }
+
+    // [One2many]
+    [ForeignKey("MenuId")]
+    [InverseProperty("Menu")]
+    public virtual ICollection<ForumForum> ForumForum { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentId")]
+    [InverseProperty("Parent")]
+    public virtual ICollection<WebsiteMenu> InverseParent { get; set; }
+
+    // [Many2one]
     [ForeignKey("PageId")]
-    //[InverseProperty("WebsiteMenus")]
-    [NotMapped]
+    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual WebsitePage? Page { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual WebsiteMenu? Parent { get; set; }
 
+    // [Many2one]
     [ForeignKey("ThemeTemplateId")]
-    //[InverseProperty("WebsiteMenus")]
-    [NotMapped]
+    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual ThemeWebsiteMenu? ThemeTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("WebsiteMenus")]
-    [NotMapped]
+    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [One2many]
+    [ForeignKey("MenuId")]
+    [InverseProperty("Menu")]
+    public virtual ICollection<WebsiteEventMenu> WebsiteEventMenu { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("WebsiteMenuWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<WebsiteMenu> InverseParent { get; set; } 
-
+    // [InverseProperty("WebsiteMenuWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_channel")]
-//[Index("IsPublished", Name = "slide_channel__is_published_index")]
-//[Index("WebsiteId", Name = "slide_channel__website_id_index")]
-public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("ForumId", Name = "slide_channel_forum_uniq", IsUnique = true)]
+//[Index("IsPublished", Name = "slide_channel_is_published_index")]
+//[Index("WebsiteId", Name = "slide_channel_website_id_index")]
+public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,13 +24,15 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
+
+    [Column("message_main_attachment_id")]
+    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -97,7 +101,7 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public long? KarmaSlideVote { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -141,7 +145,7 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("description", TypeName = "jsonb")]
@@ -175,7 +179,7 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public bool? AllowComment { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -186,99 +190,117 @@ public partial class SlideChannel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("nbr_certification")]
     public long? NbrCertification { get; set; }
 
+    [Column("forum_id")]
+    public Guid? ForumId { get; set; }
+
+    [Column("product_id")]
+    public Guid? ProductId { get; set; }
+
+    // [Many2one]
     [ForeignKey("CompletedTemplateId")]
-    //[InverseProperty("SlideChannelCompletedTemplates")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelCompletedTemplate")] //Many2one
     public virtual MailTemplate? CompletedTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SlideChannelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SlideChannelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
+    // [Many2one]
+    [ForeignKey("ForumId")]
+    // [InverseProperty("SlideChannelNavigation")] //Many2one
+    public virtual ForumForum? Forum { get; set; }
+
+    // [One2many]
+    [ForeignKey("SlideChannelId")]
+    [InverseProperty("SlideChannel")]
+    public virtual ICollection<ForumForum> ForumForum { get; set; }
+
+    // [One2many]
+    [ForeignKey("ChannelId")]
+    [InverseProperty("Channel")]
+    public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("...")]
-    [NotMapped]
+    // [InverseProperty("SlideChannel")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    //[InverseProperty("Channel")]
-    [NotMapped]
-    public virtual ICollection<HrResumeLine> HrResumeLines { get; set; } 
+    // [Many2one]
+    [ForeignKey("ProductId")]
+    // [InverseProperty("SlideChannel")] //Many2one
+    public virtual ProductProduct? Product { get; set; }
 
+    // [Many2one]
     [ForeignKey("PromotedSlideId")]
-    //[InverseProperty("SlideChannels")]
-    [NotMapped]
+    // [InverseProperty("SlideChannel")] //Many2one
     public virtual SlideSlide? PromotedSlide { get; set; }
 
+    // [Many2one]
     [ForeignKey("PublishTemplateId")]
-    //[InverseProperty("SlideChannelPublishTemplates")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelPublishTemplate")] //Many2one
     public virtual MailTemplate? PublishTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("ShareChannelTemplateId")]
-    //[InverseProperty("SlideChannelShareChannelTemplates")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelShareChannelTemplate")] //Many2one
     public virtual MailTemplate? ShareChannelTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("ShareSlideTemplateId")]
-    //[InverseProperty("SlideChannelShareSlideTemplates")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelShareSlideTemplate")] //Many2one
     public virtual MailTemplate? ShareSlideTemplate { get; set; }
 
-    //[InverseProperty("Channel")]
-    [NotMapped]
-    public virtual ICollection<SlideChannelInvite> SlideChannelInvites { get; set; } 
+    // [One2many]
+    [ForeignKey("ChannelId")]
+    [InverseProperty("Channel")]
+    public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
-    //[InverseProperty("Channel")]
-    [NotMapped]
-    public virtual ICollection<SlideChannelPartner> SlideChannelPartners { get; set; } 
+    // [One2many]
+    [ForeignKey("ChannelId")]
+    [InverseProperty("Channel")]
+    public virtual ICollection<SlideChannelPartner> SlideChannelPartner { get; set; }
 
-    //[InverseProperty("Channel")]
-    [NotMapped]
-    public virtual ICollection<SlideSlidePartner> SlideSlidePartners { get; set; } 
+    // [One2many]
+    [ForeignKey("ChannelId")]
+    [InverseProperty("Channel")]
+    public virtual ICollection<SlideSlide> SlideSlide { get; set; }
 
-    //[InverseProperty("Channel")]
-    [NotMapped]
-    public virtual ICollection<SlideSlide> SlideSlides { get; set; } 
+    // [One2many]
+    [ForeignKey("ChannelId")]
+    [InverseProperty("Channel")]
+    public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("SlideChannelUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("SlideChannelUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("WebsiteId")]
-    //[InverseProperty("SlideChannels")]
-    [NotMapped]
+    // [InverseProperty("SlideChannel")] //Many2one
     public virtual Website? Website { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SlideChannelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SlideChannelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("PrerequisiteChannelId")]
-    //[InverseProperty("PrerequisiteChannels")]
-    [NotMapped]
-    public virtual ICollection<SlideChannel> Channels { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ChannelId")] //Many2many
+    // [InverseProperty("Channel")] //Many2many
+    public virtual ICollection<ResGroups> Group { get; set; }
 
-    [ForeignKey("ChannelId")]
-    //[InverseProperty("Channels")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> Groups { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SlideChannelId")] //Many2many
+    // [InverseProperty("SlideChannel")] //Many2many
+    public virtual ICollection<ResGroups> ResGroups { get; set; }
 
-    [ForeignKey("ChannelId")]
-    //[InverseProperty("Channels")]
-    [NotMapped]
-    public virtual ICollection<SlideChannel> PrerequisiteChannels { get; set; } 
-
-    [ForeignKey("SlideChannelId")]
-    //[InverseProperty("SlideChannels")]
-    [NotMapped]
-    public virtual ICollection<ResGroup> ResGroups { get; set; } 
-
-    [ForeignKey("ChannelId")]
-    //[InverseProperty("Channels")]
-    [NotMapped]
-    public virtual ICollection<SlideChannelTag> Tags { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ChannelId")] //Many2many
+    // [InverseProperty("Channel")] //Many2many
+    public virtual ICollection<SlideChannelTag> Tag { get; set; }
 }

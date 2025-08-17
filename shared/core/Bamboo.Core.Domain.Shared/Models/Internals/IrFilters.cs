@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +10,14 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_filters")]
 //[Index("ModelId", "UserId", "ActionId", "EmbeddedActionId", "EmbeddedParentResId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
 //[Index("ModelId", "UserId", "ActionId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
-public partial class IrFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrFilters: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -37,7 +32,7 @@ public partial class IrFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? EmbeddedParentResId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -45,7 +40,6 @@ public partial class IrFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("name")]
     public string? Name { get; set; }
 
-    // v16-Compat data: text => character varying
     [Column("sort")]
     public string? Sort { get; set; }
 
@@ -65,32 +59,33 @@ public partial class IrFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrFilterCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrFiltersCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmbeddedActionId")]
-    //[InverseProperty("IrFilters")]
-    [NotMapped]
-    public virtual IrEmbeddedAction? EmbeddedAction { get; set; }
+    // [InverseProperty("IrFilters")] //Many2one
+    public virtual IrEmbeddedActions? EmbeddedAction { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("IrFilterUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("IrFiltersUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
-    //[InverseProperty("Filter")]
-    [NotMapped]
-    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilters { get; set; } 
+    // [One2many]
+    [ForeignKey("FilterId")]
+    [InverseProperty("Filter")]
+    public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilter { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrFilterWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrFiltersWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

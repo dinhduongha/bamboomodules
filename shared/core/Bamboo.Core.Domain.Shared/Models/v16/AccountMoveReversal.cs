@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,23 +21,25 @@ public partial class AccountMoveReversal: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
     [Column("date_mode")]
     public string? DateMode { get; set; }
 
     [Column("reason")]
     public string? Reason { get; set; }
 
-    // v16-Compat
     [Column("refund_method")]
     public string? RefundMethod { get; set; }
 
@@ -44,39 +47,40 @@ public partial class AccountMoveReversal: FullAuditedEntity<Guid>, IEntityDto<Gu
     public DateTime? Date { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("AccountMoveReversals")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveReversal")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountMoveReversalCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountMoveReversalCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("JournalId")]
-    //[InverseProperty("AccountMoveReversals")]
-    [NotMapped]
+    // [InverseProperty("AccountMoveReversal")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountMoveReversalWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountMoveReversalWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("ReversalId")]
-    //[InverseProperty("Reversals")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> Moves { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ReversalId")] //Many2many
+    // [InverseProperty("Reversal")] //Many2many
+    public virtual ICollection<AccountMove> Move { get; set; }
 
-    // v16-Compat
-    //[ForeignKey("ReversalId")]
-    //[InverseProperty("ReversalsNavigation")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> NewMoves { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ReversalId")] //Many2many
+    // [InverseProperty("ReversalNavigation")] //Many2many
+    public virtual ICollection<AccountMove> NewMove { get; set; }
 }

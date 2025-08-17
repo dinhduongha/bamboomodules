@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_reconcile_model_line_template")]
-public partial class AccountReconcileModelLineTemplate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReconcileModelLineTemplate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class AccountReconcileModelLineTemplate : FullAuditedEntity<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -30,7 +35,7 @@ public partial class AccountReconcileModelLineTemplate : FullAuditedEntity<Guid>
     public Guid? AccountId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,37 +53,34 @@ public partial class AccountReconcileModelLineTemplate : FullAuditedEntity<Guid>
     public bool? ForceTaxIncluded { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("AccountId")]
-    //[InverseProperty("AccountReconcileModelLineTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelLineTemplate")] //Many2one
     public virtual AccountAccountTemplate? Account { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("AccountReconcileModelLineTemplateCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("AccountReconcileModelLineTemplateCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("AccountReconcileModelLineTemplates")]
-    [NotMapped]
+    // [InverseProperty("AccountReconcileModelLineTemplate")] //Many2one
     public virtual AccountReconcileModelTemplate? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("AccountReconcileModelLineTemplateWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("AccountReconcileModelLineTemplateWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("AccountReconcileModelLineTemplateId")]
-    //[InverseProperty("AccountReconcileModelLineTemplates")]
-    [NotMapped]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplates { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountReconcileModelLineTemplateId")] //Many2many
+    // [InverseProperty("AccountReconcileModelLineTemplate")] //Many2many
+    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplate { get; set; }
 }

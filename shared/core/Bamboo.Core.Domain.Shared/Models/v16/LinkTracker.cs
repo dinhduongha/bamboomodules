@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("link_tracker")]
-public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LinkTracker: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -33,7 +38,7 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public long? Count { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,7 +53,7 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public string? Label { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -56,45 +61,43 @@ public partial class LinkTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [Column("mass_mailing_id")]
     public Guid? MassMailingId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CampaignId")]
-    //[InverseProperty("LinkTrackers")]
-    [NotMapped]
+    // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
-    //[InverseProperty("LinkTracker")]
-    [NotMapped]
-    public virtual ICollection<CardCampaign> CardCampaigns { get; set; } 
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("LinkTrackerCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("LinkTrackerCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("Link")]
-    [NotMapped]
-    public virtual ICollection<LinkTrackerClick> LinkTrackerClicks { get; set; } 
+    // [One2many]
+    [ForeignKey("LinkId")]
+    [InverseProperty("Link")]
+    public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
-    //[InverseProperty("Link")]
-    [NotMapped]
-    public virtual ICollection<LinkTrackerCode> LinkTrackerCodes { get; set; } 
+    // [One2many]
+    [ForeignKey("LinkId")]
+    [InverseProperty("Link")]
+    public virtual ICollection<LinkTrackerCode> LinkTrackerCode { get; set; }
 
+    // [Many2one]
     [ForeignKey("MassMailingId")]
-    //[InverseProperty("LinkTrackers")]
-    [NotMapped]
+    // [InverseProperty("LinkTracker")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
+    // [Many2one]
     [ForeignKey("MediumId")]
-    //[InverseProperty("LinkTrackers")]
-    [NotMapped]
+    // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmMedium? Medium { get; set; }
 
+    // [Many2one]
     [ForeignKey("SourceId")]
-    //[InverseProperty("LinkTrackers")]
-    [NotMapped]
+    // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("LinkTrackerWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("LinkTrackerWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

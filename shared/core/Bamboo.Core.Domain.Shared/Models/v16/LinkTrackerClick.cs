@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("link_tracker_click")]
-//[Index("LinkId", Name = "link_tracker_click__link_id_index")]
+//[Index("LinkId", Name = "link_tracker_click_link_id_index")]
 public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -20,6 +21,10 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -31,7 +36,7 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? CountryId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -40,7 +45,7 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public string? Ip { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -51,38 +56,38 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("mass_mailing_id")]
     public Guid? MassMailingId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CampaignId")]
-    //[InverseProperty("LinkTrackerClicks")]
-    [NotMapped]
+    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
+    // [Many2one]
     [ForeignKey("CountryId")]
-    //[InverseProperty("LinkTrackerClicks")]
-    [NotMapped]
+    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("LinkTrackerClickCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("LinkTrackerClickCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("LinkId")]
-    //[InverseProperty("LinkTrackerClicks")]
-    [NotMapped]
+    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual LinkTracker? Link { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailingTraceId")]
-    //[InverseProperty("LinkTrackerClicks")]
-    [NotMapped]
+    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual MailingTrace? MailingTrace { get; set; }
 
+    // [Many2one]
     [ForeignKey("MassMailingId")]
-    //[InverseProperty("LinkTrackerClicks")]
-    [NotMapped]
+    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("LinkTrackerClickWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("LinkTrackerClickWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("spreadsheet_dashboard_group")]
-public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class SpreadsheetDashboardGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,39 +21,40 @@ public partial class SpreadsheetDashboardGroup: FullAuditedEntity<Guid>, IEntity
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat json
-    //[Column("name")]
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    [Column("name")]
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SpreadsheetDashboardGroupCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SpreadsheetDashboardGroupCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("DashboardGroupId")]
+    [InverseProperty("DashboardGroup")]
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SpreadsheetDashboardGroupWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("DashboardGroup")]
-    [NotMapped]
-    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboards { get; set; } 
-
+    // [InverseProperty("SpreadsheetDashboardGroupWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

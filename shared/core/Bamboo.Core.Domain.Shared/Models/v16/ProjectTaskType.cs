@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_task_type")]
 //[Index("UserId", Name = "project_task_type_user_id_index")]
-public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>, IModificationAuditedObject
+public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -34,31 +39,27 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? UserId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("legend_blocked", TypeName = "jsonb")]
     public string? LegendBlocked { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("legend_done", TypeName = "jsonb")]
     public string? LegendDone { get; set; }
 
-    // v16-Compat
     [JsonField]
     [Column("legend_normal", TypeName = "jsonb")]
     public string? LegendNormal { get; set; }
@@ -69,15 +70,11 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("fold")]
     public bool? Fold { get; set; }
 
-    [Column("auto_validation_state")]
-    public bool? AutoValidationState { get; set; }
-
-    // v16-Compat
     [Column("auto_validation_kanban_state")]
     public bool? AutoValidationKanbanState { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -85,51 +82,55 @@ public partial class ProjectTaskType : FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ProjectTaskTypeCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ProjectTaskTypeCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("MailTemplateId")]
-    //[InverseProperty("ProjectTaskTypeMailTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskTypeMailTemplate")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
+    // [One2many]
+    [ForeignKey("StageId")]
+    [InverseProperty("Stage")]
+    public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+
+    // [One2many]
+    [ForeignKey("StageId")]
+    [InverseProperty("Stage")]
+    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRel { get; set; }
+
+    // [Many2one]
     [ForeignKey("RatingTemplateId")]
-    //[InverseProperty("ProjectTaskTypeRatingTemplates")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskTypeRatingTemplate")] //Many2one
     public virtual MailTemplate? RatingTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    //[InverseProperty("ProjectTaskTypes")]
-    [NotMapped]
+    // [InverseProperty("ProjectTaskType")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("ProjectTaskTypeUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("ProjectTaskTypeUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ProjectTaskTypeWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("ProjectTaskTypeWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    //[InverseProperty("Stage")]
-    [NotMapped]
-    public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRels { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("TypeId")] //Many2many
+    // [InverseProperty("Type")] //Many2many
+    public virtual ICollection<ProjectProject> Project { get; set; }
 
-    //[InverseProperty("Stage")]
-    [NotMapped]
-    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } 
-
-    [ForeignKey("ProjectTaskTypeId")]
-    //[InverseProperty("ProjectTaskTypes")]
-    [NotMapped]
-    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizards { get; set; } 
-
-    [ForeignKey("TypeId")]
-    //[InverseProperty("Types")]
-    [NotMapped]
-    public virtual ICollection<ProjectProject> Projects { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProjectTaskTypeId")]
+    // [InverseProperty("ProjectTaskType")]
+    // public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
 }

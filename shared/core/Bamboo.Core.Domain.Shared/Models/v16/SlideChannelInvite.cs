@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? ChannelId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -41,45 +46,41 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("body")]
     public string? Body { get; set; }
 
-    [Column("send_email")]
-    public bool? SendEmail { get; set; }
-
-    [Column("enroll_mode")]
-    public bool? EnrollMode { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChannelId")]
-    //[InverseProperty("SlideChannelInvites")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelInvite")] //Many2one
     public virtual SlideChannel? Channel { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SlideChannelInviteCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SlideChannelInviteCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("TemplateId")]
-    //[InverseProperty("SlideChannelInvites")]
-    [NotMapped]
+    // [InverseProperty("SlideChannelInvite")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("SlideChannelInviteWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("SlideChannelInviteWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("SlideChannelInviteId")]
-    //[InverseProperty("SlideChannelInvites")]
-    [NotMapped]
-    public virtual ICollection<IrAttachment> IrAttachments { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SlideChannelInviteId")] //Many2many
+    // [InverseProperty("SlideChannelInvite")] //Many2many
+    public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 
-    [ForeignKey("SlideChannelInviteId")]
-    //[InverseProperty("SlideChannelInvites")]
-    [NotMapped]
-    public virtual ICollection<ResPartner> ResPartners { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SlideChannelInviteId")] //Many2many
+    // [InverseProperty("SlideChannelInvite")] //Many2many
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

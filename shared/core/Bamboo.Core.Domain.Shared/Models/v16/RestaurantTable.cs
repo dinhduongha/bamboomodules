@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("restaurant_table")]
-public partial class RestaurantTable: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,23 +21,24 @@ public partial class RestaurantTable: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("floor_id")]
     public Guid? FloorId { get; set; }
-
-    [Column("table_number")]
-    public long? TableNumber { get; set; }
 
     [Column("seats")]
     public long? Seats { get; set; }
 
-    [Column("parent_id")]
-    public Guid? ParentId { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("name")]
+    public string? Name { get; set; }
 
     [Column("shape")]
     public string? Shape { get; set; }
@@ -48,7 +50,7 @@ public partial class RestaurantTable: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -65,34 +67,23 @@ public partial class RestaurantTable: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("height")]
     public double? Height { get; set; }
 
-    [Column("identifier")]
-    public string? Identifier { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("RestaurantTableCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("RestaurantTableCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("FloorId")]
-    //[InverseProperty("RestaurantTables")]
-    [NotMapped]
+    // [InverseProperty("RestaurantTable")] //Many2one
     public virtual RestaurantFloor? Floor { get; set; }
 
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<RestaurantTable> InverseParent { get; set; } 
+    // [One2many]
+    [ForeignKey("TableId")]
+    [InverseProperty("Table")]
+    public virtual ICollection<PosOrder> PosOrder { get; set; }
 
-    [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
-    public virtual RestaurantTable? Parent { get; set; }
-
-    //[InverseProperty("Table")]
-    [NotMapped]
-    public virtual ICollection<PosOrder> PosOrders { get; set; } 
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("RestaurantTableWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("RestaurantTableWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

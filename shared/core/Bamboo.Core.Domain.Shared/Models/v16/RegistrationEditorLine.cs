@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("editor_id")]
     public Guid? EditorId { get; set; }
 
@@ -36,7 +41,7 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
     public Guid? EventTicketId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -54,43 +59,43 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
     public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("RegistrationEditorLineCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("RegistrationEditorLineCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EditorId")]
-    //[InverseProperty("RegistrationEditorLines")]
-    [NotMapped]
+    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual RegistrationEditor? Editor { get; set; }
 
+    // [Many2one]
     [ForeignKey("EventId")]
-    //[InverseProperty("RegistrationEditorLines")]
-    [NotMapped]
+    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
+    // [Many2one]
     [ForeignKey("EventTicketId")]
-    //[InverseProperty("RegistrationEditorLines")]
-    [NotMapped]
+    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual EventEventTicket? EventTicket { get; set; }
 
+    // [Many2one]
     [ForeignKey("RegistrationId")]
-    //[InverseProperty("RegistrationEditorLines")]
-    [NotMapped]
+    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual EventRegistration? Registration { get; set; }
 
+    // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    //[InverseProperty("RegistrationEditorLines")]
-    [NotMapped]
+    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("RegistrationEditorLineWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("RegistrationEditorLineWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

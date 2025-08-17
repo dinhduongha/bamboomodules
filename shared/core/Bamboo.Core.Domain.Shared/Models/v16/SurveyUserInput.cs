@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_user_input")]
-//[Index("SurveyId", Name = "survey_user_input__survey_id_index")]
 //[Index("AccessToken", Name = "survey_user_input_unique_token", IsUnique = true)]
-public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -22,7 +22,10 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -36,7 +39,7 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? PartnerId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -56,17 +59,11 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("nickname")]
     public string? Nickname { get; set; }
 
-    [Column("scoring_total")]
-    public decimal? ScoringTotal { get; set; }
-
     [Column("test_entry")]
     public bool? TestEntry { get; set; }
 
     [Column("scoring_success")]
     public bool? ScoringSuccess { get; set; }
-
-    [Column("survey_first_submitted")]
-    public bool? SurveyFirstSubmitted { get; set; }
 
     [Column("is_session_answer")]
     public bool? IsSessionAnswer { get; set; }
@@ -81,7 +78,7 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public DateTime? Deadline { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -89,59 +86,68 @@ public partial class SurveyUserInput: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("scoring_percentage")]
     public double? ScoringPercentage { get; set; }
 
+    [Column("scoring_total")]
+    public double? ScoringTotal { get; set; }
+
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
 
     [Column("slide_partner_id")]
     public Guid? SlidePartnerId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("SurveyUserInputCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("SurveyUserInputCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("ResponseId")]
+    [InverseProperty("Response")]
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastDisplayedPageId")]
-    //[InverseProperty("SurveyUserInputsNavigation")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInputNavigation")] //Many2one
     public virtual SurveyQuestion? LastDisplayedPage { get; set; }
 
-    [ForeignKey("PartnerId")]
-    //[InverseProperty("SurveyUserInputs")]
-    [NotMapped]
-    public virtual ResPartner? Partner { get; set; }
-
-    [ForeignKey("SlideId")]
-    //[InverseProperty("SurveyUserInputs")]
-    [NotMapped]
-    public virtual SlideSlide? Slide { get; set; }
-
-    [ForeignKey("SlidePartnerId")]
-    //[InverseProperty("SurveyUserInputs")]
-    [NotMapped]
-    public virtual SlideSlidePartner? SlidePartner { get; set; }
-
-    [ForeignKey("SurveyId")]
-    //[InverseProperty("SurveyUserInputs")]
-    [NotMapped]
-    public virtual SurveySurvey? Survey { get; set; }
-
-    //[InverseProperty("UserInput")]
-    [NotMapped]
-    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLines { get; set; } 
-
-    [ForeignKey("LastModifierId")]
-    //[InverseProperty("SurveyUserInputWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("...")]
-    [NotMapped]
+    // [InverseProperty("SurveyUserInput")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
-    [ForeignKey("SurveyUserInputId")]
-    //[InverseProperty("SurveyUserInputs")]
-    [NotMapped]
-    public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } 
+    // [Many2one]
+    [ForeignKey("PartnerId")]
+    // [InverseProperty("SurveyUserInput")] //Many2one
+    public virtual ResPartner? Partner { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SlideId")]
+    // [InverseProperty("SurveyUserInput")] //Many2one
+    public virtual SlideSlide? Slide { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SlidePartnerId")]
+    // [InverseProperty("SurveyUserInput")] //Many2one
+    public virtual SlideSlidePartner? SlidePartner { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SurveyId")]
+    // [InverseProperty("SurveyUserInput")] //Many2one
+    public virtual SurveySurvey? Survey { get; set; }
+
+    // [One2many]
+    [ForeignKey("UserInputId")]
+    [InverseProperty("UserInput")]
+    public virtual ICollection<SurveyUserInputLine> SurveyUserInputLine { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastModifierId")]
+    // [InverseProperty("SurveyUserInputWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SurveyUserInputId")] //Many2many
+    // [InverseProperty("SurveyUserInput")] //Many2many
+    public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,8 +12,6 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_tag")]
-//[Index("IsPublished", Name = "event_tag__is_published_index")]
-//[Index("WebsiteId", Name = "event_tag__website_id_index")]
 public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -21,6 +20,10 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -35,54 +38,45 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public long? Color { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("website_id")]
-    public Guid? WebsiteId { get; set; }
-
-    [Column("is_published")]
-    public bool? IsPublished { get; set; }
-
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("EventTags")]
-    [NotMapped]
+    // [InverseProperty("EventTag")] //Many2one
     public virtual EventTagCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("EventTagCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("EventTagCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    [ForeignKey("WebsiteId")]
-    //[InverseProperty("EventTags")]
-    [NotMapped]
-    public virtual Website? Website { get; set; }
-
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("EventTagWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("EventTagWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("EventTagId")]
-    //[InverseProperty("EventTags")]
-    [NotMapped]
-    public virtual ICollection<EventEvent> EventEvents { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("EventTagId")]
+    // [InverseProperty("EventTag")]
+    // public virtual ICollection<EventEvent> EventEvent { get; set; }
 
-    [ForeignKey("EventTagId")]
-    //[InverseProperty("EventTags")]
-    [NotMapped]
-    public virtual ICollection<EventType> EventTypes { get; set; } 
+    // [Many2many] // ManyToMany Hidden
+    // [NotMapped] //Many2many // Hidden
+    // [ForeignKey("EventTagId")]
+    // [InverseProperty("EventTag")]
+    // public virtual ICollection<EventType> EventType { get; set; }
 }

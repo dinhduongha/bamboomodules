@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("theme_website_menu")]
 //[Index("ParentId", Name = "theme_website_menu_parent_id_index")]
-public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class ThemeWebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -20,6 +21,10 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("page_id")]
     public Guid? PageId { get; set; }
@@ -31,7 +36,7 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -44,7 +49,7 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
-    public StringDictionary? Name { get; set; }
+    public string? Name { get; set; }
 
     [Column("mega_menu_content")]
     public string? MegaMenuContent { get; set; }
@@ -56,37 +61,38 @@ public partial class ThemeWebsiteMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? UseMainMenuAsParent { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ThemeWebsiteMenuCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ThemeWebsiteMenuCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [One2many]
+    [ForeignKey("ParentId")]
+    [InverseProperty("Parent")]
+    public virtual ICollection<ThemeWebsiteMenu> InverseParent { get; set; }
+
+    // [Many2one]
     [ForeignKey("PageId")]
-    //[InverseProperty("ThemeWebsiteMenus")]
-    [NotMapped]
+    // [InverseProperty("ThemeWebsiteMenu")] //Many2one
     public virtual ThemeWebsitePage? Page { get; set; }
 
+    // [Many2one]
     [ForeignKey("ParentId")]
-    //[InverseProperty("InverseParent")]
-    [NotMapped]
+    // [InverseProperty("InverseParent")] //Many2one
     public virtual ThemeWebsiteMenu? Parent { get; set; }
 
+    // [One2many]
+    [ForeignKey("ThemeTemplateId")]
+    [InverseProperty("ThemeTemplate")]
+    public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ThemeWebsiteMenuWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    //[InverseProperty("Parent")]
-    [NotMapped]
-    public virtual ICollection<ThemeWebsiteMenu> InverseParent { get; set; } 
-
-    //[InverseProperty("ThemeTemplate")]
-    [NotMapped]
-    public virtual ICollection<WebsiteMenu> WebsiteMenus { get; set; } 
-
+    // [InverseProperty("ThemeWebsiteMenuWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

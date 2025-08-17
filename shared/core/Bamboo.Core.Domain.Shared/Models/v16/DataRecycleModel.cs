@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("data_recycle_model")]
-public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DataRecycleModel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -19,6 +20,10 @@ public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
@@ -33,7 +38,7 @@ public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public long? NotifyFrequency { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -69,37 +74,39 @@ public partial class DataRecycleModel: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public DateTime? LastNotification { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("DataRecycleModelCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("DataRecycleModelCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
-    //[InverseProperty("RecycleModel")]
-    [NotMapped]
-    public virtual ICollection<DataRecycleRecord> DataRecycleRecords { get; set; } 
+    // [One2many]
+    [ForeignKey("RecycleModelId")]
+    [InverseProperty("RecycleModel")]
+    public virtual ICollection<DataRecycleRecord> DataRecycleRecord { get; set; }
 
+    // [Many2one]
     [ForeignKey("ResModelId")]
-    //[InverseProperty("DataRecycleModels")]
-    [NotMapped]
+    // [InverseProperty("DataRecycleModel")] //Many2one
     public virtual IrModel? ResModel { get; set; }
 
+    // [Many2one]
     [ForeignKey("TimeFieldId")]
-    //[InverseProperty("DataRecycleModels")]
-    [NotMapped]
+    // [InverseProperty("DataRecycleModel")] //Many2one
     public virtual IrModelFields? TimeField { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("DataRecycleModelWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("DataRecycleModelWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 
-    [ForeignKey("DataRecycleModelId")]
-    //[InverseProperty("DataRecycleModels")]
-    [NotMapped]
-    public virtual ICollection<ResUser> ResUsers { get; set; } 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DataRecycleModelId")] //Many2many
+    // [InverseProperty("DataRecycleModel")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

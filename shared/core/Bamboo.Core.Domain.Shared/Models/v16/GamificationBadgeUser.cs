@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_badge_user")]
-//[Index("BadgeId", Name = "gamification_badge_user__badge_id_index")]
-//[Index("EmployeeId", Name = "gamification_badge_user__employee_id_index")]
-//[Index("UserId", Name = "gamification_badge_user__user_id_index")]
+//[Index("BadgeId", Name = "gamification_badge_user_badge_id_index")]
+//[Index("EmployeeId", Name = "gamification_badge_user_employee_id_index")]
+//[Index("UserId", Name = "gamification_badge_user_user_id_index")]
 public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -22,6 +23,10 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -36,7 +41,7 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? ChallengeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -48,7 +53,7 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
     public string? Comment { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -56,38 +61,38 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
 
+    // [Many2one]
     [ForeignKey("BadgeId")]
-    //[InverseProperty("GamificationBadgeUsers")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadgeUser")] //Many2one
     public virtual GamificationBadge? Badge { get; set; }
 
+    // [Many2one]
     [ForeignKey("ChallengeId")]
-    //[InverseProperty("GamificationBadgeUsers")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadgeUser")] //Many2one
     public virtual GamificationChallenge? Challenge { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("GamificationBadgeUserCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("GamificationBadgeUserCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("GamificationBadgeUsers")]
-    [NotMapped]
+    // [InverseProperty("GamificationBadgeUser")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("SenderId")]
-    //[InverseProperty("GamificationBadgeUserSenders")]
-    [NotMapped]
-    public virtual ResUser? Sender { get; set; }
+    // [InverseProperty("GamificationBadgeUserSender")] //Many2one
+    public virtual ResUsers? Sender { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("GamificationBadgeUserUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("GamificationBadgeUserUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("GamificationBadgeUserWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("GamificationBadgeUserWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -21,7 +22,10 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
-    // v16-Compat
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
@@ -46,11 +50,8 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("maintenance_team_id")]
     public Guid? MaintenanceTeamId { get; set; }
 
-    [Column("repeat_interval")]
-    public long? RepeatInterval { get; set; }
-
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -70,44 +71,23 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("maintenance_type")]
     public string? MaintenanceType { get; set; }
 
-    [Column("instruction_type")]
-    public string? InstructionType { get; set; }
-
-    [Column("instruction_google_slide")]
-    public string? InstructionGoogleSlide { get; set; }
-
-    [Column("repeat_unit")]
-    public string? RepeatUnit { get; set; }
-
-    [Column("repeat_type")]
-    public string? RepeatType { get; set; }
-
     [Column("request_date")]
     public DateTime? RequestDate { get; set; }
 
     [Column("close_date")]
     public DateTime? CloseDate { get; set; }
 
-   [Column("repeat_until")]
-    public DateTime? RepeatUntil { get; set; }
-
     [Column("description")]
     public string? Description { get; set; }
 
-    [Column("instruction_text")]
-    public string? InstructionText { get; set; }
-
     [Column("archive")]
     public bool? Archive { get; set; }
-
-    [Column("recurring_maintenance")]
-    public bool? RecurringMaintenance { get; set; }
 
     [Column("schedule_date", TypeName = "timestamp without time zone")]
     public DateTime? ScheduleDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -118,59 +98,58 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
 
+    // [Many2one]
     [ForeignKey("CategoryId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceEquipmentCategory? Category { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("MaintenanceRequestCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("MaintenanceRequestCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("EquipmentId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceEquipment? Equipment { get; set; }
 
+    // [Many2one]
     [ForeignKey("MaintenanceTeamId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceTeam? MaintenanceTeam { get; set; }
 
-    // v16-Compat
+    // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [Many2one]
     [ForeignKey("OwnerUserId")]
-    //[InverseProperty("MaintenanceRequestOwnerUsers")]
-    [NotMapped]
-    public virtual ResUser? OwnerUser { get; set; }
+    // [InverseProperty("MaintenanceRequestOwnerUser")] //Many2one
+    public virtual ResUsers? OwnerUser { get; set; }
 
+    // [Many2one]
     [ForeignKey("StageId")]
-    //[InverseProperty("MaintenanceRequests")]
-    [NotMapped]
+    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceStage? Stage { get; set; }
 
+    // [Many2one]
     [ForeignKey("UserId")]
-    //[InverseProperty("MaintenanceRequestUsers")]
-    [NotMapped]
-    public virtual ResUser? User { get; set; }
+    // [InverseProperty("MaintenanceRequestUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("MaintenanceRequestWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("MaintenanceRequestWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

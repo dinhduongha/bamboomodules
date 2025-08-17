@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,12 +10,11 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("ir_model_access")]
-//[Index("GroupId", Name = "ir_model_access_group_id_index")]
-//[Index("ModelId", Name = "ir_model_access_model_id_index")]
-//[Index("Name", Name = "ir_model_access_name_index")]
-public partial class IrModelAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
+//[Index("GroupId", Name = "ir_model_access__group_id_index")]
+//[Index("ModelId", Name = "ir_model_access__model_id_index")]
+//[Index("Name", Name = "ir_model_access__name_index")]
+public partial class IrModelAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,6 +23,9 @@ public partial class IrModelAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
@@ -32,7 +33,7 @@ public partial class IrModelAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? GroupId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -56,28 +57,28 @@ public partial class IrModelAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public bool? PermUnlink { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("IrModelAccessCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("IrModelAccessCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("GroupId")]
-    //[InverseProperty("IrModelAccesses")]
-    [NotMapped]
-    public virtual ResGroup? Group { get; set; }
+    // [InverseProperty("IrModelAccess")] //Many2one
+    public virtual ResGroups? Group { get; set; }
 
+    // [Many2one]
     [ForeignKey("ModelId")]
-    //[InverseProperty("IrModelAccesses")]
-    [NotMapped]
+    // [InverseProperty("IrModelAccess")] //Many2one
     public virtual IrModel? Model { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("IrModelAccessWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("IrModelAccessWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

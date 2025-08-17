@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -20,6 +21,10 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("company_id")]
     public Guid? TenantId { get; set; }
 
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
+
     [Column("departure_reason_id")]
     public Guid? DepartureReasonId { get; set; }
 
@@ -27,7 +32,7 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? EmployeeId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -38,12 +43,11 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("departure_description")]
     public string? DepartureDescription { get; set; }
 
-    // v16-Compat
     [Column("archive_private_address")]
     public bool? ArchivePrivateAddress { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -51,10 +55,6 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("set_date_end")]
     public bool? SetDateEnd { get; set; }
 
-    [Column("unassign_equipment")]
-    public bool? UnassignEquipment { get; set; }
-
-    // v16-Compat
     [Column("cancel_leaves")]
     public bool? CancelLeaves { get; set; }
 
@@ -64,28 +64,23 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("release_campany_car")]
     public bool? ReleaseCampanyCar { get; set; }
 
-    // v16-Compat
-    [ForeignKey("TenantId")]
-    [NotMapped]
-    public virtual ResCompany? Company { get; set; }
-
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("HrDepartureWizardCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("HrDepartureWizardCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("DepartureReasonId")]
-    //[InverseProperty("HrDepartureWizards")]
-    [NotMapped]
+    // [InverseProperty("HrDepartureWizard")] //Many2one
     public virtual HrDepartureReason? DepartureReason { get; set; }
 
+    // [Many2one]
     [ForeignKey("EmployeeId")]
-    //[InverseProperty("HrDepartureWizards")]
-    [NotMapped]
+    // [InverseProperty("HrDepartureWizard")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("HrDepartureWizardWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
+    // [InverseProperty("HrDepartureWizardWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }

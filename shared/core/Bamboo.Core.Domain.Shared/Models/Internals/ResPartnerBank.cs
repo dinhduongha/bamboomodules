@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,11 +10,10 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Module("base")]
 [Table("res_partner_bank")]
-//[Index("PartnerId", Name = "res_partner_bank_partner_id_index")]
+//[Index("PartnerId", Name = "res_partner_bank__partner_id_index")]
 //[Index("SanitizedAccNumber", "PartnerId", Name = "res_partner_bank_unique_number", IsUnique = true)]
-public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerBank: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,6 +21,10 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("company_id")]
     public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -37,7 +39,7 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? CurrencyId { get; set; }
 
     [Column("create_uid")]
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
@@ -58,10 +60,13 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public bool? AllowOutPayment { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
-    public DateTime CreationTime { get; set; }
+    public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("aba_routing")]
+    public string? AbaRouting { get; set; }
 
     [Column("has_iban_warning")]
     public bool? HasIbanWarning { get; set; }
@@ -78,68 +83,71 @@ public partial class ResPartnerBank: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("include_reference")]
     public bool? IncludeReference { get; set; }
 
-    // v16-Compat
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
-    // v16-Compat
-    [ForeignKey("MessageMainAttachmentId")]
-    //[InverseProperty("ResPartnerBanks")]
-    [NotMapped]
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
+    // [One2many]
+    [ForeignKey("BankAccountId")]
+    [InverseProperty("BankAccount")]
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
+    // [One2many]
+    [ForeignKey("PartnerBankId")]
+    [InverseProperty("PartnerBank")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("PartnerBankId")]
+    [InverseProperty("PartnerBank")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
+
+    // [One2many]
+    [ForeignKey("PartnerBankId")]
+    [InverseProperty("PartnerBank")]
+    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
+
+    // [One2many]
+    [ForeignKey("ResPartnerBankId")]
+    [InverseProperty("ResPartnerBank")]
+    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfig { get; set; }
+
+    // [Many2one]
     [ForeignKey("BankId")]
-    //[InverseProperty("ResPartnerBanks")]
-    [NotMapped]
+    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResBank? Bank { get; set; }
 
+    // [Many2one]
     [ForeignKey("TenantId")]
-    //[InverseProperty("ResPartnerBanks")]
-    [NotMapped]
+    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
+    // [Many2one]
     [ForeignKey("CreatorId")]
-    //[InverseProperty("ResPartnerBankCreateUs")]
-    [NotMapped]
-    public virtual ResUser? CreateU { get; set; }
+    // [InverseProperty("ResPartnerBankCreateU")] //Many2one
+    public virtual ResUsers? CreateU { get; set; }
 
+    // [Many2one]
     [ForeignKey("CurrencyId")]
-    //[InverseProperty("ResPartnerBanks")]
-    [NotMapped]
+    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
+    // [One2many]
+    [ForeignKey("BankAccountId")]
+    [InverseProperty("BankAccount")]
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+
+    // [Many2one]
+    [ForeignKey("MessageMainAttachmentId")]
+    // [InverseProperty("ResPartnerBank")] //Many2one
+    public virtual IrAttachment? MessageMainAttachment { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
-    //[InverseProperty("ResPartnerBanks")]
-    [NotMapped]
+    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
+    // [Many2one]
     [ForeignKey("LastModifierId")]
-    //[InverseProperty("ResPartnerBankWriteUs")]
-    [NotMapped]
-    public virtual ResUser? WriteU { get; set; }
-
-    /// TODO: DISABLE INVERSE COLLECTIONS
-    //[InverseProperty("BankAccount")]
-    [NotMapped]
-    public virtual ICollection<AccountJournal> AccountJournals { get; set; } 
-
-    //[InverseProperty("PartnerBank")]
-    [NotMapped]
-    public virtual ICollection<AccountMove> AccountMoves { get; set; } 
-
-    //[InverseProperty("PartnerBank")]
-    [NotMapped]
-    public virtual ICollection<AccountPaymentRegister> AccountPaymentRegisters { get; set; } 
-
-    //[InverseProperty("PartnerBank")]
-    [NotMapped]
-    public virtual ICollection<AccountPayment> AccountPayments { get; set; } 
-
-    //[InverseProperty("ResPartnerBank")]
-    [NotMapped]
-    public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfigs { get; set; } 
-
-    //[InverseProperty("BankAccount")]
-    [NotMapped]
-    public virtual ICollection<HrEmployee> HrEmployees { get; set; } 
+    // [InverseProperty("ResPartnerBankWriteU")] //Many2one
+    public virtual ResUsers? WriteU { get; set; }
 }
