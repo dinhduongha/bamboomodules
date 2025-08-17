@@ -93,26 +93,22 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
-
-    # --- Xác định lớp cha và interface cho ABP ---
+    
     if is_auto:
         base_class = f"FullAuditedEntity<Guid>"
-        has_one_to_many = any(f.get('type', '').lower() == 'one2many' for f in model_data.get('fields', {}).values())
-        if has_one_to_many:
+        if any(f.get('type', '').lower() == 'one2many' for f in model_data.get('fields', {}).values()):
             base_class = f"FullAuditedAggregateRoot<Guid>"
     else:
         base_class = f"Entity<Guid>"
 
     final_interfaces = []
-    has_company_id = 'company_id' in model_data.get('fields', {}) # SỬA LỖI: Thêm lại dòng này
+    has_company_id = 'company_id' in model_data.get('fields', {})
     if has_company_id:
         final_interfaces.append("IMultiTenant")
-    
     final_interfaces.extend(sorted(implemented_interfaces))
 
     inverse_field_nav_map = {'create_uid': 'Creator', 'write_uid': 'LastModifier', 'company_id': 'Company'}
     
-    # --- Xây dựng using statements ---
     using_statements = {
         "using System;", "using System.Collections.Generic;", "using System.ComponentModel.DataAnnotations;",
         "using System.ComponentModel.DataAnnotations.Schema;", "using Volo.Abp.Domain.Entities;",
@@ -126,23 +122,23 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
         using_statements.add(f"using {project_name}.MixinData;")
     
     for field_info in model_data.get('fields', {}).values():
-        if 'related_model' in field_info:
-            related_model_name = field_info['related_model']
-            if related_model_name in master_models:
-                related_model_base_module = master_models[related_model_name].get('base_module')
-                if related_model_base_module:
-                    pascal_related_module = module_namespace_map.get(related_model_base_module, to_pascal_case(related_model_base_module))
-                    entity_namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_related_module}"
-                    using_statements.add(f"using {entity_namespace};")
+        if 'related_model' in field_info and field_info['related_model'] in master_models:
+            related_model_base_module = master_models[field_info['related_model']].get('base_module')
+            if related_model_base_module:
+                pascal_related_module = module_namespace_map.get(related_model_base_module, to_pascal_case(related_model_base_module))
+                entity_namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_related_module}"
+                using_statements.add(f"using {entity_namespace};")
 
     table_name = model_data.get('table_name') or model_name.replace('.', '_')
     depends_str = f"Depends = new[] {{ {', '.join(f'\"{dep}\"' for dep in dependencies)} }}" if dependencies else ""
     is_transient = model_data.get('is_transient', False)
     
-    model_attribute_str = f'IsTransient = {str(is_transient).lower()}'
-    if not is_auto:
-        model_attribute_str += ', IsAuto = false'
-    attributes = [f'[Module("{module_name}"{(", " + depends_str) if depends_str else ""})]', f'[Model("{model_name}", {model_attribute_str})]', f'[Table("{table_name}")]']
+    model_attribute_props = [f'IsTransient = {str(is_transient).lower()}']
+    if not is_auto: model_attribute_props.append('IsAuto = false')
+    if model_data.get('attributes', {}).get('Description'):
+        model_attribute_props.append(f'Description = "{model_data["attributes"]["Description"]}"')
+
+    attributes = [f'[Module("{module_name}"{(", " + depends_str) if depends_str else ""})]', f'[Model("{model_name}", {", ".join(model_attribute_props)})]', f'[Table("{table_name}")]']
     namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_module}"
     inheritance = f": {base_class}{', ' + ', '.join(final_interfaces) if final_interfaces else ''}"
     
@@ -223,6 +219,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
                 // Please uncomment and complete the following collection navigation property manually.
                 /*
                 [{attribute_name}(RelatedModel = "your.model.name", InverseField = "{inverse_field_guess}")]
+                //[ForeignKey("{inverse_field_guess}")]
                 public virtual ICollection<YourRelatedModel>? {pascal_field_name} {{ get; set; }}
                 */
                 """
@@ -258,6 +255,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
             related_model_pascal = to_pascal_case(field_info['related_model'])
             prop_content = f"""
             [One2many(RelatedModel = "{field_info['related_model']}", InverseField = "{csharp_inverse_field}")]
+            //[ForeignKey("{csharp_inverse_field}")]
             public virtual ICollection<{related_model_pascal}>? {pascal_field_name} {{ get; set; }}
             """
         elif field_type == 'many2many':
@@ -1044,7 +1042,8 @@ class OdooModelVisitor(ast.NodeVisitor):
         current_class_info = {
             'name': None, 'inherits': [], 'fields': {}, 'methods': {}, 
             'is_transient': False, 'is_abstract': False, 'base_classes': [], 
-            'delegated_inherits': [], 'table_name': None, 'is_auto': True
+            'delegated_inherits': [], 'table_name': None, 'is_auto': True,
+            'attributes': {}
         }
 
         for base in node.bases:
@@ -1057,13 +1056,15 @@ class OdooModelVisitor(ast.NodeVisitor):
         for item in node.body:
             if isinstance(item, ast.Assign):
                 for target in item.targets:
-                    if isinstance(target, ast.Name):
+                    if isinstance(target, ast.Name) and target.id.startswith('_'):
                         if target.id == '_name' and isinstance(item.value, ast.Constant):
                             current_class_info['name'] = item.value.value
+                        elif target.id == '_auto' and isinstance(item.value, ast.Constant) and item.value.value is False:
+                            current_class_info['is_auto'] = False
                         elif target.id == '_table' and isinstance(item.value, ast.Constant):
                             current_class_info['table_name'] = item.value.value
-                        elif target.id == '_auto' and isinstance(item.value, ast.Constant):
-                            current_class_info['is_auto'] = item.value.value
+                        elif target.id == '_description' and isinstance(item.value, ast.Constant):
+                            current_class_info['attributes']['Description'] = item.value.value
                         elif target.id == '_inherit':
                             if isinstance(item.value, ast.Constant):
                                 current_class_info['inherits'].append(item.value.value)
@@ -1088,52 +1089,33 @@ class OdooModelVisitor(ast.NodeVisitor):
     def _parse_field(self, node, context):
         if not (len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and isinstance(node.value, ast.Call)): return
         field_name = node.targets[0].id
+        if field_name.startswith('_'): return # Bỏ qua các trường private của class
+        
         call = node.value
         if not (isinstance(call.func, ast.Attribute) and hasattr(call.func.value, 'id') and call.func.value.id == 'fields'): return
         
         field_type = call.func.attr
-        field_data = {'type': field_type}
+        field_data = {'type': field_type, 'attributes': {}}
         
-        has_index = False
         for kw in call.keywords:
-            if kw.arg == 'index' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
-                has_index = True
-                break
-        field_data['has_index'] = has_index
+            if isinstance(kw.value, ast.Constant):
+                field_data['attributes'][to_pascal_case(kw.arg)] = kw.value.value
 
-        is_sparse = False
-        for kw in call.keywords:
-            if kw.arg == 'sparse' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
-                is_sparse = True
-                break
-        field_data['is_sparse'] = is_sparse
+        field_data['is_required'] = field_data['attributes'].get('Required', False)
+        field_data['is_translatable'] = field_data['attributes'].get('Translate', False)
+        field_data['is_sparse'] = field_data['attributes'].get('Sparse', False)
+        field_data['has_index'] = field_data['attributes'].get('Index', False)
 
-        is_required = False
-        for kw in call.keywords:
-            if kw.arg == 'required' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
-                is_required = True
-                break
-        field_data['is_required'] = is_required
-        
-        for kw in call.keywords:
-            if kw.arg == 'translate' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
-                field_data['is_translatable'] = True
-                break
-        
-        for kw in call.keywords:
-            if kw.arg == 'compute' and isinstance(kw.value, ast.Constant):
-                field_data['type'] = 'Computed'
-                field_data['compute'] = kw.value.value
-        
+        if 'Compute' in field_data['attributes']:
+            field_data['type'] = 'Computed'
+            field_data['compute'] = field_data['attributes']['Compute']
+
         if field_type.lower() in ['many2one', 'one2many', 'many2many']:
             related_model = None
             if call.args and isinstance(call.args[0], ast.Constant):
                 related_model = call.args[0].value
-            else:
-                for kw in call.keywords:
-                    if kw.arg == 'comodel_name' and isinstance(kw.value, ast.Constant):
-                        related_model = kw.value.value
-                        break
+            elif 'ComodelName' in field_data['attributes']:
+                related_model = field_data['attributes']['ComodelName']
             
             if related_model:
                 field_data['related_model'] = related_model
@@ -1142,51 +1124,34 @@ class OdooModelVisitor(ast.NodeVisitor):
                 inverse_field = None
                 if len(call.args) > 1 and isinstance(call.args[1], ast.Constant):
                     inverse_field = call.args[1].value
-                else:
-                    for kw in call.keywords:
-                        if kw.arg == 'inverse_name' and isinstance(kw.value, ast.Constant):
-                            inverse_field = kw.value.value
-                            break
+                elif 'InverseName' in field_data['attributes']:
+                    inverse_field = field_data['attributes']['InverseName']
                 if inverse_field:
                     field_data['inverse_field'] = inverse_field
         
         if field_type.lower() == 'selection':
             selection_list = []
-            for kw in call.keywords:
-                if kw.arg == 'selection' and isinstance(kw.value, ast.List):
-                    for elt in kw.value.elts:
-                        if isinstance(elt, (ast.Tuple, ast.List)) and len(elt.elts) == 2 and all(isinstance(e, ast.Constant) for e in elt.elts):
-                            selection_list.append((elt.elts[0].value, elt.elts[1].value))
-            if selection_list:
-                field_data['selection'] = selection_list
-            
+            if 'Selection' in field_data['attributes'] and isinstance(field_data['attributes']['Selection'], list):
+                selection_list = field_data['attributes']['Selection']
+            field_data['selection'] = selection_list
+        if field_type.lower() == 'serialized':
+            field_data['is_sparse'] = True
+
         context['fields'][field_name] = field_data
 
     def _parse_method(self, node, context):
         method_name = node.name
-        
         is_instance_method = len(node.args.args) > 0 and node.args.args[0].arg == 'self'
         params = [(arg.arg, self._get_type_hint_str(arg.annotation) or "object") for arg in node.args.args[1:]]
         return_type_str = self._get_type_hint_str(node.returns)
-        
         source_code = ""
         try:
             source_code = ast.get_source_segment(self.full_source_text, node)
         except:
-            try:
-                source_code = inspect.getsource(node)
-            except:
-                source_code = f"# Could not retrieve source code for {method_name}"
-        
-        method_data = {
-            'params': params, 
-            'source': inspect.cleandoc(source_code or ""), 
-            'is_instance_method': is_instance_method,
-            'source_file': self.source_filename
-        }
-        if return_type_str:
-            method_data['return_type'] = return_type_str
-        
+            try: source_code = inspect.getsource(node)
+            except: source_code = f"# Could not retrieve source code for {method_name}"
+        method_data = {'params': params, 'source': inspect.cleandoc(source_code or ""), 'is_instance_method': is_instance_method, 'source_file': self.source_filename}
+        if return_type_str: method_data['return_type'] = return_type_str
         context['methods'][method_name] = method_data
 #</editor-fold>
 
@@ -1485,15 +1450,82 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
     attr_dir = output_path / f"src/{project_base_name}.Domain.Shared/Attributes"
     attr_dir.mkdir(parents=True, exist_ok=True)
     attribute_definitions = {
-        "ModuleAttribute.cs": "[AttributeUsage(AttributeTargets.Class)] public class ModuleAttribute : Attribute { public string Name { get; } public string[] Depends { get; } public ModuleAttribute(string name, params string[] depends) { Name = name; Depends = depends; } }",
-        "ModelAttribute.cs": "[AttributeUsage(AttributeTargets.Class)] public class ModelAttribute : Attribute { public string Name { get; set; } public bool IsTransient { get; set; } public bool IsAuto { get; set; } = true; public ModelAttribute(string name) { Name = name; } }",
-        "JsonFieldAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class JsonFieldAttribute : Attribute { public bool IsSparse { get; set; } = false; }",
-        "Many2oneAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2oneAttribute : Attribute { public string RelatedModel { get; set; } }",
-        "One2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class One2manyAttribute : Attribute { public string RelatedModel { get; set; } public string InverseField { get; set; } }",
-        "Many2manyAttribute.cs": "[AttributeUsage(AttributeTargets.Property)] public class Many2manyAttribute : Attribute { public string RelatedModel { get; set; } }",
+        "ModuleAttribute.cs": """
+            [AttributeUsage(AttributeTargets.Class)]
+            public class ModuleAttribute : Attribute
+            {
+                public string Name { get; }
+                public string[] Depends { get; }
+                public ModuleAttribute(string name, params string[] depends)
+                {
+                    Name = name;
+                    Depends = depends;
+                }
+            }
+        """,
+        "ModelAttribute.cs": """
+            [AttributeUsage(AttributeTargets.Class)]
+            public class ModelAttribute : Attribute
+            {
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public bool IsTransient { get; set; }
+                public bool IsAuto { get; set; } = true;
+                public ModelAttribute(string name)
+                {
+                    Name = name;
+                }
+            }
+        """,
+        "OdooFieldAttribute.cs": """
+            [AttributeUsage(AttributeTargets.Property)]
+            public class OdooFieldAttribute : Attribute 
+            { 
+                public string? String { get; set; }
+                public string? Help { get; set; }
+                public bool? Required { get; set; }
+                public bool? Readonly { get; set; }
+                public bool? Index { get; set; }
+                public bool? Store { get; set; }
+                public bool? Copy { get; set; }
+                public bool? Translate { get; set; }
+                public bool? Sparse { get; set; }
+                public bool? CompanyDependent { get; set; }
+                public int? Digits { get; set; }
+                public bool? Attatchment { get; set; }
+                public string? ComodelName { get; set; }
+                public string[] Groups { get; set; }
+            }
+        """,
+        "JsonFieldAttribute.cs": """
+            [AttributeUsage(AttributeTargets.Property)]
+            public class JsonFieldAttribute : Attribute 
+            { 
+                public bool IsSparse { get; set; } = false;
+            }
+        """,
+        "Many2oneAttribute.cs": """
+        [AttributeUsage(AttributeTargets.Property)]
+        public class Many2oneAttribute : Attribute 
+        { 
+            public string RelatedModel { get; set; } 
+        }""",
+        "One2manyAttribute.cs": """
+        [AttributeUsage(AttributeTargets.Property)]
+        public class One2manyAttribute : Attribute
+        { 
+            public string RelatedModel { get; set; }
+            public string InverseField { get; set; } 
+        }""",
+        "Many2manyAttribute.cs": """
+        [AttributeUsage(AttributeTargets.Property)]
+        public class Many2manyAttribute : Attribute
+        { 
+            public string RelatedModel { get; set; }
+        }""",
     }
     for file_name, class_def in attribute_definitions.items():
-        (attr_dir / file_name).write_text(format_csharp_code(f"namespace {project_base_name}.Domain.Shared.Attributes; {class_def}"), encoding='utf-8')
+        (attr_dir / file_name).write_text(format_csharp_code(f"using System;\nnamespace {project_base_name}.Domain.Shared.Attributes; {class_def}"), encoding='utf-8')
     
     marker_interface_dir = output_path / f"src/{project_base_name}.Domain.Shared/Interfaces/Markers"
     data_interface_dir = output_path / f"src/{project_base_name}.Domain/MixinData"
@@ -1709,7 +1741,7 @@ if __name__ == '__main__':
                              "- 'type': (Default) Group by type (Primitives, M2O, O2M, etc.).\n"
                              "- 'abc': Sort all properties alphabetically.")
     
-    #parser.add_argument('--exclude-models', nargs='*', default=['mail.activity.mixin', 'portal.mixin', 'format.address.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin'],
+    #parser.add_argument('--exclude-models', nargs='*', default=['mail.activity.mixin', 'portal.mixin', 'format.address.mixin', 'utm.source.mixin', 'utm.test.source.mixin', 'website.cover_properties.mixin', 'website.multi.mixin', 'website.published.mixin', 'website.published.multi.mixin','website.searchable.mixin', 'purchase.bill.line.match'],
     #                    help="Manually specify a list of models to exclude.\n"
     #                         "Note: AbstractModels are already detected automatically.")
     

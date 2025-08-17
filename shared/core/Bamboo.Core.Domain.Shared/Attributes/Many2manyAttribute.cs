@@ -1,3 +1,8 @@
 using System;
+namespace Bamboo.Core.Domain.Shared.Attributes;
 
-namespace Bamboo.Core.Domain.Shared.Attributes; [AttributeUsage(AttributeTargets.Property)] public class Many2manyAttribute : Attribute { public string RelatedModel { get; set; } }
+[AttributeUsage(AttributeTargets.Property)]
+public class Many2manyAttribute : Attribute
+{
+    public string RelatedModel { get; set; }
+}

@@ -45,13 +45,13 @@ VIEW_ENTITIES = [
 
 
 # CÁC BẢNG CẦN COMMENT OUT QUAN HỆ MANY-TO-MANY
-# Có nhiều bảng tham chiếu đến nó, vậy thì để các bảng đó quyết định quan hệ.
 # Thêm tên các lớp (class) vào đây.
 COMMENT_OUT_M2M_RELATIONSHIPS = [
     #"ResCompany" # 166
 ]
 
 # CÁC BẢNG CẦN COMMENT OUT QUAN HỆ ONE-TO-MANY
+# Có nhiều bảng tham chiếu đến nó, vậy thì để các bảng đó quyết định quan hệ.
 # Thêm tên các lớp (class) vào đây.
 COMMENT_OUT_O2M_RELATIONSHIPS = [
     "AccountAccount", # 14
@@ -91,14 +91,14 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
     #"StockPicking", # 9
     #"StockPickingType",
     #"StockWarehouse", # 7
-    "UomUom", # 7
+    #"UomUom", # 7
     "Website"
 ]
 
 PROPERTIES_TO_CLEAN_WITHMANY = [
     "Company", "CreateU", "WriteU", "User", "Currency",
     "Country", "Partner", "PartnerCategory", "MessageMainAttachment",
-    "Account", "Journal", "Product", "ProductUom", "ProductCateg"
+    "Account", "Journal", "Product", "ProductUom", "ProductCateg", "Website"
 ]
 
 # ==============================================================================
@@ -212,18 +212,25 @@ def analyze_and_transform_fluent_block(entity_name, body_content, schema_map):
         current_content = company_prop_pattern.sub('', current_content)
 
         current_content = re.sub(r'(\.HasIndex\((.|\n)*?e\.)CompanyId', r'\1TenantId', current_content)
-        tenant_id_property_code = 'entity.Property(e => e.TenantId).HasColumnName("company_id");'
+        tenant_id_property_code = 'entity.Property(e => e.TenantId).HasColumnName("company_id");\n\n            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");'
         id_block_pattern = re.compile(r'(Property\(e\s*=>\s*e\.Id\).*?;)', re.DOTALL)
         if id_block_pattern.search(current_content):
             current_content = id_block_pattern.sub(r'\1\n\n            ' + tenant_id_property_code, current_content, count=1)
         else:
              current_content = tenant_id_property_code + '\n\n' + current_content
+
         tenant_id_index_code = r'entity.HasIndex(e => e.TenantId);'
+        ou_id_index_code = r'\n\n            entity.HasIndex(e => e.OrganizationUnitId);'
         to_table_pattern = re.compile(r'(entity\.ToTable\(.*?\);)')
-        if to_table_pattern.search(current_content):
-            current_content = to_table_pattern.sub(r'\1\n\n            ' + tenant_id_index_code, current_content, count=1)
+        tenant_id_index_pattern = re.compile(r'(entity\.HasIndex\(\s*e\s*=>\s*e\.TenantId\s*(?:,[^\)]*)?\);)', re.MULTILINE)
+        
+        if tenant_id_index_pattern.search(current_content):
+            current_content = tenant_id_index_pattern.sub(r"\1" + ou_id_index_code, current_content, 1)
         else:
-            current_content = current_content + '\n\n' + tenant_id_index_code
+            if to_table_pattern.search(current_content):
+                current_content = to_table_pattern.sub(r'\1\n\n            ' + tenant_id_index_code  + ou_id_index_code, current_content, count=1)
+            else:
+                current_content = current_content + '\n\n            ' + tenant_id_index_code  + ou_id_index_code
 
     replacements = {'CreateUid': 'CreatorId', 'WriteUid': 'LastModifierId', 'CreateDate': 'CreationTime', 'WriteDate': 'LastModificationTime'}
     for old, new in replacements.items():
@@ -403,7 +410,7 @@ namespace {namespace}
     {{
         public static void Configure{entity_name}(this ModelBuilder modelBuilder)
         {{
-{config_body}
+        {config_body}
         }}
     }}
 }}
@@ -577,11 +584,32 @@ def build_schema_map(entities_dir, fluent_content):
 
 def refactor_entity_file(content, schema_map):
     """Áp dụng các quy tắc chuyển đổi cho một file entity, sử dụng schema_map."""
+    
+    join_table_pk_pattern = r'\[PrimaryKey\(".*",\s*".*"\)\]'
+    is_many_to_many_join_table = bool(re.search(join_table_pk_pattern, content))
+
+    if is_many_to_many_join_table:
+        content = re.sub(r'^(\s*\[Index.*\]\s*)$', r'//\1', content, flags=re.MULTILINE)
+        content = re.sub(r'(^\[PrimaryKey\(".*",\s*".*"\)\]\s*$)', r'//\1', content, flags=re.MULTILINE)
+        return content
+        
     class_name_match = re.search(r'public\s+partial\s+class\s+(\w+)', content)
     if not class_name_match: return content
     class_name = class_name_match.group(1)
     
     one2many_found_in_file = [False]
+    table_attr_pattern = r'\[Table\("(ir|res|bas)_[^"]*"\)\]'
+    is_system_by_attribute = bool(re.search(table_attr_pattern, content))
+    is_system_by_manual_list = class_name in MANUAL_SYSTEM_ENTITIES
+    is_system_entity = is_system_by_attribute or is_system_by_manual_list
+    has_company_id = '[Column("company_id")]' in content or 'public Guid? CompanyId' in content
+
+    should_add_multitenancy = False
+    if is_system_entity:
+        if has_company_id:
+            should_add_multitenancy = True
+    else:
+        should_add_multitenancy = True
 
     def transform_relationship(match):
         attributes_block_str = match.group(1)
@@ -622,6 +650,7 @@ def refactor_entity_file(content, schema_map):
             is_fluent_m2m = rel_info.get('is_fluent_m2m', False)            
             if is_fluent_m2m: # M2M tường minh -> giữ lại
                 result.append(f"\n\n{indent}// [Many2many] // Normal")
+                result.append(f"{indent}// [NotMapped] //Many2many // Normal")
                 for line in full_original_block.splitlines():
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -632,6 +661,7 @@ def refactor_entity_file(content, schema_map):
                         #result.append(f"{line_indent} {line.strip()}")
             else: # M2M ẩn -> comment out
                 result.append(f"\n\n{indent}// [Many2many] // Hidden")
+                result.append(f"{indent}// [NotMapped] //Many2many // Hidden")
                 for line in full_original_block.splitlines():
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -639,6 +669,7 @@ def refactor_entity_file(content, schema_map):
         
         elif rel_type == 'ManyToManyHidden':
             result.append(f"\n\n{indent}// [Many2many] // ManyToMany Hidden")
+            result.append(f"{indent}// [NotMapped] //Many2many // Hidden")
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -682,27 +713,46 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
-using Volo.Abp.Domain.Entities.Auditing;
-using Volo.Abp.MultiTenancy;"""
+using Volo.Abp.Domain.Entities.Auditing;"""
+    if should_add_multitenancy:
+        abp_usings += "\nusing Volo.Abp.MultiTenancy;"
+
     content = re.sub(r'^\s*using Microsoft\.EntityFrameworkCore;.*$', abp_usings, content, flags=re.MULTILINE)
     
     # Comment out các Index còn lại
     content = re.sub(r'(^\s*\[Index.*\]\s*$)', r'//\1', content, flags=re.MULTILINE)
     
     # Thay thế Id và thêm TenantId
-    id_replacement = r"""public Guid Id { get => base.Id; set => base.Id = value; }
+    # id_replacement = r"""public Guid Id { get => base.Id; set => base.Id = value; }
+
+    # [Column("company_id")]
+    # public Guid? TenantId { get; set; }"""
+
+    if should_add_multitenancy:
+        id_replacement = r"""public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("company_id")]
-    public Guid? TenantId { get; set; }"""
+    public Guid? TenantId { get; set; }
+
+    [Column("organization_unit_id")]
+    public Guid? OrganizationUnitId  { get; set; }
+    """
+    else:
+        id_replacement = r"public Guid Id { get => base.Id; set => base.Id = value; }"
     content = re.sub(r'public\s+Guid\s+Id\s*{\s*get;\s*set;\s*}', id_replacement, content)
     
     # Thay thế các trường Auditing và các trường khác
-    content = content.replace("public Guid? CreateUid { get; set; }", "public Guid? CreatorId { get; set; }")
-    content = content.replace("public Guid? WriteUid { get; set; }", "public Guid? LastModifierId { get; set; }")
-    content = content.replace("public DateTime? CreateDate { get; set; }", "public DateTime CreationTime { get; set; }")
-    content = content.replace("public DateTime? WriteDate { get; set; }", "public DateTime? LastModificationTime { get; set; }")
+    content = content.replace("public Guid? CreateUid { get; set; }", "public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }")
+    content = content.replace("public Guid? WriteUid { get; set; }", "public override Guid? LastModifierId { get; set; }")
+    content = content.replace("public DateTime? CreateDate { get; set; }", "public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }")
+    content = content.replace("public DateTime CreateDate { get; set; }", "public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }")
+    content = content.replace("public DateTime? WriteDate { get; set; }", "public override DateTime? LastModificationTime { get; set; }")
+    content = content.replace("public DateTime WriteDate { get; set; }", "public override DateTime? LastModificationTime { get; set; }")
     content = content.replace("public DateOnly? ", "public DateTime? ")
     content = content.replace("public DateOnly ", "public DateTime ")
+    content = content.replace("public TimeOnly? ", "public TimeSpan? ")
+    content = content.replace("public TimeOnly ", "public TimeSpan ")
+
     content = content.replace('[ForeignKey("CompanyId")]', '[ForeignKey("TenantId")]')
     content = content.replace('[ForeignKey("CreateUid")]', '[ForeignKey("CreatorId")]')
     content = content.replace('[ForeignKey("WriteUid")]', '[ForeignKey("LastModifierId")]')
@@ -714,6 +764,23 @@ using Volo.Abp.MultiTenancy;"""
     # Xóa phần khởi tạo ICollection
     content = re.sub(r'(public\s+virtual\s+ICollection<[^>]*>\s*.*?{\s*get;\s*set;\s*})(\s*=\s*new.*;)', r'\1', content)
 
+    lines = content.split('\n')
+    new_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i].expandtabs(4)
+        if 'TypeName = "jsonb"' in line:
+            j = i + 1
+            while j < len(lines) and not lines[j].strip().startswith("public"): j += 1
+            if j < len(lines):
+                public_line_indent = ' ' * (len(lines[j]) - len(lines[j].lstrip(' ')))
+                new_lines.append(f"{public_line_indent}[JsonField]")
+                for k in range(i, j + 1): new_lines.append(lines[k])
+                i = j + 1
+                continue
+        new_lines.append(line)
+        i += 1
+    content = "\n".join(new_lines)
     return content
 
 
@@ -722,16 +789,33 @@ def refactor_all_entities(entities_dir, schema_map, args):
     """Hàm điều khiển việc tái cấu trúc tất cả các file entity."""
     print(f"\nGiai đoạn 3: Bắt đầu tái cấu trúc các file trong '{entities_dir}'...")
     output_dir = args.output_entities
-    os.makedirs(output_dir, exist_ok=True)
+    process_join_tables = args.include_join_tables
+    many2many_dir = os.path.join(output_dir, "many2many")
     
+    os.makedirs(output_dir, exist_ok=True)
+    if process_join_tables:
+        os.makedirs(many2many_dir, exist_ok=True)
+        print(f"Đã chuẩn bị thư mục con cho bảng nối: '{many2many_dir}'")
+
     files_to_process = [f for f in os.listdir(entities_dir) if f.lower().endswith('.cs')]
     for filename in files_to_process:
         input_path = os.path.join(entities_dir, filename)
-        output_path = os.path.join(output_dir, filename)
         print(f"  - Đang xử lý: {filename}")
         with open(input_path, 'r', encoding='utf-8') as f:
             original_content = f.read()
-            
+        
+        is_join_table = bool(re.search(r'\[PrimaryKey\(".*",\s*".*"\)\]', original_content))
+
+        # Nếu là bảng nối VÀ logic mặc định là bỏ qua
+        if is_join_table and not process_join_tables:
+            print(f"  - Bỏ qua bảng nối (mặc định): {filename}")
+            continue
+        
+        if is_join_table:
+            output_path = os.path.join(many2many_dir, filename)
+        else:
+            output_path = os.path.join(output_dir, filename)
+                
         modified_content = refactor_entity_file(original_content, schema_map)
         
         with open(output_path, 'w', encoding='utf-8') as f:
@@ -783,6 +867,11 @@ def main():
     parser.add_argument("-n", "--namespace", default="Bamboo.Core.EntityFrameworkCore", help="Namespace cho các file fluent được tạo ra.")
     parser.add_argument("-c", "--classname", default="ModelBuilderExtensions", help="Tên lớp partial cho các file fluent.")
 
+    parser.add_argument(
+        "--include-join-tables",
+        action="store_true", # Khi có flag này, giá trị sẽ là True
+        help="Thêm cờ này để xử lý các bảng nối (mặc định: bỏ qua)."
+    )
     args = parser.parse_args()
     
     print("--- Bắt đầu quy trình tái cấu trúc kết hợp ---")
