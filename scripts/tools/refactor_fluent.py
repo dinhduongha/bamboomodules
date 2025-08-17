@@ -9,8 +9,17 @@ import textwrap
 # THÊM TÊN CÁC LỚP (CLASS) BẠN MUỐN COI LÀ "BẢNG HỆ THỐNG" VÀO ĐÂY
 # Ví dụ: ["MyCustomSystemTable", "AnotherSpecialOne"]
 MANUAL_SYSTEM_ENTITIES = [
-    # "TenLop1", 
-    # "TenLop2"
+    "AuthTotpDevice"
+    "AuthTotpWizard"
+    "ReportLayout", 
+    "ReportPaperformat",
+    #"ResPartnerActivation.cs",
+    #"ResPartnerGrade"
+    "WebEditorConverterTest",
+    "WebEditorConverterTestSub",
+    "WebTourTour",
+    "WebTourTourStep",
+    "WizardIrModelMenuCreate"
 ]
 
 # DANH SÁCH CÁC VIEW - Script sẽ tự động thêm .ToView()
@@ -680,7 +689,7 @@ def refactor_entity_file(content, schema_map):
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     if line.strip().startswith(("[InverseProperty")):
-                        result.append(f"{indent}// {line.strip()} //Many2many")
+                        result.append(f"{indent}// {line.strip()} //Many2one")
                     else:
                         result.append(line)
         else:
