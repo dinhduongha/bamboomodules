@@ -205,7 +205,7 @@ namespace Bamboo.Core.Application
             }).ToList();
         }
 
-        public virtual async Task<object> CreateAsync(TEntity entity, List<string> fields)
+        public virtual async Task<TEntity> CreateAsync(TEntity entity, List<string> fields)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
@@ -357,7 +357,7 @@ namespace Bamboo.Core.Application
             _repository.DeleteManyAsync(ids);
         }
 
-        public virtual async Task<TEntity> UnlinkAsync(List<Guid> ids)
+        public virtual async Task<object> UnlinkAsync(List<Guid> ids)
         {
             // var modelName = typeof(TEntity).Name;
             // await _authorizationService.CheckAccessAsync(modelName, "unlink");
@@ -425,7 +425,7 @@ namespace Bamboo.Core.Application
             return result.Select(r => (r.Id, r.Name)).ToList();
         }
 
-        public virtual async Task<object> CopyAsync(Guid id, List<string> fields, TEntity defaultValues = null)
+        public virtual async Task<TEntity> CopyAsync(Guid id, List<string> fields, TEntity defaultValues = null)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
@@ -503,7 +503,9 @@ namespace Bamboo.Core.Application
             return dict;
         }
 
-        public virtual async Task<OnchangeResult> OnchangeAsync(List<string> changedFields, TEntity values, Dictionary<string, object> fieldInfo)
+        // object values, object field_names, object fields_spec
+        public virtual async Task<object> OnchangeAsync(List<string> changedFields, TEntity values, Dictionary<string, object> fieldInfo)
+        //public virtual async Task<object> OnchangeAsync(object values, object field_names, object fields_spec)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
@@ -571,7 +573,7 @@ namespace Bamboo.Core.Application
             throw new UserFriendlyException("Not implemented");
         }
 
-        public virtual async Task<Dictionary<string, object>> DefaultGetAsync(List<string> fields)
+        public virtual async Task<TEntity> DefaultGetAsync(List<string> fields)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
@@ -598,7 +600,8 @@ namespace Bamboo.Core.Application
                 result["name"] = "";
             }
 
-            return result;
+            //return result;
+            return default;
         }
 
         public virtual async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)

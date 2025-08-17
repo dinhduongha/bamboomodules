@@ -24,7 +24,7 @@ public partial class CoreDbContext : AbpDbContext<CoreDbContext>, ICoreDbContext
 
         builder.ConfigureCore();
         //builder.ConfigureCoreFluentExt();
-        builder.ApplyAllConfigurations();
+        //builder.ApplyAllConfigurations();
         builder.SnakeCase();
     }
 }

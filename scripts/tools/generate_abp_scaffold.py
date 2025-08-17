@@ -510,7 +510,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
         base_class, base_call = "ApplicationService", ""
         repo_interface_name = f"I{pascal_model}Repository"
         repo_var_name = f"_{repo_interface_name[1].lower()}{repo_interface_name[2:]}"
-        repo_namespace = f"{project_base_name}.Domain.Repositories"
+        repo_namespace = f"using {project_base_name}.Domain.Repositories;"
         using_statements.extend(["using Volo.Abp.Application.Services;", repo_namespace])
         private_fields.append(f"private readonly {repo_interface_name} {repo_var_name};")
         constructor_params.append(f"{repo_interface_name} {repo_var_name[1:]}")
@@ -1256,7 +1256,7 @@ def _resolve_base_modules(master_models, module_infos, all_parsed_files, all_mod
 
     return master_models
 
-def analyze_odoo_sources(source_dirs, manual_excluded_models):
+def analyze_odoo_sources(args):
     global master_models
     master_models = {}
     
@@ -1266,7 +1266,7 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
     all_parsed_files = []
 
     # BƯỚC 1: Quét và thu thập tất cả dữ liệu thô
-    for path_str in source_dirs:
+    for path_str in args.source_dirs:
         current_path = Path(path_str)
         if not current_path.is_dir():
             logging.warning(f"Skipping invalid source: {current_path}")
@@ -1275,12 +1275,7 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
         logging.info(f"--- Recursively scanning directory: {current_path} ---")
         for manifest_path in sorted(current_path.glob('**/__manifest__.py')):
             module_dir, module_name = manifest_path.parent, manifest_path.parent.name
-            if module_name.startswith(('test_', 'test.')):
-                continue
-            if module_name.endswith(('_test', '_tests')):
-                continue
-            if 'overwrite_' in str(manifest_path):
-                logging.info(f"  -> Skipping overwrite path: {manifest_path}")
+            if module_name.endswith(('_test', '_tests')) or 'overwrite_' in str(manifest_path):
                 continue
             
             all_module_names.add(module_name)
@@ -1308,11 +1303,8 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
                         if visitor.found_models:
                             all_parsed_files.append({'module_name': module_name, 'models': visitor.found_models})
                             for info in visitor.found_models:
-                                model_identifier = info.get('name') or info.get('inherits', ['N/A'])[0]
                                 if info.get('name'):
                                     module_infos[module_name]['models'].add(info['name'])
-                                #if not info.get('is_auto', True): # Chỉ in ra nếu is_auto là False
-                                #    print(f"DEBUG VISITOR: Found _auto=False for class related to '{model_identifier}' in {model_file.name}")
                     except Exception as e:
                         logging.error(f"Error parsing file {model_file.name}: {e}")
 
@@ -1327,7 +1319,7 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
             for inherited in info.get('inherits', []): all_model_names_from_parsing.add(inherited)
     
     for model_name in all_model_names_from_parsing:
-        master_models[model_name] = {'fields': {}, 'methods': {}, 'source_modules': set(), 'base_classes': set(), 'delegated_inherits': [], 'inherited_mixins': set()}
+        master_models[model_name] = {'fields': {}, 'methods': {}, 'source_modules': set(), 'base_classes': set(), 'delegated_inherits': [], 'inherited_mixins': set(), 'table_name': None, 'is_auto': True}
 
     for parsed_file in all_parsed_files:
         module_name = parsed_file['module_name']
@@ -1336,12 +1328,11 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
             if info.get('name'): target_model_names.add(info.get('name'))
             for target_model_name in target_model_names:
                 if target_model_name in master_models:
+                    # Luôn cập nhật các thuộc tính này, không phụ thuộc vào _name
                     master_models[target_model_name]['is_transient'] = info['is_transient']
                     master_models[target_model_name]['is_auto'] = info['is_auto']
                     if info.get('table_name'):
                          master_models[target_model_name]['table_name'] = info['table_name']
-                    if not info.get('is_auto', True): # Chỉ in ra nếu is_auto là False
-                        master_models[target_model_name]['is_auto'] = False
 
                     master_models[target_model_name]['fields'].update(info['fields'])
                     master_models[target_model_name]['delegated_inherits'].extend(info.get('delegated_inherits', []))
@@ -1359,12 +1350,8 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
             model_odoo_name = info.get('name')
             if model_odoo_name and (info.get('is_abstract') or model_odoo_name.endswith('.mixin')):
                 auto_detected_mixins.add(model_odoo_name)
+    manual_excluded_models = set(args.exclude_models or [])
     final_exclude_set = auto_detected_mixins.union(manual_excluded_models)
-
-    models_to_remove = {name for name in master_models if (name.startswith('test_') or name.startswith('test.') or name.endswith('.test') or '.test.' in name)}
-    for model_name in models_to_remove:
-        del master_models[model_name]
-        logging.info(f"  -> Skipping test model: {model_name}")
 
     # Thêm model gốc ảo
     master_models['models.Model'] = {'fields': COMMON_ODOO_FIELDS.copy(), 'methods': {}, 'base_classes': set(), 'inherited_mixins': set()}
@@ -1372,8 +1359,7 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
     # BƯỚC 4: Phân giải kế thừa đệ quy
     resolved_models = set()
     def resolve_inheritance(model_name):
-        if model_name in resolved_models or model_name not in master_models:
-            return
+        if model_name in resolved_models or model_name not in master_models: return
         resolved_models.add(model_name)
         
         data = master_models[model_name]
@@ -1383,14 +1369,17 @@ def analyze_odoo_sources(source_dirs, manual_excluded_models):
             resolve_inheritance(parent_name)
             
             parent_data = master_models.get(parent_name, {})
+            # Chỉ trộn fields nếu cha không phải là mixin (và không phải models.Model)
             if parent_name not in final_exclude_set or parent_name == 'models.Model':
                 merged_fields = parent_data.get('fields', {}).copy()
                 merged_fields.update(data.get('fields', {}))
                 data['fields'] = merged_fields
             
-            merged_methods = parent_data.get('all_methods', {}).copy()
-            merged_methods.update(data.get('all_methods', {}))
-            data['all_methods'] = merged_methods
+            # Chỉ trộn methods nếu cha không phải là mixin (và không phải models.Model)
+            if parent_name not in final_exclude_set or parent_name == 'models.Model':
+                merged_methods = parent_data.get('all_methods', {}).copy()
+                merged_methods.update(data.get('all_methods', {}))
+                data['all_methods'] = merged_methods
 
     for model_name in list(master_models.keys()):
         if model_name not in final_exclude_set:
@@ -1675,7 +1664,7 @@ def main(args):
     manual_excluded_models = set(args.exclude_models or [])
     
     # Phần 1: Đọc file, tổng hợp và phân tích dữ liệu
-    analysis_result = analyze_odoo_sources(args.source_dirs, manual_excluded_models)
+    analysis_result = analyze_odoo_sources(args)
     
     # Phần 2: Tạo các content
     generate_csharp_files(args, **analysis_result)
