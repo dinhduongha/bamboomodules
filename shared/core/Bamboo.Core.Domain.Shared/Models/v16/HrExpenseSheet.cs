@@ -199,7 +199,7 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2many] // ManyToMany Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrExpenseSheetId")]
-    // [InverseProperty("HrExpenseSheet")]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; }
+    //[ForeignKey("HrExpenseSheetId")]
+    //[InverseProperty("HrExpenseSheet")]
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
 }

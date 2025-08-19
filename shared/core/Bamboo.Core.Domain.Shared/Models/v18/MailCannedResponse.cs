@@ -64,7 +64,7 @@ public partial class MailCannedResponse: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2many] // Normal
     // [ForeignKey("MailCannedResponseId")] //Many2many
-    [InverseProperty("MailCannedResponse")] //Many2many
+    // [InverseProperty("MailCannedResponse")] //Many2many
     // [NotMapped] //Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

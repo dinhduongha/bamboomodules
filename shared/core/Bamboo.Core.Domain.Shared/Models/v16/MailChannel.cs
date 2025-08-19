@@ -87,6 +87,7 @@ public partial class MailChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? LivechatVisitorId { get; set; }
 
     // [One2many]
+    [NotMapped] //One2many
     [ForeignKey("VideocallChannelId")]
     [InverseProperty("VideocallChannel")]
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
@@ -112,6 +113,7 @@ public partial class MailChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [NotMapped] // [One2many]
     [ForeignKey("ReportMessageGroupId")]
     [InverseProperty("ReportMessageGroup")]
     public virtual ICollection<GamificationChallenge> GamificationChallenge { get; set; }

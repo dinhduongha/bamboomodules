@@ -53,7 +53,7 @@ public partial class CertificateKey: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [One2many]
     [ForeignKey("PrivateKeyId")]
-    [InverseProperty("PrivateKey")]
+    [InverseProperty("PrivateKeyCert")]
     public virtual ICollection<AccountEdiProxyClientUser> AccountEdiProxyClientUser { get; set; }
 
     // [One2many]

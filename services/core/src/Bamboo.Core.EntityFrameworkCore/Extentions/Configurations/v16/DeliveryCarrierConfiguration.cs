@@ -89,7 +89,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("delivery_carrier_product_id_fkey");
 
-            entity.HasOne(d => d.Warehouse).WithMany(p => p.DeliveryCarrier)
+            // v16-Compat
+            //entity.HasOne(d => d.Warehouse).WithMany(p => p.DeliveryCarrier)
+            entity.HasOne(d => d.Warehouse).WithMany()
                 .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("delivery_carrier_warehouse_id_fkey");
@@ -201,8 +203,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         j.IndexerProperty<Guid>("StateId").HasColumnName("state_id");
                     });
 
+            // v16-Compat
             // entity.HasMany(d => d.StockWarehouse).WithMany(p => p.DeliveryCarrier)
-            entity.HasMany(d => d.StockWarehouse).WithMany(p => p.DeliveryCarrier)
+            entity.HasMany(d => d.StockWarehouse).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "DeliveryCarrierStockWarehouseRel",
                     r => r.HasOne<StockWarehouse>().WithMany()

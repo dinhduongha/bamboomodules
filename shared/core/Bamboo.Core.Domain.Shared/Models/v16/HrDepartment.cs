@@ -77,7 +77,7 @@ public partial class HrDepartment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("DepartmentId")]
+    // [One2many] [ForeignKey("DepartmentId")]
     [InverseProperty("Department")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

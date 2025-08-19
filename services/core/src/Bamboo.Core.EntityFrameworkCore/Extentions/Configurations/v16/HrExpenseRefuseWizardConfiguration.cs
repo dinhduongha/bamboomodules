@@ -59,7 +59,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .HasConstraintName("hr_expense_refuse_wizard_write_uid_fkey");
 
             // entity.HasMany(d => d.HrExpenseSheet).WithMany(p => p.HrExpenseRefuseWizard)
-            entity.HasMany(d => d.HrExpenseSheets).WithMany(p => p.HrExpenseRefuseWizards)
+            entity.HasMany(d => d.HrExpenseSheets).WithMany()
                 .UsingEntity<Dictionary<string, object>>(
                     "HrExpenseRefuseWizardHrExpenseSheetRel",
                     r => r.HasOne<HrExpenseSheet>().WithMany()

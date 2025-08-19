@@ -153,7 +153,7 @@ public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public Guid? OvertimeId { get; set; }
 
     // [One2many]
-    [ForeignKey("HolidayId")]
+    // [One2many] [ForeignKey("HolidayId")]
     [InverseProperty("Holiday")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

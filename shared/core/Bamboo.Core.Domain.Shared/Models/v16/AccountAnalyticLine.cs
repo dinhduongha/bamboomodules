@@ -210,12 +210,12 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual AccountMoveLine? MoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("MoAnalyticAccountLineId")]
+    // [One2many] [ForeignKey("MoAnalyticAccountLineId")]
     [InverseProperty("MoAnalyticAccountLine")]
     public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLine { get; set; }
 
     // [One2many]
-    [ForeignKey("WcAnalyticAccountLineId")]
+    // [One2many] [ForeignKey("WcAnalyticAccountLineId")]
     [InverseProperty("WcAnalyticAccountLine")]
     public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLine { get; set; }
 
@@ -260,7 +260,7 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual SaleOrderLine? SoLineNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountLineId")]
+    // [One2many] [ForeignKey("AnalyticAccountLineId")]
     [InverseProperty("AnalyticAccountLine")]
     public virtual ICollection<StockMove> StockMove { get; set; }
 

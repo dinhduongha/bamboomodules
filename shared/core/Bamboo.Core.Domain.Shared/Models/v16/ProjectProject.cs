@@ -166,7 +166,7 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual AccountAnalyticAccount? Account { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
+    // [One2many] [ForeignKey("ProjectId")]
     [InverseProperty("Project")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

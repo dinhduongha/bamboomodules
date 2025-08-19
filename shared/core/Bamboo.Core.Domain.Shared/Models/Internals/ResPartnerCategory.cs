@@ -48,7 +48,7 @@ public partial class ResPartnerCategory: FullAuditedAggregateRoot<Guid>, IEntity
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("PartnerCategoryId")]
+    // [One2many] [ForeignKey("PartnerCategoryId")]
     [InverseProperty("PartnerCategory")]
     public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
 

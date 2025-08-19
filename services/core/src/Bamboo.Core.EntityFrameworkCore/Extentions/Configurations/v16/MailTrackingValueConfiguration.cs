@@ -82,18 +82,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_tracking_value_create_uid_fkey");
 
-            // entity.HasOne(d => d.Currency).WithMany(p => p.MailTrackingValue)
-            entity.HasOne(d => d.Currency).WithMany()
-                .HasForeignKey(d => d.CurrencyId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("mail_tracking_value_currency_id_fkey");
+                // entity.HasOne(d => d.Currency).WithMany(p => p.MailTrackingValue)
+                entity.HasOne(d => d.Currency).WithMany()
+                    .HasForeignKey(d => d.CurrencyId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("mail_tracking_value_currency_id_fkey");
 
-            entity.HasOne(d => d.ModelField).WithMany(p => p.MailTrackingValue)
+            //entity.HasOne(d => d.ModelField).WithMany(p => p.MailTrackingValue)
+            entity.HasOne(d => d.ModelField).WithMany()
                 .HasForeignKey(d => d.FieldId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_tracking_value_field_id_fkey");
 
-            entity.HasOne(d => d.FieldNavigation).WithMany(p => p.MailTrackingValue)
+            //entity.HasOne(d => d.FieldNavigation).WithMany(p => p.MailTrackingValueNavigation)
+            entity.HasOne(d => d.FieldNavigation).WithMany()
                 .HasForeignKey(d => d.Field)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("mail_tracking_value_field_fkey");

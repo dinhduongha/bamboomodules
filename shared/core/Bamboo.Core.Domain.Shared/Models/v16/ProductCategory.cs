@@ -106,12 +106,12 @@ public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
     public string? PropertyStockAccountProductionCostId { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductCategId")]
+    // [One2many] [ForeignKey("ProductCategId")]
     [InverseProperty("ProductCateg")]
     public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicability { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductCategId")]
+    // [One2many] [ForeignKey("ProductCategId")]
     [InverseProperty("ProductCateg")]
     public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
 

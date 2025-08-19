@@ -60,7 +60,7 @@ public partial class UomUom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     public string? TimesheetWidget { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductUomId")]
+    // [One2many] [ForeignKey("ProductUomId")]
     [InverseProperty("ProductUom")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

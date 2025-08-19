@@ -216,7 +216,7 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public double? RemainingHours { get; set; }
 
     // [One2many]
-    [ForeignKey("SoLine")]
+    // [One2many] [ForeignKey("SoLine")]
     [InverseProperty("SoLineNavigation")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

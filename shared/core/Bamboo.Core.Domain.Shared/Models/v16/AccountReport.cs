@@ -50,8 +50,8 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public override Guid? LastModifierId { get; set; }
 
     // v16-Compat
-    //[Column("chart_template")]
-    //public string? ChartTemplate { get; set; }
+    [Column("chart_template")]
+    public string? ChartTemplateString { get; set; }
 
     [Column("availability_condition")]
     public string? AvailabilityCondition { get; set; }

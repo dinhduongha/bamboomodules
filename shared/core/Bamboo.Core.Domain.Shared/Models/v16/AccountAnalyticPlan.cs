@@ -83,12 +83,12 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountRootPlan { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticPlanId")]
+    // [One2many] [ForeignKey("AnalyticPlanId")]
     [InverseProperty("AnalyticPlan")]
     public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicability { get; set; }
 
     // [One2many]
-    [ForeignKey("PlanId")]
+    // [One2many] [ForeignKey("PlanId")]
     [InverseProperty("Plan")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

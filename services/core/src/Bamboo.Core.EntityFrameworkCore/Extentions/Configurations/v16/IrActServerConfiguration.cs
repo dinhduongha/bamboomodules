@@ -110,13 +110,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ir_act_server_crud_model_id_fkey");
 
-            entity.HasOne(d => d.LinkField).WithMany(p => p.IrActServerLinkField)
-                .HasForeignKey(d => d.LinkFieldId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("ir_act_server_link_field_id_fkey");
+                entity.HasOne(d => d.LinkField).WithMany(p => p.IrActServerLinkField)
+                    .HasForeignKey(d => d.LinkFieldId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("ir_act_server_link_field_id_fkey");
 
             // v16-Compat
-            entity.HasOne(d => d.LinkField).WithMany(p => p.IrActServer)
+            //entity.HasOne(d => d.LinkField).WithMany(p => p.IrActServer)
+            entity.HasOne(d => d.LinkField).WithMany(p => p.IrActServerLinkField)
                 .HasForeignKey(d => d.LinkFieldId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ir_act_server_link_field_id_fkey");

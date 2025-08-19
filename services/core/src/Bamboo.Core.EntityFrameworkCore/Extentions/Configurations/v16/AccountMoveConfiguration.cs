@@ -228,7 +228,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_debit_origin_id_fkey");
 
-            entity.HasOne(d => d.ExpenseSheet).WithMany(p => p.AccountMove)
+            //entity.HasOne(d => d.ExpenseSheet).WithMany(p => p.AccountMove)
+            entity.HasOne(d => d.ExpenseSheet).WithMany()
                 .HasForeignKey(d => d.ExpenseSheetId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_expense_sheet_id_fkey");
@@ -301,11 +302,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("account_move_preferred_payment_method_line_id_fkey");
 
-
-            entity.HasOne(d => d.Payment).WithMany(p => p.AccountMove)
-                .HasForeignKey(d => d.PaymentId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("account_move_payment_id_fkey");
+            // v16-Compat
+            // entity.HasOne(d => d.Payment).WithMany(p => p.AccountMovePayment)
+            //     .HasForeignKey(d => d.PaymentId)
+            //     .OnDelete(DeleteBehavior.SetNull)
+            //     .HasConstraintName("account_move_payment_id_fkey");
 
             entity.HasOne(d => d.ReversedEntry).WithMany(p => p.InverseReversedEntry)
                 .HasForeignKey(d => d.ReversedEntryId)

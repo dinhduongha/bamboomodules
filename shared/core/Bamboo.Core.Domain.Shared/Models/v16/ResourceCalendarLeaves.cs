@@ -63,7 +63,7 @@ public partial class ResourceCalendarLeaves: FullAuditedAggregateRoot<Guid>, IEn
     public Guid? WorkEntryTypeId { get; set; }
 
     // [One2many]
-    [ForeignKey("GlobalLeaveId")]
+    // [One2many] [ForeignKey("GlobalLeaveId")]
     [InverseProperty("GlobalLeave")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

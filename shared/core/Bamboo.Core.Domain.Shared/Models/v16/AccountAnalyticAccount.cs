@@ -71,22 +71,22 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [One2many]
-    [ForeignKey("XPlan2Id")]
+    // [One2many] [ForeignKey("XPlan2Id")]
     [InverseProperty("XPlan2")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2 { get; set; }
 
     // [One2many]
-    [ForeignKey("XPlan3Id")]
+    // [One2many] [ForeignKey("XPlan3Id")]
     [InverseProperty("XPlan3")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3 { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountAnalyticId")]
+    // [One2many] [ForeignKey("AccountAnalyticId")]
     [InverseProperty("AccountAnalytic")]
     public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountAnalyticId")]
+    // [One2many] [ForeignKey("AccountAnalyticId")]
     [InverseProperty("AccountAnalytic")]
     public virtual ICollection<AccountAssetCategory> AccountAssetCategory { get; set; }
 
@@ -101,22 +101,22 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<HrSalaryRule> HrSalaryRule { get; set; }
 
@@ -127,12 +127,12 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [One2many]
-    [ForeignKey("CostsHourAccountId")]
+    // [One2many] [ForeignKey("CostsHourAccountId")]
     [InverseProperty("CostsHourAccount")]
     public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 
@@ -147,27 +147,27 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public virtual AccountAnalyticPlan? Plan { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountId")]
+    // [One2many] [ForeignKey("AccountId")]
     [InverseProperty("Account")]
     public virtual ICollection<ProjectProject> ProjectProjectAccount { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many]
-    [ForeignKey("XPlan2Id")]
+    // [One2many] [ForeignKey("XPlan2Id")]
     [InverseProperty("XPlan2")]
     public virtual ICollection<ProjectProject> ProjectProjectXPlan2 { get; set; }
 
     // [One2many]
-    [ForeignKey("XPlan3Id")]
+    // [One2many] [ForeignKey("XPlan3Id")]
     [InverseProperty("XPlan3")]
     public virtual ICollection<ProjectProject> ProjectProjectXPlan3 { get; set; }
 
@@ -177,7 +177,7 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public virtual AccountAnalyticPlan? RootPlan { get; set; }
 
     // [One2many]
-    [ForeignKey("AnalyticAccountId")]
+    // [One2many] [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 

@@ -241,7 +241,7 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public decimal? AmountDelivery { get; set; }
 
     // [One2many]
-    [ForeignKey("OrderId")]
+    // [One2many] [ForeignKey("OrderId")]
     [InverseProperty("Order")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

@@ -100,7 +100,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .HasConstraintName("hr_contract_contract_type_id_fkey");
 
             // v16-Compat     
-            entity.HasOne(d => d.ContractType).WithMany(p => p.HrContract)
+            entity.HasOne(d => d.ContractType).WithMany(p => p.HrContractContractType)
                 .HasForeignKey(d => d.ContractTypeId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_contract_contract_type2_id_fkey");

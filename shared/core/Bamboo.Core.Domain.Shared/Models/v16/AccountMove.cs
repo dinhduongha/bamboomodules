@@ -280,7 +280,7 @@ public partial class AccountMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public string? PeppolMoveState { get; set; }
 
     // [One2many]
-    [ForeignKey("TimesheetInvoiceId")]
+    // [One2many] [ForeignKey("TimesheetInvoiceId")]
     [InverseProperty("TimesheetInvoice")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
@@ -374,7 +374,9 @@ public partial class AccountMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     // [InverseProperty("AccountMove")] //Many2one
     public virtual AccountFiscalPosition? FiscalPosition { get; set; }
 
+    // v16-Compat
     // [One2many]
+    [NotMapped] // [One2many]
     [ForeignKey("AccountMoveId")]
     [InverseProperty("AccountMove")]
     public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }

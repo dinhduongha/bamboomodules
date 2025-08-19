@@ -94,13 +94,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_template_ref_ir_act_window_fkey");
 
-            // entity.HasOne(d => d.User).WithMany(p => p.MailTemplateUser)
-            entity.HasOne(d => d.User).WithMany()
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("mail_template_user_id_fkey");
+                // entity.HasOne(d => d.User).WithMany(p => p.MailTemplateUser)
+                entity.HasOne(d => d.User).WithMany()
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("mail_template_user_id_fkey");
 
-            entity.HasOne(d => d.ReportTemplateNavigation).WithMany(p => p.MailTemplate)
+            //entity.HasOne(d => d.ReportTemplateNavigation).WithMany(p => p.MailTemplate)
+            entity.HasOne(d => d.ReportTemplateNavigation).WithMany()
                 .HasForeignKey(d => d.ReportTemplate)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("mail_template_report_template_fkey");

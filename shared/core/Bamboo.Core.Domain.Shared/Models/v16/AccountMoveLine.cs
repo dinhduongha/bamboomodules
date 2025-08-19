@@ -240,7 +240,7 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual AccountAccount? Account { get; set; }
 
     // [One2many]
-    [ForeignKey("MoveLineId")]
+    // [One2many] [ForeignKey("MoveLineId")]
     [InverseProperty("MoveLine")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 

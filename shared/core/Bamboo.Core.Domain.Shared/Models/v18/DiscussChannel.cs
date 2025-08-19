@@ -191,8 +191,9 @@ public partial class DiscussChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 
     // [Many2many] // Normal
+    [NotMapped] // [Many2many] // Normal
     // [ForeignKey("DiscussChannelId")] //Many2many
-    [InverseProperty("DiscussChannelNavigation")] //Many2many
+    // [InverseProperty("DiscussChannelNavigation")] //Many2many
     // [NotMapped] //Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

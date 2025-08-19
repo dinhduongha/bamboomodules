@@ -31,7 +31,8 @@ namespace Bamboo.Core.EntityFrameworkCore
             entity.Property(e => e.Active).HasColumnName("active");
             entity.Property(e => e.AvailabilityCondition).HasColumnName("availability_condition");
             entity.Property(e => e.ChartTemplateId).HasColumnName("chart_template_id");
-            entity.Property(e => e.ChartTemplate).HasColumnName("chart_template");
+            // v16-Compat
+            entity.Property(e => e.ChartTemplateString).HasColumnName("chart_template");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("now()")

@@ -56,6 +56,7 @@ public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [NotMapped] //One2many
     [ForeignKey("GroupId")]
     [InverseProperty("Group")]
     public virtual ICollection<AccountAccount> AccountAccount { get; set; }

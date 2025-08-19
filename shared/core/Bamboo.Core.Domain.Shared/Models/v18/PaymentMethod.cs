@@ -100,13 +100,13 @@ public partial class PaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2many] // Normal
     // [ForeignKey("PaymentMethodId")] //Many2many
-    [InverseProperty("PaymentMethod")] //Many2many
+    // [InverseProperty("PaymentMethod")] //Many2many
     // [NotMapped] //Many2many // Normal
     public virtual ICollection<ResCountry> ResCountry { get; set; }
 
     // [Many2many] // Normal
     // [ForeignKey("PaymentMethodId")] //Many2many
-    [InverseProperty("PaymentMethod")] //Many2many
+    // [InverseProperty("PaymentMethod")] //Many2many
     // [NotMapped] //Many2many // Normal
     public virtual ICollection<ResCurrency> ResCurrency { get; set; }
 }

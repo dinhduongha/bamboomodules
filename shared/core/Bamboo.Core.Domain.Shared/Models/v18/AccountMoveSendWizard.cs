@@ -90,8 +90,9 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [NotMapped] // [Many2many] // Normal
     // [ForeignKey("AccountMoveSendWizardId")] //Many2many
-    [InverseProperty("AccountMoveSendWizard")] //Many2many
+    // [InverseProperty("AccountMoveSendWizard")] //Many2many
     // [NotMapped] //Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

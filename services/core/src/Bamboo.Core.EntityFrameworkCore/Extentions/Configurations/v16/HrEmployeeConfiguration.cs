@@ -316,7 +316,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 .HasConstraintName("hr_employee_work_location_id_fkey");
  
            // v16-Compat
-            entity.HasOne(d => d.WorkLocation).WithMany(p => p.HrEmployee)
+            entity.HasOne(d => d.WorkLocation).WithMany(p => p.HrEmployeeWorkLocation)
                 .HasForeignKey(d => d.WorkLocationId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("hr_employee_work_location2_id_fkey");
