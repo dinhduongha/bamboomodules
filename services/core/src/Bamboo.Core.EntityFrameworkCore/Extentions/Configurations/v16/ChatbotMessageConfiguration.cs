@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Bamboo.Core.Models;
+// Cần thêm using đến namespace chứa entity của bạn ở đây
+// Ví dụ: using YourProject.Entities;
+
+namespace Bamboo.Core.EntityFrameworkCore
+{
+    public static partial class ModelBuilderExtensions
+    {
+        public static void ConfigureChatbotMessage(this ModelBuilder modelBuilder)
+        {
+        modelBuilder.Entity<ChatbotMessage>(entity =>
+            {
+            entity.HasKey(e => e.Id).HasName("chatbot_message_pkey");
+
+            entity.ToTable("chatbot_message");
+
+            entity.HasIndex(e => e.TenantId);
+
+            entity.HasIndex(e => e.OrganizationUnitId);
+
+            entity.HasIndex(e => e.MailMessageId, "chatbot_message__unique_mail_message_id").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+
+            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+            entity.Property(e => e.CreationTime)
+                .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DiscussChannelId).HasColumnName("discuss_channel_id");
+            entity.Property(e => e.MailChannelId).HasColumnName("mail_channel_id");
+            entity.Property(e => e.MailMessageId).HasColumnName("mail_message_id");
+            entity.Property(e => e.ScriptStepId).HasColumnName("script_step_id");
+            entity.Property(e => e.UserRawAnswer).HasColumnName("user_raw_answer");
+            entity.Property(e => e.UserScriptAnswerId).HasColumnName("user_script_answer_id");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            // entity.HasOne(d => d.CreateU).WithMany(p => p.ChatbotMessageCreateU)
+            entity.HasOne(d => d.CreateU).WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("chatbot_message_create_uid_fkey");
+
+            entity.HasOne(d => d.DiscussChannel).WithMany(p => p.ChatbotMessage)
+                .HasForeignKey(d => d.DiscussChannelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("chatbot_message_discuss_channel_id_fkey");
+
+            entity.HasOne(d => d.MailChannel).WithMany(p => p.ChatbotMessage)
+                .HasForeignKey(d => d.MailChannelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("chatbot_message_mail_channel_id_fkey");
+
+            entity.HasOne(d => d.MailMessage).WithOne(p => p.ChatbotMessage)
+                .HasForeignKey<ChatbotMessage>(d => d.MailMessageId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("chatbot_message_mail_message_id_fkey");
+
+            entity.HasOne(d => d.ScriptStep).WithMany(p => p.ChatbotMessage)
+                .HasForeignKey(d => d.ScriptStepId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("chatbot_message_script_step_id_fkey");
+
+            entity.HasOne(d => d.UserScriptAnswer).WithMany(p => p.ChatbotMessage)
+                .HasForeignKey(d => d.UserScriptAnswerId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("chatbot_message_user_script_answer_id_fkey");
+
+            // entity.HasOne(d => d.WriteU).WithMany(p => p.ChatbotMessageWriteU)
+            entity.HasOne(d => d.WriteU).WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("chatbot_message_write_uid_fkey");
+            });
+        }
+    }
+}

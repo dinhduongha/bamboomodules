@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_reveal_view")]
-//[Index("CreateDate", Name = "crm_reveal_view_create_date_index")]
+//[Index("CreateDate", Name = "crm_reveal_view__create_date_index")]
+//[Index("RevealState", Name = "crm_reveal_view__reveal_state_index")]
 //[Index("RevealRuleId", "RevealIp", Name = "crm_reveal_view_ip_rule_id", IsUnique = true)]
-//[Index("RevealState", Name = "crm_reveal_view_reveal_state_index")]
 //[Index("RevealState", "CreateDate", Name = "crm_reveal_view_state_create_date")]
 public partial class CrmRevealView: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

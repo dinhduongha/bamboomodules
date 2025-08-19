@@ -48,8 +48,8 @@ public partial class SaleMassCancelOrders: FullAuditedEntity<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("SaleMassCancelOrdersId")] //Many2many
-    // [InverseProperty("SaleMassCancelOrders")] //Many2many
+    [InverseProperty("SaleMassCancelOrders")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

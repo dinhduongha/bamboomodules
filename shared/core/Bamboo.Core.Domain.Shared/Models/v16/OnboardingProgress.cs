@@ -62,12 +62,18 @@ public partial class OnboardingProgress: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual OnboardingOnboarding? Onboarding { get; set; }
 
     // [One2many]
-    [ForeignKey("ProgressId")]
-    [InverseProperty("Progress")]
-    public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
+    //[ForeignKey("ProgressId")]
+    //[InverseProperty("Progress")]
+    //public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("OnboardingProgressWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    //[NotMapped] //Many2many // Normal
+    [ForeignKey("OnboardingProgressId")] //Many2many
+    [InverseProperty("OnboardingProgress")] //Many2many
+    public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 }

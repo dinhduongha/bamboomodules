@@ -40,10 +40,6 @@ public partial class AccountFiscalPosition: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
-
     [Column("zip_from")]
     public string? ZipFrom { get; set; }
 
@@ -52,6 +48,10 @@ public partial class AccountFiscalPosition: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("foreign_vat")]
     public string? ForeignVat { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
 
     [JsonField]
     [Column("note", TypeName = "jsonb")]
@@ -115,6 +115,16 @@ public partial class AccountFiscalPosition: FullAuditedAggregateRoot<Guid>, IEnt
     // [One2many]
     [ForeignKey("DefaultFiscalPositionId")]
     [InverseProperty("DefaultFiscalPosition")]
+    public virtual ICollection<PosConfig> PosConfigDefaultFiscalPosition { get; set; }
+
+    // [One2many]
+    [ForeignKey("TakeawayFpId")]
+    [InverseProperty("TakeawayFp")]
+    public virtual ICollection<PosConfig> PosConfigTakeawayFp { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultFiscalPositionId")]
+    [InverseProperty("DefaultFiscalPosition")]
     public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 
     // [One2many]
@@ -143,16 +153,16 @@ public partial class AccountFiscalPosition: FullAuditedAggregateRoot<Guid>, IEnt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountFiscalPositionId")]
     // [InverseProperty("AccountFiscalPosition")]
-    // public virtual ICollection<PosConfig> PosConfig { get; set; }
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountFiscalPositionId")]
     // [InverseProperty("AccountFiscalPosition")]
-    // public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
+    public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

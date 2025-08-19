@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("forum_post_vote")]
-//[Index("CreateDate", Name = "forum_post_vote_create_date_index")]
+//[Index("CreateDate", Name = "forum_post_vote__create_date_index")]
 //[Index("PostId", "UserId", Name = "forum_post_vote_vote_uniq", IsUnique = true)]
 public partial class ForumPostVote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

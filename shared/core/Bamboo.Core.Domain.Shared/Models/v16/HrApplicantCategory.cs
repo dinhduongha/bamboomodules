@@ -55,8 +55,14 @@ public partial class HrApplicantCategory: FullAuditedEntity<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrApplicantCategoryId")]
     // [InverseProperty("HrApplicantCategory")]
-    // public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrApplicantCategoryId")]
+    // [InverseProperty("HrApplicantCategory")]
+    public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 }

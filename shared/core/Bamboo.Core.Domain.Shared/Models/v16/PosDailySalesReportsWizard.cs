@@ -40,6 +40,9 @@ public partial class PosDailySalesReportsWizard: FullAuditedEntity<Guid>, IEntit
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("add_report_per_employee")]
+    public bool? AddReportPerEmployee { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("PosDailySalesReportsWizardCreateU")] //Many2one

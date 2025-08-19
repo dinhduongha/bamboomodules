@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_expense")]
-//[Index("State", Name = "hr_expense_state_index")]
+//[Index("SheetId", Name = "hr_expense__sheet_id_index")]
+//[Index("State", Name = "hr_expense__state_index")]
 public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -38,14 +39,17 @@ public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
 
+    [Column("sheet_id")]
+    public Guid? SheetId { get; set; }
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
+    [Column("vendor_id")]
+    public Guid? VendorId { get; set; }
+
     [Column("account_id")]
     public Guid? AccountId { get; set; }
-
-    [Column("sheet_id")]
-    public Guid? SheetId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -56,11 +60,11 @@ public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("payment_mode")]
-    public string? PaymentMode { get; set; }
-
     [Column("state")]
     public string? State { get; set; }
+
+    [Column("payment_mode")]
+    public string? PaymentMode { get; set; }
 
     [Column("reference")]
     public string? Reference { get; set; }
@@ -84,6 +88,18 @@ public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("quantity")]
     public decimal? Quantity { get; set; }
 
+    [Column("tax_amount_currency")]
+    public decimal? TaxAmountCurrency { get; set; }
+
+    [Column("tax_amount")]
+    public decimal? TaxAmount { get; set; }
+
+    [Column("total_amount_currency")]
+    public decimal? TotalAmountCurrency { get; set; }
+
+    [Column("untaxed_amount_currency")]
+    public decimal? UntaxedAmountCurrency { get; set; }
+
     [Column("amount_tax")]
     public decimal? AmountTax { get; set; }
 
@@ -101,6 +117,9 @@ public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("is_refused")]
     public bool? IsRefused { get; set; }
+
+    [Column("price_unit")]
+    public decimal? PriceUnit { get; set; }
 
     [Column("sample")]
     public bool? Sample { get; set; }
@@ -185,21 +204,26 @@ public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public virtual HrExpenseSheet? Sheet { get; set; }
 
     // [Many2one]
+    [ForeignKey("VendorId")]
+    // [InverseProperty("HrExpense")] //Many2one
+    public virtual ResPartner? Vendor { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("HrExpenseWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrExpenseId")]
     // [InverseProperty("HrExpense")]
-    // public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicate { get; set; }
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicate { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrExpenseId")]
     // [InverseProperty("HrExpense")]
-    // public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

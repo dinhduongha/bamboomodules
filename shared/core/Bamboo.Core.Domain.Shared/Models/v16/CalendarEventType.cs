@@ -55,8 +55,8 @@ public partial class CalendarEventType: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TypeId")]
     // [InverseProperty("Type")]
-    // public virtual ICollection<CalendarEvent> Event { get; set; }
+    public virtual ICollection<CalendarEvent> Event { get; set; }
 }

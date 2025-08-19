@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_department")]
-//[Index("CompanyId", Name = "hr_department_company_id_index")]
-//[Index("ParentId", Name = "hr_department_parent_id_index")]
-//[Index("ParentPath", Name = "hr_department_parent_path_index")]
+//[Index("CompanyId", Name = "hr_department__company_id_index")]
+//[Index("ParentId", Name = "hr_department__parent_id_index")]
+//[Index("ParentPath", Name = "hr_department__parent_path_index")]
 public partial class HrDepartment: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -49,14 +49,20 @@ public partial class HrDepartment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
-
     [Column("complete_name")]
     public string? CompleteName { get; set; }
 
     [Column("parent_path")]
     public string? ParentPath { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
+
 
     [Column("note")]
     public string? Note { get; set; }
@@ -128,6 +134,21 @@ public partial class HrDepartment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // [One2many]
     [ForeignKey("DepartmentId")]
     [InverseProperty("Department")]
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("DepartmentId")]
+    [InverseProperty("Department")]
+    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("DepartmentId")]
+    [InverseProperty("Department")]
+    public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("DepartmentId")]
+    [InverseProperty("Department")]
     public virtual ICollection<HrPlan> HrPlan { get; set; }
 
     // [One2many]
@@ -144,6 +165,11 @@ public partial class HrDepartment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("ParentId")]
     [InverseProperty("Parent")]
     public virtual ICollection<HrDepartment> InverseParent { get; set; }
+
+    // [One2many]
+    [ForeignKey("DepartmentId")]
+    [InverseProperty("Department")]
+    public virtual ICollection<MailActivityPlan> MailActivityPlan { get; set; }
 
     // [One2many]
     [ForeignKey("DepartmentId")]
@@ -176,14 +202,26 @@ public partial class HrDepartment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrDepartmentId")]
     // [InverseProperty("HrDepartment")]
-    // public virtual ICollection<HrLeaveStressDay> HrLeaveStressDay { get; set; }
+    public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrDepartmentId")]
     // [InverseProperty("HrDepartment")]
-    // public virtual ICollection<MailChannel> MailChannel { get; set; }
+    public virtual ICollection<HrLeaveMandatoryDay> HrLeaveMandatoryDay { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrDepartmentId")]
+    // [InverseProperty("HrDepartment")]
+    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDay { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrDepartmentId")]
+    // [InverseProperty("HrDepartment")]
+    public virtual ICollection<MailChannel> MailChannel { get; set; }
 }

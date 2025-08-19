@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_meeting_room")]
-//[Index("IsPublished", Name = "event_meeting_room_is_published_index")]
+//[Index("IsPublished", Name = "event_meeting_room__is_published_index")]
 public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

@@ -66,28 +66,38 @@ public partial class MailingList: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [InverseProperty("DestList")]
     public virtual ICollection<MailingListMerge> MailingListMergeNavigation { get; set; }
 
+    // [One2many]
+    [ForeignKey("ListId")]
+    [InverseProperty("List")]
+    public virtual ICollection<MailingSubscription> MailingSubscription { get; set; }
+
+    // [One2many]
+    [ForeignKey("NewsletterId")]
+    [InverseProperty("Newsletter")]
+    public virtual ICollection<Website> Website { get; set; }
+
     // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("MailingListWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingListId")]
     // [InverseProperty("MailingList")]
-    // public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
+    public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingListId")]
     // [InverseProperty("MailingList")]
-    // public virtual ICollection<MailingContactImport> MailingContactImport { get; set; }
+    public virtual ICollection<MailingContactImport> MailingContactImport { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingListId")]
     // [InverseProperty("MailingList")]
-    // public virtual ICollection<MailingListMerge> MailingListMerge { get; set; }
+    public virtual ICollection<MailingListMerge> MailingListMerge { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

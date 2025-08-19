@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_share_wizard")]
-public partial class ProjectShareWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectShareWizard: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -56,6 +56,11 @@ public partial class ProjectShareWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("CreatorId")]
     // [InverseProperty("ProjectShareWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentWizardId")]
+    [InverseProperty("ParentWizard")]
+    public virtual ICollection<ProjectShareCollaboratorWizard> ProjectShareCollaboratorWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

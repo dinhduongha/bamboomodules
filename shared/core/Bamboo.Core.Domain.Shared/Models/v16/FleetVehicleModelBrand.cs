@@ -37,6 +37,9 @@ public partial class FleetVehicleModelBrand: FullAuditedAggregateRoot<Guid>, IEn
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

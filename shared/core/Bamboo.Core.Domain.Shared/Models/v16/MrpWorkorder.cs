@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_workorder")]
-//[Index("State", Name = "mrp_workorder_state_index")]
+//[Index("ProductionId", Name = "mrp_workorder__production_id_index")]
+//[Index("State", Name = "mrp_workorder__state_index")]
 public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -25,6 +26,9 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
     
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -55,6 +59,9 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("name")]
     public string? Name { get; set; }
+
+    [Column("barcode")]
+    public string? Barcode { get; set; }
 
     [Column("production_availability")]
     public string? ProductionAvailability { get; set; }
@@ -181,6 +188,18 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("LastModifierId")]
     // [InverseProperty("MrpWorkorderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MrpWorkorderId")] //Many2many
+    // [InverseProperty("MrpWorkorder")] //Many2many
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MrpWorkorderId")] //Many2many
+    // [InverseProperty("MrpWorkorderNavigation")] //Many2many
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineNavigation { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

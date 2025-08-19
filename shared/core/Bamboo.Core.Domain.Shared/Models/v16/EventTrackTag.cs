@@ -66,20 +66,20 @@ public partial class EventTrackTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTrackTagId")]
     // [InverseProperty("EventTrackTag")]
-    // public virtual ICollection<EventEvent> EventEvent { get; set; }
+    public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTrackTagId")]
     // [InverseProperty("EventTrackTagNavigation")]
-    // public virtual ICollection<EventEvent> EventEventNavigation { get; set; }
+    public virtual ICollection<EventEvent> EventEventNavigation { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTrackTagId")]
     // [InverseProperty("EventTrackTag")]
-    // public virtual ICollection<EventTrack> EventTrack { get; set; }
+    public virtual ICollection<EventTrack> EventTrack { get; set; }
 }

@@ -71,8 +71,8 @@ public partial class ChatbotScriptAnswer: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ChatbotScriptAnswerId")]
     // [InverseProperty("ChatbotScriptAnswerNavigation")]
-    // public virtual ICollection<ChatbotScriptStep> ChatbotScriptStep { get; set; }
+    public virtual ICollection<ChatbotScriptStep> ChatbotScriptStep { get; set; }
 }

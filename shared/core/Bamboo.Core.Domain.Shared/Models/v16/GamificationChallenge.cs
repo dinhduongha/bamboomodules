@@ -141,7 +141,12 @@ public partial class GamificationChallenge: FullAuditedAggregateRoot<Guid>, IEnt
     // [Many2one]
     [ForeignKey("ReportMessageGroupId")]
     // [InverseProperty("GamificationChallenge")] //Many2one
-    public virtual MailChannel? ReportMessageGroup { get; set; }
+    public virtual DiscussChannel? ReportMessageGroup { get; set; }
+
+    // // [Many2one]
+    // [ForeignKey("ReportMessageGroupId")]
+    // // [InverseProperty("GamificationChallenge")] //Many2one
+    // public virtual MailChannel? ReportMessageGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportTemplateId")]

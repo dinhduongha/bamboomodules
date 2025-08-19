@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_page")]
-//[Index("IsPublished", Name = "website_page_is_published_index")]
-//[Index("WebsiteId", Name = "website_page_website_id_index")]
+//[Index("IsPublished", Name = "website_page__is_published_index")]
+//[Index("WebsiteId", Name = "website_page__website_id_index")]
 public partial class WebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -48,11 +48,17 @@ public partial class WebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("header_color")]
     public string? HeaderColor { get; set; }
 
+    [Column("header_text_color")]
+    public string? HeaderTextColor { get; set; }
+
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
     [Column("website_indexed")]
     public bool? WebsiteIndexed { get; set; }
+
+    [Column("is_new_page_template")]
+    public bool? IsNewPageTemplate { get; set; }
 
     [Column("header_overlay")]
     public bool? HeaderOverlay { get; set; }
@@ -96,6 +102,11 @@ public partial class WebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("PageId")]
     [InverseProperty("Page")]
     public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
+
+    // [One2many]
+    [ForeignKey("TargetModelId")]
+    [InverseProperty("TargetModel")]
+    public virtual ICollection<WebsitePageProperties> WebsitePageProperties { get; set; }
 
     // [One2many]
     [ForeignKey("PageId")]

@@ -64,6 +64,9 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("release_campany_car")]
     public bool? ReleaseCampanyCar { get; set; }
 
+    [Column("unassign_equipment")]
+    public bool? UnassignEquipment { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("HrDepartureWizardCreateU")] //Many2one

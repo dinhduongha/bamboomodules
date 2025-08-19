@@ -153,11 +153,17 @@ public partial class LoyaltyReward: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("LoyaltyRewardId")] //Many2many
     // [InverseProperty("LoyaltyReward")] //Many2many
+    public virtual ICollection<AccountTax> AccountTax { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("LoyaltyRewardId")] //Many2many
+    // [InverseProperty("LoyaltyReward")] //Many2many
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("LoyaltyRewardId")]
     // [InverseProperty("LoyaltyReward")]
-    // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

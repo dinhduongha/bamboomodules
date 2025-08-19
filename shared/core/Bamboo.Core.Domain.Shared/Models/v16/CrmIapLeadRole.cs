@@ -69,14 +69,14 @@ public partial class CrmIapLeadRole: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmIapLeadRoleId")]
     // [InverseProperty("CrmIapLeadRole")]
-    // public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestNavigation { get; set; }
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestNavigation { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmIapLeadRoleId")]
     // [InverseProperty("CrmIapLeadRole")]
-    // public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
+    public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 }

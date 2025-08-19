@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_group")]
-//[Index("ParentId", Name = "account_group_parent_id_index")]
+//[Index("ParentId", Name = "account_group__parent_id_index")]
 //[Index("ParentPath", Name = "account_group_parent_path_index")]
 public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -39,15 +39,15 @@ public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
-
     [Column("code_prefix_start")]
     public string? CodePrefixStart { get; set; }
 
     [Column("code_prefix_end")]
     public string? CodePrefixEnd { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

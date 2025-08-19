@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_tracking_value")]
-//[Index("Field", Name = "mail_tracking_value_field_index")]
-//[Index("MailMessageId", Name = "mail_tracking_value_mail_message_id_index")]
+//[Index("Field", Name = "mail_tracking_value__field_index")]
+//[Index("MailMessageId", Name = "mail_tracking_value__mail_message_id_index")]
 public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -29,6 +29,9 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("field")]
     public Guid? Field { get; set; }
+
+    [Column("field_id")]
+    public Guid? FieldId { get; set; }
 
     [Column("old_value_integer")]
     public long? OldValueInteger { get; set; }
@@ -62,6 +65,10 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("new_value_char")]
     public string? NewValueChar { get; set; }
+
+    [JsonField]
+    [Column("field_info", TypeName = "jsonb")]
+    public string? FieldInfo { get; set; }
 
     [Column("old_value_text")]
     public string? OldValueText { get; set; }
@@ -107,6 +114,11 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [ForeignKey("Field")]
     // [InverseProperty("MailTrackingValue")] //Many2one
     public virtual IrModelFields? FieldNavigation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("FieldId")]
+    // [InverseProperty("MailTrackingValue")] //Many2one
+    public virtual IrModelFields? ModelField { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]

@@ -37,6 +37,12 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("page_id")]
     public Guid? PageId { get; set; }
 
+    [Column("scale_min")]
+    public long? ScaleMin { get; set; }
+
+    [Column("scale_max")]
+    public long? ScaleMax { get; set; }
+
     [Column("time_limit")]
     public long? TimeLimit { get; set; }
 
@@ -86,6 +92,18 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public string? QuestionPlaceholder { get; set; }
 
     [JsonField]
+    [Column("scale_min_label", TypeName = "jsonb")]
+    public string? ScaleMinLabel { get; set; }
+
+    [JsonField]
+    [Column("scale_mid_label", TypeName = "jsonb")]
+    public string? ScaleMidLabel { get; set; }
+
+    [JsonField]
+    [Column("scale_max_label", TypeName = "jsonb")]
+    public string? ScaleMaxLabel { get; set; }
+
+    [JsonField]
     [Column("comments_message", TypeName = "jsonb")]
     public string? CommentsMessage { get; set; }
 
@@ -111,6 +129,9 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("is_time_limited")]
     public bool? IsTimeLimited { get; set; }
+
+    [Column("is_time_customized")]
+    public bool? IsTimeCustomized { get; set; }
 
     [Column("comments_allowed")]
     public bool? CommentsAllowed { get; set; }
@@ -222,9 +243,15 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("SurveyQuestionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SurveyQuestionId")] //Many2many
+    // [InverseProperty("SurveyQuestion")] //Many2many
+    public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswer { get; set; }
+
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("SurveyQuestionId")]
     // [InverseProperty("SurveyQuestion")]
-    // public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
+    public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 }

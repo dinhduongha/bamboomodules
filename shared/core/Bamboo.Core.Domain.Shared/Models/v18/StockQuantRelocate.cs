@@ -67,8 +67,8 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("StockQuantRelocateId")] //Many2many
-    // [InverseProperty("StockQuantRelocate")] //Many2many
+    [InverseProperty("StockQuantRelocate")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 }

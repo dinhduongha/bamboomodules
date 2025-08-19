@@ -47,6 +47,9 @@ public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("opt_out_reason_id")]
+    public Guid? OptOutReasonId { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("MailBlacklistCreateU")] //Many2one
@@ -56,6 +59,11 @@ public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("MessageMainAttachmentId")]
     // [InverseProperty("MailBlacklist")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
+
+    // [Many2one]
+    [ForeignKey("OptOutReasonId")]
+    // [InverseProperty("MailBlacklist")] //Many2one
+    public virtual MailingSubscriptionOptout? OptOutReason { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

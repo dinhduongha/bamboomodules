@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_attribute_value")]
-//[Index("AttributeId", Name = "product_attribute_value_attribute_id_index")]
-//[Index("Sequence", Name = "product_attribute_value_sequence_index")]
+//[Index("AttributeId", Name = "product_attribute_value__attribute_id_index")]
+//[Index("Sequence", Name = "product_attribute_value__sequence_index")]
 //[Index("Name", "AttributeId", Name = "product_attribute_value_value_company_uniq", IsUnique = true)]
 public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -53,11 +53,17 @@ public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("is_custom")]
     public bool? IsCustom { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("default_extra_price")]
+    public double? DefaultExtraPrice { get; set; }
 
     // [Many2one]
     [ForeignKey("AttributeId")]
@@ -73,6 +79,11 @@ public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEnt
     [ForeignKey("ProductAttributeValueId")]
     [InverseProperty("ProductAttributeValue")]
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
+
+    // [One2many]
+    [ForeignKey("AttributeValueId")]
+    [InverseProperty("AttributeValue")]
+    public virtual ICollection<UpdateProductAttributeValue> UpdateProductAttributeValue { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

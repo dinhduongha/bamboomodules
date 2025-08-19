@@ -94,7 +94,7 @@ namespace Bamboo.Core.Application.Services.Commons
                 var modelId = await GetModelIdAsync(modelName);
 
                 rules = (await _ruleRepository.GetQueryableAsync())
-                    .Where(r => r.ModelId == modelId && (r.Active == true) && r.Groups.Any(g => userGroups.Contains(g.Id)))
+                    .Where(r => r.ModelId == modelId && (r.Active == true) && r.Group.Any(g => userGroups.Contains(g.Id)))
                     .ToList();
 
                 _memoryCache.Set(cacheKey, rules, TimeSpan.FromMinutes(10));

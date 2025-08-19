@@ -34,6 +34,9 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("partner_bank_id")]
     public Guid? PartnerBankId { get; set; }
 
+    [Column("custom_user_currency_id")]
+    public Guid? CustomUserCurrencyId { get; set; }
+
     [Column("source_currency_id")]
     public Guid? SourceCurrencyId { get; set; }
 
@@ -55,6 +58,9 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [Column("communication")]
     public string? Communication { get; set; }
 
+    [Column("installments_mode")]
+    public string? InstallmentsMode { get; set; }
+
     [Column("payment_type")]
     public string? PaymentType { get; set; }
 
@@ -72,6 +78,9 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("amount")]
     public decimal? Amount { get; set; }
+
+    [Column("custom_user_amount")]
+    public decimal? CustomUserAmount { get; set; }
 
     [Column("source_amount")]
     public decimal? SourceAmount { get; set; }
@@ -111,6 +120,11 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("CurrencyId")]
     // [InverseProperty("AccountPaymentRegisterCurrency")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CustomUserCurrencyId")]
+    // [InverseProperty("AccountPaymentRegisterCustomUserCurrency")] //Many2one
+    public virtual ResCurrency? CustomUserCurrency { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]

@@ -84,8 +84,8 @@ public partial class HrPayrollStructure: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("StructId")] //Many2many
-    // [InverseProperty("Struct")] //Many2many
+    [InverseProperty("Struct")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrSalaryRule> Rule { get; set; }
 }

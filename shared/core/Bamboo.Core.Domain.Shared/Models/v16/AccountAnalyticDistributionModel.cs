@@ -25,6 +25,9 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 

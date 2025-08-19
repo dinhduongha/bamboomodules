@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("resource_calendar_attendance")]
-//[Index("Dayofweek", Name = "resource_calendar_attendance_dayofweek_index")]
-//[Index("HourFrom", Name = "resource_calendar_attendance_hour_from_index")]
+//[Index("Dayofweek", Name = "resource_calendar_attendance__dayofweek_index")]
+//[Index("HourFrom", Name = "resource_calendar_attendance__hour_from_index")]
 public partial class ResourceCalendarAttendance: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -74,6 +74,9 @@ public partial class ResourceCalendarAttendance: FullAuditedEntity<Guid>, IEntit
 
     [Column("hour_to")]
     public double? HourTo { get; set; }
+
+    [Column("duration_days")]
+    public double? DurationDays { get; set; }
 
     [Column("work_entry_type_id")]
     public Guid? WorkEntryTypeId { get; set; }

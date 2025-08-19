@@ -81,7 +81,7 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudited
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
-    // [ForeignKey("RuleGroupId")] //Many2many
-    // [InverseProperty("RuleGroup")] //Many2many
-    public virtual ICollection<ResGroups> Groups { get; set; }
+    [ForeignKey("RuleGroupId")] //Many2many
+    [InverseProperty("RuleGroup")] //Many2many
+    public virtual ICollection<ResGroups> Group { get; set; }
 }

@@ -48,8 +48,8 @@ public partial class ProjectProjectStageDeleteWizard: FullAuditedEntity<Guid>, I
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("ProjectProjectStageDeleteWizardId")] //Many2many
-    // [InverseProperty("ProjectProjectStageDeleteWizard")] //Many2many
+    [InverseProperty("ProjectProjectStageDeleteWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<ProjectProjectStage> ProjectProjectStage { get; set; }
 }

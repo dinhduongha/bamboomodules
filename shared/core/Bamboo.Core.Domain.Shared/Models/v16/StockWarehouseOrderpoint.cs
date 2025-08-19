@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_warehouse_orderpoint")]
-//[Index("CompanyId", Name = "stock_warehouse_orderpoint_company_id_index")]
-//[Index("LocationId", Name = "stock_warehouse_orderpoint_location_id_index")]
+//[Index("CompanyId", Name = "stock_warehouse_orderpoint__company_id_index")]
+//[Index("LocationId", Name = "stock_warehouse_orderpoint__location_id_index")]
 //[Index("ProductId", "LocationId", "CompanyId", Name = "stock_warehouse_orderpoint_product_location_check", IsUnique = true)]
 //[Index("WarehouseId", Name = "stock_warehouse_orderpoint_warehouse_id_index")]
 public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
@@ -74,6 +74,9 @@ public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, I
     [Column("qty_to_order")]
     public decimal? QtyToOrder { get; set; }
 
+    [Column("qty_to_order_manual")]
+    public decimal? QtyToOrderManual { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -88,6 +91,9 @@ public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, I
 
     [Column("vendor_id")]
     public Guid? VendorId { get; set; }
+
+    [Column("product_supplier_id")]
+    public Guid? ProductSupplierId { get; set; }
 
     [Column("purchase_visibility_days")]
     public double? PurchaseVisibilityDays { get; set; }
@@ -138,6 +144,11 @@ public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, I
     // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
     public virtual ProductCategory? ProductCategory { get; set; }
 
+    // [Many2one]
+    [ForeignKey("ProductSupplierId")]
+    // [InverseProperty("StockWarehouseOrderpointProductSupplier")] //Many2one
+    public virtual ResPartner? ProductSupplier { get; set; }
+
     // [One2many]
     [ForeignKey("OrderpointId")]
     [InverseProperty("Orderpoint")]
@@ -166,6 +177,7 @@ public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, I
     // [Many2one]
     [ForeignKey("VendorId")]
     // [InverseProperty("StockWarehouseOrderpoint")] //Many2one
+    // [InverseProperty("StockWarehouseOrderpointVendor")] //Many2one
     public virtual ResPartner? Vendor { get; set; }
 
     // [Many2one]
@@ -179,8 +191,8 @@ public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, I
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockWarehouseOrderpointId")]
     // [InverseProperty("StockWarehouseOrderpoint")]
-    // public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnooze { get; set; }
+    public virtual ICollection<StockOrderpointSnooze> StockOrderpointSnooze { get; set; }
 }

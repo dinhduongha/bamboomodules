@@ -12,8 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_project")]
-//[Index("Date", Name = "project_project_date_index")]
-//[Index("StageId", Name = "project_project_stage_id_index")]
+//[Index("AccountId", Name = "project_project__account_id_index")]
+//[Index("Date", Name = "project_project__date_index")]
+//[Index("StageId", Name = "project_project__stage_id_index")]
 public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -26,6 +27,9 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
     
+
+    [Column("account_id")]
+    public Guid? AccountId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -129,8 +133,17 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("x_plan2_id")]
+    public Guid? XPlan2Id { get; set; }
+
+    [Column("x_plan3_id")]
+    public Guid? XPlan3Id { get; set; }
+
     [Column("sale_line_id")]
     public Guid? SaleLineId { get; set; }
+
+    [Column("reinvoiced_sale_order_id")]
+    public Guid? ReinvoicedSaleOrderId { get; set; }
 
     [Column("allow_billable")]
     public bool? AllowBillable { get; set; }
@@ -143,6 +156,14 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("timesheet_product_id")]
     public Guid? TimesheetProductId { get; set; }
+
+    [Column("billing_type")]
+    public string? BillingType { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AccountId")]
+    // [InverseProperty("ProjectProjectAccount")] //Many2one
+    public virtual AccountAnalyticAccount? Account { get; set; }
 
     // [One2many]
     [ForeignKey("ProjectId")]
@@ -184,6 +205,16 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("ProjectProject")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProjectId")]
+    [InverseProperty("Project")]
+    public virtual ICollection<MrpBom> MrpBom { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProjectId")]
+    [InverseProperty("Project")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
     // [Many2one]
     [ForeignKey("PartnerId")]
     // [InverseProperty("ProjectProject")] //Many2one
@@ -222,12 +253,27 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [One2many]
     [ForeignKey("ProjectId")]
     [InverseProperty("Project")]
+    public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProjectId")]
+    [InverseProperty("Project")]
     public virtual ICollection<ProjectTask> ProjectTaskProject { get; set; }
 
     // [One2many]
     [ForeignKey("ProjectId")]
     [InverseProperty("Project")]
     public virtual ICollection<ProjectUpdate> ProjectUpdate { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProjectId")]
+    [InverseProperty("Project")]
+    public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ReinvoicedSaleOrderId")]
+    // [InverseProperty("ProjectProject")] //Many2one
+    public virtual SaleOrder? ReinvoicedSaleOrder { get; set; }
 
     // [One2many]
     [ForeignKey("InternalProjectId")]
@@ -254,6 +300,11 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("ProjectProject")] //Many2one
     public virtual ProjectProjectStage? Stage { get; set; }
 
+    // [One2many]
+    [ForeignKey("ProjectId")]
+    [InverseProperty("Project")]
+    public virtual ICollection<StockPicking> StockPicking { get; set; }
+
     // [Many2one]
     [ForeignKey("TimesheetProductId")]
     // [InverseProperty("ProjectProject")] //Many2one
@@ -269,6 +320,16 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("ProjectProjectWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
+    // [Many2one]
+    [ForeignKey("XPlan2Id")]
+    // [InverseProperty("ProjectProjectXPlan2")] //Many2one
+    public virtual AccountAnalyticAccount? XPlan2 { get; set; }
+
+    // [Many2one]
+    [ForeignKey("XPlan3Id")]
+    // [InverseProperty("ProjectProjectXPlan3")] //Many2one
+    public virtual AccountAnalyticAccount? XPlan3 { get; set; }
+
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("ProjectProjectId")] //Many2many
@@ -276,16 +337,22 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<ProjectTags> ProjectTags { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProjectProjectId")]
     // [InverseProperty("ProjectProject")]
-    // public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProjectId")] //Many2many
+    // [InverseProperty("Project")] //Many2many
+    public virtual ICollection<ProjectTaskType> Type { get; set; }
 
     // [Many2many] // ManyToMany Hidden
     // [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProjectId")]
     // [InverseProperty("Project")]
-    // public virtual ICollection<ProjectTaskType> Type { get; set; }
+    //public virtual ICollection<ProjectTaskType> Type { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

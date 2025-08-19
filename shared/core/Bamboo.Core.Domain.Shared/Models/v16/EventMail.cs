@@ -34,6 +34,9 @@ public partial class EventMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("interval_nbr")]
     public long? IntervalNbr { get; set; }
 
+    [Column("last_registration_id")]
+    public Guid? LastRegistrationId { get; set; }
+
     [Column("mail_count_done")]
     public long? MailCountDone { get; set; }
 
@@ -81,6 +84,11 @@ public partial class EventMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("SchedulerId")]
     [InverseProperty("Scheduler")]
     public virtual ICollection<EventMailRegistration> EventMailRegistration { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LastRegistrationId")]
+    // [InverseProperty("EventMail")] //Many2one
+    public virtual EventRegistration? LastRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

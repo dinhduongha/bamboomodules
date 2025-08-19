@@ -37,6 +37,9 @@ public partial class ChooseDeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("weight_uom_name")]
+    public string? WeightUomName { get; set; }
+
     [Column("delivery_message")]
     public string? DeliveryMessage { get; set; }
 

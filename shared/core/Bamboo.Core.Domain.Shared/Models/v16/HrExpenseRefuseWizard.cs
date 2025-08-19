@@ -24,7 +24,7 @@ public partial class HrExpenseRefuseWizard: FullAuditedEntity<Guid>, IEntityDto<
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
     
-
+    //v16-Compat
     [Column("hr_expense_sheet_id")]
     public Guid? HrExpenseSheetId { get; set; }
 
@@ -50,7 +50,7 @@ public partial class HrExpenseRefuseWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("HrExpenseSheetId")]
-    // [InverseProperty("HrExpenseRefuseWizard")] //Many2one
+    [InverseProperty("HrExpenseRefuseWizard")] //Many2one
     public virtual HrExpenseSheet? HrExpenseSheet { get; set; }
 
     // [Many2one]
@@ -58,9 +58,16 @@ public partial class HrExpenseRefuseWizard: FullAuditedEntity<Guid>, IEntityDto<
     // [InverseProperty("HrExpenseRefuseWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
+    // v16-Compat
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrExpenseRefuseWizardId")] //Many2many
     // [InverseProperty("HrExpenseRefuseWizard")] //Many2many
     public virtual ICollection<HrExpense> HrExpense { get; set; }
+
+    // [Many2many] // Normal
+    [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrExpenseRefuseWizardId")] //Many2many
+    // [InverseProperty("HrExpenseRefuseWizard")] //Many2many
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheets { get; set; }
 }

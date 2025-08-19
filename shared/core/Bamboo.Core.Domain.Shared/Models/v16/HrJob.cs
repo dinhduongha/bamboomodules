@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_job")]
-//[Index("IsPublished", Name = "hr_job_is_published_index")]
+//[Index("IsPublished", Name = "hr_job__is_published_index")]
+//[Index("WebsiteId", Name = "hr_job__website_id_index")]
 //[Index("Name", "CompanyId", "DepartmentId", Name = "hr_job_name_company_uniq", IsUnique = true)]
-//[Index("WebsiteId", Name = "hr_job_website_id_index")]
 public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -62,8 +62,13 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    [Column("description")]
+    [JsonField]
+    [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
+
+    // v16-Compat
+    //[Column("description")]
+    //public string? Description { get; set; }
 
     [Column("requirements")]
     public string? Requirements { get; set; }
@@ -95,11 +100,34 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     [Column("color")]
     public long? Color { get; set; }
 
+    [Column("industry_id")]
+    public Guid? IndustryId { get; set; }
+
+    // [Column("no_of_hired_employee")]
+    // public long? NoOfHiredEmployee { get; set; }
+
+    [Column("date_from")]
+    public DateTime? DateFrom { get; set; }
+
+    [Column("date_to")]
+    public DateTime? DateTo { get; set; }
+
+    [JsonField]
+    [Column("job_properties", TypeName = "jsonb")]
+    public string? JobProperties { get; set; }
+
+    [JsonField]
+    [Column("applicant_properties_definition", TypeName = "jsonb")]
+    public string? ApplicantPropertiesDefinition { get; set; }
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
+
+    [Column("published_date")]
+    public DateTime? PublishedDate { get; set; }
 
     [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
@@ -187,6 +215,11 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     public virtual ResUsers? HrResponsible { get; set; }
 
     // [Many2one]
+    [ForeignKey("IndustryId")]
+    // [InverseProperty("HrJob")] //Many2one
+    public virtual ResPartnerIndustry? Industry { get; set; }
+
+    // [Many2one]
     [ForeignKey("ManagerId")]
     // [InverseProperty("HrJob")] //Many2one
     public virtual HrEmployee? Manager { get; set; }
@@ -217,10 +250,16 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrJobId")]
     // [InverseProperty("HrJob")]
-    // public virtual ICollection<HrRecruitmentStage> HrRecruitmentStage { get; set; }
+    public virtual ICollection<HrRecruitmentStage> HrRecruitmentStage { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrJobId")] //Many2many
+    // [InverseProperty("HrJob")] //Many2many
+    public virtual ICollection<HrSkill> HrSkill { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

@@ -48,8 +48,8 @@ public partial class AccountMoveSendBatchWizard: FullAuditedEntity<Guid>, IEntit
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("AccountMoveSendBatchWizardId")] //Many2many
-    // [InverseProperty("AccountMoveSendBatchWizard")] //Many2many
+    [InverseProperty("AccountMoveSendBatchWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 }

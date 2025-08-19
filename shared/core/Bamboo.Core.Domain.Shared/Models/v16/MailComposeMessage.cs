@@ -37,6 +37,15 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("res_id")]
     public Guid? ResId { get; set; }
 
+    [Column("res_domain_user_id")]
+    public Guid? ResDomainUserId { get; set; }
+
+    [Column("record_alias_domain_id")]
+    public Guid? RecordAliasDomainId { get; set; }
+
+    [Column("record_company_id")]
+    public Guid? RecordCompanyId { get; set; }
+
     [Column("subtype_id")]
     public Guid? SubtypeId { get; set; }
 
@@ -79,11 +88,23 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("reply_to")]
     public string? ReplyTo { get; set; }
 
+    [Column("scheduled_date")]
+    public string? ScheduledDate { get; set; }
+
+    [Column("template_name")]
+    public string? TemplateName { get; set; }
+
     [Column("body")]
     public string? Body { get; set; }
 
     [Column("active_domain")]
     public string? ActiveDomain { get; set; }
+
+    [Column("res_ids")]
+    public string? ResIds { get; set; }
+
+    [Column("res_domain")]
+    public string? ResDomain { get; set; }
 
     [Column("email_add_signature")]
     public bool? EmailAddSignature { get; set; }
@@ -103,8 +124,17 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("auto_delete")]
     public bool? AutoDelete { get; set; }
 
+    [Column("auto_delete_keep_log")]
+    public bool? AutoDeleteKeepLog { get; set; }
+
     [Column("auto_delete_message")]
     public bool? AutoDeleteMessage { get; set; }
+
+    [Column("force_send")]
+    public bool? ForceSend { get; set; }
+
+    [Column("use_exclusion_list")]
+    public bool? UseExclusionList { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -162,6 +192,21 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual MailMessage? Parent { get; set; }
 
     // [Many2one]
+    [ForeignKey("RecordAliasDomainId")]
+    // [InverseProperty("MailComposeMessage")] //Many2one
+    public virtual MailAliasDomain? RecordAliasDomain { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RecordCompanyId")]
+    // [InverseProperty("MailComposeMessage")] //Many2one
+    public virtual ResCompany? RecordCompany { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ResDomainUserId")]
+    // [InverseProperty("MailComposeMessageResDomainUser")] //Many2one
+    public virtual ResUsers? ResDomainUser { get; set; }
+
+    // [Many2one]
     [ForeignKey("SubtypeId")]
     // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailMessageSubtype? Subtype { get; set; }
@@ -180,6 +225,7 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("WizardId")] //Many2many
     // [InverseProperty("Wizard")] //Many2many
+    // [InverseProperty("WizardNavigation")] //Many2many
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal

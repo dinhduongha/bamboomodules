@@ -38,6 +38,9 @@ public partial class ProjectCollaborator: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("limited_access")]
+    public bool? LimitedAccess { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

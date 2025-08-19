@@ -12,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_user_input")]
+//[Index("SurveyId", Name = "survey_user_input__survey_id_index")]
 //[Index("AccessToken", Name = "survey_user_input_unique_token", IsUnique = true)]
 public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -59,11 +60,17 @@ public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("nickname")]
     public string? Nickname { get; set; }
 
+    [Column("scoring_total")]
+    public decimal? ScoringTotal { get; set; }
+
     [Column("test_entry")]
     public bool? TestEntry { get; set; }
 
     [Column("scoring_success")]
     public bool? ScoringSuccess { get; set; }
+
+    [Column("survey_first_submitted")]
+    public bool? SurveyFirstSubmitted { get; set; }
 
     [Column("is_session_answer")]
     public bool? IsSessionAnswer { get; set; }
@@ -86,14 +93,22 @@ public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("scoring_percentage")]
     public double? ScoringPercentage { get; set; }
 
-    [Column("scoring_total")]
-    public double? ScoringTotal { get; set; }
+    // [Column("scoring_total")]
+    // public double? ScoringTotal { get; set; }
 
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
 
     [Column("slide_partner_id")]
     public Guid? SlidePartnerId { get; set; }
+
+    [Column("applicant_id")]
+    public Guid? ApplicantId { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ApplicantId")]
+    // [InverseProperty("SurveyUserInput")] //Many2one
+    public virtual HrApplicant? Applicant { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]

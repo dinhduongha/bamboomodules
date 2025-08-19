@@ -73,6 +73,9 @@ public partial class StockScrap: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("scrap_qty")]
     public decimal? ScrapQty { get; set; }
 
+    [Column("should_replenish")]
+    public bool? ShouldReplenish { get; set; }
+
     [Column("date_done", TypeName = "timestamp without time zone")]
     public DateTime? DateDone { get; set; }
 
@@ -87,6 +90,14 @@ public partial class StockScrap: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("workorder_id")]
     public Guid? WorkorderId { get; set; }
+
+    [Column("bom_id")]
+    public Guid? BomId { get; set; }
+
+    // [Many2one]
+    [ForeignKey("BomId")]
+    // [InverseProperty("StockScrap")] //Many2one
+    public virtual MrpBom? Bom { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -156,6 +167,11 @@ public partial class StockScrap: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // [One2many]
     [ForeignKey("ScrapId")]
     [InverseProperty("Scrap")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("ScrapId")]
+    [InverseProperty("Scrap")]
     public virtual ICollection<StockWarnInsufficientQtyScrap> StockWarnInsufficientQtyScrap { get; set; }
 
     // [Many2one]
@@ -167,4 +183,10 @@ public partial class StockScrap: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("LastModifierId")]
     // [InverseProperty("StockScrapWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("StockScrapId")] //Many2many
+    // [InverseProperty("StockScrap")] //Many2many
+    public virtual ICollection<StockScrapReasonTag> StockScrapReasonTag { get; set; }
 }

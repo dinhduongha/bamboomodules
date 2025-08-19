@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_task_user_rel")]
+//[Index("TaskId", Name = "project_task_user_rel__task_id_index")]
+//[Index("UserId", Name = "project_task_user_rel__user_id_index")]
 //[Index("TaskId", "UserId", Name = "project_task_user_rel_project_personal_stage_unique", IsUnique = true)]
-//[Index("TaskId", Name = "project_task_user_rel_task_id_index")]
-//[Index("UserId", Name = "project_task_user_rel_user_id_index")]
 public partial class ProjectTaskUserRel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

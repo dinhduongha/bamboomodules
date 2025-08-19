@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_routing_workcenter")]
-//[Index("BomId", Name = "mrp_routing_workcenter_bom_id_index")]
+//[Index("BomId", Name = "mrp_routing_workcenter__bom_id_index")]
 public partial class MrpRoutingWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

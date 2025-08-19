@@ -12,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_account_tag")]
+//[Index("Name", "Applicability", "CountryId", Name = "account_account_tag_name_uniq", IsUnique = true)]
 public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -37,12 +38,12 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("applicability")]
+    public string? Applicability { get; set; }
+
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
-
-    [Column("applicability")]
-    public string? Applicability { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -72,38 +73,38 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountTagId")]
     // [InverseProperty("AccountAccountTag")]
-    // public virtual ICollection<AccountAccount> AccountAccount { get; set; }
+    public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountTagId")]
     // [InverseProperty("AccountAccountTag")]
-    // public virtual ICollection<AccountAccountTemplate> AccountAccountTemplate { get; set; }
+    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplate { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountTagId")]
     // [InverseProperty("AccountAccountTag")]
-    // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountTagId")]
     // [InverseProperty("AccountAccountTag")]
-    // public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
+    public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountTagId")]
     // [InverseProperty("AccountAccountTag")]
-    // public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplate { get; set; }
+    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplate { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountTagId")]
     // [InverseProperty("AccountAccountTag")]
-    // public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

@@ -12,12 +12,12 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_notification")]
-//[Index("IsRead", Name = "mail_notification_is_read_index")]
-//[Index("MailMailId", Name = "mail_notification_mail_mail_id_index")]
-//[Index("MailMessageId", Name = "mail_notification_mail_message_id_index")]
-//[Index("NotificationStatus", Name = "mail_notification_notification_status_index")]
-//[Index("NotificationType", Name = "mail_notification_notification_type_index")]
-//[Index("ResPartnerId", Name = "mail_notification_res_partner_id_index")]
+//[Index("IsRead", Name = "mail_notification__is_read_index")]
+//[Index("MailMailId", Name = "mail_notification__mail_mail_id_index")]
+//[Index("MailMessageId", Name = "mail_notification__mail_message_id_index")]
+//[Index("NotificationStatus", Name = "mail_notification__notification_status_index")]
+//[Index("NotificationType", Name = "mail_notification__notification_type_index")]
+//[Index("ResPartnerId", Name = "mail_notification__res_partner_id_index")]
 //[Index("ResPartnerId", "IsRead", "NotificationStatus", "MailMessageId", Name = "mail_notification_res_partner_id_is_read_notification_status_ma")]
 public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -62,6 +62,9 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("read_date", TypeName = "timestamp without time zone")]
     public DateTime? ReadDate { get; set; }
 
+    [Column("sms_id_int")]
+    public Guid? SmsIdInt { get; set; }
+
     [Column("sms_id")]
     public Guid? SmsId { get; set; }
 
@@ -91,6 +94,11 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
     // [InverseProperty("MailNotification")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
+    // [One2many]
+    [ForeignKey("NotificationId")]
+    [InverseProperty("Notification")]
+    public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
+
     // [Many2one]
     [ForeignKey("ResPartnerId")]
     // [InverseProperty("MailNotificationResPartner")] //Many2one
@@ -106,9 +114,14 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
     [InverseProperty("Notification")]
     public virtual ICollection<SmsResendRecipient> SmsResendRecipient { get; set; }
 
+    // [One2many]
+    [ForeignKey("MailNotificationId")]
+    [InverseProperty("MailNotification")]
+    public virtual ICollection<SmsTracker> SmsTracker { get; set; }
+
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailNotificationId")]
     // [InverseProperty("MailNotification")]
-    // public virtual ICollection<MailResendMessage> MailResendMessage { get; set; }
+    public virtual ICollection<MailResendMessage> MailResendMessage { get; set; }
 }

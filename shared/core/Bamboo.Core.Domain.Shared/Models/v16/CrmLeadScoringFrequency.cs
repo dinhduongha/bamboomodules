@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_lead_scoring_frequency")]
-//[Index("Variable", Name = "crm_lead_scoring_frequency_variable_index")]
+//[Index("Variable", Name = "crm_lead_scoring_frequency__variable_index")]
 public partial class CrmLeadScoringFrequency: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

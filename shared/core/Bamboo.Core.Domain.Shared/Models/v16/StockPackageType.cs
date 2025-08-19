@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_package_type")]
+//[Index("CompanyId", Name = "stock_package_type__company_id_index")]
 //[Index("Barcode", Name = "stock_package_type_barcode_uniq", IsUnique = true)]
-//[Index("CompanyId", Name = "stock_package_type_company_id_index")]
 public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -29,15 +29,6 @@ public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("sequence")]
     public long? Sequence { get; set; }
-
-    [Column("height")]
-    public double? Height { get; set; }
-
-    [Column("width")]
-    public double? Width { get; set; }
-
-    [Column("packaging_length")]
-    public double? PackagingLength { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -56,6 +47,15 @@ public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("height")]
+    public double? Height { get; set; }
+
+    [Column("width")]
+    public double? Width { get; set; }
+
+    [Column("packaging_length")]
+    public double? PackagingLength { get; set; }
 
     [Column("base_weight")]
     public double? BaseWeight { get; set; }
@@ -105,8 +105,8 @@ public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPackageTypeId")]
     // [InverseProperty("StockPackageType")]
-    // public virtual ICollection<StockPutawayRule> StockPutawayRule { get; set; }
+    public virtual ICollection<StockPutawayRule> StockPutawayRule { get; set; }
 }

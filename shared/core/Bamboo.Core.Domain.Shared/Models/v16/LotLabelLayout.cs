@@ -57,5 +57,11 @@ public partial class LotLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("LotLabelLayoutId")] //Many2many
     // [InverseProperty("LotLabelLayout")] //Many2many
+    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("LotLabelLayoutId")] //Many2many
+    // [InverseProperty("LotLabelLayout")] //Many2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

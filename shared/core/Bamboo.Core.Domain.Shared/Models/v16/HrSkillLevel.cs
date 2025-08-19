@@ -62,6 +62,11 @@ public partial class HrSkillLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // [One2many]
     [ForeignKey("SkillLevelId")]
     [InverseProperty("SkillLevel")]
+    public virtual ICollection<HrCandidateSkill> HrCandidateSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillLevelId")]
+    [InverseProperty("SkillLevel")]
     public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
 
     // [One2many]

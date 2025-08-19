@@ -62,14 +62,14 @@ public partial class CrmIapLeadIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmIapLeadIndustryId")]
     // [InverseProperty("CrmIapLeadIndustry")]
-    // public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmIapLeadIndustryId")]
     // [InverseProperty("CrmIapLeadIndustry")]
-    // public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
+    public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 }

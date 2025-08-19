@@ -56,6 +56,9 @@ public partial class HrExpenseSplit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("total_amount")]
     public decimal? TotalAmount { get; set; }
 
+    [Column("total_amount_currency")]
+    public decimal? TotalAmountCurrency { get; set; }
+
     [Column("product_has_cost")]
     public bool? ProductHasCost { get; set; }
 

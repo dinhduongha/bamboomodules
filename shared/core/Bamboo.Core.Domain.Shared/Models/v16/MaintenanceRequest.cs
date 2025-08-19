@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("maintenance_request")]
-//[Index("EquipmentId", Name = "maintenance_request_equipment_id_index")]
+//[Index("EquipmentId", Name = "maintenance_request__equipment_id_index")]
 public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -50,6 +50,9 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("maintenance_team_id")]
     public Guid? MaintenanceTeamId { get; set; }
 
+    [Column("repeat_interval")]
+    public long? RepeatInterval { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -71,17 +74,38 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("maintenance_type")]
     public string? MaintenanceType { get; set; }
 
+    [Column("instruction_type")]
+    public string? InstructionType { get; set; }
+
+    [Column("instruction_google_slide")]
+    public string? InstructionGoogleSlide { get; set; }
+
+    [Column("repeat_unit")]
+    public string? RepeatUnit { get; set; }
+
+    [Column("repeat_type")]
+    public string? RepeatType { get; set; }
+
     [Column("request_date")]
     public DateTime? RequestDate { get; set; }
 
     [Column("close_date")]
     public DateTime? CloseDate { get; set; }
 
+    [Column("repeat_until")]
+    public DateTime? RepeatUntil { get; set; }
+
     [Column("description")]
     public string? Description { get; set; }
 
+    [Column("instruction_text")]
+    public string? InstructionText { get; set; }
+
     [Column("archive")]
     public bool? Archive { get; set; }
+
+    [Column("recurring_maintenance")]
+    public bool? RecurringMaintenance { get; set; }
 
     [Column("schedule_date", TypeName = "timestamp without time zone")]
     public DateTime? ScheduleDate { get; set; }

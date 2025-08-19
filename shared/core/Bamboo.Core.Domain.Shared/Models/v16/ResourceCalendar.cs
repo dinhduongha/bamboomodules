@@ -36,11 +36,17 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("tz")]
     public string? Tz { get; set; }
 
+    [Column("hours_per_day")]
+    public double? HoursPerDay { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
     [Column("two_weeks_calendar")]
     public bool? TwoWeeksCalendar { get; set; }
+
+    [Column("flexible_hours")]
+    public bool? FlexibleHours { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -48,8 +54,8 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("hours_per_day")]
-    public double? HoursPerDay { get; set; }
+    [Column("full_time_required_hours")]
+    public double? FullTimeRequiredHours { get; set; }
 
     // [One2many]
     [ForeignKey("TrgDateCalendarId")]
@@ -75,6 +81,16 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     [ForeignKey("ResourceCalendarId")]
     [InverseProperty("ResourceCalendar")]
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+
+    // [One2many]
+    [ForeignKey("ResourceCalendarId")]
+    [InverseProperty("ResourceCalendar")]
+    public virtual ICollection<HrLeave> HrLeave { get; set; }
+
+    // [One2many]
+    [ForeignKey("ResourceCalendarId")]
+    [InverseProperty("ResourceCalendar")]
+    public virtual ICollection<HrLeaveMandatoryDay> HrLeaveMandatoryDay { get; set; }
 
     // [One2many]
     [ForeignKey("ResourceCalendarId")]
@@ -110,6 +126,11 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     [ForeignKey("CalendarId")]
     [InverseProperty("Calendar")]
     public virtual ICollection<ResourceResource> ResourceResource { get; set; }
+
+    // [One2many]
+    [ForeignKey("OpeningHours")]
+    [InverseProperty("OpeningHoursNavigation")]
+    public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

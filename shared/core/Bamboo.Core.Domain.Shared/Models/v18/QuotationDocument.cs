@@ -65,20 +65,20 @@ public partial class QuotationDocument: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("QuotationDocumentId")]
-    // [InverseProperty("QuotationDocument")]
-    // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("QuotationDocumentId")] //Many2many
     // [InverseProperty("QuotationDocument")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [Many2many] // Normal
+    // [ForeignKey("QuotationDocumentId")] //Many2many
+    [InverseProperty("QuotationDocument")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<SaleOrderTemplate> SaleOrderTemplate { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("QuotationDocumentId")] //Many2many
-    // [InverseProperty("QuotationDocument")] //Many2many
+    [InverseProperty("QuotationDocument")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<SalePdfFormField> SalePdfFormField { get; set; }
 }

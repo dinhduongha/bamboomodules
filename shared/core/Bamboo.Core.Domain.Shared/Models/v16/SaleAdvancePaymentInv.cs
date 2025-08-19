@@ -49,6 +49,9 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
     [Column("deduct_down_payments")]
     public bool? DeductDownPayments { get; set; }
 
+    [Column("consolidated_billing")]
+    public bool? ConsolidatedBilling { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

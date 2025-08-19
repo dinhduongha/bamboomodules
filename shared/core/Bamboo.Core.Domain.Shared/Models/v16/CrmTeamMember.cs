@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_team_member")]
-//[Index("CrmTeamId", Name = "crm_team_member_crm_team_id_index")]
-//[Index("UserId", Name = "crm_team_member_user_id_index")]
+//[Index("CrmTeamId", Name = "crm_team_member__crm_team_id_index")]
+//[Index("UserId", Name = "crm_team_member__user_id_index")]
 public partial class CrmTeamMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

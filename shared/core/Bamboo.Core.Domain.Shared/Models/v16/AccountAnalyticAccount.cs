@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_analytic_account")]
-//[Index("Code", Name = "account_analytic_account_code_index")]
-public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+//[Index("Code", Name = "account_analytic_account__code_index")]
+public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,8 +23,8 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
+    public Guid? OrganizationUnitId { get; set; }
+
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -44,12 +44,12 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("code")]
+    public string? Code { get; set; }
+
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
-
-    [Column("code")]
-    public string? Code { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -63,7 +63,22 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     // [One2many]
     [ForeignKey("AccountId")]
     [InverseProperty("Account")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAccount { get; set; }
+
+    // [One2many]
+    [ForeignKey("AccountId")]
+    [InverseProperty("Account")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("XPlan2Id")]
+    [InverseProperty("XPlan2")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2 { get; set; }
+
+    // [One2many]
+    [ForeignKey("XPlan3Id")]
+    [InverseProperty("XPlan3")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3 { get; set; }
 
     // [One2many]
     [ForeignKey("AccountAnalyticId")]
@@ -89,6 +104,22 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
+
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<HrContract> HrContract { get; set; }
+
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("AnalyticAccountId")]
+    [InverseProperty("AnalyticAccount")]
+    public virtual ICollection<HrSalaryRule> HrSalaryRule { get; set; }
+
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
@@ -116,6 +147,11 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     public virtual AccountAnalyticPlan? Plan { get; set; }
 
     // [One2many]
+    [ForeignKey("AccountId")]
+    [InverseProperty("Account")]
+    public virtual ICollection<ProjectProject> ProjectProjectAccount { get; set; }
+
+    // [One2many]
     [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
@@ -124,6 +160,16 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     [ForeignKey("AnalyticAccountId")]
     [InverseProperty("AnalyticAccount")]
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+
+    // [One2many]
+    [ForeignKey("XPlan2Id")]
+    [InverseProperty("XPlan2")]
+    public virtual ICollection<ProjectProject> ProjectProjectXPlan2 { get; set; }
+
+    // [One2many]
+    [ForeignKey("XPlan3Id")]
+    [InverseProperty("XPlan3")]
+    public virtual ICollection<ProjectProject> ProjectProjectXPlan3 { get; set; }
 
     // [Many2one]
     [ForeignKey("RootPlanId")]
@@ -141,20 +187,40 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAnalyticAccountId")]
     // [InverseProperty("AccountAnalyticAccount")]
-    // public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAnalyticAccountId")]
     // [InverseProperty("AccountAnalyticAccount")]
-    // public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAnalyticAccountId")]
     // [InverseProperty("AccountAnalyticAccount")]
-    // public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountAnalyticAccountId")] //Many2many
+    // [InverseProperty("AccountAnalyticAccount")] //Many2many
+    public virtual ICollection<MrpBom> MrpBom { get; set; }
+
+    // INVESTIGATE
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountAnalyticAccountId")] //Many2many
+    // [InverseProperty("AccountAnalyticAccount")] //Many2many
+    //public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // INVESTIGATE
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountAnalyticAccountId")] //Many2many
+    // [InverseProperty("AccountAnalyticAccount")] //Many2many
+    //public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 }

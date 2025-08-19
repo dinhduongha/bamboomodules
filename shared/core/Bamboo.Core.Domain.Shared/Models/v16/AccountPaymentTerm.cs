@@ -27,11 +27,17 @@ public partial class AccountPaymentTerm: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [Column("discount_days")]
+    public long? DiscountDays { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("early_pay_discount_computation")]
+    public string? EarlyPayDiscountComputation { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -47,11 +53,17 @@ public partial class AccountPaymentTerm: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("display_on_invoice")]
     public bool? DisplayOnInvoice { get; set; }
 
+    [Column("early_discount")]
+    public bool? EarlyDiscount { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("discount_percentage")]
+    public double? DiscountPercentage { get; set; }
 
     // [One2many]
     [ForeignKey("InvoicePaymentTermId")]

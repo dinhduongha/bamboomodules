@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crossovered_budget_lines")]
-//[Index("CrossoveredBudgetId", Name = "crossovered_budget_lines_crossovered_budget_id_index")]
+//[Index("CrossoveredBudgetId", Name = "crossovered_budget_lines__crossovered_budget_id_index")]
 public partial class CrossoveredBudgetLines: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

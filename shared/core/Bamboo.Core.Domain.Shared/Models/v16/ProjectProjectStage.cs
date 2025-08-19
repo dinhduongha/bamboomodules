@@ -57,6 +57,11 @@ public partial class ProjectProjectStage: FullAuditedAggregateRoot<Guid>, IEntit
     public Guid? SmsTemplateId { get; set; }
 
     // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("ProjectProjectStage")] //Many2one
+    public virtual ResCompany? Company { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("ProjectProjectStageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
@@ -80,4 +85,10 @@ public partial class ProjectProjectStage: FullAuditedAggregateRoot<Guid>, IEntit
     [ForeignKey("LastModifierId")]
     // [InverseProperty("ProjectProjectStageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProjectProjectStageId")]
+    // [InverseProperty("ProjectProjectStage")]
+    public virtual ICollection<ProjectProjectStageDeleteWizard> ProjectProjectStageDeleteWizard { get; set; }
 }

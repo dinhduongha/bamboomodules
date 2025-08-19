@@ -37,12 +37,19 @@ public partial class ProductRibbon: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("text_color")]
     public string? TextColor { get; set; }
 
+    [Column("position")]
+    public string? Position { get; set; }
+
     [Column("html_class")]
     public string? HtmlClass { get; set; }
 
     [JsonField]
     [Column("html", TypeName = "jsonb")]
     public string? Html { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -54,6 +61,11 @@ public partial class ProductRibbon: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("CreatorId")]
     // [InverseProperty("ProductRibbonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("VariantRibbonId")]
+    [InverseProperty("VariantRibbon")]
+    public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [One2many]
     [ForeignKey("RibbonId")]

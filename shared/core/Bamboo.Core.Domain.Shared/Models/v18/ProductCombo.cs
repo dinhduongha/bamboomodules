@@ -70,8 +70,8 @@ public partial class ProductCombo: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductComboId")]
-    // [InverseProperty("ProductCombo")]
-    // public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+    // [ForeignKey("ProductComboId")] //Many2many
+    // [InverseProperty("ProductCombo")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

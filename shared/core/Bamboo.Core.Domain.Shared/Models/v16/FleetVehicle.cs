@@ -61,6 +61,9 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
+    [Column("vehicle_range")]
+    public long? VehicleRange { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -94,6 +97,9 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("fuel_type")]
     public string? FuelType { get; set; }
 
+    [Column("power_unit")]
+    public string? PowerUnit { get; set; }
+
     [Column("co2_standard")]
     public string? Co2Standard { get; set; }
 
@@ -103,6 +109,9 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("next_assignation_date")]
     public DateTime? NextAssignationDate { get; set; }
 
+    [Column("order_date")]
+    public DateTime? OrderDate { get; set; }
+
     [Column("acquisition_date")]
     public DateTime? AcquisitionDate { get; set; }
 
@@ -111,6 +120,10 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("first_contract_date")]
     public DateTime? FirstContractDate { get; set; }
+
+    [JsonField]
+    [Column("vehicle_properties", TypeName = "jsonb")]
+    public string? VehicleProperties { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -248,10 +261,21 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleState? State { get; set; }
 
+    // [One2many]
+    [ForeignKey("VehicleId")]
+    [InverseProperty("Vehicle")]
+    public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
+
     // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("FleetVehicleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("FleetVehicleId")]
+    // [InverseProperty("FleetVehicle")]
+    public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

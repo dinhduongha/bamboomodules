@@ -65,8 +65,8 @@ public partial class AccountEdiFormat: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountEdiFormatId")]
     // [InverseProperty("AccountEdiFormat")]
-    // public virtual ICollection<AccountJournal> AccountJournal { get; set; }
+    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

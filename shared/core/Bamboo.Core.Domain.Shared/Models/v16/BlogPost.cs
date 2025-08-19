@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("blog_post")]
-//[Index("IsPublished", Name = "blog_post_is_published_index")]
-//[Index("WebsiteId", Name = "blog_post_website_id_index")]
+//[Index("IsPublished", Name = "blog_post__is_published_index")]
+//[Index("WebsiteId", Name = "blog_post__website_id_index")]
 public partial class BlogPost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -82,11 +82,17 @@ public partial class BlogPost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("content", TypeName = "jsonb")]
     public string? Content { get; set; }
 
+    [JsonField]
+    [Column("teaser_manual", TypeName = "jsonb")]
+    public string? TeaserManual { get; set; }
+
+    // v16-Compat
+    //[Column("teaser_manual")]
+    //public string? TeaserManual { get; set; }
+
+
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
-
-    [Column("teaser_manual")]
-    public string? TeaserManual { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }
@@ -137,8 +143,8 @@ public partial class BlogPost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("BlogPostId")]
     // [InverseProperty("BlogPost")]
-    // public virtual ICollection<BlogTag> BlogTag { get; set; }
+    public virtual ICollection<BlogTag> BlogTag { get; set; }
 }

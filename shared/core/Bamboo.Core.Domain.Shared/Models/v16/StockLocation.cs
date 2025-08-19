@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_location")]
+//[Index("CompanyId", Name = "stock_location__company_id_index")]
+//[Index("LocationId", Name = "stock_location__location_id_index")]
+//[Index("ParentPath", Name = "stock_location__parent_path_index")]
+//[Index("Usage", Name = "stock_location__usage_index")]
 //[Index("Barcode", "CompanyId", Name = "stock_location_barcode_company_uniq", IsUnique = true)]
-//[Index("CompanyId", Name = "stock_location_company_id_index")]
-//[Index("LocationId", Name = "stock_location_location_id_index")]
-//[Index("ParentPath", Name = "stock_location_parent_path_index")]
-//[Index("Usage", Name = "stock_location_usage_index")]
 public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -111,6 +111,9 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("is_subcontracting_location")]
     public bool? IsSubcontractingLocation { get; set; }
 
+    [Column("is_a_dock")]
+    public bool? IsADock { get; set; }
+
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("StockLocation")] //Many2one
@@ -137,6 +140,11 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<MrpProduction> MrpProductionLocationDest { get; set; }
 
     // [One2many]
+    [ForeignKey("LocationFinalId")]
+    [InverseProperty("LocationFinal")]
+    public virtual ICollection<MrpProduction> MrpProductionLocationFinal { get; set; }
+
+    // [One2many]
     [ForeignKey("LocationSrcId")]
     [InverseProperty("LocationSrc")]
     public virtual ICollection<MrpProduction> MrpProductionLocationSrc { get; set; }
@@ -156,10 +164,30 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [InverseProperty("LocationDest")]
     public virtual ICollection<MrpUnbuild> MrpUnbuildLocationDest { get; set; }
 
+    // [One2many]
+    [ForeignKey("LocationFinalId")]
+    [InverseProperty("LocationFinal")]
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
     // [Many2one]
     [ForeignKey("RemovalStrategyId")]
     // [InverseProperty("StockLocation")] //Many2one
     public virtual ProductRemoval? RemovalStrategy { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<RepairOrder> RepairOrderLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationDestId")]
+    [InverseProperty("LocationDest")]
+    public virtual ICollection<RepairOrder> RepairOrderLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("PartsLocationId")]
+    [InverseProperty("PartsLocation")]
+    public virtual ICollection<RepairOrder> RepairOrderPartsLocation { get; set; }
 
     // [One2many]
     [ForeignKey("LocationId")]
@@ -177,6 +205,21 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [One2many]
+    [ForeignKey("ProductLocationDestId")]
+    [InverseProperty("ProductLocationDest")]
+    public virtual ICollection<RepairOrder> RepairOrderProductLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductLocationSrcId")]
+    [InverseProperty("ProductLocationSrc")]
+    public virtual ICollection<RepairOrder> RepairOrderProductLocationSrc { get; set; }
+
+    // [One2many]
+    [ForeignKey("RecycleLocationId")]
+    [InverseProperty("RecycleLocation")]
+    public virtual ICollection<RepairOrder> RepairOrderRecycleLocation { get; set; }
+
+    // [One2many]
     [ForeignKey("InternalTransitLocationId")]
     [InverseProperty("InternalTransitLocation")]
     public virtual ICollection<ResCompany> ResCompanyInternalTransitLocation { get; set; }
@@ -185,6 +228,11 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("SubcontractingLocationId")]
     [InverseProperty("SubcontractingLocation")]
     public virtual ICollection<ResCompany> ResCompanySubcontractingLocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("LocationId")]
+    [InverseProperty("Location")]
+    public virtual ICollection<StockLot> StockLot { get; set; }
 
     // [One2many]
     [ForeignKey("LocationId")]
@@ -207,6 +255,11 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<StockMove> StockMoveLocationDest { get; set; }
 
     // [One2many]
+    [ForeignKey("LocationFinalId")]
+    [InverseProperty("LocationFinal")]
+    public virtual ICollection<StockMove> StockMoveLocationFinal { get; set; }
+
+    // [One2many]
     [ForeignKey("LocationDestId")]
     [InverseProperty("LocationDest")]
     public virtual ICollection<StockPackageDestination> StockPackageDestination { get; set; }
@@ -215,6 +268,11 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LocationDestId")]
     [InverseProperty("LocationDest")]
     public virtual ICollection<StockPackageLevel> StockPackageLevel { get; set; }
+
+    // [One2many]
+    [ForeignKey("DockId")]
+    [InverseProperty("Dock")]
+    public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [One2many]
     [ForeignKey("LocationId")]
@@ -237,6 +295,26 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<StockPickingType> StockPickingTypeDefaultLocationSrc { get; set; }
 
     // [One2many]
+    [ForeignKey("DefaultProductLocationDestId")]
+    [InverseProperty("DefaultProductLocationDest")]
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultProductLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultProductLocationSrcId")]
+    [InverseProperty("DefaultProductLocationSrc")]
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultProductLocationSrc { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultRecycleLocationDestId")]
+    [InverseProperty("DefaultRecycleLocationDest")]
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultRecycleLocationDest { get; set; }
+
+    // [One2many]
+    [ForeignKey("DefaultRemoveLocationDestId")]
+    [InverseProperty("DefaultRemoveLocationDest")]
+    public virtual ICollection<StockPickingType> StockPickingTypeDefaultRemoveLocationDest { get; set; }
+
+    // [One2many]
     [ForeignKey("LocationInId")]
     [InverseProperty("LocationIn")]
     public virtual ICollection<StockPutawayRule> StockPutawayRuleLocationIn { get; set; }
@@ -255,6 +333,11 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LocationId")]
     [InverseProperty("Location")]
     public virtual ICollection<StockQuantPackage> StockQuantPackage { get; set; }
+
+    // [One2many]
+    [ForeignKey("DestLocationId")]
+    [InverseProperty("DestLocation")]
+    public virtual ICollection<StockQuantRelocate> StockQuantRelocate { get; set; }
 
     // [One2many]
     [ForeignKey("LocationId")]
@@ -375,4 +458,10 @@ public partial class StockLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LastModifierId")]
     // [InverseProperty("StockLocationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockLocationId")]
+    // [InverseProperty("StockLocation")]
+    public virtual ICollection<StockPickingType> StockPickingType { get; set; }
 }

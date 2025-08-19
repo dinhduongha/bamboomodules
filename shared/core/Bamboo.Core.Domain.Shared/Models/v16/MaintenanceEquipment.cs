@@ -24,13 +24,24 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
+
+    [Column("maintenance_team_id")]
+    public Guid? MaintenanceTeamId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("technician_user_id")]
     public Guid? TechnicianUserId { get; set; }
+
+    [Column("maintenance_count")]
+    public long? MaintenanceCount { get; set; }
+
+    [Column("maintenance_open_count")]
+    public long? MaintenanceOpenCount { get; set; }
+
+    [Column("expected_mtbf")]
+    public long? ExpectedMtbf { get; set; }
 
     [Column("owner_user_id")]
     public Guid? OwnerUserId { get; set; }
@@ -44,17 +55,17 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("color")]
     public long? Color { get; set; }
 
-    [Column("maintenance_count")]
-    public long? MaintenanceCount { get; set; }
+    // [Column("maintenance_count")]
+    // public long? MaintenanceCount { get; set; }
 
-    [Column("maintenance_open_count")]
-    public long? MaintenanceOpenCount { get; set; }
+    // [Column("maintenance_open_count")]
+    // public long? MaintenanceOpenCount { get; set; }
 
     [Column("period")]
     public long? Period { get; set; }
 
-    [Column("maintenance_team_id")]
-    public Guid? MaintenanceTeamId { get; set; }
+    // [Column("maintenance_team_id")]
+    // public Guid? MaintenanceTeamId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -74,11 +85,11 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("serial_no")]
     public string? SerialNo { get; set; }
 
-    [Column("assign_date")]
-    public DateTime? AssignDate { get; set; }
-
     [Column("effective_date")]
     public DateTime? EffectiveDate { get; set; }
+
+    [Column("assign_date")]
+    public DateTime? AssignDate { get; set; }
 
     [Column("warranty_date")]
     public DateTime? WarrantyDate { get; set; }
@@ -92,6 +103,10 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [JsonField]
+    [Column("equipment_properties", TypeName = "jsonb")]
+    public string? EquipmentProperties { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }

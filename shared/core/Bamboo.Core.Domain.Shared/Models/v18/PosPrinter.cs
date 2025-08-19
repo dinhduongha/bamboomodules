@@ -64,14 +64,14 @@ public partial class PosPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("PrinterId")] //Many2many
-    // [InverseProperty("Printer")] //Many2many
+    [InverseProperty("Printer")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<PosCategory> Category { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PrinterId")]
-    // [InverseProperty("Printer")]
-    // public virtual ICollection<PosConfig> Config { get; set; }
+    // [ForeignKey("PrinterId")] //Many2many
+    // [InverseProperty("Printer")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<PosConfig> Config { get; set; }
 }

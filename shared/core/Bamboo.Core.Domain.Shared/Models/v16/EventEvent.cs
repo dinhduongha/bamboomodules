@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_event")]
-//[Index("IsPublished", Name = "event_event_is_published_index")]
-//[Index("WebsiteId", Name = "event_event_website_id_index")]
+//[Index("IsPublished", Name = "event_event__is_published_index")]
+//[Index("WebsiteId", Name = "event_event__website_id_index")]
 public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -66,6 +66,12 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("date_tz")]
     public string? DateTz { get; set; }
 
+    [Column("lang")]
+    public string? Lang { get; set; }
+
+    [Column("badge_format")]
+    public string? BadgeFormat { get; set; }
+
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -73,6 +79,10 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
+
+    [JsonField]
+    [Column("registration_properties_definition", TypeName = "jsonb")]
+    public string? RegistrationPropertiesDefinition { get; set; }
 
     [JsonField]
     [Column("ticket_instructions", TypeName = "jsonb")]
@@ -110,6 +120,9 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
+
+    [Column("website_visibility")]
+    public string? WebsiteVisibility { get; set; }
 
     [JsonField]
     [Column("website_meta_title", TypeName = "jsonb")]
@@ -161,14 +174,17 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("exhibitor_menu")]
     public bool? ExhibitorMenu { get; set; }
 
+    [Column("meeting_room_allow_creation")]
+    public bool? MeetingRoomAllowCreation { get; set; }
+
     [Column("website_track")]
     public bool? WebsiteTrack { get; set; }
 
     [Column("website_track_proposal")]
     public bool? WebsiteTrackProposal { get; set; }
 
-    [Column("meeting_room_allow_creation")]
-    public bool? MeetingRoomAllowCreation { get; set; }
+    // [Column("meeting_room_allow_creation")]
+    // public bool? MeetingRoomAllowCreation { get; set; }
 
     // [Many2one]
     [ForeignKey("AddressId")]
@@ -214,6 +230,10 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("EventId")]
     [InverseProperty("Event")]
     public virtual ICollection<EventEventTicket> EventEventTicket { get; set; }
+
+    // [Many2one]
+    // [InverseProperty("Event")] //Many2one
+    public virtual EventLeadRequest? EventLeadRequest { get; set; }
 
     // [One2many]
     [ForeignKey("EventId")]

@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_snippet_filter")]
-//[Index("IsPublished", Name = "website_snippet_filter_is_published_index")]
-//[Index("WebsiteId", Name = "website_snippet_filter_website_id_index")]
+//[Index("IsPublished", Name = "website_snippet_filter__is_published_index")]
+//[Index("WebsiteId", Name = "website_snippet_filter__website_id_index")]
 public partial class WebsiteSnippetFilter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

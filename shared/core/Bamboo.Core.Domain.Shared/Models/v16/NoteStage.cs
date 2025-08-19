@@ -66,8 +66,8 @@ public partial class NoteStage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StageId")]
     // [InverseProperty("Stage")]
-    // public virtual ICollection<NoteNote> Note { get; set; }
+    public virtual ICollection<NoteNote> Note { get; set; }
 }

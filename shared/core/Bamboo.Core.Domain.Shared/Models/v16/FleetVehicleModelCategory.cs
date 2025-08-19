@@ -44,6 +44,12 @@ public partial class FleetVehicleModelCategory: FullAuditedAggregateRoot<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("weight_capacity")]
+    public double? WeightCapacity { get; set; }
+
+    [Column("volume_capacity")]
+    public double? VolumeCapacity { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("FleetVehicleModelCategoryCreateU")] //Many2one
@@ -58,6 +64,11 @@ public partial class FleetVehicleModelCategory: FullAuditedAggregateRoot<Guid>, 
     [ForeignKey("CategoryId")]
     [InverseProperty("Category")]
     public virtual ICollection<FleetVehicleModel> FleetVehicleModel { get; set; }
+
+    // [One2many]
+    [ForeignKey("VehicleCategoryId")]
+    [InverseProperty("VehicleCategory")]
+    public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

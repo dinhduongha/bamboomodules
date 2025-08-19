@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_leave")]
-//[Index("DateFrom", Name = "hr_leave_date_from_index")]
+//[Index("DateFrom", Name = "hr_leave__date_from_index")]
+//[Index("EmployeeId", Name = "hr_leave__employee_id_index")]
+//[Index("UserId", Name = "hr_leave__user_id_index")]
 //[Index("DateTo", "DateFrom", Name = "hr_leave_date_to_date_from_index")]
-//[Index("EmployeeId", Name = "hr_leave_employee_id_index")]
-//[Index("UserId", Name = "hr_leave_user_id_index")]
 public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -52,6 +52,9 @@ public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
+
+    [Column("resource_calendar_id")]
+    public Guid? ResourceCalendarId { get; set; }
 
     [Column("meeting_id")]
     public Guid? MeetingId { get; set; }
@@ -137,6 +140,15 @@ public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("number_of_days")]
     public double? NumberOfDays { get; set; }
 
+    [Column("number_of_hours")]
+    public double? NumberOfHours { get; set; }
+
+    // [Column("request_hour_from")]
+    // public double? RequestHourFrom { get; set; }
+
+    // [Column("request_hour_to")]
+    // public double? RequestHourTo { get; set; }
+
     [Column("overtime_id")]
     public Guid? OvertimeId { get; set; }
 
@@ -149,6 +161,11 @@ public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [ForeignKey("CategoryId")]
     // [InverseProperty("HrLeave")] //Many2one
     public virtual HrEmployeeCategory? Category { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("HrLeaveCompany")] //Many2one
+    public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -229,6 +246,11 @@ public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [ForeignKey("ParentId")]
     // [InverseProperty("InverseParent")] //Many2one
     public virtual HrLeave? Parent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ResourceCalendarId")]
+    // [InverseProperty("HrLeave")] //Many2one
+    public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [One2many]
     [ForeignKey("HolidayId")]

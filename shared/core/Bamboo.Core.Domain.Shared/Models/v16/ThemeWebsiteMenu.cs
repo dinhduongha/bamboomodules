@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("theme_website_menu")]
-//[Index("ParentId", Name = "theme_website_menu_parent_id_index")]
+//[Index("ParentId", Name = "theme_website_menu__parent_id_index")]
 public partial class ThemeWebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

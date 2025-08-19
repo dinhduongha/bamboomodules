@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sms_sms")]
-//[Index("MailMessageId", Name = "sms_sms_mail_message_id_index")]
+//[Index("MailMessageId", Name = "sms_sms__mail_message_id_index")]
+//[Index("Uuid", Name = "sms_sms_uuid_unique", IsUnique = true)]
 public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -38,6 +39,9 @@ public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
     [Column("number")]
     public string? Number { get; set; }
 
@@ -49,6 +53,9 @@ public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     [Column("body")]
     public string? Body { get; set; }
+
+    [Column("to_delete")]
+    public bool? ToDelete { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

@@ -61,6 +61,19 @@ public partial class PaymentLinkWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("discount_date")]
+    public DateTime? DiscountDate { get; set; }
+
+    [JsonField]
+    [Column("open_installments", TypeName = "jsonb")]
+    public string? OpenInstallments { get; set; }
+
+    [Column("has_eligible_epd")]
+    public bool? HasEligibleEpd { get; set; }
+
+    [Column("amount_paid")]
+    public decimal? AmountPaid { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("PaymentLinkWizardCreateU")] //Many2one

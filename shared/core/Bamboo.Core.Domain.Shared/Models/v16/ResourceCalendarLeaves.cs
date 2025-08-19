@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("resource_calendar_leaves")]
-//[Index("CalendarId", Name = "resource_calendar_leaves_calendar_id_index")]
-//[Index("ResourceId", Name = "resource_calendar_leaves_resource_id_index")]
+//[Index("CalendarId", Name = "resource_calendar_leaves__calendar_id_index")]
+//[Index("ResourceId", Name = "resource_calendar_leaves__resource_id_index")]
 public partial class ResourceCalendarLeaves: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

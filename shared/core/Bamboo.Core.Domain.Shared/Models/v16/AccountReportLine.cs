@@ -12,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_report_line")]
+//[Index("ReportId", "Code", Name = "account_report_line_code_uniq", IsUnique = true)]
 //[Index("Code", Name = "account_report_line_code_uniq", IsUnique = true)]
 public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -50,8 +51,14 @@ public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("groupby")]
     public string? Groupby { get; set; }
 
+    [Column("user_groupby")]
+    public string? UserGroupby { get; set; }
+
     [Column("code")]
     public string? Code { get; set; }
+
+    [Column("horizontal_split_side")]
+    public string? HorizontalSplitSide { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]

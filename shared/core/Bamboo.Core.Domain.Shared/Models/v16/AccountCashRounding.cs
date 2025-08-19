@@ -41,6 +41,14 @@ public partial class AccountCashRounding: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
+    [JsonField]
+    [Column("profit_account_id", TypeName = "jsonb")]
+    public string? ProfitAccountId { get; set; }
+
+    [JsonField]
+    [Column("loss_account_id", TypeName = "jsonb")]
+    public string? LossAccountId { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

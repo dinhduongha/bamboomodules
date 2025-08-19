@@ -66,6 +66,11 @@ public partial class LinkTracker: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
+    // [One2many]
+    [ForeignKey("LinkTrackerId")]
+    [InverseProperty("LinkTracker")]
+    public virtual ICollection<CardCampaign> CardCampaign { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("LinkTrackerCreateU")] //Many2one

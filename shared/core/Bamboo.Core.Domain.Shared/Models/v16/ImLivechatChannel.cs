@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("im_livechat_channel")]
-//[Index("IsPublished", Name = "im_livechat_channel_is_published_index")]
+//[Index("IsPublished", Name = "im_livechat_channel__is_published_index")]
 public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -35,15 +35,6 @@ public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("button_text")]
-    public string? ButtonText { get; set; }
-
-    [Column("default_message")]
-    public string? DefaultMessage { get; set; }
-
-    [Column("input_placeholder")]
-    public string? InputPlaceholder { get; set; }
-
     [Column("header_background_color")]
     public string? HeaderBackgroundColor { get; set; }
 
@@ -55,6 +46,31 @@ public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("button_text_color")]
     public string? ButtonTextColor { get; set; }
+
+    [JsonField]
+    [Column("button_text", TypeName = "jsonb")]
+    public string? ButtonText { get; set; }
+
+    // v16-Compat
+    //[Column("button_text")]
+    //public string? ButtonText { get; set; }
+
+    [JsonField]
+    [Column("default_message", TypeName = "jsonb")]
+    public string? DefaultMessage { get; set; }
+
+    // v16-Compat
+    //[Column("default_message")]
+    //public string? DefaultMessage { get; set; }
+
+    [JsonField]
+    [Column("input_placeholder", TypeName = "jsonb")]
+    public string? InputPlaceholder { get; set; }
+
+    // v16-Compat
+    //[Column("input_placeholder")]
+    //public string? InputPlaceholder { get; set; }
+
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -73,6 +89,11 @@ public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("CreatorId")]
     // [InverseProperty("ImLivechatChannelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("LivechatChannelId")]
+    [InverseProperty("LivechatChannel")]
+    public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [One2many]
     [ForeignKey("ChannelId")]

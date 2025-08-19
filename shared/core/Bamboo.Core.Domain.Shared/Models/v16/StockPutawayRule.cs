@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_putaway_rule")]
-//[Index("CompanyId", Name = "stock_putaway_rule_company_id_index")]
-//[Index("LocationInId", Name = "stock_putaway_rule_location_in_id_index")]
+//[Index("CompanyId", Name = "stock_putaway_rule__company_id_index")]
+//[Index("LocationInId", Name = "stock_putaway_rule__location_in_id_index")]
 public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -50,6 +50,9 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("sublocation")]
+    public string? Sublocation { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

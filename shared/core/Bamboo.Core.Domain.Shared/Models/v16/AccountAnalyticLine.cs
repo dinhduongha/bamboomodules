@@ -12,12 +12,13 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_analytic_line")]
-//[Index("AccountId", Name = "account_analytic_line_account_id_index")]
-//[Index("Date", Name = "account_analytic_line_date_index")]
-//[Index("MoveLineId", Name = "account_analytic_line_move_line_id_index")]
-//[Index("OrderId", Name = "account_analytic_line_order_id_index")]
-//[Index("ProjectId", Name = "account_analytic_line_project_id_index")]
-//[Index("UserId", Name = "account_analytic_line_user_id_index")]
+//[Index("AccountId", Name = "account_analytic_line__account_id_index")]
+//[Index("Date", Name = "account_analytic_line__date_index")]
+//[Index("EmployeeId", Name = "account_analytic_line__employee_id_index")]
+//[Index("MoveLineId", Name = "account_analytic_line__move_line_id_index")]
+//[Index("OrderId", Name = "account_analytic_line__order_id_index")]
+//[Index("ProjectId", Name = "account_analytic_line__project_id_index")]
+//[Index("UserId", Name = "account_analytic_line__user_id_index")]
 public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -31,11 +32,11 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     public Guid? OrganizationUnitId  { get; set; }
     
 
-    [Column("product_uom_id")]
-    public Guid? ProductUomId { get; set; }
-
     [Column("account_id")]
     public Guid? AccountId { get; set; }
+
+    [Column("product_uom_id")]
+    public Guid? ProductUomId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -76,6 +77,12 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("unit_amount")]
     public double? UnitAmount { get; set; }
 
+    [Column("x_plan2_id")]
+    public Guid? XPlan2Id { get; set; }
+
+    [Column("x_plan3_id")]
+    public Guid? XPlan3Id { get; set; }
+
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
@@ -99,6 +106,9 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("task_id")]
     public Guid? TaskId { get; set; }
+
+    [Column("parent_task_id")]
+    public Guid? ParentTaskId { get; set; }
 
     [Column("ancestor_task_id")]
     public Guid? AncestorTaskId { get; set; }
@@ -135,6 +145,7 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("AccountId")]
+    // [InverseProperty("AccountAnalyticLineAccount")] //Many2one
     // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountAnalyticAccount? Account { get; set; }
 
@@ -214,6 +225,11 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
+    [ForeignKey("ParentTaskId")]
+    // [InverseProperty("AccountAnalyticLineParentTask")] //Many2one
+    public virtual ProjectTask? ParentTask { get; set; }
+
+    // [Many2one]
     [ForeignKey("PartnerId")]
     // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
@@ -267,4 +283,32 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     [ForeignKey("LastModifierId")]
     // [InverseProperty("AccountAnalyticLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("XPlan2Id")]
+    // [InverseProperty("AccountAnalyticLineXPlan2")] //Many2one
+    public virtual AccountAnalyticAccount? XPlan2 { get; set; }
+
+    // [Many2one]
+    [ForeignKey("XPlan3Id")]
+    // [InverseProperty("AccountAnalyticLineXPlan3")] //Many2one
+    public virtual AccountAnalyticAccount? XPlan3 { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticLineId")]
+    // [InverseProperty("AccountAnalyticLine")]
+    public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticLineId")]
+    // [InverseProperty("AccountAnalyticLineNavigation")]
+    public virtual ICollection<MrpWorkorder> MrpWorkorderNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    //[NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticLineId")]
+    // [InverseProperty("AccountAnalyticLine")]
+    //public virtual ICollection<StockMove> StockMove { get; set; }
 }

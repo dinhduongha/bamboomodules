@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_channel")]
+//[Index("IsPublished", Name = "slide_channel__is_published_index")]
+//[Index("WebsiteId", Name = "slide_channel__website_id_index")]
 //[Index("ForumId", Name = "slide_channel_forum_uniq", IsUnique = true)]
-//[Index("IsPublished", Name = "slide_channel_is_published_index")]
-//[Index("WebsiteId", Name = "slide_channel_website_id_index")]
 public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -288,9 +288,21 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PrerequisiteChannelId")] //Many2many
+    // [InverseProperty("PrerequisiteChannel")] //Many2many
+    public virtual ICollection<SlideChannel> Channel { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
     // [ForeignKey("ChannelId")] //Many2many
     // [InverseProperty("Channel")] //Many2many
     public virtual ICollection<ResGroups> Group { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ChannelId")] //Many2many
+    // [InverseProperty("Channel")] //Many2many
+    public virtual ICollection<SlideChannel> PrerequisiteChannel { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

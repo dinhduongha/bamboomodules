@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_asset_category")]
-//[Index("Name", Name = "account_asset_category_name_index")]
-//[Index("Type", Name = "account_asset_category_type_index")]
+//[Index("Name", Name = "account_asset_category__name_index")]
+//[Index("Type", Name = "account_asset_category__type_index")]
 public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

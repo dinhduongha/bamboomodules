@@ -55,8 +55,8 @@ public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTypeId")]
     // [InverseProperty("AccountType")]
-    // public virtual ICollection<AccountFinancialReport> Report { get; set; }
+    public virtual ICollection<AccountFinancialReport> Report { get; set; }
 }

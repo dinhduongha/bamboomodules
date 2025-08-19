@@ -55,8 +55,8 @@ public partial class RepairTags: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("RepairTagsId")]
     // [InverseProperty("RepairTags")]
-    // public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 }

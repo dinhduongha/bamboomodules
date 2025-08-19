@@ -69,6 +69,11 @@ public partial class MailGuest: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [One2many]
     [ForeignKey("GuestId")]
     [InverseProperty("Guest")]
+    public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
+
+    // [One2many]
+    [ForeignKey("GuestId")]
+    [InverseProperty("Guest")]
     public virtual ICollection<MailChannelMember> MailChannelMember { get; set; }
 
     // [One2many]

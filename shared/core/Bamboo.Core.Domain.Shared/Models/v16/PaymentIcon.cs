@@ -54,8 +54,8 @@ public partial class PaymentIcon: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PaymentIconId")]
     // [InverseProperty("PaymentIcon")]
-    // public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
+    public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 }

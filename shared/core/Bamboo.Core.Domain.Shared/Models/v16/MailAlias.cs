@@ -26,6 +26,9 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("alias_domain_id")]
+    public Guid? AliasDomainId { get; set; }
+
     [Column("alias_model_id")]
     public Guid? AliasModelId { get; set; }
 
@@ -50,8 +53,14 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("alias_name")]
     public string? AliasName { get; set; }
 
+    [Column("alias_full_name")]
+    public string? AliasFullName { get; set; }
+
     [Column("alias_contact")]
     public string? AliasContact { get; set; }
+
+    [Column("alias_status")]
+    public string? AliasStatus { get; set; }
 
     [JsonField]
     [Column("alias_bounced_content", TypeName = "jsonb")]
@@ -59,6 +68,9 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("alias_defaults")]
     public string? AliasDefaults { get; set; }
+
+    [Column("alias_incoming_local")]
+    public bool? AliasIncomingLocal { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -70,6 +82,11 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("AliasId")]
     [InverseProperty("Alias")]
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AliasDomainId")]
+    // [InverseProperty("MailAlias")] //Many2one
+    public virtual MailAliasDomain? AliasDomain { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasModelId")]

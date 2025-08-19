@@ -124,8 +124,8 @@ public partial class LoyaltyRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("LoyaltyRuleId")]
     // [InverseProperty("LoyaltyRule")]
-    // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

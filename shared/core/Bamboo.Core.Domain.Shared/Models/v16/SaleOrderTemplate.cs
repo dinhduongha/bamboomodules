@@ -24,6 +24,9 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }
 
@@ -43,6 +46,10 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 
+    [JsonField]
+    [Column("journal_id", TypeName = "jsonb")]
+    public string? JournalId { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -57,6 +64,9 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("prepayment_percent")]
+    public double? PrepaymentPercent { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -97,4 +107,10 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("LastModifierId")]
     // [InverseProperty("SaleOrderTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("SaleOrderTemplateId")]
+    // [InverseProperty("SaleOrderTemplate")]
+    public virtual ICollection<QuotationDocument> QuotationDocument { get; set; }
 }

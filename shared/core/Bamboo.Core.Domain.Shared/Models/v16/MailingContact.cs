@@ -49,6 +49,12 @@ public partial class MailingContact: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("first_name")]
+    public string? FirstName { get; set; }
+
+    [Column("last_name")]
+    public string? LastName { get; set; }
+
     [Column("company_name")]
     public string? CompanyName { get; set; }
 
@@ -82,6 +88,11 @@ public partial class MailingContact: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [InverseProperty("Contact")]
     public virtual ICollection<MailingContactListRel> MailingContactListRel { get; set; }
 
+    // [One2many]
+    [ForeignKey("ContactId")]
+    [InverseProperty("Contact")]
+    public virtual ICollection<MailingSubscription> MailingSubscription { get; set; }
+
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
     // [InverseProperty("MailingContact")] //Many2one
@@ -98,10 +109,10 @@ public partial class MailingContact: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingContactId")]
     // [InverseProperty("MailingContact")]
-    // public virtual ICollection<MailingContactToList> MailingContactToList { get; set; }
+    public virtual ICollection<MailingContactToList> MailingContactToList { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

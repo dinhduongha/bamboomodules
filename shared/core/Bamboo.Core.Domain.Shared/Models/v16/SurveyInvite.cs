@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_invite")]
-//[Index("AuthorId", Name = "survey_invite_author_id_index")]
+//[Index("AuthorId", Name = "survey_invite__author_id_index")]
 public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -113,6 +113,7 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("WizardId")] //Many2many
     // [InverseProperty("WizardNavigation")] //Many2many
+    // [InverseProperty("Wizard1")] //Many2many
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal

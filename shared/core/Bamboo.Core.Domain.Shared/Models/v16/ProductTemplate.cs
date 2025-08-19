@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_template")]
-//[Index("CompanyId", Name = "product_template_company_id_index")]
-//[Index("IsPublished", Name = "product_template_is_published_index")]
-//[Index("WebsiteId", Name = "product_template_website_id_index")]
-//[Index("WebsiteSequence", Name = "product_template_website_sequence_index")]
+//[Index("CompanyId", Name = "product_template__company_id_index")]
+//[Index("IsPublished", Name = "product_template__is_published_index")]
+//[Index("WebsiteId", Name = "product_template__website_id_index")]
+//[Index("WebsiteSequence", Name = "product_template__website_sequence_index")]
 public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -59,6 +59,9 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("type")]
     public string? Type { get; set; }
 
+    [Column("service_tracking")]
+    public string? ServiceTracking { get; set; }
+
     [Column("default_code")]
     public string? DefaultCode { get; set; }
 
@@ -80,6 +83,10 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [JsonField]
     [Column("description_sale", TypeName = "jsonb")]
     public string? DescriptionSale { get; set; }
+
+    [JsonField]
+    [Column("product_properties", TypeName = "jsonb")]
+    public string? ProductProperties { get; set; }
 
     [Column("list_price")]
     public decimal? ListPrice { get; set; }
@@ -105,11 +112,22 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("has_configurable_attributes")]
     public bool? HasConfigurableAttributes { get; set; }
 
+    [Column("is_favorite")]
+    public bool? IsFavorite { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonField]
+    [Column("property_account_income_id", TypeName = "jsonb")]
+    public string? PropertyAccountIncomeId { get; set; }
+
+    [JsonField]
+    [Column("property_account_expense_id", TypeName = "jsonb")]
+    public string? PropertyAccountExpenseId { get; set; }
 
     [Column("service_type")]
     public string? ServiceType { get; set; }
@@ -126,8 +144,23 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("sale_line_warn_msg")]
     public string? SaleLineWarnMsg { get; set; }
 
+    [Column("sale_delay")]
+    public long? SaleDelay { get; set; }
+
     [Column("tracking")]
     public string? Tracking { get; set; }
+
+    [JsonField]
+    [Column("responsible_id", TypeName = "jsonb")]
+    public string? ResponsibleId { get; set; }
+
+    [JsonField]
+    [Column("property_stock_production", TypeName = "jsonb")]
+    public string? PropertyStockProduction { get; set; }
+
+    [JsonField]
+    [Column("property_stock_inventory", TypeName = "jsonb")]
+    public string? PropertyStockInventory { get; set; }
 
     [JsonField]
     [Column("description_picking", TypeName = "jsonb")]
@@ -141,8 +174,19 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("description_pickingin", TypeName = "jsonb")]
     public string? DescriptionPickingin { get; set; }
 
-    [Column("sale_delay")]
-    public long? SaleDelay { get; set; }
+    [Column("is_storable")]
+    public bool? IsStorable { get; set; }
+
+    [Column("lot_valuated")]
+    public bool? LotValuated { get; set; }
+
+    [JsonField]
+    [Column("public_description", TypeName = "jsonb")]
+    public string? PublicDescription { get; set; }
+
+
+    // [Column("sale_delay")]
+    // public long? SaleDelay { get; set; }
 
     [Column("pos_categ_id")]
     public Guid? PosCategId { get; set; }
@@ -153,6 +197,9 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("to_weight")]
     public bool? ToWeight { get; set; }
 
+    [Column("self_order_available")]
+    public bool? SelfOrderAvailable { get; set; }
+
     [Column("purchase_method")]
     public string? PurchaseMethod { get; set; }
 
@@ -161,6 +208,25 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("purchase_line_warn_msg")]
     public string? PurchaseLineWarnMsg { get; set; }
+
+    [JsonField]
+    [Column("property_account_creditor_price_difference", TypeName = "jsonb")]
+    public string? PropertyAccountCreditorPriceDifference { get; set; }
+
+    [JsonField]
+    [Column("service_to_purchase", TypeName = "jsonb")]
+    public string? ServiceToPurchase { get; set; }
+
+    [Column("create_repair")]
+    public bool? CreateRepair { get; set; }
+
+    [JsonField]
+    [Column("asset_category_id", TypeName = "jsonb")]
+    public string? AssetCategoryId { get; set; }
+
+    [JsonField]
+    [Column("deferred_revenue_category_id", TypeName = "jsonb")]
+    public string? DeferredRevenueCategoryId { get; set; }
 
     [Column("produce_delay")]
     public double? ProduceDelay { get; set; }
@@ -171,8 +237,22 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("can_be_expensed")]
     public bool? CanBeExpensed { get; set; }
 
-    [Column("service_tracking")]
-    public string? ServiceTracking { get; set; }
+    [JsonField]
+    [Column("project_id", TypeName = "jsonb")]
+    public string? ProjectId { get; set; }
+
+    [JsonField]
+    [Column("project_template_id", TypeName = "jsonb")]
+    public string? ProjectTemplateId { get; set; }
+
+    [Column("country_of_origin")]
+    public Guid? CountryOfOrigin { get; set; }
+
+    [Column("hs_code")]
+    public string? HsCode { get; set; }
+
+    // [Column("service_tracking")]
+    // public string? ServiceTracking { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -215,6 +295,10 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
 
+    [JsonField]
+    [Column("description_ecommerce", TypeName = "jsonb")]
+    public string? DescriptionEcommerce { get; set; }
+
     [Column("compare_list_price")]
     public decimal? CompareListPrice { get; set; }
 
@@ -240,6 +324,12 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("available_threshold")]
     public double? AvailableThreshold { get; set; }
 
+    [Column("split_method_landed_cost")]
+    public string? SplitMethodLandedCost { get; set; }
+
+    [Column("landed_cost_ok")]
+    public bool? LandedCostOk { get; set; }
+
     [Column("membership_date_from")]
     public DateTime? MembershipDateFrom { get; set; }
 
@@ -249,20 +339,8 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("membership")]
     public bool? Membership { get; set; }
 
-    [Column("product_add_mode")]
-    public string? ProductAddMode { get; set; }
-
-    [Column("country_of_origin")]
-    public Guid? CountryOfOrigin { get; set; }
-
-    [Column("hs_code")]
-    public string? HsCode { get; set; }
-
-    [Column("split_method_landed_cost")]
-    public string? SplitMethodLandedCost { get; set; }
-
-    [Column("landed_cost_ok")]
-    public bool? LandedCostOk { get; set; }
+    [Column("service_upsell_threshold")]
+    public double? ServiceUpsellThreshold { get; set; }
 
     [Column("expiration_time")]
     public long? ExpirationTime { get; set; }
@@ -279,8 +357,24 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("use_expiration_date")]
     public bool? UseExpirationDate { get; set; }
 
-    [Column("service_upsell_threshold")]
-    public double? ServiceUpsellThreshold { get; set; }
+    [Column("product_add_mode")]
+    public string? ProductAddMode { get; set; }
+
+    // [Column("country_of_origin")]
+    // public Guid? CountryOfOrigin { get; set; }
+
+    // [Column("hs_code")]
+    // public string? HsCode { get; set; }
+
+    // [Column("split_method_landed_cost")]
+    // public string? SplitMethodLandedCost { get; set; }
+
+    // [Column("landed_cost_ok")]
+    // public bool? LandedCostOk { get; set; }
+
+
+    // [Column("service_upsell_threshold")]
+    // public double? ServiceUpsellThreshold { get; set; }
 
     [Column("email_template_id")]
     public Guid? EmailTemplateId { get; set; }
@@ -434,23 +528,35 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [InverseProperty("Src")] //Many2many
     public virtual ICollection<ProductTemplate> DestNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateId")]
-    // [InverseProperty("ProductTemplate")]
-    // public virtual ICollection<ProductAttribute> ProductAttribute { get; set; }
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductTemplateId")] //Many2many
+    // [InverseProperty("ProductTemplate")] //Many2many
+    public virtual ICollection<PosCategory> PosCategory { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateId")]
     // [InverseProperty("ProductTemplate")]
-    // public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
+    public virtual ICollection<ProductAttribute> ProductAttribute { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductTemplateId")] //Many2many
+    // [InverseProperty("ProductTemplate")] //Many2many
+    public virtual ICollection<ProductCombo> ProductCombo { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateId")]
     // [InverseProperty("ProductTemplate")]
-    // public virtual ICollection<ProductPublicCategory> ProductPublicCategory { get; set; }
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTemplateId")]
+    // [InverseProperty("ProductTemplate")]
+    public virtual ICollection<ProductPublicCategory> ProductPublicCategory { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -459,10 +565,10 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual ICollection<ProductTag> ProductTag { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductId")]
     // [InverseProperty("Product")]
-    // public virtual ICollection<StockRoute> Route { get; set; }
+    public virtual ICollection<StockRoute> Route { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

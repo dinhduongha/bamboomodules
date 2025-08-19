@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_track")]
-//[Index("PageId", Name = "website_track_page_id_index")]
-//[Index("Url", Name = "website_track_url_index")]
-//[Index("VisitorId", Name = "website_track_visitor_id_index")]
+//[Index("PageId", Name = "website_track__page_id_index")]
+//[Index("Url", Name = "website_track__url_index")]
+//[Index("VisitorId", Name = "website_track__visitor_id_index")]
 public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

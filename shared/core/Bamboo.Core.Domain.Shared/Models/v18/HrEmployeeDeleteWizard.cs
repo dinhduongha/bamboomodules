@@ -48,8 +48,8 @@ public partial class HrEmployeeDeleteWizard: FullAuditedEntity<Guid>, IEntityDto
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrEmployeeDeleteWizardId")] //Many2many
-    // [InverseProperty("HrEmployeeDeleteWizard")] //Many2many
+    [InverseProperty("HrEmployeeDeleteWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

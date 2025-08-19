@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("blog_blog")]
-//[Index("WebsiteId", Name = "blog_blog_website_id_index")]
+//[Index("WebsiteId", Name = "blog_blog__website_id_index")]
 public partial class BlogBlog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

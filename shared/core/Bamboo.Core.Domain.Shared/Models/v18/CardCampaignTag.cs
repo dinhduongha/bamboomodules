@@ -55,8 +55,8 @@ public partial class CardCampaignTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CardCampaignTagId")]
-    // [InverseProperty("CardCampaignTag")]
-    // public virtual ICollection<CardCampaign> CardCampaign { get; set; }
+    // [ForeignKey("CardCampaignTagId")] //Many2many
+    // [InverseProperty("CardCampaignTag")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<CardCampaign> CardCampaign { get; set; }
 }

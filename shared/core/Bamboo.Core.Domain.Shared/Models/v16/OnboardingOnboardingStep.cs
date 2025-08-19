@@ -40,6 +40,9 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
     [Column("done_icon")]
     public string? DoneIcon { get; set; }
 
+    [Column("step_image_filename")]
+    public string? StepImageFilename { get; set; }
+
     [Column("panel_step_open_action_name")]
     public string? PanelStepOpenActionName { get; set; }
 
@@ -58,6 +61,13 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
     [JsonField]
     [Column("done_text", TypeName = "jsonb")]
     public string? DoneText { get; set; }
+
+    [JsonField]
+    [Column("step_image_alt", TypeName = "jsonb")]
+    public string? StepImageAlt { get; set; }
+
+    [Column("is_per_company")]
+    public bool? IsPerCompany { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -84,4 +94,10 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
     [ForeignKey("LastModifierId")]
     // [InverseProperty("OnboardingOnboardingStepWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("OnboardingOnboardingStepId")]
+    // [InverseProperty("OnboardingOnboardingStep")]
+    public virtual ICollection<OnboardingOnboarding> OnboardingOnboarding { get; set; }
 }

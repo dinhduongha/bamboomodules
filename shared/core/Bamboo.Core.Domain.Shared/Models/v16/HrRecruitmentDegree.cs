@@ -55,6 +55,11 @@ public partial class HrRecruitmentDegree: FullAuditedAggregateRoot<Guid>, IEntit
     [InverseProperty("Type")]
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
+    // [One2many]
+    [ForeignKey("TypeId")]
+    [InverseProperty("Type")]
+    public virtual ICollection<HrCandidate> HrCandidate { get; set; }
+
     // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("HrRecruitmentDegreeWriteU")] //Many2one

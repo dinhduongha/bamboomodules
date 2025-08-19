@@ -56,8 +56,8 @@ public partial class AccountMergeWizard: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("AccountMergeWizardId")] //Many2many
-    // [InverseProperty("AccountMergeWizard")] //Many2many
+    [InverseProperty("AccountMergeWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 }

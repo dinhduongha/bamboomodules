@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_template")]
-//[Index("Model", Name = "mail_template_model_index")]
+//[Index("Model", Name = "mail_template__model_index")]
 public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -31,6 +31,9 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("report_template")]
     public Guid? ReportTemplate { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
 
     [Column("mail_server_id")]
     public Guid? MailServerId { get; set; }
@@ -67,6 +70,9 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("reply_to")]
     public string? ReplyTo { get; set; }
+
+    [Column("email_layout_xmlid")]
+    public string? EmailLayoutXmlid { get; set; }
 
     [Column("scheduled_date")]
     public string? ScheduledDate { get; set; }
@@ -112,6 +118,11 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public virtual ICollection<AccountInvoiceSend> AccountInvoiceSend { get; set; }
 
     // [One2many]
+    [ForeignKey("MailTemplateId")]
+    [InverseProperty("MailTemplate")]
+    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
+
+    // [One2many]
     [ForeignKey("TemplateId")]
     [InverseProperty("Template")]
     public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
@@ -126,6 +137,11 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [InverseProperty("MailTemplate")]
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
+    // [One2many]
+    [ForeignKey("TemplateId")]
+    [InverseProperty("Template")]
+    public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("MailTemplateCreateU")] //Many2one
@@ -135,6 +151,11 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("MailTemplateId")]
     [InverseProperty("MailTemplate")]
     public virtual ICollection<EventTrackStage> EventTrackStage { get; set; }
+
+    // [One2many]
+    [ForeignKey("TemplateId")]
+    [InverseProperty("Template")]
+    public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [One2many]
     [ForeignKey("EmailTemplateId")]
@@ -227,6 +248,11 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [One2many]
+    [ForeignKey("PendingEmailTemplateId")]
+    [InverseProperty("PendingEmailTemplate")]
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [One2many]
     [ForeignKey("TemplateId")]
     [InverseProperty("Template")]
     public virtual ICollection<SaleOrderCancel> SaleOrderCancel { get; set; }
@@ -271,6 +297,11 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [InverseProperty("CertificationMailTemplate")]
     public virtual ICollection<SurveySurvey> SurveySurvey { get; set; }
 
+    // [Many2one]
+    [ForeignKey("UserId")]
+    // [InverseProperty("MailTemplateUser")] //Many2one
+    public virtual ResUsers? User { get; set; }
+
     // [One2many]
     [ForeignKey("CartRecoveryMailTemplateId")]
     [InverseProperty("CartRecoveryMailTemplate")]
@@ -287,15 +318,21 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // [InverseProperty("EmailTemplate")] //Many2many
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailTemplateId")]
-    // [InverseProperty("MailTemplate")]
-    // public virtual ICollection<MailActivityType> MailActivityType { get; set; }
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MailTemplateId")] //Many2many
+    // [InverseProperty("MailTemplate")] //Many2many
+    public virtual ICollection<IrActReportXml> IrActionsReport { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailTemplateId")]
     // [InverseProperty("MailTemplate")]
-    // public virtual ICollection<MailTemplateReset> MailTemplateReset { get; set; }
+    public virtual ICollection<MailActivityType> MailActivityType { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailTemplateId")]
+    // [InverseProperty("MailTemplate")]
+    public virtual ICollection<MailTemplateReset> MailTemplateReset { get; set; }
 }

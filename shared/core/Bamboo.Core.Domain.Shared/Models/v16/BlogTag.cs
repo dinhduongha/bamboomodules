@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("blog_tag")]
-//[Index("CategoryId", Name = "blog_tag_category_id_index")]
+//[Index("CategoryId", Name = "blog_tag__category_id_index")]
 //[Index("Name", Name = "blog_tag_name_uniq", IsUnique = true)]
 public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -29,6 +29,9 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
+
+    [Column("color")]
+    public long? Color { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

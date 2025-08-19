@@ -63,8 +63,8 @@ public partial class HrEmployeeCvWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrEmployeeCvWizardId")] //Many2many
-    // [InverseProperty("HrEmployeeCvWizard")] //Many2many
+    [InverseProperty("HrEmployeeCvWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

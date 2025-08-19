@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("calendar_filters")]
-//[Index("PartnerId", Name = "calendar_filters_partner_id_index")]
-//[Index("UserId", Name = "calendar_filters_user_id_index")]
+//[Index("PartnerId", Name = "calendar_filters__partner_id_index")]
+//[Index("UserId", Name = "calendar_filters__user_id_index")]
 //[Index("UserId", "PartnerId", Name = "calendar_filters_user_id_partner_id_unique", IsUnique = true)]
 public partial class CalendarFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

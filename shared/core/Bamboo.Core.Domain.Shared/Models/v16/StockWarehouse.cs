@@ -65,6 +65,15 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("int_type_id")]
     public Guid? IntTypeId { get; set; }
 
+    [Column("qc_type_id")]
+    public Guid? QcTypeId { get; set; }
+
+    [Column("store_type_id")]
+    public Guid? StoreTypeId { get; set; }
+
+    [Column("xdock_type_id")]
+    public Guid? XdockTypeId { get; set; }
+
     [Column("return_type_id")]
     public Guid? ReturnTypeId { get; set; }
 
@@ -115,6 +124,12 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("buy_to_resupply")]
     public bool? BuyToResupply { get; set; }
+
+    [Column("repair_type_id")]
+    public Guid? RepairTypeId { get; set; }
+
+    [Column("repair_mto_pull_id")]
+    public Guid? RepairMtoPullId { get; set; }
 
     [Column("manufacture_pull_id")]
     public Guid? ManufacturePullId { get; set; }
@@ -169,6 +184,9 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("subcontracting_to_resupply")]
     public bool? SubcontractingToResupply { get; set; }
+
+    [Column("opening_hours")]
+    public Guid? OpeningHours { get; set; }
 
     [Column("subcontracting_dropshipping_pull_id")]
     public Guid? SubcontractingDropshippingPullId { get; set; }
@@ -242,6 +260,11 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual StockRule? MtoPull { get; set; }
 
     // [Many2one]
+    [ForeignKey("OpeningHours")]
+    // [InverseProperty("StockWarehouse")] //Many2one
+    public virtual ResourceCalendar? OpeningHoursNavigation { get; set; }
+
+    // [Many2one]
     [ForeignKey("OutTypeId")]
     // [InverseProperty("StockWarehouseOutType")] //Many2one
     public virtual StockPickingType? OutType { get; set; }
@@ -302,9 +325,24 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
 
     // [Many2one]
+    [ForeignKey("QcTypeId")]
+    // [InverseProperty("StockWarehouseQcType")] //Many2one
+    public virtual StockPickingType? QcType { get; set; }
+
+    // [Many2one]
     [ForeignKey("ReceptionRouteId")]
     // [InverseProperty("StockWarehouseReceptionRoute")] //Many2one
     public virtual StockRoute? ReceptionRoute { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RepairMtoPullId")]
+    // [InverseProperty("StockWarehouseRepairMtoPull")] //Many2one
+    public virtual StockRule? RepairMtoPull { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RepairTypeId")]
+    // [InverseProperty("StockWarehouseRepairType")] //Many2one
+    public virtual StockPickingType? RepairType { get; set; }
 
     // [Many2one]
     [ForeignKey("ReturnTypeId")]
@@ -315,6 +353,11 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("WarehouseId")]
     [InverseProperty("Warehouse")]
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("WarehouseId")]
+    [InverseProperty("Warehouse")]
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SamLocId")]
@@ -370,6 +413,11 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("WarehouseId")]
     [InverseProperty("Warehouse")]
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
+
+    // [Many2one]
+    [ForeignKey("StoreTypeId")]
+    // [InverseProperty("StockWarehouseStoreType")] //Many2one
+    public virtual StockPickingType? StoreType { get; set; }
 
     // [Many2one]
     [ForeignKey("SubcontractingDropshippingPullId")]
@@ -436,17 +484,28 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("StockWarehouseWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("WarehouseId")]
-    // [InverseProperty("Warehouse")]
-    // public virtual ICollection<StockRoute> Route { get; set; }
+    // [Many2one]
+    [ForeignKey("XdockTypeId")]
+    // [InverseProperty("StockWarehouseXdockType")] //Many2one
+    public virtual StockPickingType? XdockType { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    //[NotMapped] //Many2many // Hidden
     // [ForeignKey("StockWarehouseId")]
     // [InverseProperty("StockWarehouse")]
-    // public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
+    //public virtual ICollection<DeliveryCarrier> DeliveryCarrier { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("WarehouseId")]
+    // [InverseProperty("Warehouse")]
+    public virtual ICollection<StockRoute> Route { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockWarehouseId")]
+    // [InverseProperty("StockWarehouse")]
+    public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

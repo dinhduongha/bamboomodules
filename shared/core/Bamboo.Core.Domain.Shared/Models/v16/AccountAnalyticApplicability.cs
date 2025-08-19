@@ -58,6 +58,11 @@ public partial class AccountAnalyticApplicability: FullAuditedEntity<Guid>, IEnt
     public virtual AccountAnalyticPlan? AnalyticPlan { get; set; }
 
     // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("AccountAnalyticApplicability")] //Many2one
+    public virtual ResCompany? Company { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("AccountAnalyticApplicabilityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }

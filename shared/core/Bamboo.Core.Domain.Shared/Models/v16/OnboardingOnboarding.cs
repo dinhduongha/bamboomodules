@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("onboarding_onboarding")]
 //[Index("RouteName", Name = "onboarding_onboarding_route_name_uniq", IsUnique = true)]
-public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class OnboardingOnboarding : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,8 +23,8 @@ public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
+    public Guid? OrganizationUnitId { get; set; }
+
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -37,6 +37,9 @@ public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("route_name")]
     public string? RouteName { get; set; }
+
+    [Column("text_completed")]
+    public string? TextCompleted { get; set; }
 
     [Column("panel_background_color")]
     public string? PanelBackgroundColor { get; set; }
@@ -76,4 +79,11 @@ public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEnti
     [ForeignKey("LastModifierId")]
     // [InverseProperty("OnboardingOnboardingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // INVESIGATE:
+    // [Many2many] // Normal
+    //[NotMapped] //Many2many // Normal
+    // [ForeignKey("OnboardingOnboardingId")] //Many2many
+    // [InverseProperty("OnboardingOnboarding")] //Many2many
+    //public virtual ICollection<OnboardingOnboardingStep> OnboardingOnboardingStep { get; set; }
 }

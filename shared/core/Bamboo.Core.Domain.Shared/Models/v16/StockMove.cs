@@ -12,18 +12,20 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_move")]
-//[Index("CompanyId", Name = "stock_move_company_id_index")]
-//[Index("CreatedProductionId", Name = "stock_move_created_production_id_index")]
-//[Index("Date", Name = "stock_move_date_index")]
-//[Index("GroupId", Name = "stock_move_group_id_index")]
-//[Index("LocationDestId", Name = "stock_move_location_dest_id_index")]
-//[Index("LocationId", Name = "stock_move_location_id_index")]
-//[Index("OrderpointId", Name = "stock_move_orderpoint_id_index")]
-//[Index("OriginReturnedMoveId", Name = "stock_move_origin_returned_move_id_index")]
-//[Index("PickingId", Name = "stock_move_picking_id_index")]
-//[Index("ProductId", Name = "stock_move_product_id_index")]
+//[Index("CompanyId", Name = "stock_move__company_id_index")]
+//[Index("CreatedProductionId", Name = "stock_move__created_production_id_index")]
+//[Index("Date", Name = "stock_move__date_index")]
+//[Index("GroupId", Name = "stock_move__group_id_index")]
+//[Index("LocationDestId", Name = "stock_move__location_dest_id_index")]
+//[Index("LocationFinalId", Name = "stock_move__location_final_id_index")]
+//[Index("LocationId", Name = "stock_move__location_id_index")]
+//[Index("OrderpointId", Name = "stock_move__orderpoint_id_index")]
+//[Index("OriginReturnedMoveId", Name = "stock_move__origin_returned_move_id_index")]
+//[Index("PickingId", Name = "stock_move__picking_id_index")]
+//[Index("ProductId", Name = "stock_move__product_id_index")]
+//[Index("RepairLineType", Name = "stock_move__repair_line_type_index")]
+//[Index("State", Name = "stock_move__state_index")]
 //[Index("ProductId", "LocationId", "LocationDestId", "CompanyId", "State", Name = "stock_move_product_location_index")]
-//[Index("State", Name = "stock_move_state_index")]
 public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -52,11 +54,17 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
 
+    [Column("location_final_id")]
+    public Guid? LocationFinalId { get; set; }
+
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
+
+    [Column("scrap_id")]
+    public Guid? ScrapId { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
@@ -127,6 +135,12 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("product_uom_qty")]
     public decimal? ProductUomQty { get; set; }
 
+    [Column("quantity")]
+    public decimal? Quantity { get; set; }
+
+    [Column("picked")]
+    public bool? Picked { get; set; }
+
     [Column("quantity_done")]
     public decimal? QuantityDone { get; set; }
 
@@ -177,6 +191,9 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("repair_id")]
     public Guid? RepairId { get; set; }
+
+    [Column("repair_line_type")]
+    public string? RepairLineType { get; set; }
 
     [Column("is_done")]
     public bool? IsDone { get; set; }
@@ -266,6 +283,7 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("StockMoveCreatedProduction")] //Many2one
     public virtual MrpProduction? CreatedProduction { get; set; }
 
+    // v16-Compat
     // [Many2one]
     [ForeignKey("CreatedPurchaseLineId")]
     // [InverseProperty("StockMoveCreatedPurchaseLine")] //Many2one
@@ -290,6 +308,11 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("LocationDestId")]
     // [InverseProperty("StockMoveLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LocationFinalId")]
+    // [InverseProperty("StockMoveLocationFinal")] //Many2one
+    public virtual StockLocation? LocationFinal { get; set; }
 
     // [Many2one]
     [ForeignKey("OperationId")]
@@ -354,6 +377,7 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [Many2one]
     [ForeignKey("PurchaseLineId")]
     // [InverseProperty("StockMovePurchaseLine")] //Many2one
+    // [InverseProperty("StockMove")] //Many2one
     public virtual PurchaseOrderLine? PurchaseLine { get; set; }
 
     // [One2many]
@@ -395,6 +419,11 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("SaleLineId")]
     // [InverseProperty("StockMove")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ScrapId")]
+    // [InverseProperty("StockMove")] //Many2one
+    public virtual StockScrap? Scrap { get; set; }
 
     // [One2many]
     [ForeignKey("MoveId")]
@@ -448,6 +477,18 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
+    // [ForeignKey("StockMoveId")] //Many2many
+    // [InverseProperty("StockMove")] //Many2many
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    [ForeignKey("MoveId")]
+    [InverseProperty("Move")]
+    public virtual ICollection<PurchaseOrderLine> CreatedPurchaseOrderLine { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
     // [ForeignKey("MoveOrigId")] //Many2many
     // [InverseProperty("MoveOrig")] //Many2many
     public virtual ICollection<StockMove> MoveDest { get; set; }
@@ -458,9 +499,21 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("MoveDest")] //Many2many
     public virtual ICollection<StockMove> MoveOrig { get; set; }
 
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockMoveId")]
+    // [InverseProperty("StockMove")]
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
+
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("MoveId")] //Many2many
     // [InverseProperty("Move")] //Many2many
     public virtual ICollection<StockRoute> Route { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MoveId")] //Many2many
+    // [InverseProperty("Move")] //Many2many
+    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValue { get; set; }
 }

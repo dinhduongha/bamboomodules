@@ -153,20 +153,20 @@ public partial class HrCandidate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrCandidateId")]
-    // [InverseProperty("HrCandidate")]
-    // public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrCandidateId")] //Many2many
     // [InverseProperty("HrCandidate")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
+
+    // [Many2many] // Normal
+    // [ForeignKey("HrCandidateId")] //Many2many
+    [InverseProperty("HrCandidate")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrApplicantCategory> HrApplicantCategory { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrCandidateId")] //Many2many
-    // [InverseProperty("HrCandidate")] //Many2many
+    [InverseProperty("HrCandidate")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrSkill> HrSkill { get; set; }
 }

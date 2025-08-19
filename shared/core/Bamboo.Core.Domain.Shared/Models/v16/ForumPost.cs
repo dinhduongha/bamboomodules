@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("forum_post")]
-//[Index("CreateDate", Name = "forum_post_create_date_index")]
-//[Index("CreateUid", Name = "forum_post_create_uid_index")]
-//[Index("ParentId", Name = "forum_post_parent_id_index")]
-//[Index("WriteDate", Name = "forum_post_write_date_index")]
-//[Index("WriteUid", Name = "forum_post_write_uid_index")]
+//[Index("CreateDate", Name = "forum_post__create_date_index")]
+//[Index("CreateUid", Name = "forum_post__create_uid_index")]
+//[Index("ParentId", Name = "forum_post__parent_id_index")]
+//[Index("WriteDate", Name = "forum_post__write_date_index")]
+//[Index("WriteUid", Name = "forum_post__write_uid_index")]
 public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -118,6 +118,9 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("last_activity_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastActivityDate { get; set; }
+
     [Column("bump_date", TypeName = "timestamp without time zone")]
     public DateTime? BumpDate { get; set; }
 
@@ -184,9 +187,16 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ForumPostId")] //Many2many
+    // [InverseProperty("ForumPost")] //Many2many
+    public virtual ICollection<ForumTag> ForumTag { get; set; }
+
+    // v16-Compat
+    // [Many2many] // Normal
+    //[NotMapped] //Many2many // Normal
     // [ForeignKey("ForumId")] //Many2many
     // [InverseProperty("ForumNavigation")] //Many2many
-    public virtual ICollection<ForumTag> ForumTag { get; set; }
+    //public virtual ICollection<ForumTag> ForumTag { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

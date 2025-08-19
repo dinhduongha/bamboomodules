@@ -79,11 +79,20 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("access_token")]
+    public string? AccessToken { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
 
     [Column("iface_tax_included")]
     public string? IfaceTaxIncluded { get; set; }
+
+    [Column("customer_display_type")]
+    public string? CustomerDisplayType { get; set; }
+
+    [Column("customer_display_bg_img_name")]
+    public string? CustomerDisplayBgImgName { get; set; }
 
     [Column("proxy_ip")]
     public string? ProxyIp { get; set; }
@@ -99,6 +108,9 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("receipt_footer")]
     public string? ReceiptFooter { get; set; }
+
+    [Column("is_order_printer")]
+    public bool? IsOrderPrinter { get; set; }
 
     [Column("iface_cashdrawer")]
     public bool? IfaceCashdrawer { get; set; }
@@ -136,6 +148,9 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("set_maximum_difference")]
     public bool? SetMaximumDifference { get; set; }
 
+    [Column("basic_receipt")]
+    public bool? BasicReceipt { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -156,6 +171,9 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("module_pos_restaurant")]
     public bool? ModulePosRestaurant { get; set; }
+
+    [Column("module_pos_avatax")]
+    public bool? ModulePosAvatax { get; set; }
 
     [Column("module_pos_discount")]
     public bool? ModulePosDiscount { get; set; }
@@ -186,6 +204,27 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("ship_later")]
     public bool? ShipLater { get; set; }
+
+    [Column("auto_validate_terminal_payment")]
+    public bool? AutoValidateTerminalPayment { get; set; }
+
+    [Column("show_product_images")]
+    public bool? ShowProductImages { get; set; }
+
+    [Column("show_category_images")]
+    public bool? ShowCategoryImages { get; set; }
+
+    [Column("module_pos_sms")]
+    public bool? ModulePosSms { get; set; }
+
+    [Column("is_closing_entry_by_product")]
+    public bool? IsClosingEntryByProduct { get; set; }
+
+    [Column("order_edit_tracking")]
+    public bool? OrderEditTracking { get; set; }
+
+    [Column("orderlines_sequence_in_cart_by_category")]
+    public bool? OrderlinesSequenceInCartByCategory { get; set; }
 
     [Column("limited_products_loading")]
     public bool? LimitedProductsLoading { get; set; }
@@ -220,6 +259,9 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("gift_card_settings")]
     public string? GiftCardSettings { get; set; }
 
+    [Column("takeaway_fp_id")]
+    public Guid? TakeawayFpId { get; set; }
+
     [Column("iface_splitbill")]
     public bool? IfaceSplitbill { get; set; }
 
@@ -232,11 +274,44 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("is_table_management")]
     public bool? IsTableManagement { get; set; }
 
-    [Column("is_order_printer")]
-    public bool? IsOrderPrinter { get; set; }
+    // [Column("is_order_printer")]
+    // public bool? IsOrderPrinter { get; set; }
 
     [Column("set_tip_after_payment")]
     public bool? SetTipAfterPayment { get; set; }
+
+    [Column("module_pos_restaurant_appointment")]
+    public bool? ModulePosRestaurantAppointment { get; set; }
+
+    [Column("takeaway")]
+    public bool? Takeaway { get; set; }
+
+    [Column("self_ordering_default_language_id")]
+    public Guid? SelfOrderingDefaultLanguageId { get; set; }
+
+    [Column("self_ordering_default_user_id")]
+    public Guid? SelfOrderingDefaultUserId { get; set; }
+
+    [Column("self_ordering_mode")]
+    public string? SelfOrderingMode { get; set; }
+
+    [Column("self_ordering_service_mode")]
+    public string? SelfOrderingServiceMode { get; set; }
+
+    [Column("self_ordering_pay_after")]
+    public string? SelfOrderingPayAfter { get; set; }
+
+    [Column("self_ordering_image_brand_name")]
+    public string? SelfOrderingImageBrandName { get; set; }
+
+    [Column("self_ordering_takeaway")]
+    public bool? SelfOrderingTakeaway { get; set; }
+
+    [Column("has_paper")]
+    public bool? HasPaper { get; set; }
+
+    [Column("self_order_online_payment_method_id")]
+    public Guid? SelfOrderOnlinePaymentMethodId { get; set; }
 
     [Column("discount_product_id")]
     public Guid? DiscountProductId { get; set; }
@@ -265,6 +340,7 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [Many2one]
     [ForeignKey("DefaultFiscalPositionId")]
     // [InverseProperty("PosConfigNavigation")] //Many2one
+    // [InverseProperty("PosConfigDefaultFiscalPosition")] //Many2one
     public virtual AccountFiscalPosition? DefaultFiscalPosition { get; set; }
 
     // [Many2one]
@@ -315,6 +391,11 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [One2many]
     [ForeignKey("ConfigId")]
     [InverseProperty("Config")]
+    public virtual ICollection<PosOrder> PosOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("ConfigId")]
+    [InverseProperty("Config")]
     public virtual ICollection<PosSession> PosSession { get; set; }
 
     // [Many2one]
@@ -327,10 +408,11 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [InverseProperty("PosConfig")]
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
+    // v16-Compat
     // [One2many]
-    [ForeignKey("PosConfigId")]
-    [InverseProperty("PosConfig")]
-    public virtual ICollection<RestaurantFloor> RestaurantFloor { get; set; }
+    //[ForeignKey("PosConfigId")]
+    //[InverseProperty("PosConfig")]
+    //public virtual ICollection<RestaurantFloor> RestaurantFloor { get; set; }
 
     // [Many2one]
     [ForeignKey("RoundingMethod")]
@@ -343,6 +425,21 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public virtual StockRoute? Route { get; set; }
 
     // [Many2one]
+    [ForeignKey("SelfOrderOnlinePaymentMethodId")]
+    // [InverseProperty("PosConfig")] //Many2one
+    public virtual PosPaymentMethod? SelfOrderOnlinePaymentMethod { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SelfOrderingDefaultLanguageId")]
+    // [InverseProperty("PosConfig")] //Many2one
+    public virtual ResLang? SelfOrderingDefaultLanguage { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SelfOrderingDefaultUserId")]
+    // [InverseProperty("PosConfigSelfOrderingDefaultUser")] //Many2one
+    public virtual ResUsers? SelfOrderingDefaultUser { get; set; }
+
+    // [Many2one]
     [ForeignKey("SequenceId")]
     // [InverseProperty("PosConfigSequence")] //Many2one
     public virtual IrSequence? Sequence { get; set; }
@@ -351,6 +448,11 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("SequenceLineId")]
     // [InverseProperty("PosConfigSequenceLine")] //Many2one
     public virtual IrSequence? SequenceLine { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TakeawayFpId")]
+    // [InverseProperty("PosConfigTakeawayFp")] //Many2one
+    public virtual AccountFiscalPosition? TakeawayFp { get; set; }
 
     // [Many2one]
     [ForeignKey("TipProductId")]
@@ -379,11 +481,35 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("PosConfig")] //Many2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PosConfigId")] //Many2many
+    // [InverseProperty("PosConfigNavigation")] //Many2many
+    public virtual ICollection<HrEmployee> HrEmployeeNavigation { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PosConfigId")] //Many2many
+    // [InverseProperty("PosConfig")] //Many2many
+    public virtual ICollection<IrAttachment> IrAttachment { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("IsTrusting")] //Many2many
+    // [InverseProperty("IsTrusting")] //Many2many
+    public virtual ICollection<PosConfig> IsTrusted { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("IsTrusted")] //Many2many
+    // [InverseProperty("IsTrusted")] //Many2many
+    public virtual ICollection<PosConfig> IsTrusting { get; set; }
+
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosConfigId")]
     // [InverseProperty("PosConfig")]
-    // public virtual ICollection<LoyaltyProgram> LoyaltyProgram { get; set; }
+    public virtual ICollection<LoyaltyProgram> LoyaltyProgram { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -398,26 +524,57 @@ public partial class PosConfig: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public virtual ICollection<PosCategory> PosCategory { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosConfigId")]
     // [InverseProperty("PosConfig")]
-    // public virtual ICollection<PosDetailsWizard> PosDetailsWizard { get; set; }
+    public virtual ICollection<PosDetailsWizard> PosDetailsWizard { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("PosConfigId")] //Many2many
     // [InverseProperty("PosConfig")] //Many2many
+    public virtual ICollection<PosNote> PosNote { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PosConfigId")] //Many2many
+    // [InverseProperty("PosConfigNavigation")] //Many2many
     public virtual ICollection<PosPaymentMethod> PosPaymentMethod { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosConfigId")]
+    // [InverseProperty("PosConfig")]
+    public virtual ICollection<PosSelfOrderCustomLink> PosSelfOrderCustomLink { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("ConfigId")] //Many2many
     // [InverseProperty("Config")] //Many2many
-    public virtual ICollection<RestaurantPrinter> Printer { get; set; }
+    public virtual ICollection<PosPrinter> Printer { get; set; }
+
+    // v16-Compat
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ConfigId")] //Many2many
+    // [InverseProperty("Config")] //Many2many
+    //public virtual ICollection<RestaurantPrinter> Printer { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("PosConfigId")] //Many2many
     // [InverseProperty("PosConfigNavigation")] //Many2many
     public virtual ICollection<ProductPricelist> ProductPricelist { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PosConfigId")] //Many2many
+    // [InverseProperty("PosConfigNavigation")] //Many2many
+    public virtual ICollection<ResLang> ResLang { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    [ForeignKey("PosConfigId")] //Many2many
+    [InverseProperty("PosConfig")] //Many2many
+    public virtual ICollection<RestaurantFloor> RestaurantFloor { get; set; }
 }

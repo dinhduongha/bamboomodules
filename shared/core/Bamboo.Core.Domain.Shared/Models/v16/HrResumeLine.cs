@@ -12,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_resume_line")]
+//[Index("EmployeeId", Name = "hr_resume_line__employee_id_index")]
 public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -37,9 +38,6 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
-
     [Column("display_type")]
     public string? DisplayType { get; set; }
 
@@ -49,8 +47,21 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("date_end")]
     public DateTime? DateEnd { get; set; }
 
-    [Column("description")]
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
+
+    [JsonField]
+    [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
+
+    // v16-Compat
+    //[Column("description")]
+    //public string? Description { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -61,8 +72,14 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("channel_id")]
     public Guid? ChannelId { get; set; }
 
+    [Column("department_id")]
+    public Guid? DepartmentId { get; set; }
+
     [Column("survey_id")]
     public Guid? SurveyId { get; set; }
+
+    [Column("expiration_status")]
+    public string? ExpirationStatus { get; set; }
 
     // [Many2one]
     [ForeignKey("ChannelId")]
@@ -73,6 +90,11 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("CreatorId")]
     // [InverseProperty("HrResumeLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("DepartmentId")]
+    // [InverseProperty("HrResumeLine")] //Many2one
+    public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]

@@ -52,8 +52,8 @@ public partial class DeliveryZipPrefix: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ZipPrefixId")]
     // [InverseProperty("ZipPrefix")]
-    // public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
+    public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
 }

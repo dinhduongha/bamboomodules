@@ -43,6 +43,9 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("allocation_notif_subtype_id")]
     public Guid? AllocationNotifSubtypeId { get; set; }
 
+    [Column("max_allowed_negative")]
+    public long? MaxAllowedNegative { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -80,11 +83,20 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("show_on_dashboard")]
+    public bool? ShowOnDashboard { get; set; }
+
     [Column("unpaid")]
     public bool? Unpaid { get; set; }
 
+    [Column("include_public_holidays_in_duration")]
+    public bool? IncludePublicHolidaysInDuration { get; set; }
+
     [Column("support_document")]
     public bool? SupportDocument { get; set; }
+
+    [Column("allows_negative")]
+    public bool? AllowsNegative { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -94,6 +106,9 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("overtime_deductible")]
     public bool? OvertimeDeductible { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
 
     [Column("work_entry_type_id")]
     public Guid? WorkEntryTypeId { get; set; }
@@ -137,6 +152,16 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [InverseProperty("HolidayStatus")]
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
 
+    // [One2many]
+    [ForeignKey("HolidayStatusId")]
+    [InverseProperty("HolidayStatus")]
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("HolidayStatusId")]
+    [InverseProperty("HolidayStatus")]
+    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
+
     // [Many2one]
     [ForeignKey("IconId")]
     // [InverseProperty("HrLeaveType")] //Many2one
@@ -171,4 +196,10 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("LastModifierId")]
     // [InverseProperty("HrLeaveTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("HrLeaveTypeId")] //Many2many
+    // [InverseProperty("HrLeaveType")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

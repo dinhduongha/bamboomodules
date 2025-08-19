@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_bom")]
-//[Index("CompanyId", Name = "mrp_bom_company_id_index")]
-//[Index("ProductId", Name = "mrp_bom_product_id_index")]
-//[Index("ProductTmplId", Name = "mrp_bom_product_tmpl_id_index")]
+//[Index("CompanyId", Name = "mrp_bom__company_id_index")]
+//[Index("ProductId", Name = "mrp_bom__product_id_index")]
+//[Index("ProductTmplId", Name = "mrp_bom__product_tmpl_id_index")]
 public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -45,6 +45,12 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
+
+    [Column("produce_delay")]
+    public long? ProduceDelay { get; set; }
+
+    [Column("days_to_prepare_mo")]
+    public long? DaysToPrepareMo { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -78,6 +84,9 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -129,6 +138,11 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     // [InverseProperty("MrpBom")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+
     // [Many2one]
     [ForeignKey("ProductTmplId")]
     // [InverseProperty("MrpBom")] //Many2one
@@ -139,6 +153,16 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     // [InverseProperty("MrpBom")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
+    // [Many2one]
+    [ForeignKey("ProjectId")]
+    // [InverseProperty("MrpBom")] //Many2one
+    public virtual ProjectProject? Project { get; set; }
+
+    // [One2many]
+    [ForeignKey("BomId")]
+    [InverseProperty("Bom")]
+    public virtual ICollection<StockScrap> StockScrap { get; set; }
+
     // [One2many]
     [ForeignKey("BomId")]
     [InverseProperty("Bom")]
@@ -148,6 +172,12 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     [ForeignKey("LastModifierId")]
     // [InverseProperty("MrpBomWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MrpBomId")]
+    // [InverseProperty("MrpBom")]
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

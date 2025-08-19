@@ -37,8 +37,13 @@ public partial class HrSkill: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -55,6 +60,11 @@ public partial class HrSkill: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [ForeignKey("SkillId")]
     [InverseProperty("Skill")]
     public virtual ICollection<HrApplicantSkill> HrApplicantSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillId")]
+    [InverseProperty("Skill")]
+    public virtual ICollection<HrCandidateSkill> HrCandidateSkill { get; set; }
 
     // [One2many]
     [ForeignKey("SkillId")]
@@ -77,14 +87,26 @@ public partial class HrSkill: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrSkillId")]
     // [InverseProperty("HrSkill")]
-    // public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrSkillId")]
     // [InverseProperty("HrSkill")]
-    // public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+    public virtual ICollection<HrCandidate> HrCandidate { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrSkillId")]
+    // [InverseProperty("HrSkill")]
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrSkillId")]
+    // [InverseProperty("HrSkill")]
+    public virtual ICollection<HrJob> HrJob { get; set; }
 }

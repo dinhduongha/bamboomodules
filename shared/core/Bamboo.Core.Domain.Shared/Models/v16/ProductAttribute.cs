@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_attribute")]
-//[Index("CategoryId", Name = "product_attribute_category_id_index")]
-//[Index("Sequence", Name = "product_attribute_sequence_index")]
+//[Index("CategoryId", Name = "product_attribute__category_id_index")]
+//[Index("Sequence", Name = "product_attribute__sequence_index")]
 public partial class ProductAttribute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -45,6 +45,9 @@ public partial class ProductAttribute: FullAuditedAggregateRoot<Guid>, IEntityDt
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

@@ -78,6 +78,11 @@ public partial class StockLandedCost: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual AccountMove? AccountMove { get; set; }
 
     // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("StockLandedCost")] //Many2one
+    public virtual ResCompany? Company { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("StockLandedCostCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }

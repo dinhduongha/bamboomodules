@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_slide_partner")]
-//[Index("ChannelId", Name = "slide_slide_partner_channel_id_index")]
-//[Index("PartnerId", Name = "slide_slide_partner_partner_id_index")]
-//[Index("SlideId", Name = "slide_slide_partner_slide_id_index")]
+//[Index("ChannelId", Name = "slide_slide_partner__channel_id_index")]
+//[Index("PartnerId", Name = "slide_slide_partner__partner_id_index")]
+//[Index("SlideId", Name = "slide_slide_partner__slide_id_index")]
 //[Index("SlideId", "PartnerId", Name = "slide_slide_partner_slide_partner_uniq", IsUnique = true)]
 public partial class SlideSlidePartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

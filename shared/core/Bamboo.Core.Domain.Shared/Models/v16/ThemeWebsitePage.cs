@@ -46,6 +46,9 @@ public partial class ThemeWebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
+    [Column("is_new_page_template")]
+    public bool? IsNewPageTemplate { get; set; }
+
     [Column("header_overlay")]
     public bool? HeaderOverlay { get; set; }
 

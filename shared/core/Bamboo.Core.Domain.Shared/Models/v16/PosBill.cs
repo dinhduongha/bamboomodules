@@ -37,6 +37,9 @@ public partial class PosBill: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("value")]
     public decimal? Value { get; set; }
 
+    [Column("for_all_config")]
+    public bool? ForAllConfig { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -54,8 +57,8 @@ public partial class PosBill: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosBillId")]
     // [InverseProperty("PosBill")]
-    // public virtual ICollection<PosConfig> PosConfig { get; set; }
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

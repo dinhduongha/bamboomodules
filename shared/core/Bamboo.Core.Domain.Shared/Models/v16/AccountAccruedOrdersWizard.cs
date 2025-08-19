@@ -24,6 +24,9 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
 
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
+
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
 
@@ -70,6 +73,11 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
     [ForeignKey("CurrencyId")]
     // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
+
+    // [Many2one]
+    [ForeignKey("JournalId")]
+    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
+    public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

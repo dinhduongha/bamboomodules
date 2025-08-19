@@ -58,14 +58,14 @@ public partial class SalePdfFormField: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("SalePdfFormFieldId")]
-    // [InverseProperty("SalePdfFormField")]
-    // public virtual ICollection<ProductDocument> ProductDocument { get; set; }
+    // [ForeignKey("SalePdfFormFieldId")] //Many2many
+    // [InverseProperty("SalePdfFormField")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<ProductDocument> ProductDocument { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("SalePdfFormFieldId")]
-    // [InverseProperty("SalePdfFormField")]
-    // public virtual ICollection<QuotationDocument> QuotationDocument { get; set; }
+    // [ForeignKey("SalePdfFormFieldId")] //Many2many
+    // [InverseProperty("SalePdfFormField")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<QuotationDocument> QuotationDocument { get; set; }
 }

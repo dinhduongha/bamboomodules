@@ -40,6 +40,9 @@ public partial class ApplicantGetRefuseReason: FullAuditedEntity<Guid>, IEntityD
     [Column("send_mail")]
     public bool? SendMail { get; set; }
 
+    [Column("duplicates")]
+    public bool? Duplicates { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

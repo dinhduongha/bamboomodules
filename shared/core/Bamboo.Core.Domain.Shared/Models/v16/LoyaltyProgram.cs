@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("loyalty_program")]
-//[Index("WebsiteId", Name = "loyalty_program_website_id_index")]
+//[Index("WebsiteId", Name = "loyalty_program__website_id_index")]
 public partial class LoyaltyProgram: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -49,6 +49,9 @@ public partial class LoyaltyProgram: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("trigger")]
     public string? Trigger { get; set; }
+
+    [Column("date_from")]
+    public DateTime? DateFrom { get; set; }
 
     [Column("date_to")]
     public DateTime? DateTo { get; set; }
@@ -148,4 +151,10 @@ public partial class LoyaltyProgram: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [ForeignKey("LoyaltyProgramId")] //Many2many
     // [InverseProperty("LoyaltyProgram")] //Many2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("LoyaltyProgramId")] //Many2many
+    // [InverseProperty("LoyaltyProgram")] //Many2many
+    public virtual ICollection<ProductPricelist> ProductPricelist { get; set; }
 }

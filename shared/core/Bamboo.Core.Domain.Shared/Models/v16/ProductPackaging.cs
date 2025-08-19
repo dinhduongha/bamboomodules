@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_packaging")]
+//[Index("CompanyId", Name = "product_packaging__company_id_index")]
 //[Index("Barcode", Name = "product_packaging_barcode_uniq", IsUnique = true)]
-//[Index("CompanyId", Name = "product_packaging_company_id_index")]
 public partial class ProductPackaging: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -104,8 +104,8 @@ public partial class ProductPackaging: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PackagingId")]
     // [InverseProperty("Packaging")]
-    // public virtual ICollection<StockRoute> Route { get; set; }
+    public virtual ICollection<StockRoute> Route { get; set; }
 }

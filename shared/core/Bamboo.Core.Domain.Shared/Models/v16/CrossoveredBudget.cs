@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crossovered_budget")]
-//[Index("State", Name = "crossovered_budget_state_index")]
+//[Index("State", Name = "crossovered_budget__state_index")]
 public partial class CrossoveredBudget: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

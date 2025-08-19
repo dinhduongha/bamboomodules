@@ -32,6 +32,9 @@ public partial class HrWorkEntryType: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [Column("country_id")]
+    public Guid? CountryId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -40,6 +43,9 @@ public partial class HrWorkEntryType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("code")]
     public string? Code { get; set; }
+
+    [Column("external_code")]
+    public string? ExternalCode { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -56,6 +62,11 @@ public partial class HrWorkEntryType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("is_leave")]
     public bool? IsLeave { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CountryId")]
+    // [InverseProperty("HrWorkEntryType")] //Many2one
+    public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]

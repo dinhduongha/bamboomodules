@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_quant_package")]
-//[Index("CompanyId", Name = "stock_quant_package_company_id_index")]
-//[Index("LocationId", Name = "stock_quant_package_location_id_index")]
-//[Index("PackageTypeId", Name = "stock_quant_package_package_type_id_index")]
+//[Index("CompanyId", Name = "stock_quant_package__company_id_index")]
+//[Index("LocationId", Name = "stock_quant_package__location_id_index")]
+//[Index("PackageTypeId", Name = "stock_quant_package__package_type_id_index")]
 public partial class StockQuantPackage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -97,6 +97,11 @@ public partial class StockQuantPackage: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("PackageId")]
     [InverseProperty("Package")]
     public virtual ICollection<StockQuant> StockQuant { get; set; }
+
+    // [One2many]
+    [ForeignKey("DestPackageId")]
+    [InverseProperty("DestPackage")]
+    public virtual ICollection<StockQuantRelocate> StockQuantRelocate { get; set; }
 
     // [One2many]
     [ForeignKey("PackageId")]

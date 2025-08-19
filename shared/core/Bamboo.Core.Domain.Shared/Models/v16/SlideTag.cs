@@ -53,8 +53,8 @@ public partial class SlideTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TagId")]
     // [InverseProperty("Tag")]
-    // public virtual ICollection<SlideSlide> Slide { get; set; }
+    public virtual ICollection<SlideSlide> Slide { get; set; }
 }

@@ -73,14 +73,14 @@ public partial class FleetVehicleSendMail: FullAuditedEntity<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("WizardId")] //Many2many
-    // [InverseProperty("Wizard")] //Many2many
+    [InverseProperty("Wizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("FleetVehicleSendMailId")] //Many2many
-    // [InverseProperty("FleetVehicleSendMail")] //Many2many
+    [InverseProperty("FleetVehicleSendMail")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 }

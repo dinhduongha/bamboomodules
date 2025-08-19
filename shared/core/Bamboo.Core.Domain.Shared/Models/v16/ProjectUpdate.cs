@@ -37,6 +37,12 @@ public partial class ProjectUpdate: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
 
+    [Column("task_count")]
+    public long? TaskCount { get; set; }
+
+    [Column("closed_task_count")]
+    public long? ClosedTaskCount { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -64,6 +70,15 @@ public partial class ProjectUpdate: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("allocated_time")]
+    public long? AllocatedTime { get; set; }
+
+    [Column("timesheet_time")]
+    public long? TimesheetTime { get; set; }
+
+    [Column("uom_id")]
+    public Guid? UomId { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("ProjectUpdateCreateU")] //Many2one
@@ -83,6 +98,11 @@ public partial class ProjectUpdate: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LastUpdateId")]
     [InverseProperty("LastUpdate")]
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
+
+    // [Many2one]
+    [ForeignKey("UomId")]
+    // [InverseProperty("ProjectUpdate")] //Many2one
+    public virtual UomUom? Uom { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]

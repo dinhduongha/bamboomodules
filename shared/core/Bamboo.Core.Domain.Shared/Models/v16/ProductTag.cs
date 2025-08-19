@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_tag")]
+//[Index("WebsiteId", Name = "product_tag__website_id_index")]
 //[Index("Name", Name = "product_tag_name_uniq", IsUnique = true)]
-//[Index("WebsiteId", Name = "product_tag_website_id_index")]
 public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -27,14 +27,17 @@ public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? OrganizationUnitId  { get; set; }
     
 
-    [Column("color")]
-    public long? Color { get; set; }
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("color")]
+    public long? Color { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -51,6 +54,9 @@ public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("ribbon_id")]
     public Guid? RibbonId { get; set; }
+
+    [Column("visible_on_ecommerce")]
+    public bool? VisibleOnEcommerce { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -88,14 +94,26 @@ public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTagId")]
     // [InverseProperty("ProductTag")]
-    // public virtual ICollection<ProductProduct> ProductProduct { get; set; }
+    public virtual ICollection<DeliveryCarrier> DeliveryCarrier { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTagId")]
+    // [InverseProperty("ProductTagNavigation")]
+    public virtual ICollection<DeliveryCarrier> DeliveryCarrierNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTagId")]
     // [InverseProperty("ProductTag")]
-    // public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+    public virtual ICollection<ProductProduct> ProductProduct { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductTagId")]
+    // [InverseProperty("ProductTag")]
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

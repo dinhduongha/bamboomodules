@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_provider")]
-//[Index("CompanyId", Name = "payment_provider_company_id_index")]
+//[Index("CompanyId", Name = "payment_provider__company_id_index")]
 public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -138,6 +138,18 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("qr_code")]
     public bool? QrCode { get; set; }
 
+    [Column("authorize_login")]
+    public string? AuthorizeLogin { get; set; }
+
+    [Column("authorize_transaction_key")]
+    public string? AuthorizeTransactionKey { get; set; }
+
+    [Column("authorize_signature_key")]
+    public string? AuthorizeSignatureKey { get; set; }
+
+    [Column("authorize_client_key")]
+    public string? AuthorizeClientKey { get; set; }
+
     // [One2many]
     [ForeignKey("PaymentProviderId")]
     [InverseProperty("PaymentProvider")]
@@ -208,5 +220,23 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("PaymentProviderId")] //Many2many
     // [InverseProperty("PaymentProvider")] //Many2many
+    public virtual ICollection<ResCurrency> Currency { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PaymentProviderId")] //Many2many
+    // [InverseProperty("PaymentProvider")] //Many2many
     public virtual ICollection<PaymentIcon> PaymentIcon { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PaymentProviderId")]
+    // [InverseProperty("PaymentProvider")]
+    public virtual ICollection<PaymentMethod> PaymentMethod { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PaymentProviderId")]
+    // [InverseProperty("PaymentProvider")]
+    public virtual ICollection<PosPaymentMethod> PosPaymentMethod { get; set; }
 }

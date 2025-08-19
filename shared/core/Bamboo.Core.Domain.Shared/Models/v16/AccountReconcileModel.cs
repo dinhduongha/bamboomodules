@@ -41,14 +41,18 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
 
     [Column("rule_type")]
     public string? RuleType { get; set; }
 
     [Column("matching_order")]
     public string? MatchingOrder { get; set; }
+
+    [Column("counterpart_type")]
+    public string? CounterpartType { get; set; }
 
     [Column("match_nature")]
     public string? MatchNature { get; set; }
@@ -79,6 +83,10 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("decimal_separator")]
     public string? DecimalSeparator { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

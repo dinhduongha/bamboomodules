@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Bamboo.Core.Models;
+// Cần thêm using đến namespace chứa entity của bạn ở đây
+// Ví dụ: using YourProject.Entities;
+
+namespace Bamboo.Core.EntityFrameworkCore
+{
+    public static partial class ModelBuilderExtensions
+    {
+        public static void ConfigureAccountPrintJournal(this ModelBuilder modelBuilder)
+        {
+        modelBuilder.Entity<AccountPrintJournal>(entity =>
+            {
+            entity.HasKey(e => e.Id).HasName("account_print_journal_pkey");
+
+            entity.ToTable("account_print_journal");
+
+            entity.HasIndex(e => e.TenantId);
+
+            entity.HasIndex(e => e.OrganizationUnitId);
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+
+            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+            entity.Property(e => e.AmountCurrency).HasColumnName("amount_currency");
+
+            entity.Property(e => e.CreationTime)
+                .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.DateFrom).HasColumnName("date_from");
+            entity.Property(e => e.DateTo).HasColumnName("date_to");
+            entity.Property(e => e.SortSelection).HasColumnName("sort_selection");
+            entity.Property(e => e.TargetMove).HasColumnName("target_move");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            // entity.HasOne(d => d.Company).WithMany(p => p.AccountPrintJournal)
+            entity.HasOne(d => d.Company).WithMany()
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("account_print_journal_company_id_fkey");
+
+            // entity.HasOne(d => d.CreateU).WithMany(p => p.AccountPrintJournalCreateU)
+            entity.HasOne(d => d.CreateU).WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_print_journal_create_uid_fkey");
+
+            // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountPrintJournalWriteU)
+            entity.HasOne(d => d.WriteU).WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("account_print_journal_write_uid_fkey");
+
+            // entity.HasMany(d => d.AccountJournal).WithMany(p => p.AccountPrintJournal)
+            entity.HasMany(d => d.AccountJournal).WithMany(p => p.AccountPrintJournal)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AccountJournalAccountPrintJournalRel",
+                    r => r.HasOne<AccountJournal>().WithMany()
+                        .HasForeignKey("AccountJournalId")
+                        .HasConstraintName("account_journal_account_print_journal_r_account_journal_id_fkey"),
+                    l => l.HasOne<AccountPrintJournal>().WithMany()
+                        .HasForeignKey("AccountPrintJournalId")
+                        .HasConstraintName("account_journal_account_print_jou_account_print_journal_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("AccountPrintJournalId", "AccountJournalId").HasName("account_journal_account_print_journal_rel_pkey");
+                        j.ToTable("account_journal_account_print_journal_rel");
+                        j.HasIndex(new[] { "AccountJournalId", "AccountPrintJournalId" }, "account_journal_account_print_account_journal_id_account_pr_idx");
+                        j.IndexerProperty<Guid>("AccountPrintJournalId").HasColumnName("account_print_journal_id");
+                        j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
+                    });
+            });
+        }
+    }
+}

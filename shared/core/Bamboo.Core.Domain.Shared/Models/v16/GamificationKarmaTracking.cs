@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_karma_tracking")]
-//[Index("UserId", Name = "gamification_karma_tracking_user_id_index")]
+//[Index("TrackingDate", Name = "gamification_karma_tracking__tracking_date_index")]
+//[Index("UserId", Name = "gamification_karma_tracking__user_id_index")]
 public partial class GamificationKarmaTracking: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -41,11 +42,20 @@ public partial class GamificationKarmaTracking: FullAuditedEntity<Guid>, IEntity
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("tracking_date")]
-    public DateTime? TrackingDate { get; set; }
+    [Column("origin_ref")]
+    public string? OriginRef { get; set; }
+
+    [Column("origin_ref_model_name")]
+    public string? OriginRefModelName { get; set; }
+
+    [Column("reason")]
+    public string? Reason { get; set; }
 
     [Column("consolidated")]
     public bool? Consolidated { get; set; }
+
+    [Column("tracking_date", TypeName = "timestamp without time zone")]
+    public DateTime? TrackingDate { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

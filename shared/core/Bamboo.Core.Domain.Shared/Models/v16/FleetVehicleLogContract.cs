@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_log_contract")]
-//[Index("UserId", Name = "fleet_vehicle_log_contract_user_id_index")]
+//[Index("UserId", Name = "fleet_vehicle_log_contract__user_id_index")]
 public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

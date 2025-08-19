@@ -48,6 +48,9 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("title", TypeName = "jsonb")]
     public string? Title { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("is_auto_campaign")]
     public bool? IsAutoCampaign { get; set; }
 
@@ -56,6 +59,9 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("ab_testing_winner_mailing_id")]
+    public Guid? AbTestingWinnerMailingId { get; set; }
 
     [Column("ab_testing_total_pc")]
     public long? AbTestingTotalPc { get; set; }
@@ -71,6 +77,11 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("ab_testing_sms_winner_selection")]
     public string? AbTestingSmsWinnerSelection { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AbTestingWinnerMailingId")]
+    // [InverseProperty("UtmCampaign")] //Many2one
+    public virtual MailingMailing? AbTestingWinnerMailing { get; set; }
 
     // [One2many]
     [ForeignKey("CampaignId")]

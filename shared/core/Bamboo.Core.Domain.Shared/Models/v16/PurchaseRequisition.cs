@@ -53,8 +53,20 @@ public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("origin")]
     public string? Origin { get; set; }
 
+    [Column("reference")]
+    public string? Reference { get; set; }
+
+    [Column("requisition_type")]
+    public string? RequisitionType { get; set; }
+
     [Column("state")]
     public string? State { get; set; }
+
+    [Column("date_start")]
+    public DateTime? DateStart { get; set; }
+
+    [Column("date_end")]
+    public DateTime? DateEnd { get; set; }
 
     [Column("ordering_date")]
     public DateTime? OrderingDate { get; set; }
@@ -65,8 +77,8 @@ public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("description")]
     public string? Description { get; set; }
 
-    [Column("date_end", TypeName = "timestamp without time zone")]
-    public DateTime? DateEnd { get; set; }
+    [Column("active")]
+    public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

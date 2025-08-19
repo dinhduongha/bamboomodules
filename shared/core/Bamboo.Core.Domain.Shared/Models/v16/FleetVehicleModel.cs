@@ -46,6 +46,9 @@ public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("horsepower")]
     public long? Horsepower { get; set; }
 
+    [Column("vehicle_range")]
+    public long? VehicleRange { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -69,6 +72,13 @@ public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("default_fuel_type")]
     public string? DefaultFuelType { get; set; }
+
+    [Column("power_unit")]
+    public string? PowerUnit { get; set; }
+
+    [JsonField]
+    [Column("vehicle_properties_definition", TypeName = "jsonb")]
+    public string? VehiclePropertiesDefinition { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

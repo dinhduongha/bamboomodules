@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Bamboo.Core.Models;
+// Cần thêm using đến namespace chứa entity của bạn ở đây
+// Ví dụ: using YourProject.Entities;
+
+namespace Bamboo.Core.EntityFrameworkCore
+{
+    public static partial class ModelBuilderExtensions
+    {
+        public static void ConfigureHrWorkEntryType(this ModelBuilder modelBuilder)
+        {
+        modelBuilder.Entity<HrWorkEntryType>(entity =>
+            {
+            entity.HasKey(e => e.Id).HasName("hr_work_entry_type_pkey");
+
+            entity.ToTable("hr_work_entry_type");
+
+            entity.HasIndex(e => e.TenantId);
+
+            entity.HasIndex(e => e.OrganizationUnitId);
+
+            entity.HasIndex(e => e.Code, "hr_work_entry_type_unique_work_entry_code").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("next_uuid()")
+                .HasColumnName("id");
+
+            entity.Property(e => e.TenantId).HasColumnName("company_id");
+
+            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.Code).HasColumnName("code");
+            entity.Property(e => e.Color).HasColumnName("color");
+            entity.Property(e => e.CountryId).HasColumnName("country_id");
+            entity.Property(e => e.CreationTime)
+                .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("create_date");
+            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+            entity.Property(e => e.ExternalCode).HasColumnName("external_code");
+            entity.Property(e => e.IsLeave).HasColumnName("is_leave");
+            entity.Property(e => e.Name)
+                .HasColumnType("jsonb")
+                .HasColumnName("name");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.LastModificationTime)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("write_date");
+            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            // entity.HasOne(d => d.Country).WithMany(p => p.HrWorkEntryType)
+            entity.HasOne(d => d.Country).WithMany()
+                .HasForeignKey(d => d.CountryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_work_entry_type_country_id_fkey");
+
+            // entity.HasOne(d => d.CreateU).WithMany(p => p.HrWorkEntryTypeCreateU)
+            entity.HasOne(d => d.CreateU).WithMany()
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_work_entry_type_create_uid_fkey");
+
+            // entity.HasOne(d => d.WriteU).WithMany(p => p.HrWorkEntryTypeWriteU)
+            entity.HasOne(d => d.WriteU).WithMany()
+                .HasForeignKey(d => d.LastModifierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("hr_work_entry_type_write_uid_fkey");
+            });
+        }
+    }
+}

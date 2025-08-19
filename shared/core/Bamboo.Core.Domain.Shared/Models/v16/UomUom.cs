@@ -135,6 +135,11 @@ public partial class UomUom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     public virtual ICollection<ProductTemplate> ProductTemplateUomPo { get; set; }
 
     // [One2many]
+    [ForeignKey("UomId")]
+    [InverseProperty("Uom")]
+    public virtual ICollection<ProjectUpdate> ProjectUpdate { get; set; }
+
+    // [One2many]
     [ForeignKey("ProductUom")]
     [InverseProperty("ProductUomNavigation")]
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }

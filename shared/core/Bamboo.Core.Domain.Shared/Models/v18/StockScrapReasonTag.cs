@@ -59,8 +59,8 @@ public partial class StockScrapReasonTag: FullAuditedEntity<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockScrapReasonTagId")]
-    // [InverseProperty("StockScrapReasonTag")]
-    // public virtual ICollection<StockScrap> StockScrap { get; set; }
+    // [ForeignKey("StockScrapReasonTagId")] //Many2many
+    // [InverseProperty("StockScrapReasonTag")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<StockScrap> StockScrap { get; set; }
 }

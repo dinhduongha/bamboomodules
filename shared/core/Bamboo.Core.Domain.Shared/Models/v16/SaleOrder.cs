@@ -12,12 +12,12 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sale_order")]
-//[Index("CompanyId", Name = "sale_order_company_id_index")]
-//[Index("CreateDate", Name = "sale_order_create_date_index")]
+//[Index("CompanyId", Name = "sale_order__company_id_index")]
+//[Index("CreateDate", Name = "sale_order__create_date_index")]
+//[Index("PartnerId", Name = "sale_order__partner_id_index")]
+//[Index("State", Name = "sale_order__state_index")]
+//[Index("UserId", Name = "sale_order__user_id_index")]
 //[Index("DateOrder", "Id", Name = "sale_order_date_order_id_idx", AllDescending = true)]
-//[Index("PartnerId", Name = "sale_order_partner_id_index")]
-//[Index("State", Name = "sale_order_state_index")]
-//[Index("UserId", Name = "sale_order_user_id_index")]
 public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -45,6 +45,9 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("partner_invoice_id")]
     public Guid? PartnerInvoiceId { get; set; }
@@ -121,6 +124,9 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("amount_total")]
     public decimal? AmountTotal { get; set; }
 
+    [Column("locked")]
+    public bool? Locked { get; set; }
+
     [Column("require_signature")]
     public bool? RequireSignature { get; set; }
 
@@ -142,8 +148,18 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("prepayment_percent")]
+    public double? PrepaymentPercent { get; set; }
+
+    [Column("pending_email_template_id")]
+    public Guid? PendingEmailTemplateId { get; set; }
+
     [Column("sale_order_template_id")]
     public Guid? SaleOrderTemplateId { get; set; }
+
+    [JsonField]
+    [Column("customizable_pdf_form_fields", TypeName = "jsonb")]
+    public string? CustomizablePdfFormFields { get; set; }
 
     [Column("incoterm")]
     public Guid? Incoterm { get; set; }
@@ -175,6 +191,22 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
 
+    [Column("carrier_id")]
+    public Guid? CarrierId { get; set; }
+
+    [Column("delivery_message")]
+    public string? DeliveryMessage { get; set; }
+
+    [JsonField]
+    [Column("pickup_location_data", TypeName = "jsonb")]
+    public string? PickupLocationData { get; set; }
+
+    [Column("recompute_delivery_price")]
+    public bool? RecomputeDeliveryPrice { get; set; }
+
+    [Column("shipping_weight")]
+    public double? ShippingWeight { get; set; }
+
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
@@ -193,17 +225,17 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("report_grids")]
     public bool? ReportGrids { get; set; }
 
-    [Column("carrier_id")]
-    public Guid? CarrierId { get; set; }
+    // [Column("carrier_id")]
+    // public Guid? CarrierId { get; set; }
 
-    [Column("delivery_message")]
-    public string? DeliveryMessage { get; set; }
+    // [Column("delivery_message")]
+    // public string? DeliveryMessage { get; set; }
 
     [Column("delivery_rating_success")]
     public bool? DeliveryRatingSuccess { get; set; }
 
-    [Column("recompute_delivery_price")]
-    public bool? RecomputeDeliveryPrice { get; set; }
+    // [Column("recompute_delivery_price")]
+    // public bool? RecomputeDeliveryPrice { get; set; }
 
     [Column("amount_delivery")]
     public decimal? AmountDelivery { get; set; }
@@ -278,6 +310,11 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("SaleOrder")] //Many2one
     public virtual AccountIncoterms? IncotermNavigation { get; set; }
 
+    // [Many2one]
+    [ForeignKey("JournalId")]
+    // [InverseProperty("SaleOrder")] //Many2one
+    public virtual AccountJournal? Journal { get; set; }
+
     // [One2many]
     [ForeignKey("OrderId")]
     [InverseProperty("Order")]
@@ -318,6 +355,11 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("SaleOrder")] //Many2one
     public virtual AccountPaymentTerm? PaymentTerm { get; set; }
 
+    // [Many2one]
+    [ForeignKey("PendingEmailTemplateId")]
+    // [InverseProperty("SaleOrder")] //Many2one
+    public virtual MailTemplate? PendingEmailTemplate { get; set; }
+
     // [One2many]
     [ForeignKey("SaleOrderOriginId")]
     [InverseProperty("SaleOrderOrigin")]
@@ -352,6 +394,11 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("SaleOrderId")]
     [InverseProperty("SaleOrder")]
     public virtual ICollection<ProjectCreateSaleOrder> ProjectCreateSaleOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("ReinvoicedSaleOrderId")]
+    [InverseProperty("ReinvoicedSaleOrder")]
+    public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [One2many]
     [ForeignKey("SaleOrderId")]
@@ -392,6 +439,11 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("OrderId")]
     [InverseProperty("Order")]
     public virtual ICollection<SaleOrderCouponPoints> SaleOrderCouponPoints { get; set; }
+
+    // [One2many]
+    [ForeignKey("SaleOrderId")]
+    [InverseProperty("SaleOrder")]
+    public virtual ICollection<SaleOrderDiscount> SaleOrderDiscount { get; set; }
 
     // [One2many]
     [ForeignKey("OrderId")]
@@ -461,11 +513,23 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("SaleOrder")] //Many2many
     public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SaleOrderId")] //Many2many
+    // [InverseProperty("SaleOrder")] //Many2many
+    public virtual ICollection<QuotationDocument> QuotationDocument { get; set; }
+
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("SaleOrderId")]
     // [InverseProperty("SaleOrder")]
-    // public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInv { get; set; }
+    public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInv { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("SaleOrderId")]
+    // [InverseProperty("SaleOrder")]
+    public virtual ICollection<SaleMassCancelOrders> SaleMassCancelOrders { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -474,8 +538,8 @@ public partial class SaleOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public virtual ICollection<CrmTag> Tag { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("SaleOrderId")]
     // [InverseProperty("SaleOrder")]
-    // public virtual ICollection<PaymentTransaction> Transaction { get; set; }
+    public virtual ICollection<PaymentTransaction> Transaction { get; set; }
 }

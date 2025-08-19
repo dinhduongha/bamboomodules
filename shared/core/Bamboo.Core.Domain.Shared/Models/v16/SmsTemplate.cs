@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sms_template")]
-//[Index("Model", Name = "sms_template_model_index")]
+//[Index("Model", Name = "sms_template__model_index")]
 public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -122,8 +122,8 @@ public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("SmsTemplateId")]
     // [InverseProperty("SmsTemplate")]
-    // public virtual ICollection<SmsTemplateReset> SmsTemplateReset { get; set; }
+    public virtual ICollection<SmsTemplateReset> SmsTemplateReset { get; set; }
 }

@@ -12,13 +12,13 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("purchase_order")]
-//[Index("CompanyId", Name = "purchase_order_company_id_index")]
-//[Index("DateApprove", Name = "purchase_order_date_approve_index")]
-//[Index("DateOrder", Name = "purchase_order_date_order_index")]
-//[Index("DatePlanned", Name = "purchase_order_date_planned_index")]
-//[Index("Priority", Name = "purchase_order_priority_index")]
-//[Index("State", Name = "purchase_order_state_index")]
-//[Index("UserId", Name = "purchase_order_user_id_index")]
+//[Index("CompanyId", Name = "purchase_order__company_id_index")]
+//[Index("DateApprove", Name = "purchase_order__date_approve_index")]
+//[Index("DateOrder", Name = "purchase_order__date_order_index")]
+//[Index("DatePlanned", Name = "purchase_order__date_planned_index")]
+//[Index("Priority", Name = "purchase_order__priority_index")]
+//[Index("State", Name = "purchase_order__state_index")]
+//[Index("UserId", Name = "purchase_order__user_id_index")]
 public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -98,11 +98,20 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("amount_total")]
     public decimal? AmountTotal { get; set; }
 
+    [Column("amount_total_cc")]
+    public decimal? AmountTotalCc { get; set; }
+
+    [Column("currency_rate")]
+    public decimal? CurrencyRate { get; set; }
+
     [Column("mail_reminder_confirmed")]
     public bool? MailReminderConfirmed { get; set; }
 
     [Column("mail_reception_confirmed")]
     public bool? MailReceptionConfirmed { get; set; }
+
+    [Column("mail_reception_declined")]
+    public bool? MailReceptionDeclined { get; set; }
 
     [Column("date_order", TypeName = "timestamp without time zone")]
     public DateTime? DateOrder { get; set; }
@@ -122,8 +131,8 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("currency_rate")]
-    public double? CurrencyRate { get; set; }
+    // [Column("currency_rate")]
+    // public double? CurrencyRate { get; set; }
 
     [Column("picking_type_id")]
     public Guid? PickingTypeId { get; set; }
@@ -140,6 +149,9 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("effective_date", TypeName = "timestamp without time zone")]
     public DateTime? EffectiveDate { get; set; }
 
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
+
     [Column("requisition_id")]
     public Guid? RequisitionId { get; set; }
 
@@ -148,6 +160,11 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("report_grids")]
     public bool? ReportGrids { get; set; }
+
+    // [One2many]
+    [ForeignKey("PurchaseOrderId")]
+    [InverseProperty("PurchaseOrder")]
+    public virtual ICollection<BillToPoWizard> BillToPoWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -205,6 +222,11 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
+    [ForeignKey("ProjectId")]
+    // [InverseProperty("PurchaseOrder")] //Many2one
+    public virtual ProjectProject? Project { get; set; }
+
+    // [Many2one]
     [ForeignKey("PurchaseGroupId")]
     // [InverseProperty("PurchaseOrder")] //Many2one
     public virtual PurchaseOrderGroup? PurchaseGroup { get; set; }
@@ -241,16 +263,16 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PurchaseOrderId")]
     // [InverseProperty("PurchaseOrder")]
-    // public virtual ICollection<PurchaseRequisitionAlternativeWarning> PurchaseRequisitionAlternativeWarning { get; set; }
+    public virtual ICollection<PurchaseRequisitionAlternativeWarning> PurchaseRequisitionAlternativeWarning { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PurchaseOrderId")]
     // [InverseProperty("PurchaseOrderNavigation")]
-    // public virtual ICollection<PurchaseRequisitionAlternativeWarning> PurchaseRequisitionAlternativeWarningNavigation { get; set; }
+    public virtual ICollection<PurchaseRequisitionAlternativeWarning> PurchaseRequisitionAlternativeWarningNavigation { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

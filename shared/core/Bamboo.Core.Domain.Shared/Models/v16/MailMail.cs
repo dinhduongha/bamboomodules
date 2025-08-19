@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_mail")]
-//[Index("MailMessageId", Name = "mail_mail_mail_message_id_index")]
+//[Index("MailMessageId", Name = "mail_mail__mail_message_id_index")]
 public partial class MailMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

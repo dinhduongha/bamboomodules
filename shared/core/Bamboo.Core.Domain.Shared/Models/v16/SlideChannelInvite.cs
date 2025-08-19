@@ -46,6 +46,12 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("body")]
     public string? Body { get; set; }
 
+    [Column("send_email")]
+    public bool? SendEmail { get; set; }
+
+    [Column("enroll_mode")]
+    public bool? EnrollMode { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

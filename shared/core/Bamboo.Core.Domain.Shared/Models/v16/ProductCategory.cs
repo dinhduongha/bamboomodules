@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_category")]
-//[Index("ParentId", Name = "product_category_parent_id_index")]
-//[Index("ParentPath", Name = "product_category_parent_path_index")]
+//[Index("ParentId", Name = "product_category__parent_id_index")]
+//[Index("ParentPath", Name = "product_category__parent_path_index")]
 public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -45,17 +45,65 @@ public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
+    [JsonField]
+    [Column("product_properties_definition", TypeName = "jsonb")]
+    public string? ProductPropertiesDefinition { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [JsonField]
+    [Column("property_account_income_categ_id", TypeName = "jsonb")]
+    public string? PropertyAccountIncomeCategId { get; set; }
+
+    [JsonField]
+    [Column("property_account_expense_categ_id", TypeName = "jsonb")]
+    public string? PropertyAccountExpenseCategId { get; set; }
+
+    [JsonField]
+    [Column("property_account_downpayment_categ_id", TypeName = "jsonb")]
+    public string? PropertyAccountDownpaymentCategId { get; set; }
+
     [Column("removal_strategy_id")]
     public Guid? RemovalStrategyId { get; set; }
 
     [Column("packaging_reserve_method")]
     public string? PackagingReserveMethod { get; set; }
+
+    [JsonField]
+    [Column("property_valuation", TypeName = "jsonb")]
+    public string? PropertyValuation { get; set; }
+
+    [JsonField]
+    [Column("property_cost_method", TypeName = "jsonb")]
+    public string? PropertyCostMethod { get; set; }
+
+    [JsonField]
+    [Column("property_stock_journal", TypeName = "jsonb")]
+    public string? PropertyStockJournal { get; set; }
+
+    [JsonField]
+    [Column("property_stock_account_input_categ_id", TypeName = "jsonb")]
+    public string? PropertyStockAccountInputCategId { get; set; }
+
+    [JsonField]
+    [Column("property_stock_account_output_categ_id", TypeName = "jsonb")]
+    public string? PropertyStockAccountOutputCategId { get; set; }
+
+    [JsonField]
+    [Column("property_stock_valuation_account_id", TypeName = "jsonb")]
+    public string? PropertyStockValuationAccountId { get; set; }
+
+    [JsonField]
+    [Column("property_account_creditor_price_difference_categ", TypeName = "jsonb")]
+    public string? PropertyAccountCreditorPriceDifferenceCateg { get; set; }
+
+    [JsonField]
+    [Column("property_stock_account_production_cost_id", TypeName = "jsonb")]
+    public string? PropertyStockAccountProductionCostId { get; set; }
 
     // [One2many]
     [ForeignKey("ProductCategId")]
@@ -113,6 +161,11 @@ public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual ICollection<StockPutawayRule> StockPutawayRule { get; set; }
 
     // [One2many]
+    [ForeignKey("CategId")]
+    [InverseProperty("Categ")]
+    public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
+
+    // [One2many]
     [ForeignKey("ProductCategoryId")]
     [InverseProperty("ProductCategory")]
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
@@ -123,8 +176,14 @@ public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CategId")]
     // [InverseProperty("Categ")]
-    // public virtual ICollection<StockRoute> Route { get; set; }
+    public virtual ICollection<StockRoute> Route { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductCategoryId")]
+    // [InverseProperty("ProductCategory")]
+    public virtual ICollection<StockPickingType> StockPickingType { get; set; }
 }

@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_employee")]
+//[Index("CompanyId", Name = "hr_employee__company_id_index")]
+//[Index("ResourceCalendarId", Name = "hr_employee__resource_calendar_id_index")]
+//[Index("ResourceId", Name = "hr_employee__resource_id_index")]
 //[Index("Barcode", Name = "hr_employee_barcode_uniq", IsUnique = true)]
-//[Index("CompanyId", Name = "hr_employee_company_id_index")]
-//[Index("ResourceCalendarId", Name = "hr_employee_resource_calendar_id_index")]
-//[Index("ResourceId", Name = "hr_employee_resource_id_index")]
 //[Index("UserId", "CompanyId", Name = "hr_employee_user_uniq", IsUnique = true)]
 public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -69,6 +69,12 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("address_home_id")]
     public Guid? AddressHomeId { get; set; }
 
+    [Column("private_state_id")]
+    public Guid? PrivateStateId { get; set; }
+
+    [Column("private_country_id")]
+    public Guid? PrivateCountryId { get; set; }
+
     [Column("country_id")]
     public Guid? CountryId { get; set; }
 
@@ -80,6 +86,9 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("bank_account_id")]
     public Guid? BankAccountId { get; set; }
+
+    [Column("distance_home_work")]
+    public long? DistanceHomeWork { get; set; }
 
     [Column("km_home_work")]
     public long? KmHomeWork { get; set; }
@@ -110,6 +119,27 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("employee_type")]
     public string? EmployeeType { get; set; }
+
+    [Column("private_street")]
+    public string? PrivateStreet { get; set; }
+
+    [Column("private_street2")]
+    public string? PrivateStreet2 { get; set; }
+
+    [Column("private_city")]
+    public string? PrivateCity { get; set; }
+
+    [Column("private_zip")]
+    public string? PrivateZip { get; set; }
+
+    [Column("private_phone")]
+    public string? PrivatePhone { get; set; }
+
+    [Column("private_email")]
+    public string? PrivateEmail { get; set; }
+
+    [Column("lang")]
+    public string? Lang { get; set; }
 
     [Column("gender")]
     public string? Gender { get; set; }
@@ -156,11 +186,20 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("emergency_phone")]
     public string? EmergencyPhone { get; set; }
 
+    [Column("distance_home_work_unit")]
+    public string? DistanceHomeWorkUnit { get; set; }
+
+    // [Column("employee_type")]
+    // public string? EmployeeType { get; set; }
+
     [Column("barcode")]
     public string? Barcode { get; set; }
 
     [Column("pin")]
     public string? Pin { get; set; }
+
+    [Column("private_car_plate")]
+    public string? PrivateCarPlate { get; set; }
 
     [Column("spouse_birthdate")]
     public DateTime? SpouseBirthdate { get; set; }
@@ -177,6 +216,10 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("departure_date")]
     public DateTime? DepartureDate { get; set; }
 
+    [JsonField]
+    [Column("employee_properties", TypeName = "jsonb")]
+    public string? EmployeeProperties { get; set; }
+
     [Column("additional_note")]
     public string? AdditionalNote { get; set; }
 
@@ -188,6 +231,12 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("active")]
     public bool? Active { get; set; }
+
+    [Column("is_flexible")]
+    public bool? IsFlexible { get; set; }
+
+    [Column("is_fully_flexible")]
+    public bool? IsFullyFlexible { get; set; }
 
     [Column("work_permit_scheduled_activity")]
     public bool? WorkPermitScheduledActivity { get; set; }
@@ -201,6 +250,9 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("contract_id")]
     public Guid? ContractId { get; set; }
 
+    [Column("legal_name")]
+    public string? LegalName { get; set; }
+
     [Column("vehicle")]
     public string? Vehicle { get; set; }
 
@@ -210,11 +262,8 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("contract_warning")]
     public bool? ContractWarning { get; set; }
 
-    [Column("expense_manager_id")]
-    public Guid? ExpenseManagerId { get; set; }
-
-    [Column("leave_manager_id")]
-    public Guid? LeaveManagerId { get; set; }
+    [Column("attendance_manager_id")]
+    public Guid? AttendanceManagerId { get; set; }
 
     [Column("last_attendance_id")]
     public Guid? LastAttendanceId { get; set; }
@@ -225,8 +274,41 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("last_check_out", TypeName = "timestamp without time zone")]
     public DateTime? LastCheckOut { get; set; }
 
+    [Column("expense_manager_id")]
+    public Guid? ExpenseManagerId { get; set; }
+
+    [Column("leave_manager_id")]
+    public Guid? LeaveManagerId { get; set; }
+
     [Column("mobility_card")]
     public string? MobilityCard { get; set; }
+
+    [Column("monday_location_id")]
+    public Guid? MondayLocationId { get; set; }
+
+    [Column("tuesday_location_id")]
+    public Guid? TuesdayLocationId { get; set; }
+
+    [Column("wednesday_location_id")]
+    public Guid? WednesdayLocationId { get; set; }
+
+    [Column("thursday_location_id")]
+    public Guid? ThursdayLocationId { get; set; }
+
+    [Column("friday_location_id")]
+    public Guid? FridayLocationId { get; set; }
+
+    [Column("saturday_location_id")]
+    public Guid? SaturdayLocationId { get; set; }
+
+    [Column("sunday_location_id")]
+    public Guid? SundayLocationId { get; set; }
+
+    [Column("today_location_name")]
+    public string? TodayLocationName { get; set; }
+
+    [Column("hourly_cost")]
+    public decimal? HourlyCost { get; set; }
 
     [Column("hr_presence_state_display")]
     public string? HrPresenceStateDisplay { get; set; }
@@ -240,8 +322,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("manually_set_present")]
     public bool? ManuallySetPresent { get; set; }
 
-    [Column("hourly_cost")]
-    public decimal? HourlyCost { get; set; }
+    [Column("manually_set_presence")]
+    public bool? ManuallySetPresence { get; set; }
+
+    // [Column("hourly_cost")]
+    // public decimal? HourlyCost { get; set; }
 
     // [One2many]
     [ForeignKey("EmployeeId")]
@@ -253,6 +338,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [InverseProperty("Manager")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineManager { get; set; }
 
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
+
     // [Many2one]
     [ForeignKey("AddressId")]
     // [InverseProperty("HrEmployeeAddress")] //Many2one
@@ -262,6 +352,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("AddressHomeId")]
     // [InverseProperty("HrEmployeeAddressHome")] //Many2one
     public virtual ResPartner? AddressHome { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AttendanceManagerId")]
+    // [InverseProperty("HrEmployeeAttendanceManager")] //Many2one
+    public virtual ResUsers? AttendanceManager { get; set; }
 
     // [Many2one]
     [ForeignKey("BankAccountId")]
@@ -333,6 +428,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [InverseProperty("PurchaserEmployee")]
     public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
+    // [Many2one]
+    [ForeignKey("FridayLocationId")]
+    // [InverseProperty("HrEmployeeFridayLocation")] //Many2one
+    public virtual HrWorkLocation? FridayLocation { get; set; }
+
     // [One2many]
     [ForeignKey("EmployeeId")]
     [InverseProperty("Employee")]
@@ -342,6 +442,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("EmployeeId")]
     [InverseProperty("Employee")]
     public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HomeworkLocationWizard> HomeworkLocationWizard { get; set; }
 
     // [One2many]
     [ForeignKey("EmpId")]
@@ -361,6 +466,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // [One2many]
     [ForeignKey("EmployeeId")]
     [InverseProperty("Employee")]
+    public virtual ICollection<HrCandidate> HrCandidate { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
@@ -372,6 +482,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("EmployeeId")]
     [InverseProperty("Employee")]
     public virtual ICollection<HrDepartureWizard> HrDepartureWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrEmployeeLocation> HrEmployeeLocation { get; set; }
 
     // [One2many]
     [ForeignKey("EmployeeId")]
@@ -419,6 +534,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationManager { get; set; }
 
     // [One2many]
+    [ForeignKey("SecondApproverId")]
+    [InverseProperty("SecondApprover")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationSecondApprover { get; set; }
+
+    // [One2many]
     [ForeignKey("EmployeeId")]
     [InverseProperty("Employee")]
     public virtual ICollection<HrLeave> HrLeaveEmployee { get; set; }
@@ -437,6 +557,16 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("SecondApproverId")]
     [InverseProperty("SecondApprover")]
     public virtual ICollection<HrLeave> HrLeaveSecondApprover { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrPayslip> HrPayslip { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
     [ForeignKey("EmployeeId")]
@@ -494,6 +624,11 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
+    [ForeignKey("MondayLocationId")]
+    // [InverseProperty("HrEmployeeMondayLocation")] //Many2one
+    public virtual HrWorkLocation? MondayLocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("ParentId")]
     // [InverseProperty("InverseParent")] //Many2one
     public virtual HrEmployee? Parent { get; set; }
@@ -502,6 +637,26 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("EmployeeId")]
     [InverseProperty("Employee")]
     public virtual ICollection<PosOrder> PosOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<PosPayment> PosPayment { get; set; }
+
+    // [One2many]
+    [ForeignKey("EmployeeId")]
+    [InverseProperty("Employee")]
+    public virtual ICollection<PosSession> PosSession { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PrivateCountryId")]
+    // [InverseProperty("HrEmployeePrivateCountry")] //Many2one
+    public virtual ResCountry? PrivateCountry { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PrivateStateId")]
+    // [InverseProperty("HrEmployee")] //Many2one
+    public virtual ResCountryState? PrivateState { get; set; }
 
     // [One2many]
     [ForeignKey("EmployeeId")]
@@ -524,9 +679,34 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
+    [ForeignKey("SaturdayLocationId")]
+    // [InverseProperty("HrEmployeeSaturdayLocation")] //Many2one
+    public virtual HrWorkLocation? SaturdayLocation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SundayLocationId")]
+    // [InverseProperty("HrEmployeeSundayLocation")] //Many2one
+    public virtual HrWorkLocation? SundayLocation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ThursdayLocationId")]
+    // [InverseProperty("HrEmployeeThursdayLocation")] //Many2one
+    public virtual HrWorkLocation? ThursdayLocation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TuesdayLocationId")]
+    // [InverseProperty("HrEmployeeTuesdayLocation")] //Many2one
+    public virtual HrWorkLocation? TuesdayLocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("UserId")]
     // [InverseProperty("HrEmployeeUser")] //Many2one
     public virtual ResUsers? User { get; set; }
+
+    // [Many2one]
+    [ForeignKey("WednesdayLocationId")]
+    // [InverseProperty("HrEmployeeWednesdayLocation")] //Many2one
+    public virtual HrWorkLocation? WednesdayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkContactId")]
@@ -536,6 +716,7 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // [Many2one]
     [ForeignKey("WorkLocationId")]
     // [InverseProperty("HrEmployee")] //Many2one
+    // [InverseProperty("HrEmployeeWorkLocation")] //Many2one
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
     // [Many2one]
@@ -550,22 +731,46 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<HrEmployeeCategory> Category { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PlanWizardId")]
     // [InverseProperty("PlanWizard")]
-    // public virtual ICollection<HrPlanWizard> Employee { get; set; }
+    public virtual ICollection<HrPlanWizard> Employee { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")]
     // [InverseProperty("HrEmployee")]
-    // public virtual ICollection<HrLeave> HrLeave { get; set; }
+    public virtual ICollection<HrEmployeeCvWizard> HrEmployeeCvWizard { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")]
     // [InverseProperty("HrEmployee")]
-    // public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
+    public virtual ICollection<HrEmployeeDeleteWizard> HrEmployeeDeleteWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    public virtual ICollection<HrLeave> HrLeave { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployee")]
+    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -574,20 +779,32 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<HrSkill> HrSkill { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")]
     // [InverseProperty("HrEmployee")]
-    // public virtual ICollection<HrWorkEntryRegenerationWizard> HrWorkEntryRegenerationWizard { get; set; }
+    public virtual ICollection<HrWorkEntryRegenerationWizard> HrWorkEntryRegenerationWizard { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("EmployeeId")]
+    // [InverseProperty("Employee")]
+    public virtual ICollection<HrPayslipEmployees> Payslip { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")]
     // [InverseProperty("HrEmployee")]
-    // public virtual ICollection<PosConfig> PosConfig { get; set; }
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrEmployeeId")]
+    // [InverseProperty("HrEmployeeNavigation")]
+    public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EmpId")]
     // [InverseProperty("Emp")]
-    // public virtual ICollection<HrHolidaysSummaryEmployee> Sum { get; set; }
+    public virtual ICollection<HrHolidaysSummaryEmployee> Sum { get; set; }
 }

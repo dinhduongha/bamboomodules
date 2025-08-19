@@ -57,7 +57,17 @@ public partial class HrEmployeeCategory: FullAuditedAggregateRoot<Guid>, IEntity
     // [One2many]
     [ForeignKey("CategoryId")]
     [InverseProperty("Category")]
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
+
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Category")]
+    public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
@@ -65,8 +75,15 @@ public partial class HrEmployeeCategory: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CategoryId")]
     // [InverseProperty("Category")]
-    // public virtual ICollection<HrEmployee> Emp { get; set; }
+    public virtual ICollection<HrEmployee> Emp { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("CategoryId")]
+    // [InverseProperty("Category")]
+    public virtual ICollection<HrEmployee> Employee { get; set; }
+
 }

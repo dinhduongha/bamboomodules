@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_account")]
-//[Index("AccountType", Name = "account_account_account_type_index")]
+//[Index("AccountType", Name = "account_account__account_type_index")]
 //[Index("Code", "CompanyId", Name = "account_account_code_company_uniq", IsUnique = true)]
 public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -45,6 +45,9 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("account_type")]
+    public string? AccountType { get; set; }
+
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -52,8 +55,9 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("code")]
     public string? Code { get; set; }
 
-    [Column("account_type")]
-    public string? AccountType { get; set; }
+    [JsonField]
+    [Column("code_store", TypeName = "jsonb")]
+    public string? CodeStore { get; set; }
 
     [Column("internal_group")]
     public string? InternalGroup { get; set; }
@@ -145,6 +149,11 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
+    // public virtual ICollection<AccountMergeWizardLine> AccountMergeWizardLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountId")]
+    // [InverseProperty("Account")]
     // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
@@ -183,6 +192,21 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<AccountTax> AccountTax { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AdvanceTaxPaymentAccountId")]
+    // [InverseProperty("AdvanceTaxPaymentAccount")]
+    // public virtual ICollection<AccountTaxGroup> AccountTaxGroupAdvanceTaxPaymentAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("TaxPayableAccountId")]
+    // [InverseProperty("TaxPayableAccount")]
+    // public virtual ICollection<AccountTaxGroup> AccountTaxGroupTaxPayableAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("TaxReceivableAccountId")]
+    // [InverseProperty("TaxReceivableAccount")]
+    // public virtual ICollection<AccountTaxGroup> AccountTaxGroupTaxReceivableAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
     // public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
@@ -211,6 +235,36 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
     // public virtual ICollection<HrExpense> HrExpense { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountCredit")]
+    // [InverseProperty("AccountCreditNavigation")]
+    // public virtual ICollection<HrPayslipLine> HrPayslipLineAccountCreditNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountDebit")]
+    // [InverseProperty("AccountDebitNavigation")]
+    // public virtual ICollection<HrPayslipLine> HrPayslipLineAccountDebitNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountCredit")]
+    // [InverseProperty("AccountCreditNavigation")]
+    // public virtual ICollection<HrSalaryRule> HrSalaryRuleAccountCreditNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountDebit")]
+    // [InverseProperty("AccountDebitNavigation")]
+    // public virtual ICollection<HrSalaryRule> HrSalaryRuleAccountDebitNavigation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountId")]
+    // [InverseProperty("Account")]
+    // public virtual ICollection<MrpAccountWipAccountingLine> MrpAccountWipAccountingLine { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("ExpenseAccountId")]
+    // [InverseProperty("ExpenseAccount")]
+    // public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
@@ -243,6 +297,16 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<ResCompany> ResCompanyAccountDefaultPosReceivableAccount { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountDiscountExpenseAllocationId")]
+    // [InverseProperty("AccountDiscountExpenseAllocation")]
+    // public virtual ICollection<ResCompany> ResCompanyAccountDiscountExpenseAllocation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountDiscountIncomeAllocationId")]
+    // [InverseProperty("AccountDiscountIncomeAllocation")]
+    // public virtual ICollection<ResCompany> ResCompanyAccountDiscountIncomeAllocation { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
     // [ForeignKey("AccountJournalEarlyPayDiscountGainAccountId")]
     // [InverseProperty("AccountJournalEarlyPayDiscountGainAccount")]
     // public virtual ICollection<ResCompany> ResCompanyAccountJournalEarlyPayDiscountGainAccount { get; set; }
@@ -251,6 +315,21 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [ForeignKey("AccountJournalEarlyPayDiscountLossAccountId")]
     // [InverseProperty("AccountJournalEarlyPayDiscountLossAccount")]
     // public virtual ICollection<ResCompany> ResCompanyAccountJournalEarlyPayDiscountLossAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountJournalSuspenseAccountId")]
+    // [InverseProperty("AccountJournalSuspenseAccount")]
+    // public virtual ICollection<ResCompany> ResCompanyAccountJournalSuspenseAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountProductionWipAccountId")]
+    // [InverseProperty("AccountProductionWipAccount")]
+    // public virtual ICollection<ResCompany> ResCompanyAccountProductionWipAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("AccountProductionWipOverheadAccountId")]
+    // [InverseProperty("AccountProductionWipOverheadAccount")]
+    // public virtual ICollection<ResCompany> ResCompanyAccountProductionWipOverheadAccount { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
     // [ForeignKey("AccountJournalPaymentCreditAccountId")]
@@ -286,6 +365,11 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [ForeignKey("ExpenseCurrencyExchangeAccountId")]
     // [InverseProperty("ExpenseCurrencyExchangeAccount")]
     // public virtual ICollection<ResCompany> ResCompanyExpenseCurrencyExchangeAccount { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
+    // [ForeignKey("ExpenseOutstandingAccountId")]
+    // [InverseProperty("ExpenseOutstandingAccount")]
+    // public virtual ICollection<ResCompany> ResCompanyExpenseOutstandingAccount { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'AccountAccount'
     // [ForeignKey("IncomeCurrencyExchangeAccountId")]
@@ -354,16 +438,16 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")]
     // [InverseProperty("AccountAccount")]
-    // public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")]
     // [InverseProperty("AccountAccount")]
-    // public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -372,46 +456,58 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")]
     // [InverseProperty("AccountAccount")]
-    // public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
+    public virtual ICollection<AccountMergeWizard> AccountMergeWizard { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAccountId")]
+    // [InverseProperty("AccountAccount")]
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
-    // public virtual ICollection<AccountBudgetPost> Budget { get; set; }
+    public virtual ICollection<AccountBudgetPost> Budget { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account1")]
-    // public virtual ICollection<AccountJournal> Journal { get; set; }
+    public virtual ICollection<AccountJournal> Journal { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
-    // public virtual ICollection<AccountBankbookReport> ReportLine { get; set; }
+    public virtual ICollection<AccountBankbookReport> ReportLine { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
-    // public virtual ICollection<AccountDaybookReport> ReportLine1 { get; set; }
+    public virtual ICollection<AccountDaybookReport> ReportLine1 { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
-    // public virtual ICollection<AccountFinancialReport> ReportLine2 { get; set; }
+    public virtual ICollection<AccountFinancialReport> ReportLine2 { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")]
     // [InverseProperty("Account")]
-    // public virtual ICollection<AccountCashbookReport> ReportLineNavigation { get; set; }
+    public virtual ICollection<AccountCashbookReport> ReportLineNavigation { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("AccountAccountId")] //Many2many
+    // [InverseProperty("AccountAccount")] //Many2many
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

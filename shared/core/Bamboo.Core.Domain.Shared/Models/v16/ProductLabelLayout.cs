@@ -28,6 +28,9 @@ public partial class ProductLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("custom_quantity")]
     public long? CustomQuantity { get; set; }
 
+    [Column("pricelist_id")]
+    public Guid? PricelistId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -46,6 +49,9 @@ public partial class ProductLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("move_quantity")]
+    public string? MoveQuantity { get; set; }
+
     [Column("picking_quantity")]
     public string? PickingQuantity { get; set; }
 
@@ -53,6 +59,11 @@ public partial class ProductLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [ForeignKey("CreatorId")]
     // [InverseProperty("ProductLabelLayoutCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PricelistId")]
+    // [InverseProperty("ProductLabelLayout")] //Many2one
+    public virtual ProductPricelist? Pricelist { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
@@ -76,4 +87,10 @@ public partial class ProductLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     // [ForeignKey("ProductLabelLayoutId")] //Many2many
     // [InverseProperty("ProductLabelLayout")] //Many2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductLabelLayoutId")] //Many2many
+    // [InverseProperty("ProductLabelLayout")] //Many2many
+    public virtual ICollection<StockMove> StockMove { get; set; }
 }

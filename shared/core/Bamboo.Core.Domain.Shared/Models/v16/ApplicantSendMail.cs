@@ -77,4 +77,10 @@ public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
     // [ForeignKey("ApplicantSendMailId")] //Many2many
     // [InverseProperty("ApplicantSendMail")] //Many2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ApplicantSendMailId")] //Many2many
+    // [InverseProperty("ApplicantSendMail")] //Many2many
+    public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 }

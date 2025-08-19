@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_attribute_category")]
-//[Index("Sequence", Name = "product_attribute_category_sequence_index")]
+//[Index("Sequence", Name = "product_attribute_category__sequence_index")]
 public partial class ProductAttributeCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

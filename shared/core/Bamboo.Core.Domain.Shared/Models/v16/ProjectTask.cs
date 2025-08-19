@@ -12,15 +12,17 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_task")]
-//[Index("DateDeadline", Name = "project_task_date_deadline_index")]
-//[Index("DateEnd", Name = "project_task_date_end_index")]
-//[Index("DateLastStageUpdate", Name = "project_task_date_last_stage_update_index")]
+//[Index("CreateDate", Name = "project_task__create_date_index")]
+//[Index("DateDeadline", Name = "project_task__date_deadline_index")]
+//[Index("DateEnd", Name = "project_task__date_end_index")]
+//[Index("DateLastStageUpdate", Name = "project_task__date_last_stage_update_index")]
 //[Index("DisplayProjectId", Name = "project_task_display_project_id_index")]
 //[Index("IsClosed", Name = "project_task_is_closed_index")]
-//[Index("ParentId", Name = "project_task_parent_id_index")]
-//[Index("Priority", Name = "project_task_priority_index")]
-//[Index("ProjectId", Name = "project_task_project_id_index")]
-//[Index("StageId", Name = "project_task_stage_id_index")]
+//[Index("ParentId", Name = "project_task__parent_id_index")]
+//[Index("Priority", Name = "project_task__priority_index")]
+//[Index("ProjectId", Name = "project_task__project_id_index")]
+//[Index("StageId", Name = "project_task__stage_id_index")]
+//[Index("State", Name = "project_task__state_index")]
 public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -91,6 +93,13 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("priority")]
     public string? Priority { get; set; }
 
+    [Column("state")]
+    public string? State { get; set; }
+
+    [JsonField]
+    [Column("html_field_history", TypeName = "jsonb")]
+    public string? HtmlFieldHistory { get; set; }
+
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
@@ -122,6 +131,9 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("display_in_project")]
+    public bool? DisplayInProject { get; set; }
+
     [Column("is_closed")]
     public bool? IsClosed { get; set; }
 
@@ -146,11 +158,17 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("date_assign", TypeName = "timestamp without time zone")]
     public DateTime? DateAssign { get; set; }
 
+    // [Column("date_deadline", TypeName = "timestamp without time zone")]
+    // public DateTime? DateDeadline { get; set; }
+
     [Column("date_last_stage_update", TypeName = "timestamp without time zone")]
     public DateTime? DateLastStageUpdate { get; set; }
 
     [Column("rating_last_value")]
     public double? RatingLastValue { get; set; }
+
+    [Column("allocated_hours")]
+    public double? AllocatedHours { get; set; }
 
     [Column("planned_hours")]
     public double? PlannedHours { get; set; }
@@ -166,6 +184,18 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("sale_line_id")]
     public Guid? SaleLineId { get; set; }
+
+    // [Column("email_from")]
+    // public string? EmailFrom { get; set; }
+
+    [Column("partner_name")]
+    public string? PartnerName { get; set; }
+
+    // [Column("partner_phone")]
+    // public string? PartnerPhone { get; set; }
+
+    [Column("partner_company_name")]
+    public string? PartnerCompanyName { get; set; }
 
     [Column("remaining_hours")]
     public double? RemainingHours { get; set; }
@@ -184,6 +214,11 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("subtask_effective_hours")]
     public double? SubtaskEffectiveHours { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentTaskId")]
+    [InverseProperty("ParentTask")]
+    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineParentTask { get; set; }
 
     // [One2many]
     [ForeignKey("AncestorTaskId")]
@@ -222,8 +257,14 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("DisplayedImageId")]
-    // [InverseProperty("ProjectTaskDisplayedImage")] //Many2one
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual IrAttachment? DisplayedImage { get; set; }
+
+    // v16-Compat
+    // [Many2one]
+    // [ForeignKey("DisplayedImageId")]
+    // // [InverseProperty("ProjectTaskDisplayedImage")] //Many2one
+    // public virtual IrAttachment? DisplayedImage { get; set; }
 
     // [One2many]
     [ForeignKey("TimesheetTaskId")]
@@ -263,6 +304,7 @@ public partial class ProjectTask: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     // [Many2one]
     [ForeignKey("ProjectId")]
     // [InverseProperty("ProjectTaskProject")] //Many2one
+    // [InverseProperty("ProjectTask")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]

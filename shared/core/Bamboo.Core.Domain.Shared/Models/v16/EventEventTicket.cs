@@ -25,6 +25,9 @@ public partial class EventEventTicket: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
 
@@ -39,6 +42,9 @@ public partial class EventEventTicket: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
+
+    [Column("color")]
+    public string? Color { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -93,6 +99,11 @@ public partial class EventEventTicket: FullAuditedAggregateRoot<Guid>, IEntityDt
     [ForeignKey("EventTypeId")]
     // [InverseProperty("EventEventTicket")] //Many2one
     public virtual EventType? EventType { get; set; }
+
+    // [One2many]
+    [ForeignKey("EventTicketId")]
+    [InverseProperty("EventTicket")]
+    public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]

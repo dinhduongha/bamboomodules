@@ -56,8 +56,8 @@ public partial class UtmTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CampaignId")]
     // [InverseProperty("Campaign")]
-    // public virtual ICollection<UtmCampaign> Tag { get; set; }
+    public virtual ICollection<UtmCampaign> Tag { get; set; }
 }

@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_template_attribute_line")]
-//[Index("AttributeId", Name = "product_template_attribute_line_attribute_id_index")]
-//[Index("ProductTmplId", Name = "product_template_attribute_line_product_tmpl_id_index")]
+//[Index("AttributeId", Name = "product_template_attribute_line__attribute_id_index")]
+//[Index("ProductTmplId", Name = "product_template_attribute_line__product_tmpl_id_index")]
 public partial class ProductTemplateAttributeLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -29,6 +29,9 @@ public partial class ProductTemplateAttributeLine: FullAuditedAggregateRoot<Guid
 
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }
+
+    [Column("sequence")]
+    public long? Sequence { get; set; }
 
     [Column("attribute_id")]
     public Guid? AttributeId { get; set; }
@@ -77,8 +80,8 @@ public partial class ProductTemplateAttributeLine: FullAuditedAggregateRoot<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeLineId")]
     // [InverseProperty("ProductTemplateAttributeLine")]
-    // public virtual ICollection<ProductAttributeValue> ProductAttributeValue { get; set; }
+    public virtual ICollection<ProductAttributeValue> ProductAttributeValue { get; set; }
 }

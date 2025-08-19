@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_payment")]
-//[Index("MoveId", Name = "account_payment_move_id_index")]
+//[Index("MoveId", Name = "account_payment__move_id_index")]
+//[Index("JournalId", "CompanyId", Name = "account_payment_journal_id_company_id_idx")]
 public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -31,6 +32,9 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("partner_bank_id")]
     public Guid? PartnerBankId { get; set; }
@@ -65,14 +69,26 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("name")]
+    public string? Name { get; set; }
+
+    [Column("state")]
+    public string? State { get; set; }
+
     [Column("payment_type")]
     public string? PaymentType { get; set; }
 
     [Column("partner_type")]
     public string? PartnerType { get; set; }
 
+    [Column("memo")]
+    public string? Memo { get; set; }
+
     [Column("payment_reference")]
     public string? PaymentReference { get; set; }
+
+    [Column("date")]
+    public DateTime? Date { get; set; }
 
     [Column("amount")]
     public decimal? Amount { get; set; }
@@ -85,6 +101,9 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("is_matched")]
     public bool? IsMatched { get; set; }
+
+    [Column("is_sent")]
+    public bool? IsSent { get; set; }
 
     [Column("is_internal_transfer")]
     public bool? IsInternalTransfer { get; set; }
@@ -113,15 +132,29 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("pos_session_id")]
     public Guid? PosSessionId { get; set; }
 
+    [Column("pos_order_id")]
+    public Guid? PosOrderId { get; set; }
+
     // [One2many]
-    [ForeignKey("PaymentId")]
-    [InverseProperty("Payment")]
+    [ForeignKey("OriginPaymentId")]
+    [InverseProperty("OriginPayment")]
     public virtual ICollection<AccountMove> AccountMove { get; set; }
+
+    // v16-Compat
+    // [One2many]
+    //[ForeignKey("PaymentId")]
+    //[InverseProperty("Payment")]
+    //public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
     [ForeignKey("PaymentId")]
     [InverseProperty("Payment")]
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("AccountPayment")] //Many2one
+    public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -157,6 +190,11 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("SourcePaymentId")]
     [InverseProperty("SourcePayment")]
     public virtual ICollection<AccountPayment> InverseSourcePayment { get; set; }
+
+    // [Many2one]
+    [ForeignKey("JournalId")]
+    // [InverseProperty("AccountPayment")] //Many2one
+    public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
@@ -219,6 +257,16 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<PaymentTransaction> PaymentTransactionNavigation { get; set; }
 
     // [Many2one]
+    [ForeignKey("PosOrderId")]
+    // [InverseProperty("AccountPayment")] //Many2one
+    public virtual PosOrder? PosOrder { get; set; }
+
+    // [One2many]
+    [ForeignKey("OnlineAccountPaymentId")]
+    [InverseProperty("OnlineAccountPayment")]
+    public virtual ICollection<PosPayment> PosPayment { get; set; }
+
+    // [Many2one]
     [ForeignKey("PosPaymentMethodId")]
     // [InverseProperty("AccountPayment")] //Many2one
     public virtual PosPaymentMethod? PosPaymentMethod { get; set; }
@@ -244,8 +292,14 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountPaymentId")]
     // [InverseProperty("AccountPayment")]
-    // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
+    public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PaymentId")]
+    // [InverseProperty("Payment")]
+    public virtual ICollection<AccountMove> Invoice { get; set; }
 }

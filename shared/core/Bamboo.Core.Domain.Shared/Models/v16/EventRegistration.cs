@@ -12,9 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_registration")]
-//[Index("UtmCampaignId", Name = "event_registration_utm_campaign_id_index")]
-//[Index("UtmMediumId", Name = "event_registration_utm_medium_id_index")]
-//[Index("UtmSourceId", Name = "event_registration_utm_source_id_index")]
+//[Index("UtmCampaignId", Name = "event_registration__utm_campaign_id_index")]
+//[Index("UtmMediumId", Name = "event_registration__utm_medium_id_index")]
+//[Index("UtmSourceId", Name = "event_registration__utm_source_id_index")]
+//[Index("Barcode", Name = "event_registration_barcode_event_uniq", IsUnique = true)]
 public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -55,6 +56,9 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("barcode")]
+    public string? Barcode { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
 
@@ -64,11 +68,18 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("phone")]
     public string? Phone { get; set; }
 
+    [Column("company_name")]
+    public string? CompanyName { get; set; }
+
     [Column("mobile")]
     public string? Mobile { get; set; }
 
     [Column("state")]
     public string? State { get; set; }
+
+    [JsonField]
+    [Column("registration_properties", TypeName = "jsonb")]
+    public string? RegistrationProperties { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -85,11 +96,17 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("visitor_id")]
     public Guid? VisitorId { get; set; }
 
+    [Column("pos_order_line_id")]
+    public Guid? PosOrderLineId { get; set; }
+
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
     [Column("sale_order_line_id")]
     public Guid? SaleOrderLineId { get; set; }
+
+    [Column("sale_status")]
+    public string? SaleStatus { get; set; }
 
     [Column("is_paid")]
     public bool? IsPaid { get; set; }
@@ -108,6 +125,11 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("EventId")]
     // [InverseProperty("EventRegistration")] //Many2one
     public virtual EventEvent? Event { get; set; }
+
+    // [One2many]
+    [ForeignKey("LastRegistrationId")]
+    [InverseProperty("LastRegistration")]
+    public virtual ICollection<EventMail> EventMail { get; set; }
 
     // [One2many]
     [ForeignKey("RegistrationId")]
@@ -133,6 +155,11 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("PartnerId")]
     // [InverseProperty("EventRegistration")] //Many2one
     public virtual ResPartner? Partner { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PosOrderLineId")]
+    // [InverseProperty("EventRegistration")] //Many2one
+    public virtual PosOrderLine? PosOrderLine { get; set; }
 
     // [One2many]
     [ForeignKey("RegistrationId")]
@@ -179,4 +206,11 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     // [ForeignKey("EventRegistrationId")] //Many2many
     // [InverseProperty("EventRegistration")] //Many2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    //[NotMapped] //Many2many // Hidden
+    // [ForeignKey("EventRegistrationId")]
+    // [InverseProperty("EventRegistration")]
+    //public virtual ICollection<CrmLead> CrmLead { get; set; }
+
 }

@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_track")]
-//[Index("IsPublished", Name = "event_track_is_published_index")]
-//[Index("StageId", Name = "event_track_stage_id_index")]
+//[Index("IsPublished", Name = "event_track__is_published_index")]
+//[Index("StageId", Name = "event_track__stage_id_index")]
 public partial class EventTrack: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

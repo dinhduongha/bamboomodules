@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_expense_sheet")]
-//[Index("State", Name = "hr_expense_sheet_state_index")]
+//[Index("State", Name = "hr_expense_sheet__state_index")]
 public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -35,11 +35,20 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("address_id")]
     public Guid? AddressId { get; set; }
 
+    [Column("department_id")]
+    public Guid? DepartmentId { get; set; }
+
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
+
+    [Column("employee_journal_id")]
+    public Guid? EmployeeJournalId { get; set; }
+
+    [Column("payment_method_line_id")]
+    public Guid? PaymentMethodLineId { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
@@ -49,9 +58,6 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("account_move_id")]
     public Guid? AccountMoveId { get; set; }
-
-    [Column("department_id")]
-    public Guid? DepartmentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -65,6 +71,9 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("state")]
     public string? State { get; set; }
 
+    [Column("approval_state")]
+    public string? ApprovalState { get; set; }
+
     [Column("payment_state")]
     public string? PaymentState { get; set; }
 
@@ -76,6 +85,9 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("untaxed_amount")]
     public decimal? UntaxedAmount { get; set; }
+
+    [Column("total_tax_amount")]
+    public decimal? TotalTaxAmount { get; set; }
 
     [Column("total_amount_taxes")]
     public decimal? TotalAmountTaxes { get; set; }
@@ -92,10 +104,16 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    // [One2many]
+    [ForeignKey("ExpenseSheetId")]
+    [InverseProperty("ExpenseSheet")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
+
+    // v16-Compat
     // [Many2one]
-    [ForeignKey("AccountMoveId")]
+    //[ForeignKey("AccountMoveId")]
     // [InverseProperty("HrExpenseSheet")] //Many2one
-    public virtual AccountMove? AccountMove { get; set; }
+    //public virtual AccountMove? AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("AddressId")]
@@ -132,15 +150,21 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
+    // [Many2one]
+    [ForeignKey("EmployeeJournalId")]
+    // [InverseProperty("HrExpenseSheetEmployeeJournal")] //Many2one
+    public virtual AccountJournal? EmployeeJournal { get; set; }
+
     // [One2many]
     [ForeignKey("SheetId")]
     [InverseProperty("Sheet")]
     public virtual ICollection<HrExpense> HrExpense { get; set; }
 
+    // v16-Compat
     // [One2many]
-    [ForeignKey("HrExpenseSheetId")]
-    [InverseProperty("HrExpenseSheet")]
-    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
+    //[ForeignKey("HrExpenseSheetId")]
+    //[InverseProperty("HrExpenseSheet")]
+    //public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
@@ -153,6 +177,11 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
+    [ForeignKey("PaymentMethodLineId")]
+    // [InverseProperty("HrExpenseSheet")] //Many2one
+    public virtual AccountPaymentMethodLine? PaymentMethodLine { get; set; }
+
+    // [Many2one]
     [ForeignKey("UserId")]
     // [InverseProperty("HrExpenseSheetUser")] //Many2one
     public virtual ResUsers? User { get; set; }
@@ -163,8 +192,14 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrExpenseSheetId")]
     // [InverseProperty("HrExpenseSheet")]
-    // public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicate { get; set; }
+    public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicate { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("HrExpenseSheetId")]
+    // [InverseProperty("HrExpenseSheet")]
+    public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; }
 }

@@ -87,8 +87,8 @@ public partial class MailActivityPlan: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailActivityPlanId")]
-    // [InverseProperty("MailActivityPlan")]
-    // public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
+    // [ForeignKey("MailActivityPlanId")] //Many2many
+    // [InverseProperty("MailActivityPlan")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
 }

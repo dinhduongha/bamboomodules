@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("purchase_order_line")]
-//[Index("DatePlanned", Name = "purchase_order_line_date_planned_index")]
-//[Index("OrderId", Name = "purchase_order_line_order_id_index")]
+//[Index("DatePlanned", Name = "purchase_order_line__date_planned_index")]
+//[Index("OrderId", Name = "purchase_order_line__order_id_index")]
 public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -73,6 +73,9 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("product_qty")]
     public decimal? ProductQty { get; set; }
 
+    [Column("discount")]
+    public decimal? Discount { get; set; }
+
     [Column("price_unit")]
     public decimal? PriceUnit { get; set; }
 
@@ -93,6 +96,9 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("qty_to_invoice")]
     public decimal? QtyToInvoice { get; set; }
+
+    [Column("is_downpayment")]
+    public bool? IsDownpayment { get; set; }
 
     [Column("date_planned", TypeName = "timestamp without time zone")]
     public DateTime? DatePlanned { get; set; }
@@ -115,6 +121,12 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("orderpoint_id")]
     public Guid? OrderpointId { get; set; }
 
+    [Column("location_final_id")]
+    public Guid? LocationFinalId { get; set; }
+
+    [Column("group_id")]
+    public Guid? GroupId { get; set; }
+
     [Column("product_description_variants")]
     public string? ProductDescriptionVariants { get; set; }
 
@@ -126,6 +138,9 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("sale_line_id")]
     public Guid? SaleLineId { get; set; }
+
+    [Column("price_total_cc")]
+    public decimal? PriceTotalCc { get; set; }
 
     // [One2many]
     [ForeignKey("PurchaseLineId")]
@@ -146,6 +161,16 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("CurrencyId")]
     // [InverseProperty("PurchaseOrderLine")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
+
+    // [Many2one]
+    [ForeignKey("GroupId")]
+    // [InverseProperty("PurchaseOrderLine")] //Many2one
+    public virtual ProcurementGroup? Group { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LocationFinalId")]
+    // [InverseProperty("PurchaseOrderLine")] //Many2one
+    public virtual StockLocation? LocationFinal { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
@@ -195,6 +220,11 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
     // [One2many]
     [ForeignKey("PurchaseLineId")]
     [InverseProperty("PurchaseLine")]
+    public virtual ICollection<StockMove> StockMove { get; set; }
+
+    // [One2many]
+    [ForeignKey("PurchaseLineId")]
+    [InverseProperty("PurchaseLine")]
     public virtual ICollection<StockMove> StockMovePurchaseLine { get; set; }
 
     // [Many2one]
@@ -207,6 +237,12 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
     // [ForeignKey("PurchaseOrderLineId")] //Many2many
     // [InverseProperty("PurchaseOrderLine")] //Many2many
     public virtual ICollection<AccountTax> AccountTax { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CreatedPurchaseLineId")] //Many2many
+    // [InverseProperty("CreatedPurchaseLine")] //Many2many
+    public virtual ICollection<StockMove> Move { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

@@ -12,12 +12,12 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sale_order_line")]
-//[Index("CompanyId", Name = "sale_order_line_company_id_index")]
-//[Index("LinkedLineId", Name = "sale_order_line_linked_line_id_index")]
-//[Index("OrderId", Name = "sale_order_line_order_id_index")]
-//[Index("OrderPartnerId", Name = "sale_order_line_order_partner_id_index")]
-//[Index("ProjectId", Name = "sale_order_line_project_id_index")]
-//[Index("TaskId", Name = "sale_order_line_task_id_index")]
+//[Index("CompanyId", Name = "sale_order_line__company_id_index")]
+//[Index("LinkedLineId", Name = "sale_order_line__linked_line_id_index")]
+//[Index("OrderId", Name = "sale_order_line__order_id_index")]
+//[Index("OrderPartnerId", Name = "sale_order_line__order_partner_id_index")]
+//[Index("ProjectId", Name = "sale_order_line__project_id_index")]
+//[Index("TaskId", Name = "sale_order_line__task_id_index")]
 public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -52,6 +52,12 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("product_uom")]
     public Guid? ProductUom { get; set; }
 
+    [Column("linked_line_id")]
+    public Guid? LinkedLineId { get; set; }
+
+    [Column("combo_item_id")]
+    public Guid? ComboItemId { get; set; }
+
     [Column("product_packaging_id")]
     public Guid? ProductPackagingId { get; set; }
 
@@ -66,6 +72,12 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("display_type")]
     public string? DisplayType { get; set; }
+
+    [Column("virtual_id")]
+    public string? VirtualId { get; set; }
+
+    [Column("linked_virtual_id")]
+    public string? LinkedVirtualId { get; set; }
 
     [Column("qty_delivered_method")]
     public string? QtyDeliveredMethod { get; set; }
@@ -131,6 +143,9 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("technical_price_unit")]
+    public double? TechnicalPriceUnit { get; set; }
+
     [Column("price_tax")]
     public double? PriceTax { get; set; }
 
@@ -143,6 +158,9 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("route_id")]
     public Guid? RouteId { get; set; }
 
+    [Column("warehouse_id")]
+    public Guid? WarehouseId { get; set; }
+
     [Column("is_service")]
     public bool? IsService { get; set; }
 
@@ -152,8 +170,8 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("task_id")]
     public Guid? TaskId { get; set; }
 
-    [Column("linked_line_id")]
-    public Guid? LinkedLineId { get; set; }
+    [Column("is_delivery")]
+    public bool? IsDelivery { get; set; }
 
     [Column("shop_warning")]
     public string? ShopWarning { get; set; }
@@ -163,6 +181,9 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("event_ticket_id")]
     public Guid? EventTicketId { get; set; }
+
+    [Column("event_booth_category_id")]
+    public Guid? EventBoothCategoryId { get; set; }
 
     [Column("reward_id")]
     public Guid? RewardId { get; set; }
@@ -188,22 +209,21 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("expense_id")]
     public Guid? ExpenseId { get; set; }
 
-    [Column("is_delivery")]
-    public bool? IsDelivery { get; set; }
-
     [Column("has_displayed_warning_upsell")]
     public bool? HasDisplayedWarningUpsell { get; set; }
 
     [Column("remaining_hours")]
     public double? RemainingHours { get; set; }
 
-    [Column("event_booth_category_id")]
-    public Guid? EventBoothCategoryId { get; set; }
-
     // [One2many]
     [ForeignKey("SoLine")]
     [InverseProperty("SoLineNavigation")]
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ComboItemId")]
+    // [InverseProperty("SaleOrderLine")] //Many2one
+    public virtual ProductComboItem? ComboItem { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -275,6 +295,11 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     // [InverseProperty("InverseLinkedLine")] //Many2one
     public virtual SaleOrderLine? LinkedLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("SaleLineId")]
+    [InverseProperty("SaleLine")]
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
     // [Many2one]
     [ForeignKey("OrderId")]
     // [InverseProperty("SaleOrderLine")] //Many2one
@@ -345,6 +370,11 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [InverseProperty("SaleOrderLine")]
     public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
+    // [One2many]
+    [ForeignKey("SaleOrderLineId")]
+    [InverseProperty("SaleOrderLine")]
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+
     // [Many2one]
     [ForeignKey("RewardId")]
     // [InverseProperty("SaleOrderLine")] //Many2one
@@ -376,6 +406,11 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ProjectTask? Task { get; set; }
 
     // [Many2one]
+    [ForeignKey("WarehouseId")]
+    // [InverseProperty("SaleOrderLine")] //Many2one
+    public virtual StockWarehouse? Warehouse { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("SaleOrderLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
@@ -387,10 +422,16 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("OrderLineId")]
     // [InverseProperty("OrderLine")]
-    // public virtual ICollection<AccountMoveLine> InvoiceLine { get; set; }
+    public virtual ICollection<AccountMoveLine> InvoiceLine { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SaleOrderLineId")] //Many2many
+    // [InverseProperty("SaleOrderLine")] //Many2many
+    public virtual ICollection<ProductDocument> ProductDocument { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

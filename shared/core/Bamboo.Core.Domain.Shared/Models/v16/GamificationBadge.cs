@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_badge")]
-//[Index("IsPublished", Name = "gamification_badge_is_published_index")]
+//[Index("IsPublished", Name = "gamification_badge__is_published_index")]
 public partial class GamificationBadge: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

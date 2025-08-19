@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_package_level")]
-//[Index("CompanyId", Name = "stock_package_level_company_id_index")]
+//[Index("CompanyId", Name = "stock_package_level__company_id_index")]
 public partial class StockPackageLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

@@ -43,6 +43,9 @@ public partial class AccountReportExternalValue: FullAuditedEntity<Guid>, IEntit
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("text_value")]
+    public string? TextValue { get; set; }
+
     [Column("carryover_origin_expression_label")]
     public string? CarryoverOriginExpressionLabel { get; set; }
 

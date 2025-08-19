@@ -28,6 +28,9 @@ public partial class HrDepartureReason: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [Column("reason_code")]
+    public long? ReasonCode { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 

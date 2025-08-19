@@ -77,11 +77,11 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
-    [Column("price")]
-    public decimal? Price { get; set; }
-
     [Column("is_paid")]
     public bool? IsPaid { get; set; }
+
+    [Column("price")]
+    public decimal? Price { get; set; }
 
     [Column("sponsor_id")]
     public Guid? SponsorId { get; set; }
@@ -142,8 +142,8 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventBoothId")]
     // [InverseProperty("EventBooth")]
-    // public virtual ICollection<EventBoothConfigurator> EventBoothConfigurator { get; set; }
+    public virtual ICollection<EventBoothConfigurator> EventBoothConfigurator { get; set; }
 }

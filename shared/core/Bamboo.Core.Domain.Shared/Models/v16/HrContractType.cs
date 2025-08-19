@@ -28,11 +28,17 @@ public partial class HrContractType: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [Column("country_id")]
+    public Guid? CountryId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("code")]
+    public string? Code { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -45,6 +51,11 @@ public partial class HrContractType: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [ForeignKey("CountryId")]
+    // [InverseProperty("HrContractType")] //Many2one
+    public virtual ResCountry? Country { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("HrContractTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
@@ -53,6 +64,16 @@ public partial class HrContractType: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("ContractTypeId")]
     [InverseProperty("ContractType")]
     public virtual ICollection<HrContract> HrContract { get; set; }
+
+    // [One2many]
+    [ForeignKey("ContractTypeId")]
+    [InverseProperty("ContractType")]
+    public virtual ICollection<HrContract> HrContractContractType { get; set; }
+
+    // [One2many]
+    [ForeignKey("TypeId")]
+    [InverseProperty("Type")]
+    public virtual ICollection<HrContract> HrContractTypeNavigation { get; set; }
 
     // [One2many]
     [ForeignKey("ContractTypeId")]

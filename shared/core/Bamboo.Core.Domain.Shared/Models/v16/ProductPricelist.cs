@@ -88,6 +88,11 @@ public partial class ProductPricelist: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
+    [ForeignKey("PricelistId")]
+    [InverseProperty("Pricelist")]
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
+
+    // [One2many]
     [ForeignKey("BasePricelistId")]
     [InverseProperty("BasePricelist")]
     public virtual ICollection<ProductPricelistItem> ProductPricelistItemBasePricelist { get; set; }
@@ -128,16 +133,22 @@ public partial class ProductPricelist: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductPricelistId")]
     // [InverseProperty("ProductPricelist")]
-    // public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
+    public virtual ICollection<LoyaltyProgram> LoyaltyProgram { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductPricelistId")]
     // [InverseProperty("ProductPricelist")]
-    // public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
+    public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductPricelistId")]
+    // [InverseProperty("ProductPricelist")]
+    public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

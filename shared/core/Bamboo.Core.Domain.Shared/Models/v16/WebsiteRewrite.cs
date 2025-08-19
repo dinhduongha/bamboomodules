@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_rewrite")]
-//[Index("UrlFrom", Name = "website_rewrite_url_from_index")]
-//[Index("WebsiteId", Name = "website_rewrite_website_id_index")]
+//[Index("UrlFrom", Name = "website_rewrite__url_from_index")]
+//[Index("WebsiteId", Name = "website_rewrite__website_id_index")]
 public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

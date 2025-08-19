@@ -28,6 +28,9 @@ public partial class SlideSlideResource: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 

@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("sale_order_option")]
-//[Index("OrderId", Name = "sale_order_option_order_id_index")]
+//[Index("OrderId", Name = "sale_order_option__order_id_index")]
 public partial class SaleOrderOption: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

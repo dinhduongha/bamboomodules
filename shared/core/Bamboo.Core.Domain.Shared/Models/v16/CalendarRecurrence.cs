@@ -12,6 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("calendar_recurrence")]
+//[Index("MicrosoftId", Name = "calendar_recurrence__microsoft_id_index")]
+//[Index("MsUniversalEventId", Name = "calendar_recurrence__ms_universal_event_id_index")]
 public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -36,6 +38,9 @@ public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("day")]
     public long? Day { get; set; }
+
+    [Column("trigger_id")]
+    public Guid? TriggerId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -109,6 +114,9 @@ public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("microsoft_id")]
     public string? MicrosoftId { get; set; }
 
+    [Column("ms_universal_event_id")]
+    public string? MsUniversalEventId { get; set; }
+
     [Column("need_sync_m")]
     public bool? NeedSyncM { get; set; }
 
@@ -126,6 +134,11 @@ public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntity
     [ForeignKey("CreatorId")]
     // [InverseProperty("CalendarRecurrenceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TriggerId")]
+    // [InverseProperty("CalendarRecurrence")] //Many2one
+    public virtual IrCronTrigger? Trigger { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

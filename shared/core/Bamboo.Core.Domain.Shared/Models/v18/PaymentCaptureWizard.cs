@@ -54,8 +54,8 @@ public partial class PaymentCaptureWizard: FullAuditedEntity<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("PaymentCaptureWizardId")] //Many2many
-    // [InverseProperty("PaymentCaptureWizard")] //Many2many
+    [InverseProperty("PaymentCaptureWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 }

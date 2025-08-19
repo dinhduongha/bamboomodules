@@ -40,6 +40,9 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("message")]
     public string? Message { get; set; }
 
+    [Column("notify")]
+    public bool? Notify { get; set; }
+
     [Column("send_mail")]
     public bool? SendMail { get; set; }
 

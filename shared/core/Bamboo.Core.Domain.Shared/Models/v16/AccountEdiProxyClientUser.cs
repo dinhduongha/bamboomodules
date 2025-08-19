@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("account_edi_proxy_client_user")]
 //[Index("EdiIdentification", "EdiFormatId", Name = "account_edi_proxy_client_user_unique_edi_identification_per_for", IsUnique = true)]
 //[Index("IdClient", Name = "account_edi_proxy_client_user_unique_id_client", IsUnique = true)]
-public partial class AccountEdiProxyClientUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,6 +25,9 @@ public partial class AccountEdiProxyClientUser: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
+
+    [Column("private_key_id")]
+    public Guid? PrivateKeyId { get; set; }
 
     [Column("edi_format_id")]
     public Guid? EdiFormatId { get; set; }
@@ -44,6 +47,12 @@ public partial class AccountEdiProxyClientUser: FullAuditedEntity<Guid>, IEntity
     [Column("refresh_token")]
     public string? RefreshToken { get; set; }
 
+    [Column("proxy_type")]
+    public string? ProxyType { get; set; }
+
+    [Column("edi_mode")]
+    public string? EdiMode { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -56,6 +65,14 @@ public partial class AccountEdiProxyClientUser: FullAuditedEntity<Guid>, IEntity
     [Column("private_key")]
     public byte[]? PrivateKey { get; set; }
 
+    [Column("peppol_verification_code")]
+    public string? PeppolVerificationCode { get; set; }
+
+    // [One2many]
+    [ForeignKey("EdiUserId")]
+    [InverseProperty("EdiUser")]
+    public virtual ICollection<AccountPeppolServiceWizard> AccountPeppolServiceWizard { get; set; }
+
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("AccountEdiProxyClientUser")] //Many2one
@@ -65,6 +82,11 @@ public partial class AccountEdiProxyClientUser: FullAuditedEntity<Guid>, IEntity
     [ForeignKey("CreatorId")]
     // [InverseProperty("AccountEdiProxyClientUserCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PrivateKeyId")]
+    // [InverseProperty("AccountEdiProxyClientUser")] //Many2one
+    public virtual CertificateKey? PrivateKeyCert { get; set; }
 
     // [Many2one]
     [ForeignKey("EdiFormatId")]

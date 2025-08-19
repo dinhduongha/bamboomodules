@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("forum_forum")]
-//[Index("WebsiteId", Name = "forum_forum_website_id_index")]
+//[Index("WebsiteId", Name = "forum_forum__website_id_index")]
 public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

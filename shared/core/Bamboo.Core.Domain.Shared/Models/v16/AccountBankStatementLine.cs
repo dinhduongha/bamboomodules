@@ -13,8 +13,8 @@ namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement_line")]
 //[Index("InternalIndex", Name = "account_bank_statement_line_internal_index_index")]
-//[Index("MoveId", Name = "account_bank_statement_line_move_id_index")]
 //[Index("UniqueImportId", Name = "account_bank_statement_line_unique_import_id", IsUnique = true)]
+//[Index("MoveId", Name = "account_bank_statement_line__move_id_index")]
 public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -30,6 +30,9 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
+
+    [Column("journal_id")]
+    public Guid? JournalId { get; set; }
 
     [Column("statement_id")]
     public Guid? StatementId { get; set; }
@@ -67,6 +70,10 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
     [Column("internal_index")]
     public string? InternalIndex { get; set; }
 
+    [JsonField]
+    [Column("transaction_details", TypeName = "jsonb")]
+    public string? TransactionDetails { get; set; }
+
     [Column("amount")]
     public decimal? Amount { get; set; }
 
@@ -88,6 +95,9 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
     [Column("pos_session_id")]
     public Guid? PosSessionId { get; set; }
 
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
+
     [Column("unique_import_id")]
     public string? UniqueImportId { get; set; }
 
@@ -102,6 +112,11 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
+    public virtual ResCompany? Company { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("AccountBankStatementLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
@@ -112,9 +127,19 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
+    [ForeignKey("EmployeeId")]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
+    public virtual HrEmployee? Employee { get; set; }
+
+    // [Many2one]
     [ForeignKey("ForeignCurrencyId")]
     // [InverseProperty("AccountBankStatementLineForeignCurrency")] //Many2one
     public virtual ResCurrency? ForeignCurrency { get; set; }
+
+    // [Many2one]
+    [ForeignKey("JournalId")]
+    // [InverseProperty("AccountBankStatementLine")] //Many2one
+    public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]

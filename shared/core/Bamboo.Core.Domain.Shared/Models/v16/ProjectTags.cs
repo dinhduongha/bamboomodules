@@ -56,14 +56,14 @@ public partial class ProjectTags: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProjectTagsId")]
     // [InverseProperty("ProjectTags")]
-    // public virtual ICollection<ProjectProject> ProjectProject { get; set; }
+    public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProjectTagsId")]
     // [InverseProperty("ProjectTags")]
-    // public virtual ICollection<ProjectTask> ProjectTask { get; set; }
+    public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 }

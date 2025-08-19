@@ -409,9 +409,11 @@ def split_and_refactor_fluent(fluent_content, schema_map, args):
     print("Tách file Fluent API hoàn tất.")
 
 def create_individual_config_file(entity_name, config_body, namespace, partial_class_name):
-    return f"""using Microsoft.EntityFrameworkCore;
-// Cần thêm using đến namespace chứa entity của bạn ở đây
-// Ví dụ: using YourProject.Entities;
+    return f"""
+using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Bamboo.Core.Models;
 
 namespace {namespace}
 {{
@@ -659,12 +661,14 @@ def refactor_entity_file(content, schema_map):
             is_fluent_m2m = rel_info.get('is_fluent_m2m', False)            
             if is_fluent_m2m: # M2M tường minh -> giữ lại
                 result.append(f"\n\n{indent}// [Many2many] // Normal")
-                result.append(f"{indent}// [NotMapped] //Many2many // Normal")
                 for line in full_original_block.splitlines():
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
-                        if line.strip().startswith(("[ForeignKey", "[InverseProperty")):
+                        if line.strip().startswith(("[ForeignKey")):
                             result.append(f"{line_indent}// {line.strip()} //Many2many")
+                        elif line.strip().startswith(("[InverseProperty")):
+                            result.append(f"{line_indent}{line.strip()} //Many2many")
+                            result.append(f"{indent}// [NotMapped] //Many2many // Normal")
                         else:
                             result.append(line)
                         #result.append(f"{line_indent} {line.strip()}")
@@ -678,11 +682,17 @@ def refactor_entity_file(content, schema_map):
         
         elif rel_type == 'ManyToManyHidden':
             result.append(f"\n\n{indent}// [Many2many] // ManyToMany Hidden")
-            result.append(f"{indent}// [NotMapped] //Many2many // Hidden")
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
-                    result.append(f"{line_indent}// {line.strip()}")
+                    #result.append(f"{line_indent}// {line.strip()}")
+                    if line.strip().startswith(("[ForeignKey")):
+                        result.append(f"{line_indent}// {line.strip()} //Many2many")
+                    elif line.strip().startswith(("[InverseProperty")):
+                        result.append(f"{line_indent}// {line.strip()} //Many2many")
+                        result.append(f"{indent}[NotMapped] //Many2many // Hidden")
+                    else:
+                        result.append(line)
 
         elif rel_type == 'ManyToOne':
             result.append(f"\n\n{indent}// [Many2one]")

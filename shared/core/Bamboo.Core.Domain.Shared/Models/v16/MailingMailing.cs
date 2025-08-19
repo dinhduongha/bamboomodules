@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mailing_mailing")]
-//[Index("CampaignId", Name = "mailing_mailing_campaign_id_index")]
+//[Index("CampaignId", Name = "mailing_mailing__campaign_id_index")]
 public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -134,6 +134,9 @@ public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("card_campaign_id")]
+    public Guid? CardCampaignId { get; set; }
+
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
 
@@ -150,6 +153,11 @@ public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("CampaignId")]
     // [InverseProperty("MailingMailing")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CardCampaignId")]
+    // [InverseProperty("MailingMailing")] //Many2one
+    public virtual CardCampaign? CardCampaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -246,6 +254,11 @@ public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("MailingMailingUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
+    // [One2many]
+    [ForeignKey("AbTestingWinnerMailingId")]
+    [InverseProperty("AbTestingWinnerMailing")]
+    public virtual ICollection<UtmCampaign> UtmCampaign { get; set; }
+
     // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("MailingMailingWriteU")] //Many2one
@@ -258,8 +271,8 @@ public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingMailingId")]
     // [InverseProperty("MailingMailing")]
-    // public virtual ICollection<MailingList> MailingList { get; set; }
+    public virtual ICollection<MailingList> MailingList { get; set; }
 }

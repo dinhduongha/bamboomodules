@@ -73,14 +73,14 @@ public partial class CandidateSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("CandidateSendMailId")] //Many2many
-    // [InverseProperty("CandidateSendMail")] //Many2many
+    [InverseProperty("CandidateSendMail")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("CandidateSendMailId")] //Many2many
-    // [InverseProperty("CandidateSendMail")] //Many2many
+    [InverseProperty("CandidateSendMail")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 }

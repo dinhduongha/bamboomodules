@@ -79,8 +79,16 @@ public partial class FleetVehicleLogServices: FullAuditedEntity<Guid>, IEntityDt
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("account_move_line_id")]
+    public Guid? AccountMoveLineId { get; set; }
+
     [Column("purchaser_employee_id")]
     public Guid? PurchaserEmployeeId { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AccountMoveLineId")]
+    // [InverseProperty("FleetVehicleLogServices")] //Many2one
+    public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]

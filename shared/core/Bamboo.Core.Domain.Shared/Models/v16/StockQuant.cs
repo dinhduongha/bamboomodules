@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_quant")]
-//[Index("LocationId", Name = "stock_quant_location_id_index")]
-//[Index("LotId", Name = "stock_quant_lot_id_index")]
-//[Index("PackageId", Name = "stock_quant_package_id_index")]
-//[Index("ProductId", Name = "stock_quant_product_id_index")]
+//[Index("LocationId", Name = "stock_quant__location_id_index")]
+//[Index("LotId", Name = "stock_quant__lot_id_index")]
+//[Index("PackageId", Name = "stock_quant__package_id_index")]
+//[Index("ProductId", Name = "stock_quant__product_id_index")]
 public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -86,6 +86,9 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("accounting_date")]
     public DateTime? AccountingDate { get; set; }
 
+    [Column("expiration_date", TypeName = "timestamp without time zone")]
+    public DateTime? ExpirationDate { get; set; }
+
     [Column("removal_date", TypeName = "timestamp without time zone")]
     public DateTime? RemovalDate { get; set; }
 
@@ -140,38 +143,44 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockQuantId")]
     // [InverseProperty("StockQuant")]
-    // public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentName { get; set; }
+    public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentName { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockQuantId")]
     // [InverseProperty("StockQuant")]
-    // public virtual ICollection<StockInventoryConflict> StockInventoryConflict { get; set; }
+    public virtual ICollection<StockInventoryConflict> StockInventoryConflict { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockQuantId")]
     // [InverseProperty("StockQuantNavigation")]
-    // public virtual ICollection<StockInventoryConflict> StockInventoryConflictNavigation { get; set; }
+    public virtual ICollection<StockInventoryConflict> StockInventoryConflictNavigation { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockQuantId")]
     // [InverseProperty("StockQuant")]
-    // public virtual ICollection<StockInventoryWarning> StockInventoryWarning { get; set; }
+    public virtual ICollection<StockInventoryWarning> StockInventoryWarning { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockQuantId")]
     // [InverseProperty("StockQuant")]
-    // public virtual ICollection<StockRequestCount> StockRequestCount { get; set; }
+    public virtual ICollection<StockQuantRelocate> StockQuantRelocate { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockQuantId")]
     // [InverseProperty("StockQuant")]
-    // public virtual ICollection<StockTrackConfirmation> StockTrackConfirmation { get; set; }
+    public virtual ICollection<StockRequestCount> StockRequestCount { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockQuantId")]
+    // [InverseProperty("StockQuant")]
+    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmation { get; set; }
 }

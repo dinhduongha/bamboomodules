@@ -72,8 +72,8 @@ public partial class HrLeaveMandatoryDay: FullAuditedEntity<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrLeaveMandatoryDayId")] //Many2many
-    // [InverseProperty("HrLeaveMandatoryDay")] //Many2many
+    [InverseProperty("HrLeaveMandatoryDay")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 }

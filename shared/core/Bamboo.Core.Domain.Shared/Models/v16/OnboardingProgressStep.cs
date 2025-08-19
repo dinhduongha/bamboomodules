@@ -48,6 +48,11 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("OnboardingProgressStep")] //Many2one
+    public virtual ResCompany? Company { get; set; }
+
+    // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("OnboardingProgressStepCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
@@ -66,4 +71,10 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("LastModifierId")]
     // [InverseProperty("OnboardingProgressStepWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("OnboardingProgressStepId")]
+    // [InverseProperty("OnboardingProgressStep")]
+    public virtual ICollection<OnboardingProgress> OnboardingProgress { get; set; }
 }

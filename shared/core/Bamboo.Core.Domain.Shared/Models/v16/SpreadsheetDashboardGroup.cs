@@ -34,8 +34,13 @@ public partial class SpreadsheetDashboardGroup: FullAuditedAggregateRoot<Guid>, 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

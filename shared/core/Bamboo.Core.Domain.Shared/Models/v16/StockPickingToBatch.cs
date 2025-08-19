@@ -40,6 +40,9 @@ public partial class StockPickingToBatch: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("mode")]
     public string? Mode { get; set; }
 
+    [Column("description")]
+    public string? Description { get; set; }
+
     [Column("is_create_draft")]
     public bool? IsCreateDraft { get; set; }
 

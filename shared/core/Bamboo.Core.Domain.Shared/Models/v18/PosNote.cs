@@ -55,8 +55,8 @@ public partial class PosNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosNoteId")]
-    // [InverseProperty("PosNote")]
-    // public virtual ICollection<PosConfig> PosConfig { get; set; }
+    // [ForeignKey("PosNoteId")] //Many2many
+    // [InverseProperty("PosNote")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

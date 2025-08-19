@@ -76,6 +76,11 @@ public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [ForeignKey("LivechatVisitorId")]
+    [InverseProperty("LivechatVisitor")]
+    public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
+
+    // [One2many]
     [ForeignKey("VisitorId")]
     [InverseProperty("Visitor")]
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
@@ -121,8 +126,8 @@ public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("WebsiteVisitorId")]
     // [InverseProperty("WebsiteVisitor")]
-    // public virtual ICollection<CrmLead> CrmLead { get; set; }
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
 }

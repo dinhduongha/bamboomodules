@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_analytic_plan")]
-//[Index("ParentPath", Name = "account_analytic_plan_parent_path_index")]
+//[Index("ParentPath", Name = "account_analytic_plan__parent_path_index")]
 public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -32,14 +32,18 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("color")]
     public long? Color { get; set; }
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
 
     [Column("parent_path")]
     public string? ParentPath { get; set; }
@@ -47,7 +51,16 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("complete_name")]
     public string? CompleteName { get; set; }
 
-    [Column("default_applicability")]
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("default_applicability")]
+    //public string? DefaultApplicability { get; set; }
+
+    [JsonField]
+    [Column("default_applicability", TypeName = "jsonb")]
     public string? DefaultApplicability { get; set; }
 
     [Column("description")]

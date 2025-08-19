@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_attendance_overtime")]
-//[Index("EmployeeId", Name = "hr_attendance_overtime_employee_id_index")]
+//[Index("EmployeeId", Name = "hr_attendance_overtime__employee_id_index")]
 public partial class HrAttendanceOvertime: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

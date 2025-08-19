@@ -68,6 +68,9 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("social_instagram")]
     public string? SocialInstagram { get; set; }
 
+    [Column("social_tiktok")]
+    public string? SocialTiktok { get; set; }
+
     [Column("google_analytics_key")]
     public string? GoogleAnalyticsKey { get; set; }
 
@@ -92,6 +95,9 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("auth_signup_uninvited")]
     public string? AuthSignupUninvited { get; set; }
 
+    [Column("custom_blocked_third_party_domains")]
+    public string? CustomBlockedThirdPartyDomains { get; set; }
+
     [Column("cdn_filters")]
     public string? CdnFilters { get; set; }
 
@@ -112,6 +118,9 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("configurator_done")]
     public bool? ConfiguratorDone { get; set; }
+
+    [Column("block_third_party_domains")]
+    public bool? BlockThirdPartyDomains { get; set; }
 
     [Column("has_social_default_image")]
     public bool? HasSocialDefaultImage { get; set; }
@@ -155,11 +164,20 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("shop_default_sort")]
     public string? ShopDefaultSort { get; set; }
 
+    [Column("show_line_subtotals_tax_selection")]
+    public string? ShowLineSubtotalsTaxSelection { get; set; }
+
     [Column("add_to_cart_action")]
     public string? AddToCartAction { get; set; }
 
     [Column("account_on_checkout")]
     public string? AccountOnCheckout { get; set; }
+
+    [Column("shop_gap")]
+    public string? ShopGap { get; set; }
+
+    // [Column("shop_default_sort")]
+    // public string? ShopDefaultSort { get; set; }
 
     [Column("product_page_image_layout")]
     public string? ProductPageImageLayout { get; set; }
@@ -170,6 +188,9 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("product_page_image_spacing")]
     public string? ProductPageImageSpacing { get; set; }
 
+    [Column("ecommerce_access")]
+    public string? EcommerceAccess { get; set; }
+
     [JsonField]
     [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
     public string? PreventZeroPriceSaleText { get; set; }
@@ -178,14 +199,21 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("contact_us_button_url", TypeName = "jsonb")]
     public string? ContactUsButtonUrl { get; set; }
 
+    // [JsonField]
+    // [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
+    // public string? PreventZeroPriceSaleText { get; set; }
+
+    [Column("enabled_portal_reorder_button")]
+    public bool? EnabledPortalReorderButton { get; set; }
+
     [Column("send_abandoned_cart_email")]
     public bool? SendAbandonedCartEmail { get; set; }
 
     [Column("prevent_zero_price_sale")]
     public bool? PreventZeroPriceSale { get; set; }
 
-    [Column("enabled_portal_reorder_button")]
-    public bool? EnabledPortalReorderButton { get; set; }
+    // [Column("enabled_portal_reorder_button")]
+    // public bool? EnabledPortalReorderButton { get; set; }
 
     [Column("cart_abandoned_delay")]
     public double? CartAbandonedDelay { get; set; }
@@ -201,6 +229,12 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("channel_id")]
     public Guid? ChannelId { get; set; }
+
+    [Column("newsletter_id")]
+    public Guid? NewsletterId { get; set; }
+
+    [Column("forum_count")]
+    public long? ForumCount { get; set; }
 
     [Column("forums_count")]
     public long? ForumsCount { get; set; }
@@ -281,6 +315,16 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
     // [ForeignKey("WebsiteId")]
     // [InverseProperty("Website")]
+    // public virtual ICollection<EventTag> EventTag { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
+    // [ForeignKey("WebsiteId")]
+    // [InverseProperty("Website")]
+    // public virtual ICollection<EventTagCategory> EventTagCategory { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
+    // [ForeignKey("WebsiteId")]
+    // [InverseProperty("Website")]
     // public virtual ICollection<ForumForum> ForumForum { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
@@ -312,6 +356,11 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // [ForeignKey("WebsiteId")]
     // [InverseProperty("Website")]
     // public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
+
+    // [Many2one]
+    [ForeignKey("NewsletterId")]
+    // [InverseProperty("Website")] //Many2one
+    public virtual MailingList? Newsletter { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
     // [ForeignKey("WebsiteId")]
@@ -406,12 +455,27 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
     // [ForeignKey("WebsiteId")]
     // [InverseProperty("Website")]
+    // public virtual ICollection<WebsiteControllerPage> WebsiteControllerPage { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
+    // [ForeignKey("WebsiteId")]
+    // [InverseProperty("Website")]
     // public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
     // [ForeignKey("WebsiteId")]
     // [InverseProperty("Website")]
     // public virtual ICollection<WebsitePage> WebsitePage { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
+    // [ForeignKey("WebsiteId")]
+    // [InverseProperty("Website")]
+    // public virtual ICollection<WebsitePageProperties> WebsitePageProperties { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
+    // [ForeignKey("WebsiteId")]
+    // [InverseProperty("Website")]
+    // public virtual ICollection<WebsitePagePropertiesBase> WebsitePagePropertiesBase { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
     // [ForeignKey("WebsiteId")]
@@ -439,10 +503,10 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("WebsiteId")]
     // [InverseProperty("Website")]
-    // public virtual ICollection<BaseLanguageInstall> BaseLanguageInstall { get; set; }
+    public virtual ICollection<BaseLanguageInstall> BaseLanguageInstall { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

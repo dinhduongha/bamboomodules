@@ -12,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("forum_tag")]
+//[Index("ForumId", Name = "forum_tag__forum_id_index")]
 //[Index("Name", "ForumId", Name = "forum_tag_name_uniq", IsUnique = true)]
 public partial class ForumTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -25,6 +26,9 @@ public partial class ForumTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
     
+
+    [Column("color")]
+    public long? Color { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -90,8 +94,14 @@ public partial class ForumTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ForumTagId")]
     // [InverseProperty("ForumTag")]
-    // public virtual ICollection<ForumPost> ForumNavigation { get; set; }
+    public virtual ICollection<ForumPost> ForumNavigation { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ForumTagId")]
+    // [InverseProperty("ForumTag")]
+    public virtual ICollection<ForumPost> ForumPost { get; set; }
 }

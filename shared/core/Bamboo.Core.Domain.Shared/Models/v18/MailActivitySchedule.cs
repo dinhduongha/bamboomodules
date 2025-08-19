@@ -106,8 +106,8 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("MailActivityScheduleId")] //Many2many
-    // [InverseProperty("MailActivitySchedule")] //Many2many
+    [InverseProperty("MailActivitySchedule")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<MailActivityPlan> MailActivityPlan { get; set; }
 }

@@ -28,8 +28,14 @@ public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("floor_id")]
     public Guid? FloorId { get; set; }
 
+    [Column("table_number")]
+    public long? TableNumber { get; set; }
+
     [Column("seats")]
     public long? Seats { get; set; }
+
+    [Column("parent_id")]
+    public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -67,6 +73,9 @@ public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("height")]
     public double? Height { get; set; }
 
+    [Column("identifier")]
+    public string? Identifier { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("RestaurantTableCreateU")] //Many2one
@@ -76,6 +85,16 @@ public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto
     [ForeignKey("FloorId")]
     // [InverseProperty("RestaurantTable")] //Many2one
     public virtual RestaurantFloor? Floor { get; set; }
+
+    // [One2many]
+    [ForeignKey("ParentId")]
+    [InverseProperty("Parent")]
+    public virtual ICollection<RestaurantTable> InverseParent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ParentId")]
+    // [InverseProperty("InverseParent")] //Many2one
+    public virtual RestaurantTable? Parent { get; set; }
 
     // [One2many]
     [ForeignKey("TableId")]

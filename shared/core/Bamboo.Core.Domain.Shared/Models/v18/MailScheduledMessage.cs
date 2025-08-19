@@ -77,14 +77,14 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("ScheduledMessageId")] //Many2many
-    // [InverseProperty("ScheduledMessage")] //Many2many
+    [InverseProperty("ScheduledMessage")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("MailScheduledMessageId")] //Many2many
-    // [InverseProperty("MailScheduledMessageNavigation")] //Many2many
+    [InverseProperty("MailScheduledMessageNavigation")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

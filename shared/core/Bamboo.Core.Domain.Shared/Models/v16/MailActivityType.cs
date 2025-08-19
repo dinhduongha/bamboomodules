@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_activity_type")]
-//[Index("CreateUid", Name = "mail_activity_type_create_uid_index")]
+//[Index("CreateUid", Name = "mail_activity_type__create_uid_index")]
 public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -80,6 +80,9 @@ public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("keep_done")]
+    public bool? KeepDone { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -122,6 +125,11 @@ public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDt
     public virtual ICollection<MailActivity> MailActivityActivityType { get; set; }
 
     // [One2many]
+    [ForeignKey("ActivityTypeId")]
+    [InverseProperty("ActivityType")]
+    public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplate { get; set; }
+
+    // [One2many]
     [ForeignKey("PreviousActivityTypeId")]
     [InverseProperty("PreviousActivityType")]
     public virtual ICollection<MailActivity> MailActivityPreviousActivityType { get; set; }
@@ -130,6 +138,11 @@ public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [ForeignKey("RecommendedActivityTypeId")]
     [InverseProperty("RecommendedActivityType")]
     public virtual ICollection<MailActivity> MailActivityRecommendedActivityType { get; set; }
+
+    // [One2many]
+    [ForeignKey("ActivityTypeId")]
+    [InverseProperty("ActivityType")]
+    public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
 
     // [One2many]
     [ForeignKey("MailActivityTypeId")]

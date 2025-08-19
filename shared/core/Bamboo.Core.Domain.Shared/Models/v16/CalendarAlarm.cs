@@ -62,6 +62,9 @@ public partial class CalendarAlarm: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
 
+    [Column("sms_notify_responsible")]
+    public bool? SmsNotifyResponsible { get; set; }
+
     // [Many2one]
     [ForeignKey("CreatorId")]
     // [InverseProperty("CalendarAlarmCreateU")] //Many2one
@@ -83,8 +86,8 @@ public partial class CalendarAlarm: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CalendarAlarmId")]
     // [InverseProperty("CalendarAlarm")]
-    // public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
+    public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 }

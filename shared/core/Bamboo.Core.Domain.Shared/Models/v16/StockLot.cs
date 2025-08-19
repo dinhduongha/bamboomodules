@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_lot")]
-//[Index("CompanyId", Name = "stock_lot_company_id_index")]
-//[Index("ProductId", Name = "stock_lot_product_id_index")]
+//[Index("CompanyId", Name = "stock_lot__company_id_index")]
+//[Index("ProductId", Name = "stock_lot__product_id_index")]
 public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -36,6 +36,9 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("product_uom_id")]
     public Guid? ProductUomId { get; set; }
 
+    [Column("location_id")]
+    public Guid? LocationId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -48,6 +51,10 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("ref")]
     public string? Ref { get; set; }
 
+    [JsonField]
+    [Column("lot_properties", TypeName = "jsonb")]
+    public string? LotProperties { get; set; }
+
     [Column("note")]
     public string? Note { get; set; }
 
@@ -56,6 +63,10 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonField]
+    [Column("standard_price", TypeName = "jsonb")]
+    public string? StandardPrice { get; set; }
 
     [Column("product_expiry_reminded")]
     public bool? ProductExpiryReminded { get; set; }
@@ -86,6 +97,11 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [ForeignKey("MessageMainAttachmentId")]
     // [InverseProperty("StockLot")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LocationId")]
+    // [InverseProperty("StockLot")] //Many2one
+    public virtual StockLocation? Location { get; set; }
 
     // [One2many]
     [ForeignKey("LotProducingId")]
@@ -137,14 +153,24 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [InverseProperty("Lot")]
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
+    // [One2many]
+    [ForeignKey("LotId")]
+    [InverseProperty("Lot")]
+    public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
+
+    // [One2many]
+    [ForeignKey("LotId")]
+    [InverseProperty("Lot")]
+    public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluation { get; set; }
+
     // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("StockLotWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockLotId")]
     // [InverseProperty("StockLot")]
-    // public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
+    public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
 }

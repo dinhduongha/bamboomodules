@@ -81,6 +81,11 @@ public partial class ChatbotScriptStep: FullAuditedAggregateRoot<Guid>, IEntityD
     // [One2many]
     [ForeignKey("ChatbotCurrentStepId")]
     [InverseProperty("ChatbotCurrentStep")]
+    public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
+
+    // [One2many]
+    [ForeignKey("ChatbotCurrentStepId")]
+    [InverseProperty("ChatbotCurrentStep")]
     public virtual ICollection<MailChannel> MailChannel { get; set; }
 
     // [Many2one]

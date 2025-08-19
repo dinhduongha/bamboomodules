@@ -12,7 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement")]
-//[Index("Date", Name = "account_bank_statement_date_index")]
+//[Index("Date", Name = "account_bank_statement__date_index")]
+//[Index("JournalId", "FirstLineIndex", Name = "account_bank_statement_first_line_index_idx")]
+//[Index("JournalId", "Date", "Id", Name = "account_bank_statement_journal_id_date_desc_id_desc_idx", IsDescending = new[] { false, true, true })]
 //[Index("FirstLineIndex", Name = "account_bank_statement_first_line_index_index")]
 public partial class AccountBankStatement: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

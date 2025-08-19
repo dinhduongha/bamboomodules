@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_channel_partner")]
-//[Index("ChannelId", Name = "slide_channel_partner_channel_id_index")]
+//[Index("ChannelId", Name = "slide_channel_partner__channel_id_index")]
+//[Index("PartnerId", Name = "slide_channel_partner__partner_id_index")]
 //[Index("ChannelId", "PartnerId", Name = "slide_channel_partner_channel_partner_uniq", IsUnique = true)]
-//[Index("PartnerId", Name = "slide_channel_partner_partner_id_index")]
 public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -46,6 +46,15 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("member_status")]
+    public string? MemberStatus { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("last_invitation_date", TypeName = "timestamp without time zone")]
+    public DateTime? LastInvitationDate { get; set; }
+
     [Column("completed")]
     public bool? Completed { get; set; }
 
@@ -54,6 +63,9 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("survey_certification_success")]
+    public bool? SurveyCertificationSuccess { get; set; }
 
     // [Many2one]
     [ForeignKey("ChannelId")]

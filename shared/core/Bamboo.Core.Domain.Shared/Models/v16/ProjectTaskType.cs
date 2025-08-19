@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("project_task_type")]
-//[Index("UserId", Name = "project_task_type_user_id_index")]
+//[Index("UserId", Name = "project_task_type__user_id_index")]
 public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -70,6 +70,9 @@ public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("fold")]
     public bool? Fold { get; set; }
 
+    [Column("auto_validation_state")]
+    public bool? AutoValidationState { get; set; }
+
     [Column("auto_validation_kanban_state")]
     public bool? AutoValidationKanbanState { get; set; }
 
@@ -122,15 +125,22 @@ public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [InverseProperty("ProjectTaskTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("TypeId")]
+    // [InverseProperty("Type")]
+    public virtual ICollection<ProjectProject> Project { get; set; }
+
+    // v16-Compat
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("TypeId")] //Many2many
     // [InverseProperty("Type")] //Many2many
-    public virtual ICollection<ProjectProject> Project { get; set; }
+    //public virtual ICollection<ProjectProject> Project { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProjectTaskTypeId")]
     // [InverseProperty("ProjectTaskType")]
-    // public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
+    public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
 }

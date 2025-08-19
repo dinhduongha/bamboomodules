@@ -110,8 +110,8 @@ public partial class MailMessageSubtype: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailMessageSubtypeId")]
     // [InverseProperty("MailMessageSubtype")]
-    // public virtual ICollection<MailFollowers> MailFollowers { get; set; }
+    public virtual ICollection<MailFollowers> MailFollowers { get; set; }
 }

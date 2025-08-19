@@ -54,5 +54,11 @@ public partial class PickingLabelType: FullAuditedEntity<Guid>, IEntityDto<Guid>
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("PickingLabelTypeId")] //Many2many
     // [InverseProperty("PickingLabelType")] //Many2many
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PickingLabelTypeId")] //Many2many
+    // [InverseProperty("PickingLabelType")] //Many2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

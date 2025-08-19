@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mailing_trace")]
-//[Index("MassMailingId", Name = "mailing_trace_mass_mailing_id_index")]
+//[Index("MassMailingId", Name = "mailing_trace__mass_mailing_id_index")]
 public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -65,6 +65,9 @@ public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("failure_type")]
     public string? FailureType { get; set; }
 
+    [Column("failure_reason")]
+    public string? FailureReason { get; set; }
+
     [Column("sent_datetime", TypeName = "timestamp without time zone")]
     public DateTime? SentDatetime { get; set; }
 
@@ -82,6 +85,9 @@ public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("sms_id_int")]
+    public Guid? SmsIdInt { get; set; }
 
     [Column("sms_sms_id")]
     public Guid? SmsSmsId { get; set; }
@@ -124,6 +130,11 @@ public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("SmsSmsId")]
     // [InverseProperty("MailingTrace")] //Many2one
     public virtual SmsSms? SmsSms { get; set; }
+
+    // [One2many]
+    [ForeignKey("MailingTraceId")]
+    [InverseProperty("MailingTrace")]
+    public virtual ICollection<SmsTracker> SmsTracker { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

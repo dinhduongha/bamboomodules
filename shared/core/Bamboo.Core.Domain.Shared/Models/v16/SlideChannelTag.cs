@@ -12,8 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_channel_tag")]
-//[Index("GroupId", Name = "slide_channel_tag_group_id_index")]
-//[Index("Sequence", Name = "slide_channel_tag_sequence_index")]
+//[Index("GroupId", Name = "slide_channel_tag__group_id_index")]
+//[Index("GroupSequence", Name = "slide_channel_tag__group_sequence_index")]
+//[Index("Sequence", Name = "slide_channel_tag__sequence_index")]
 public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -71,8 +72,8 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TagId")]
     // [InverseProperty("Tag")]
-    // public virtual ICollection<SlideChannel> Channel { get; set; }
+    public virtual ICollection<SlideChannel> Channel { get; set; }
 }

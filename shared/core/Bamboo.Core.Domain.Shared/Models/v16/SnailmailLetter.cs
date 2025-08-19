@@ -64,9 +64,6 @@ public partial class SnailmailLetter: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("error_code")]
     public string? ErrorCode { get; set; }
 
-    [Column("info_msg")]
-    public string? InfoMsg { get; set; }
-
     [Column("street")]
     public string? Street { get; set; }
 
@@ -78,6 +75,9 @@ public partial class SnailmailLetter: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("city")]
     public string? City { get; set; }
+
+    [Column("info_msg")]
+    public string? InfoMsg { get; set; }
 
     [Column("color")]
     public bool? Color { get; set; }

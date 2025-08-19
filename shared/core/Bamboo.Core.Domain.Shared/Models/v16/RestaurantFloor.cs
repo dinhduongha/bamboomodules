@@ -57,10 +57,11 @@ public partial class RestaurantFloor: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [InverseProperty("RestaurantFloorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
+    // v16-Compat
     // [Many2one]
-    [ForeignKey("PosConfigId")]
+    // [ForeignKey("PosConfigId")]
     // [InverseProperty("RestaurantFloor")] //Many2one
-    public virtual PosConfig? PosConfig { get; set; }
+    //public virtual PosConfig? PosConfig { get; set; }
 
     // [One2many]
     [ForeignKey("FloorId")]
@@ -71,4 +72,10 @@ public partial class RestaurantFloor: FullAuditedAggregateRoot<Guid>, IEntityDto
     [ForeignKey("LastModifierId")]
     // [InverseProperty("RestaurantFloorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    //[NotMapped] //Many2many // Hidden
+    [ForeignKey("RestaurantFloorId")]
+    [InverseProperty("RestaurantFloor")]
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

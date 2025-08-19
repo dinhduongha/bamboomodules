@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("fetchmail_server")]
-//[Index("ServerType", Name = "fetchmail_server_server_type_index")]
-//[Index("State", Name = "fetchmail_server_state_index")]
+//[Index("ServerType", Name = "fetchmail_server__server_type_index")]
+//[Index("State", Name = "fetchmail_server__state_index")]
 public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

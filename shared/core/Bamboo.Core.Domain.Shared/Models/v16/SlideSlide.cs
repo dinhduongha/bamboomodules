@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_slide")]
-//[Index("IsPublished", Name = "slide_slide_is_published_index")]
+//[Index("IsPublished", Name = "slide_slide__is_published_index")]
 public partial class SlideSlide: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

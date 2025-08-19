@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_work_entry")]
+//[Index("EmployeeId", Name = "hr_work_entry__employee_id_index")]
+//[Index("WorkEntryTypeId", Name = "hr_work_entry__work_entry_type_id_index")]
 //[Index("DateStart", "DateStop", Name = "hr_work_entry_date_start_date_stop_index")]
-//[Index("EmployeeId", Name = "hr_work_entry_employee_id_index")]
-//[Index("WorkEntryTypeId", Name = "hr_work_entry_work_entry_type_id_index")]
 public partial class HrWorkEntry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

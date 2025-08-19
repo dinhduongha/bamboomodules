@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_order_line")]
-//[Index("OrderId", Name = "pos_order_line_order_id_index")]
+//[Index("OrderId", Name = "pos_order_line__order_id_index")]
 public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -34,6 +34,12 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("refunded_orderline_id")]
     public Guid? RefundedOrderlineId { get; set; }
 
+    [Column("combo_parent_id")]
+    public Guid? ComboParentId { get; set; }
+
+    [Column("combo_item_id")]
+    public Guid? ComboItemId { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -46,11 +52,20 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("notice")]
     public string? Notice { get; set; }
 
+    [Column("price_type")]
+    public string? PriceType { get; set; }
+
     [Column("full_product_name")]
     public string? FullProductName { get; set; }
 
     [Column("customer_note")]
     public string? CustomerNote { get; set; }
+
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
+    [Column("note")]
+    public string? Note { get; set; }
 
     [Column("price_unit")]
     public decimal? PriceUnit { get; set; }
@@ -70,8 +85,14 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("discount")]
     public decimal? Discount { get; set; }
 
+    [Column("skip_change")]
+    public bool? SkipChange { get; set; }
+
     [Column("is_total_cost_computed")]
     public bool? IsTotalCostComputed { get; set; }
+
+    [Column("is_edited")]
+    public bool? IsEdited { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -91,6 +112,15 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("down_payment_details")]
     public string? DownPaymentDetails { get; set; }
 
+    [Column("qty_delivered")]
+    public double? QtyDelivered { get; set; }
+
+    [Column("combo_id")]
+    public Guid? ComboId { get; set; }
+
+    [Column("event_ticket_id")]
+    public Guid? EventTicketId { get; set; }
+
     [Column("reward_id")]
     public Guid? RewardId { get; set; }
 
@@ -106,14 +136,29 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("points_cost")]
     public double? PointsCost { get; set; }
 
-    [Column("note")]
-    public string? Note { get; set; }
+    // [Column("note")]
+    // public string? Note { get; set; }
 
-    [Column("uuid")]
-    public string? Uuid { get; set; }
+    // [Column("uuid")]
+    // public string? Uuid { get; set; }
 
     [Column("mp_skip")]
     public bool? MpSkip { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ComboId")]
+    // [InverseProperty("PosOrderLine")] //Many2one
+    public virtual ProductCombo? Combo { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ComboItemId")]
+    // [InverseProperty("PosOrderLine")] //Many2one
+    public virtual ProductComboItem? ComboItem { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ComboParentId")]
+    // [InverseProperty("InverseComboParent")] //Many2one
+    public virtual PosOrderLine? ComboParent { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -129,6 +174,21 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("CreatorId")]
     // [InverseProperty("PosOrderLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosOrderLineId")]
+    [InverseProperty("PosOrderLine")]
+    public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+
+    // [Many2one]
+    [ForeignKey("EventTicketId")]
+    // [InverseProperty("PosOrderLine")] //Many2one
+    public virtual EventEventTicket? EventTicket { get; set; }
+
+    // [One2many]
+    [ForeignKey("ComboParentId")]
+    [InverseProperty("ComboParent")]
+    public virtual ICollection<PosOrderLine> InverseComboParent { get; set; }
 
     // [One2many]
     [ForeignKey("RefundedOrderlineId")]
@@ -149,6 +209,11 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("ProductId")]
     // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosOrderLineId")]
+    [InverseProperty("PosOrderLine")]
+    public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValue { get; set; }
 
     // [Many2one]
     [ForeignKey("RefundedOrderlineId")]
@@ -180,4 +245,10 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // [ForeignKey("PosOrderLineId")] //Many2many
     // [InverseProperty("PosOrderLine")] //Many2many
     public virtual ICollection<AccountTax> AccountTax { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("PosOrderLineId")] //Many2many
+    // [InverseProperty("PosOrderLine")] //Many2many
+    public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

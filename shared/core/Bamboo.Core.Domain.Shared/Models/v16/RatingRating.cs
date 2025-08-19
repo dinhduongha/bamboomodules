@@ -12,13 +12,13 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("rating_rating")]
-//[Index("MessageId", Name = "rating_rating_message_id_index")]
-//[Index("ParentResId", Name = "rating_rating_parent_res_id_index")]
-//[Index("ParentResModelId", Name = "rating_rating_parent_res_model_id_index")]
-//[Index("ParentResModel", Name = "rating_rating_parent_res_model_index")]
-//[Index("ResId", Name = "rating_rating_res_id_index")]
-//[Index("ResModelId", Name = "rating_rating_res_model_id_index")]
-//[Index("ResModel", Name = "rating_rating_res_model_index")]
+//[Index("MessageId", Name = "rating_rating__message_id_index")]
+//[Index("ParentResId", Name = "rating_rating__parent_res_id_index")]
+//[Index("ParentResModelId", Name = "rating_rating__parent_res_model_id_index")]
+//[Index("ParentResModel", Name = "rating_rating__parent_res_model_index")]
+//[Index("ResId", Name = "rating_rating__res_id_index")]
+//[Index("ResModelId", Name = "rating_rating__res_model_id_index")]
+//[Index("ResModel", Name = "rating_rating__res_model_index")]
 public partial class RatingRating: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

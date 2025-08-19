@@ -25,6 +25,9 @@ public partial class HrApplicantRefuseReason: FullAuditedAggregateRoot<Guid>, IE
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
 

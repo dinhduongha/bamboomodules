@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_storage_category_capacity")]
-//[Index("StorageCategoryId", Name = "stock_storage_category_capacity_storage_category_id_index")]
+//[Index("StorageCategoryId", Name = "stock_storage_category_capacity__storage_category_id_index")]
 //[Index("PackageTypeId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_package_type", IsUnique = true)]
 //[Index("ProductId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_product", IsUnique = true)]
 public partial class StockStorageCategoryCapacity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject

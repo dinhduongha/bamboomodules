@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_unbuild")]
-//[Index("CompanyId", Name = "mrp_unbuild_company_id_index")]
+//[Index("CompanyId", Name = "mrp_unbuild__company_id_index")]
 public partial class MrpUnbuild: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

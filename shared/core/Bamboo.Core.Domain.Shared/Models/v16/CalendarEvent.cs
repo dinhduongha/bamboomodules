@@ -12,8 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("calendar_event")]
-//[Index("AccessToken", Name = "calendar_event_access_token_index")]
-//[Index("OpportunityId", Name = "calendar_event_opportunity_id_index")]
+//[Index("AccessToken", Name = "calendar_event__access_token_index")]
+//[Index("MicrosoftId", Name = "calendar_event__microsoft_id_index")]
+//[Index("MsUniversalEventId", Name = "calendar_event__ms_universal_event_id_index")]
+//[Index("OpportunityId", Name = "calendar_event__opportunity_id_index")]
 public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -114,14 +116,23 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("applicant_id")]
     public Guid? ApplicantId { get; set; }
 
+    [Column("candidate_id")]
+    public Guid? CandidateId { get; set; }
+
     [Column("google_id")]
     public string? GoogleId { get; set; }
 
     [Column("need_sync")]
     public bool? NeedSync { get; set; }
 
+    [Column("guests_readonly")]
+    public bool? GuestsReadonly { get; set; }
+
     [Column("microsoft_id")]
     public string? MicrosoftId { get; set; }
+
+    [Column("ms_universal_event_id")]
+    public string? MsUniversalEventId { get; set; }
 
     [Column("microsoft_recurrence_master_id")]
     public string? MicrosoftRecurrenceMasterId { get; set; }
@@ -140,9 +151,19 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<CalendarAttendee> CalendarAttendee { get; set; }
 
     // [One2many]
+    [ForeignKey("Record")]
+    [InverseProperty("RecordNavigation")]
+    public virtual ICollection<CalendarPopoverDeleteWizard> CalendarPopoverDeleteWizard { get; set; }
+
+    // [One2many]
     [ForeignKey("BaseEventId")]
     [InverseProperty("BaseEvent")]
     public virtual ICollection<CalendarRecurrence> CalendarRecurrence { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CandidateId")]
+    // [InverseProperty("CalendarEvent")] //Many2one
+    public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -187,7 +208,12 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     // [Many2one]
     [ForeignKey("VideocallChannelId")]
     // [InverseProperty("CalendarEvent")] //Many2one
-    public virtual MailChannel? VideocallChannel { get; set; }
+    public virtual DiscussChannel? VideocallChannel { get; set; }
+
+    // [Many2one]
+    // [ForeignKey("VideocallChannelId")]
+    // // [InverseProperty("CalendarEvent")] //Many2one
+    // public virtual MailChannel? VideocallChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
@@ -201,10 +227,10 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CalendarEventId")]
     // [InverseProperty("CalendarEvent")]
-    // public virtual ICollection<ResPartner> ResPartner { get; set; }
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

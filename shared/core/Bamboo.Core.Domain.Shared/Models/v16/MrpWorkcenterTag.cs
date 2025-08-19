@@ -55,8 +55,8 @@ public partial class MrpWorkcenterTag: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpWorkcenterTagId")]
     // [InverseProperty("MrpWorkcenterTag")]
-    // public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 }

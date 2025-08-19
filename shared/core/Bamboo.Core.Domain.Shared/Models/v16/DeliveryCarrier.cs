@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("delivery_carrier")]
-//[Index("IsPublished", Name = "delivery_carrier_is_published_index")]
-//[Index("WebsiteId", Name = "delivery_carrier_website_id_index")]
+//[Index("IsPublished", Name = "delivery_carrier__is_published_index")]
+//[Index("WebsiteId", Name = "delivery_carrier__website_id_index")]
 public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -47,6 +47,9 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("integration_level")]
     public string? IntegrationLevel { get; set; }
+
+    [Column("tracking_url")]
+    public string? TrackingUrl { get; set; }
 
     [Column("invoice_policy")]
     public string? InvoicePolicy { get; set; }
@@ -83,8 +86,17 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("max_weight")]
+    public double? MaxWeight { get; set; }
+
+    [Column("max_volume")]
+    public double? MaxVolume { get; set; }
+
     [Column("margin")]
     public double? Margin { get; set; }
+
+    [Column("fixed_margin")]
+    public double? FixedMargin { get; set; }
 
     [Column("amount")]
     public double? Amount { get; set; }
@@ -134,6 +146,11 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [One2many]
     [ForeignKey("CarrierId")]
     [InverseProperty("Carrier")]
+    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("CarrierId")]
+    [InverseProperty("Carrier")]
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
@@ -159,9 +176,33 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DeliveryCarrierId")] //Many2many
+    // [InverseProperty("DeliveryCarrier")] //Many2many
+    public virtual ICollection<ProductTag> ProductTag { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DeliveryCarrierId")] //Many2many
+    // [InverseProperty("DeliveryCarrierNavigation")] //Many2many
+    public virtual ICollection<ProductTag> ProductTagNavigation { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ShippingId")] //Many2many
+    // [InverseProperty("Shipping")] //Many2many
+    public virtual ICollection<StockRoute> Route { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
     // [ForeignKey("CarrierId")] //Many2many
     // [InverseProperty("Carrier")] //Many2many
     public virtual ICollection<ResCountryState> State { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("DeliveryCarrierId")] //Many2many
+    // [InverseProperty("DeliveryCarrier")] //Many2many
+    public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("survey_user_input_line")]
-//[Index("UserInputId", Name = "survey_user_input_line_user_input_id_index")]
+//[Index("QuestionId", Name = "survey_user_input_line__question_id_index")]
+//[Index("UserInputId", Name = "survey_user_input_line__user_input_id_index")]
 public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -37,6 +38,9 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("question_sequence")]
     public long? QuestionSequence { get; set; }
+
+    [Column("value_scale")]
+    public long? ValueScale { get; set; }
 
     [Column("suggested_answer_id")]
     public Guid? SuggestedAnswerId { get; set; }

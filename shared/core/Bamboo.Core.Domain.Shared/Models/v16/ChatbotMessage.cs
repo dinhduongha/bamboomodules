@@ -29,6 +29,9 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
+    [Column("discuss_channel_id")]
+    public Guid? DiscussChannelId { get; set; }
+
     [Column("mail_channel_id")]
     public Guid? MailChannelId { get; set; }
 
@@ -57,6 +60,11 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [ForeignKey("CreatorId")]
     // [InverseProperty("ChatbotMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("DiscussChannelId")]
+    // [InverseProperty("ChatbotMessage")] //Many2one
+    public virtual DiscussChannel? DiscussChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("MailChannelId")]

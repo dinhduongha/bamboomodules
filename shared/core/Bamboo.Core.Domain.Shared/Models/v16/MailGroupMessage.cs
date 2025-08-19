@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_group_message")]
-//[Index("MailMessageId", Name = "mail_group_message_mail_message_id_index")]
-//[Index("ModerationStatus", Name = "mail_group_message_moderation_status_index")]
+//[Index("MailMessageId", Name = "mail_group_message__mail_message_id_index")]
+//[Index("ModerationStatus", Name = "mail_group_message__moderation_status_index")]
 public partial class MailGroupMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

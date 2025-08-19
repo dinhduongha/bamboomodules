@@ -12,12 +12,12 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_message")]
-//[Index("AuthorId", Name = "mail_message_author_id_index")]
+//[Index("AuthorId", Name = "mail_message__author_id_index")]
 //[Index("MailActivityTypeId", Name = "mail_message_mail_activity_type_id_index")]
-//[Index("MessageId", Name = "mail_message_message_id_index")]
+//[Index("MessageId", Name = "mail_message__message_id_index")]
+//[Index("SubtypeId", Name = "mail_message__subtype_id_index")]
 //[Index("Model", "ResId", "Id", Name = "mail_message_model_res_id_id_idx")]
 //[Index("Model", "ResId", Name = "mail_message_model_res_id_idx")]
-//[Index("SubtypeId", Name = "mail_message_subtype_id_index")]
 public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -36,6 +36,12 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
+
+    [Column("record_alias_domain_id")]
+    public Guid? RecordAliasDomainId { get; set; }
+
+    [Column("record_company_id")]
+    public Guid? RecordCompanyId { get; set; }
 
     [Column("subtype_id")]
     public Guid? SubtypeId { get; set; }
@@ -97,6 +103,9 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("date", TypeName = "timestamp without time zone")]
     public DateTime? Date { get; set; }
 
+    [Column("pinned_at", TypeName = "timestamp without time zone")]
+    public DateTime? PinnedAt { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -121,6 +130,20 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("CreatorId")]
     // [InverseProperty("MailMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    // [InverseProperty("FromMessage")] //Many2one
+    public virtual DiscussChannel? DiscussChannel { get; set; }
+
+    // [One2many]
+    [ForeignKey("FetchedMessageId")]
+    [InverseProperty("FetchedMessage")]
+    public virtual ICollection<DiscussChannelMember> DiscussChannelMemberFetchedMessage { get; set; }
+
+    // [One2many]
+    [ForeignKey("SeenMessageId")]
+    [InverseProperty("SeenMessage")]
+    public virtual ICollection<DiscussChannelMember> DiscussChannelMemberSeenMessage { get; set; }
 
     // [One2many]
     [ForeignKey("ParentId")]
@@ -173,6 +196,11 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ICollection<MailMessageSchedule> MailMessageSchedule { get; set; }
 
     // [One2many]
+    [ForeignKey("MessageId")]
+    [InverseProperty("Message")]
+    public virtual ICollection<MailMessageTranslation> MailMessageTranslation { get; set; }
+
+    // [One2many]
     [ForeignKey("MailMessageId")]
     [InverseProperty("MailMessage")]
     public virtual ICollection<MailNotification> MailNotification { get; set; }
@@ -201,6 +229,16 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("MessageId")]
     [InverseProperty("Message")]
     public virtual ICollection<RatingRating> RatingRating { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RecordAliasDomainId")]
+    // [InverseProperty("MailMessage")] //Many2one
+    public virtual MailAliasDomain? RecordAliasDomain { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RecordCompanyId")]
+    // [InverseProperty("MailMessage")] //Many2one
+    public virtual ResCompany? RecordCompany { get; set; }
 
     // [One2many]
     [ForeignKey("MailMessageId")]

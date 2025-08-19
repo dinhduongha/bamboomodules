@@ -107,10 +107,10 @@ public partial class ResGroups: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("Gid")]
-    // [InverseProperty("Gid")]
-    // public virtual ICollection<IrActServer> Act { get; set; }
+    [NotMapped] //Many2many // Hidden
+    [ForeignKey("Gid")]
+    [InverseProperty("Gid")]
+    public virtual ICollection<IrActServer> Act { get; set; }
 
     // [Many2many] // ManyToMany Hidden
     // [NotMapped] //Many2many // Hidden
@@ -137,15 +137,15 @@ public partial class ResGroups: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // public virtual ICollection<IrModelFields> Field { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("Hid")] //Many2many
-    // [InverseProperty("Hid")] //Many2many
+    [NotMapped] //Many2many // Normal
+    [ForeignKey("Hid")] //Many2many
+    [InverseProperty("Hid")] //Many2many
     public virtual ICollection<ResGroups> Gid { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("Gid")] //Many2many
-    // [InverseProperty("Gid")] //Many2many
+    [NotMapped] //Many2many // Normal
+    [ForeignKey("Gid")] //Many2many
+    [InverseProperty("Gid")] //Many2many
     public virtual ICollection<ResGroups> Hid { get; set; }
 
     // [Many2many] // ManyToMany Hidden
@@ -168,15 +168,15 @@ public partial class ResGroups: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2many] // ManyToMany Hidden
     // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("Gid")]
-    // [InverseProperty("Gid")]
-    // public virtual ICollection<IrUiMenu> Menu { get; set; }
+    [ForeignKey("Gid")]
+    [InverseProperty("Gid")]
+    public virtual ICollection<IrUiMenu> Menu { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+     [NotMapped] //Many2many // Hidden
     // [ForeignKey("GroupId")]
     // [InverseProperty("Group")]
-    // public virtual ICollection<IrRule> RuleGroup { get; set; }
+     public virtual ICollection<IrRule> RuleGroup { get; set; }
 
     // [Many2many] // ManyToMany Hidden
     // [NotMapped] //Many2many // Hidden
@@ -191,10 +191,10 @@ public partial class ResGroups: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("Gid")]
     // [InverseProperty("Gid")]
-    // public virtual ICollection<IrActReportXml> Uid { get; set; }
+    public virtual ICollection<IrActReportXml> Uid { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -204,13 +204,13 @@ public partial class ResGroups: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2many] // ManyToMany Hidden
     // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("GroupId")]
-    // [InverseProperty("Group")]
-    // public virtual ICollection<IrUiView> View { get; set; }
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<IrUiView> View { get; set; }
 
     // [Many2many] // ManyToMany Hidden
     // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
+    [ForeignKey("ResGroupsId")]
+    [InverseProperty("ResGroups")]
+    public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 }

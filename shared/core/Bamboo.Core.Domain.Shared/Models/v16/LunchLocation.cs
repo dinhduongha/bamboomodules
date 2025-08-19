@@ -68,14 +68,14 @@ public partial class LunchLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("LunchLocationId")]
     // [InverseProperty("LunchLocation")]
-    // public virtual ICollection<LunchAlert> LunchAlert { get; set; }
+    public virtual ICollection<LunchAlert> LunchAlert { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("LunchLocationId")]
     // [InverseProperty("LunchLocation")]
-    // public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
+    public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
 }

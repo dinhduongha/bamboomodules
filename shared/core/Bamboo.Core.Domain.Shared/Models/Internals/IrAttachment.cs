@@ -320,9 +320,9 @@ public partial class IrAttachment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // public virtual ICollection<HrLeaveType> HrLeaveType { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'IrAttachment'
-    // [ForeignKey("OriginalId")]
-    // [InverseProperty("Original")]
-    // public virtual ICollection<IrAttachment> InverseOriginal { get; set; }
+     [ForeignKey("OriginalId")]
+     [InverseProperty("Original")]
+     public virtual ICollection<IrAttachment> InverseOriginal { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'IrAttachment'
     // [ForeignKey("IrAttachmentId")]

@@ -43,9 +43,6 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("label")]
-    public string? Label { get; set; }
-
     [Column("amount_type")]
     public string? AmountType { get; set; }
 
@@ -55,6 +52,14 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
+
+    // v16-Compat
+    //[Column("label")]
+    //public string? Label { get; set; }
+
+    [JsonField]
+    [Column("label", TypeName = "jsonb")]
+    public string? Label { get; set; }
 
     [Column("force_tax_included")]
     public bool? ForceTaxIncluded { get; set; }

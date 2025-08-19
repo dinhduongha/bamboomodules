@@ -55,6 +55,9 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("postpone_max_days")]
     public long? PostponeMaxDays { get; set; }
 
+    [Column("accrual_validity_count")]
+    public long? AccrualValidityCount { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -85,8 +88,26 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("action_with_unused_accruals")]
     public string? ActionWithUnusedAccruals { get; set; }
 
+    [Column("accrual_validity_type")]
+    public string? AccrualValidityType { get; set; }
+
     [Column("added_value")]
     public decimal? AddedValue { get; set; }
+
+    [Column("maximum_leave")]
+    public double? MaximumLeave { get; set; }
+
+    [Column("maximum_leave_yearly")]
+    public decimal? MaximumLeaveYearly { get; set; }
+
+    [Column("cap_accrued_time")]
+    public bool? CapAccruedTime { get; set; }
+
+    [Column("cap_accrued_time_yearly")]
+    public bool? CapAccruedTimeYearly { get; set; }
+
+    [Column("accrual_validity")]
+    public bool? AccrualValidity { get; set; }
 
     [Column("is_based_on_worked_time")]
     public bool? IsBasedOnWorkedTime { get; set; }
@@ -97,8 +118,8 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("maximum_leave")]
-    public double? MaximumLeave { get; set; }
+    [Column("frequency_hourly_source")]
+    public string? FrequencyHourlySource { get; set; }
 
     // [Many2one]
     [ForeignKey("AccrualPlanId")]

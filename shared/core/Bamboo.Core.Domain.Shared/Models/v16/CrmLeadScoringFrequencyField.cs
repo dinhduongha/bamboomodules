@@ -56,8 +56,8 @@ public partial class CrmLeadScoringFrequencyField: FullAuditedEntity<Guid>, IEnt
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadScoringFrequencyFieldId")]
     // [InverseProperty("CrmLeadScoringFrequencyField")]
-    // public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdate { get; set; }
+    public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdate { get; set; }
 }

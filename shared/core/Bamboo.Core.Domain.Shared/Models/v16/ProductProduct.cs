@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_product")]
-//[Index("CombinationIndices", Name = "product_product_combination_indices_index")]
-//[Index("DefaultCode", Name = "product_product_default_code_index")]
-//[Index("ProductTmplId", Name = "product_product_product_tmpl_id_index")]
+//[Index("CombinationIndices", Name = "product_product__combination_indices_index")]
+//[Index("DefaultCode", Name = "product_product__default_code_index")]
+//[Index("ProductTmplId", Name = "product_product__product_tmpl_id_index")]
 public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -49,6 +49,10 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("combination_indices")]
     public string? CombinationIndices { get; set; }
 
+    [JsonField]
+    [Column("standard_price", TypeName = "jsonb")]
+    public string? StandardPrice { get; set; }
+
     [Column("volume")]
     public decimal? Volume { get; set; }
 
@@ -61,11 +65,18 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("can_image_variant_1024_be_zoomed")]
     public bool? CanImageVariant1024BeZoomed { get; set; }
 
+    [Column("write_date", TypeName = "timestamp without time zone")]
+    public override DateTime? LastModificationTime { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
-    [Column("write_date", TypeName = "timestamp without time zone")]
-    public override DateTime? LastModificationTime { get; set; }
+    [JsonField]
+    [Column("lot_properties_definition", TypeName = "jsonb")]
+    public string? LotPropertiesDefinition { get; set; }
+
+    [Column("variant_ribbon_id")]
+    public Guid? VariantRibbonId { get; set; }
 
     [Column("base_unit_id")]
     public Guid? BaseUnitId { get; set; }
@@ -227,9 +238,14 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ProductProduct'
-    // [ForeignKey("ProductVariantId")]
-    // [InverseProperty("ProductVariant")]
-    // public virtual ICollection<ProductImage> ProductImage { get; set; }
+    // [ForeignKey("ProductId")]
+    // [InverseProperty("Product")]
+    // public virtual ICollection<ProductComboItem> ProductComboItem { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ProductProduct'
+    [ForeignKey("ProductVariantId")]
+    [InverseProperty("ProductVariant")]
+    public virtual ICollection<ProductImage> ProductImage { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ProductProduct'
     // [ForeignKey("ProductId")]
@@ -300,6 +316,11 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [ForeignKey("DepositDefaultProductId")]
     // [InverseProperty("DepositDefaultProduct")]
     // public virtual ICollection<ResConfigSettings> ResConfigSettingsDepositDefaultProduct { get; set; }
+
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ProductProduct'
+    // [ForeignKey("SaleDiscountProductId")]
+    // [InverseProperty("SaleDiscountProduct")]
+    // public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ProductProduct'
     // [ForeignKey("PosDiscountProductId")]
@@ -446,6 +467,11 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("Product")]
     // public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuild { get; set; }
 
+    // [Many2one]
+    [ForeignKey("VariantRibbonId")]
+    // [InverseProperty("ProductProduct")] //Many2one
+    public virtual ProductRibbon? VariantRibbon { get; set; }
+
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ProductProduct'
     // [ForeignKey("ProductId")]
     // [InverseProperty("Product")]
@@ -457,28 +483,28 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")]
     // [InverseProperty("ProductProduct")]
-    // public virtual ICollection<LoyaltyReward> LoyaltyReward { get; set; }
+    public virtual ICollection<LoyaltyReward> LoyaltyReward { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")]
     // [InverseProperty("ProductProduct")]
-    // public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
+    public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")]
     // [InverseProperty("ProductProduct")]
-    // public virtual ICollection<ProductFetchImageWizard> ProductFetchImageWizard { get; set; }
+    public virtual ICollection<ProductFetchImageWizard> ProductFetchImageWizard { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")]
     // [InverseProperty("ProductProduct")]
-    // public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -499,14 +525,14 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("DestId")]
     // [InverseProperty("Dest")]
-    // public virtual ICollection<ProductTemplate> Src { get; set; }
+    public virtual ICollection<ProductTemplate> Src { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")]
     // [InverseProperty("ProductProduct")]
-    // public virtual ICollection<StockTrackConfirmation> StockTrackConfirmation { get; set; }
+    public virtual ICollection<StockTrackConfirmation> StockTrackConfirmation { get; set; }
 }

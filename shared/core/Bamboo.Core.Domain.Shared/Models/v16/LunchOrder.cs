@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("lunch_order")]
-//[Index("State", Name = "lunch_order_state_index")]
-//[Index("SupplierId", Name = "lunch_order_supplier_id_index")]
+//[Index("State", Name = "lunch_order__state_index")]
+//[Index("SupplierId", Name = "lunch_order__supplier_id_index")]
 //[Index("UserId", "ProductId", "Date", Name = "lunch_order_user_product_date")]
 public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

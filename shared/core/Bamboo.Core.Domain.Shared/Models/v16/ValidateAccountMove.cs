@@ -34,6 +34,12 @@ public partial class ValidateAccountMove: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("force_post")]
     public bool? ForcePost { get; set; }
 
+    [Column("ignore_abnormal_date")]
+    public bool? IgnoreAbnormalDate { get; set; }
+
+    [Column("ignore_abnormal_amount")]
+    public bool? IgnoreAbnormalAmount { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -49,4 +55,10 @@ public partial class ValidateAccountMove: FullAuditedEntity<Guid>, IEntityDto<Gu
     [ForeignKey("LastModifierId")]
     // [InverseProperty("ValidateAccountMoveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ValidateAccountMoveId")] //Many2many
+    // [InverseProperty("ValidateAccountMove")] //Many2many
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
 }

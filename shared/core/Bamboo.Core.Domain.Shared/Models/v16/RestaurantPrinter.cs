@@ -66,8 +66,8 @@ public partial class RestaurantPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ICollection<PosCategory> Category { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PrinterId")]
     // [InverseProperty("Printer")]
-    // public virtual ICollection<PosConfig> Config { get; set; }
+    public virtual ICollection<PosConfig> Config { get; set; }
 }

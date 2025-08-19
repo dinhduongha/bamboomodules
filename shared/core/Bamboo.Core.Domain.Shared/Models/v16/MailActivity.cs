@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_activity")]
-//[Index("DateDeadline", Name = "mail_activity_date_deadline_index")]
-//[Index("ResId", Name = "mail_activity_res_id_index")]
-//[Index("ResModelId", Name = "mail_activity_res_model_id_index")]
-//[Index("ResModel", Name = "mail_activity_res_model_index")]
-//[Index("UserId", Name = "mail_activity_user_id_index")]
+//[Index("DateDeadline", Name = "mail_activity__date_deadline_index")]
+//[Index("ResId", Name = "mail_activity__res_id_index")]
+//[Index("ResModelId", Name = "mail_activity__res_model_id_index")]
+//[Index("ResModel", Name = "mail_activity__res_model_index")]
+//[Index("UserId", Name = "mail_activity__user_id_index")]
 public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -66,14 +66,23 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("summary")]
     public string? Summary { get; set; }
 
+    [Column("user_tz")]
+    public string? UserTz { get; set; }
+
     [Column("date_deadline")]
     public DateTime? DateDeadline { get; set; }
+
+    [Column("date_done")]
+    public DateTime? DateDone { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
 
     [Column("automated")]
     public bool? Automated { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -136,4 +145,10 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [ForeignKey("LastModifierId")]
     // [InverseProperty("MailActivityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ActivityId")] //Many2many
+    // [InverseProperty("Activity")] //Many2many
+    public virtual ICollection<IrAttachment> Attachment { get; set; }
 }

@@ -49,11 +49,17 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("session_question_id")]
     public Guid? SessionQuestionId { get; set; }
 
+    [Column("session_speed_rating_time_limit")]
+    public long? SessionSpeedRatingTimeLimit { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("survey_type")]
+    public string? SurveyType { get; set; }
 
     [Column("questions_layout")]
     public string? QuestionsLayout { get; set; }
@@ -136,6 +142,9 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("time_limit")]
     public double? TimeLimit { get; set; }
 
+    [Column("certification_validity_months")]
+    public long? CertificationValidityMonths { get; set; }
+
     // [Many2one]
     [ForeignKey("CertificationBadgeId")]
     // [InverseProperty("SurveySurvey")] //Many2one
@@ -210,4 +219,10 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("LastModifierId")]
     // [InverseProperty("SurveySurveyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SurveySurveyId")] //Many2many
+    // [InverseProperty("SurveySurvey")] //Many2many
+    public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

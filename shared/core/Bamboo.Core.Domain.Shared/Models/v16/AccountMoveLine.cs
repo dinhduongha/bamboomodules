@@ -12,13 +12,15 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_move_line")]
-//[Index("AccountId", Name = "account_move_line_account_id_index")]
-//[Index("CompanyId", Name = "account_move_line_company_id_index")]
-//[Index("DateMaturity", Name = "account_move_line_date_maturity_index")]
+//[Index("CompanyId", Name = "account_move_line__company_id_index")]
+//[Index("DateMaturity", Name = "account_move_line__date_maturity_index")]
+//[Index("JournalId", Name = "account_move_line__journal_id_index")]
+//[Index("MatchingNumber", Name = "account_move_line__matching_number_index")]
+//[Index("MoveId", Name = "account_move_line__move_id_index")]
+//[Index("MoveName", Name = "account_move_line__move_name_index")]
+//[Index("AccountId", "Date", Name = "account_move_line_account_id_date_idx")]
+//[Index("AccountId", Name = "account_move_line__account_id_index")]
 //[Index("Date", "MoveName", "Id", Name = "account_move_line_date_name_id_idx", IsDescending = new[] { true, true, false })]
-//[Index("JournalId", Name = "account_move_line_journal_id_index")]
-//[Index("MoveId", Name = "account_move_line_move_id_index")]
-//[Index("MoveName", Name = "account_move_line_move_name_index")]
 //[Index("PartnerId", "Ref", Name = "account_move_line_partner_id_ref_idx")]
 public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -120,6 +122,9 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("date")]
     public DateTime? Date { get; set; }
 
+    [Column("invoice_date")]
+    public DateTime? InvoiceDate { get; set; }
+
     [Column("date_maturity")]
     public DateTime? DateMaturity { get; set; }
 
@@ -172,6 +177,9 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("discount_balance")]
     public decimal? DiscountBalance { get; set; }
 
+    [Column("is_imported")]
+    public bool? IsImported { get; set; }
+
     [Column("tax_tag_invert")]
     public bool? TaxTagInvert { get; set; }
 
@@ -192,6 +200,9 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("is_downpayment")]
     public bool? IsDownpayment { get; set; }
+
+    [Column("cogs_origin_id")]
+    public Guid? CogsOriginId { get; set; }
 
     [Column("purchase_line_id")]
     public Guid? PurchaseLineId { get; set; }
@@ -249,6 +260,11 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual AccountAssetCategory? AssetCategory { get; set; }
 
     // [Many2one]
+    [ForeignKey("CogsOriginId")]
+    // [InverseProperty("InverseCogsOrigin")] //Many2one
+    public virtual AccountMoveLine? CogsOrigin { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
@@ -273,6 +289,11 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual HrExpense? Expense { get; set; }
 
+    // [One2many]
+    [ForeignKey("AccountMoveLineId")]
+    [InverseProperty("AccountMoveLine")]
+    public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
+
     // [Many2one]
     [ForeignKey("FollowupLineId")]
     // [InverseProperty("AccountMoveLine")] //Many2one
@@ -288,6 +309,11 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     // [InverseProperty("AccountMoveLineGroupTax")] //Many2one
     public virtual AccountTax? GroupTax { get; set; }
 
+    // [One2many]
+    [ForeignKey("CogsOriginId")]
+    [InverseProperty("CogsOrigin")]
+    public virtual ICollection<AccountMoveLine> InverseCogsOrigin { get; set; }
+
     // [Many2one]
     [ForeignKey("JournalId")]
     // [InverseProperty("AccountMoveLine")] //Many2one
@@ -302,6 +328,11 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     [ForeignKey("MoveId")]
     // [InverseProperty("AccountMoveLine")] //Many2one
     public virtual AccountMove? Move { get; set; }
+
+    // [One2many]
+    [ForeignKey("AccountMoveLineId")]
+    [InverseProperty("AccountMoveLine")]
+    public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivity { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
@@ -390,10 +421,10 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountMoveLineId")]
     // [InverseProperty("AccountMoveLine")]
-    // public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizard { get; set; }
+    public virtual ICollection<AccountAutomaticEntryWizard> AccountAutomaticEntryWizard { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -408,8 +439,8 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     public virtual ICollection<SaleOrderLine> OrderLine { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("LineId")]
     // [InverseProperty("Line")]
-    // public virtual ICollection<AccountPaymentRegister> Wizard { get; set; }
+    public virtual ICollection<AccountPaymentRegister> Wizard { get; set; }
 }

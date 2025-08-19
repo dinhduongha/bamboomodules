@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_track_visitor")]
-//[Index("PartnerId", Name = "event_track_visitor_partner_id_index")]
-//[Index("TrackId", Name = "event_track_visitor_track_id_index")]
-//[Index("VisitorId", Name = "event_track_visitor_visitor_id_index")]
+//[Index("PartnerId", Name = "event_track_visitor__partner_id_index")]
+//[Index("TrackId", Name = "event_track_visitor__track_id_index")]
+//[Index("VisitorId", Name = "event_track_visitor__visitor_id_index")]
 public partial class EventTrackVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

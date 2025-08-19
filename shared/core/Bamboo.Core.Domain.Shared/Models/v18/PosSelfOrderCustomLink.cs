@@ -64,8 +64,8 @@ public partial class PosSelfOrderCustomLink: FullAuditedEntity<Guid>, IEntityDto
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("PosSelfOrderCustomLinkId")] //Many2many
-    // [InverseProperty("PosSelfOrderCustomLink")] //Many2many
+    [InverseProperty("PosSelfOrderCustomLink")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

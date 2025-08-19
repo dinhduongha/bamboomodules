@@ -31,6 +31,9 @@ public partial class AccountTaxRepartitionLine: FullAuditedAggregateRoot<Guid>, 
     [Column("invoice_tax_id")]
     public Guid? InvoiceTaxId { get; set; }
 
+    [Column("tax_id")]
+    public Guid? TaxId { get; set; }
+
     [Column("refund_tax_id")]
     public Guid? RefundTaxId { get; set; }
 
@@ -45,6 +48,9 @@ public partial class AccountTaxRepartitionLine: FullAuditedAggregateRoot<Guid>, 
 
     [Column("repartition_type")]
     public string? RepartitionType { get; set; }
+
+    [Column("document_type")]
+    public string? DocumentType { get; set; }
 
     [Column("use_in_tax_closing")]
     public bool? UseInTaxClosing { get; set; }
@@ -82,6 +88,11 @@ public partial class AccountTaxRepartitionLine: FullAuditedAggregateRoot<Guid>, 
     [ForeignKey("InvoiceTaxId")]
     // [InverseProperty("AccountTaxRepartitionLineInvoiceTax")] //Many2one
     public virtual AccountTax? InvoiceTax { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TaxId")]
+    // [InverseProperty("AccountTaxRepartitionLine")] //Many2one
+    public virtual AccountTax? Tax { get; set; }
 
     // [Many2one]
     [ForeignKey("RefundTaxId")]

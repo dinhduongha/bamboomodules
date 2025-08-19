@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_asset_depreciation_line")]
-//[Index("DepreciationDate", Name = "account_asset_depreciation_line_depreciation_date_index")]
-//[Index("Name", Name = "account_asset_depreciation_line_name_index")]
+//[Index("DepreciationDate", Name = "account_asset_depreciation_line__depreciation_date_index")]
+//[Index("Name", Name = "account_asset_depreciation_line__name_index")]
 public partial class AccountAssetDepreciationLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

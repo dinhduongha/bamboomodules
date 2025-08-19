@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("website_menu")]
-//[Index("ParentId", Name = "website_menu_parent_id_index")]
-//[Index("ParentPath", Name = "website_menu_parent_path_index")]
+//[Index("ParentId", Name = "website_menu__parent_id_index")]
+//[Index("ParentPath", Name = "website_menu__parent_path_index")]
 public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -29,6 +29,9 @@ public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("page_id")]
     public Guid? PageId { get; set; }
+
+    [Column("controller_page_id")]
+    public Guid? ControllerPageId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -73,6 +76,11 @@ public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ControllerPageId")]
+    // [InverseProperty("WebsiteMenu")] //Many2one
+    public virtual WebsiteControllerPage? ControllerPage { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -123,4 +131,10 @@ public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("LastModifierId")]
     // [InverseProperty("WebsiteMenuWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("WebsiteMenuId")] //Many2many
+    // [InverseProperty("WebsiteMenu")] //Many2many
+    public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

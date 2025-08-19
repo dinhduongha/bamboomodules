@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter_productivity")]
-//[Index("CompanyId", Name = "mrp_workcenter_productivity_company_id_index")]
-//[Index("WorkcenterId", Name = "mrp_workcenter_productivity_workcenter_id_index")]
-//[Index("WorkorderId", Name = "mrp_workcenter_productivity_workorder_id_index")]
+//[Index("CompanyId", Name = "mrp_workcenter_productivity__company_id_index")]
+//[Index("WorkcenterId", Name = "mrp_workcenter_productivity__workcenter_id_index")]
+//[Index("WorkorderId", Name = "mrp_workcenter_productivity__workorder_id_index")]
 public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -69,6 +69,14 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
 
     [Column("cost_already_recorded")]
     public bool? CostAlreadyRecorded { get; set; }
+
+    [Column("account_move_line_id")]
+    public Guid? AccountMoveLineId { get; set; }
+
+    // [Many2one]
+    [ForeignKey("AccountMoveLineId")]
+    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
+    public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]

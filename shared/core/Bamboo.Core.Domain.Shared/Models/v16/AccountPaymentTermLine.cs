@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_payment_term_line")]
-//[Index("PaymentId", Name = "account_payment_term_line_payment_id_index")]
+//[Index("PaymentId", Name = "account_payment_term_line__payment_id_index")]
 public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -25,6 +25,9 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
     
+
+    [Column("nb_days")]
+    public long? NbDays { get; set; }
 
     [Column("months")]
     public long? Months { get; set; }
@@ -49,6 +52,12 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("value")]
     public string? Value { get; set; }
+
+    [Column("delay_type")]
+    public string? DelayType { get; set; }
+
+    [Column("days_next_month")]
+    public string? DaysNextMonth { get; set; }
 
     [Column("value_amount")]
     public decimal? ValueAmount { get; set; }

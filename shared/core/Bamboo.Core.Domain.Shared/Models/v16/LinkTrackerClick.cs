@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("link_tracker_click")]
-//[Index("LinkId", Name = "link_tracker_click_link_id_index")]
+//[Index("LinkId", Name = "link_tracker_click__link_id_index")]
 public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter")]
-//[Index("CompanyId", Name = "mrp_workcenter_company_id_index")]
-//[Index("ResourceCalendarId", Name = "mrp_workcenter_resource_calendar_id_index")]
-//[Index("ResourceId", Name = "mrp_workcenter_resource_id_index")]
+//[Index("CompanyId", Name = "mrp_workcenter__company_id_index")]
+//[Index("ResourceCalendarId", Name = "mrp_workcenter__resource_calendar_id_index")]
+//[Index("ResourceId", Name = "mrp_workcenter__resource_id_index")]
 public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -88,6 +88,13 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("costs_hour_account_id")]
     public Guid? CostsHourAccountId { get; set; }
 
+    [Column("expense_account_id")]
+    public Guid? ExpenseAccountId { get; set; }
+
+    [JsonField]
+    [Column("analytic_distribution", TypeName = "jsonb")]
+    public string? AnalyticDistribution { get; set; }
+
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("MrpWorkcenter")] //Many2one
@@ -102,6 +109,11 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("CreatorId")]
     // [InverseProperty("MrpWorkcenterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ExpenseAccountId")]
+    // [InverseProperty("MrpWorkcenter")] //Many2one
+    public virtual AccountAccount? ExpenseAccount { get; set; }
 
     // [One2many]
     [ForeignKey("WorkcenterId")]
@@ -137,6 +149,12 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LastModifierId")]
     // [InverseProperty("MrpWorkcenterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MrpWorkcenterId")]
+    // [InverseProperty("MrpWorkcenter")]
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

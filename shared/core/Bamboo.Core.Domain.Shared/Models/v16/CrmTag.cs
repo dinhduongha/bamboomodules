@@ -56,32 +56,32 @@ public partial class CrmTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmTagId")]
     // [InverseProperty("CrmTag")]
-    // public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmTagId")]
     // [InverseProperty("CrmTag")]
-    // public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
+    public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmTagId")]
     // [InverseProperty("CrmTag")]
-    // public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
+    public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TagId")]
     // [InverseProperty("Tag")]
-    // public virtual ICollection<CrmLead> Lead { get; set; }
+    public virtual ICollection<CrmLead> Lead { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TagId")]
     // [InverseProperty("Tag")]
-    // public virtual ICollection<SaleOrder> Order { get; set; }
+    public virtual ICollection<SaleOrder> Order { get; set; }
 }

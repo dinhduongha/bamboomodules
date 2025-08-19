@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_pricelist_item")]
-//[Index("ComputePrice", Name = "product_pricelist_item_compute_price_index")]
-//[Index("PricelistId", Name = "product_pricelist_item_pricelist_id_index")]
+//[Index("ComputePrice", Name = "product_pricelist_item__compute_price_index")]
+//[Index("PricelistId", Name = "product_pricelist_item__pricelist_id_index")]
 public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -54,6 +54,9 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("applied_on")]
     public string? AppliedOn { get; set; }
 
+    [Column("display_applied_on")]
+    public string? DisplayAppliedOn { get; set; }
+
     [Column("base")]
     public string? Base { get; set; }
 
@@ -74,6 +77,9 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("price_surcharge")]
     public decimal? PriceSurcharge { get; set; }
+
+    [Column("price_markup")]
+    public decimal? PriceMarkup { get; set; }
 
     [Column("price_min_margin")]
     public decimal? PriceMinMargin { get; set; }

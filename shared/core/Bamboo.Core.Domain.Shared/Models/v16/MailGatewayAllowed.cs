@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_gateway_allowed")]
-//[Index("EmailNormalized", Name = "mail_gateway_allowed_email_normalized_index")]
+//[Index("EmailNormalized", Name = "mail_gateway_allowed__email_normalized_index")]
 public partial class MailGatewayAllowed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

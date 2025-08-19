@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_group_member")]
-//[Index("EmailNormalized", Name = "mail_group_member_email_normalized_index")]
+//[Index("EmailNormalized", Name = "mail_group_member__email_normalized_index")]
 //[Index("PartnerId", "MailGroupId", Name = "mail_group_member_unique_partner", IsUnique = true)]
 public partial class MailGroupMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {

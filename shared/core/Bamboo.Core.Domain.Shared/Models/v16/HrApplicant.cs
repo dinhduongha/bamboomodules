@@ -12,9 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_applicant")]
-//[Index("DateLastStageUpdate", Name = "hr_applicant_date_last_stage_update_index")]
-//[Index("JobId", Name = "hr_applicant_job_id_index")]
-//[Index("StageId", Name = "hr_applicant_stage_id_index")]
+//[Index("Active", Name = "hr_applicant__active_index")]
+//[Index("CandidateId", Name = "hr_applicant__candidate_id_index")]
+//[Index("DateLastStageUpdate", Name = "hr_applicant__date_last_stage_update_index")]
+//[Index("JobId", Name = "hr_applicant__job_id_index")]
+//[Index("StageId", Name = "hr_applicant__stage_id_index")]
 public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -39,6 +41,9 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
+
+    [Column("candidate_id")]
+    public Guid? CandidateId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -106,6 +111,14 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
+    [JsonField]
+    [Column("applicant_properties", TypeName = "jsonb")]
+    public string? ApplicantProperties { get; set; }
+
+    [Column("applicant_notes")]
+    public string? ApplicantNotes { get; set; }
+
+
     [Column("linkedin_profile")]
     public string? LinkedinProfile { get; set; }
 
@@ -129,6 +142,9 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("date_last_stage_update", TypeName = "timestamp without time zone")]
     public DateTime? DateLastStageUpdate { get; set; }
+
+    [Column("refuse_date", TypeName = "timestamp without time zone")]
+    public DateTime? RefuseDate { get; set; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
@@ -157,6 +173,11 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("CampaignId")]
     // [InverseProperty("HrApplicant")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CandidateId")]
+    // [InverseProperty("HrApplicant")] //Many2one
+    public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -233,6 +254,11 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [InverseProperty("Applicant")]
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
+    // [One2many]
+    [ForeignKey("ApplicantId")]
+    [InverseProperty("Applicant")]
+    public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
+
     // [Many2one]
     [ForeignKey("TypeId")]
     // [InverseProperty("HrApplicant")] //Many2one
@@ -249,16 +275,16 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrApplicantId")]
     // [InverseProperty("HrApplicant")]
-    // public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
+    public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrApplicantId")]
     // [InverseProperty("HrApplicant")]
-    // public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
+    public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

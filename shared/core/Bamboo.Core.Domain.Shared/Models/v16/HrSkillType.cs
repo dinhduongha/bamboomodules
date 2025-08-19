@@ -25,14 +25,25 @@ public partial class HrSkillType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("color")]
+    public long? Color { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -49,6 +60,11 @@ public partial class HrSkillType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("SkillTypeId")]
     [InverseProperty("SkillType")]
     public virtual ICollection<HrApplicantSkill> HrApplicantSkill { get; set; }
+
+    // [One2many]
+    [ForeignKey("SkillTypeId")]
+    [InverseProperty("SkillType")]
+    public virtual ICollection<HrCandidateSkill> HrCandidateSkill { get; set; }
 
     // [One2many]
     [ForeignKey("SkillTypeId")]

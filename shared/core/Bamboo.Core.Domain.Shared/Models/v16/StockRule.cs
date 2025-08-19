@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_rule")]
-//[Index("Action", Name = "stock_rule_action_index")]
-//[Index("LocationDestId", Name = "stock_rule_location_dest_id_index")]
-//[Index("LocationSrcId", Name = "stock_rule_location_src_id_index")]
-//[Index("RouteId", Name = "stock_rule_route_id_index")]
-//[Index("WarehouseId", Name = "stock_rule_warehouse_id_index")]
+//[Index("Action", Name = "stock_rule__action_index")]
+//[Index("LocationDestId", Name = "stock_rule__location_dest_id_index")]
+//[Index("LocationSrcId", Name = "stock_rule__location_src_id_index")]
+//[Index("RouteId", Name = "stock_rule__route_id_index")]
+//[Index("WarehouseId", Name = "stock_rule__warehouse_id_index")]
 public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -81,12 +81,18 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("auto")]
     public string? Auto { get; set; }
 
+    [Column("push_domain")]
+    public string? PushDomain { get; set; }
+
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
+
+    [Column("location_dest_from_rule")]
+    public bool? LocationDestFromRule { get; set; }
 
     [Column("propagate_cancel")]
     public bool? PropagateCancel { get; set; }
@@ -174,6 +180,11 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [ForeignKey("PbmMtoPullId")]
     [InverseProperty("PbmMtoPull")]
     public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPull { get; set; }
+
+    // [One2many]
+    [ForeignKey("RepairMtoPullId")]
+    [InverseProperty("RepairMtoPull")]
+    public virtual ICollection<StockWarehouse> StockWarehouseRepairMtoPull { get; set; }
 
     // [One2many]
     [ForeignKey("SamRuleId")]

@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mailing_filter")]
-//[Index("CreateUid", Name = "mailing_filter_create_uid_index")]
+//[Index("CreateUid", Name = "mailing_filter__create_uid_index")]
 public partial class MailingFilter: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

@@ -37,11 +37,16 @@ public partial class MrpWorkcenterProductivityLoss: FullAuditedAggregateRoot<Gui
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
-
     [Column("loss_type")]
     public string? LossType { get; set; }
+
+    [JsonField]
+    [Column("name", TypeName = "jsonb")]
+    public string? Name { get; set; }
+
+    // v16-Compat
+    //[Column("name")]
+    //public string? Name { get; set; }
 
     [Column("manual")]
     public bool? Manual { get; set; }

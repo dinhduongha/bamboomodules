@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("gamification_goal")]
-//[Index("ChallengeId", Name = "gamification_goal_challenge_id_index")]
+//[Index("ChallengeId", Name = "gamification_goal__challenge_id_index")]
 public partial class GamificationGoal: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

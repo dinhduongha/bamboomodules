@@ -82,6 +82,16 @@ public partial class ProcurementGroup: FullAuditedAggregateRoot<Guid>, IEntityDt
     [InverseProperty("Group")]
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
+    // [One2many]
+    [ForeignKey("GroupId")]
+    [InverseProperty("Group")]
+    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProcurementGroupId")]
+    [InverseProperty("ProcurementGroup")]
+    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+
     // [Many2one]
     [ForeignKey("SaleId")]
     // [InverseProperty("ProcurementGroup")] //Many2one

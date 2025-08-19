@@ -106,8 +106,8 @@ public partial class HrLeaveAllocationGenerateMultiWizard: FullAuditedEntity<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("HrLeaveAllocationGenerateMultiWizardId")] //Many2many
-    // [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2many
+    [InverseProperty("HrLeaveAllocationGenerateMultiWizard")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

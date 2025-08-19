@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("loyalty_card")]
+//[Index("PartnerId", Name = "loyalty_card__partner_id_index")]
 //[Index("Code", Name = "loyalty_card_card_code_unique", IsUnique = true)]
-//[Index("PartnerId", Name = "loyalty_card_partner_id_index")]
 public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -48,6 +48,9 @@ public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("expiration_date")]
     public DateTime? ExpirationDate { get; set; }
 
+    [Column("active")]
+    public bool? Active { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -77,6 +80,16 @@ public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("CreatorId")]
     // [InverseProperty("LoyaltyCardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("CardId")]
+    [InverseProperty("Card")]
+    public virtual ICollection<LoyaltyCardUpdateBalance> LoyaltyCardUpdateBalance { get; set; }
+
+    // [One2many]
+    [ForeignKey("CardId")]
+    [InverseProperty("Card")]
+    public virtual ICollection<LoyaltyHistory> LoyaltyHistory { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
@@ -124,8 +137,8 @@ public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("LoyaltyCardId")]
     // [InverseProperty("LoyaltyCardNavigation")]
-    // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
+    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

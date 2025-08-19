@@ -51,6 +51,10 @@ public partial class MaintenanceEquipmentCategory: FullAuditedAggregateRoot<Guid
     [Column("note", TypeName = "jsonb")]
     public string? Note { get; set; }
 
+    [JsonField]
+    [Column("equipment_properties_definition", TypeName = "jsonb")]
+    public string? EquipmentPropertiesDefinition { get; set; }
+
     [Column("fold")]
     public bool? Fold { get; set; }
 

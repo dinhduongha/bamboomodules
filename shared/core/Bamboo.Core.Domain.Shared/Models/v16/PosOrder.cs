@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_order")]
-//[Index("CompanyId", Name = "pos_order_company_id_index")]
-//[Index("DateOrder", Name = "pos_order_date_order_index")]
-//[Index("PosReference", Name = "pos_order_pos_reference_index")]
-//[Index("SessionId", Name = "pos_order_session_id_index")]
-//[Index("State", Name = "pos_order_state_index")]
+//[Index("CompanyId", Name = "pos_order__company_id_index")]
+//[Index("DateOrder", Name = "pos_order__date_order_index")]
+//[Index("PosReference", Name = "pos_order__pos_reference_index")]
+//[Index("SessionId", Name = "pos_order__session_id_index")]
+//[Index("State", Name = "pos_order__state_index")]
 public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -45,6 +45,9 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("session_id")]
     public Guid? SessionId { get; set; }
 
+    [Column("config_id")]
+    public Guid? ConfigId { get; set; }
+
     [Column("account_move")]
     public Guid? AccountMove { get; set; }
 
@@ -72,14 +75,41 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("last_order_preparation_change")]
+    public string? LastOrderPreparationChange { get; set; }
+
     [Column("state")]
     public string? State { get; set; }
+
+    [Column("floating_order_name")]
+    public string? FloatingOrderName { get; set; }
 
     [Column("pos_reference")]
     public string? PosReference { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
+
+    [Column("ticket_code")]
+    public string? TicketCode { get; set; }
+
+    [Column("uuid")]
+    public string? Uuid { get; set; }
+
+    [Column("email")]
+    public string? Email { get; set; }
+
+    [Column("mobile")]
+    public string? Mobile { get; set; }
+
+    [Column("shipping_date")]
+    public DateTime? ShippingDate { get; set; }
+
+    [Column("general_note")]
+    public string? GeneralNote { get; set; }
+
+    [Column("amount_difference")]
+    public decimal? AmountDifference { get; set; }
 
     [Column("amount_tax")]
     public decimal? AmountTax { get; set; }
@@ -108,6 +138,9 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("is_tipped")]
     public bool? IsTipped { get; set; }
 
+    [Column("has_deleted_line")]
+    public bool? HasDeletedLine { get; set; }
+
     [Column("date_order", TypeName = "timestamp without time zone")]
     public DateTime? DateOrder { get; set; }
 
@@ -116,6 +149,9 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("next_online_payment_amount")]
+    public decimal? NextOnlinePaymentAmount { get; set; }
 
     [Column("crm_team_id")]
     public Guid? CrmTeamId { get; set; }
@@ -135,15 +171,51 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("multiprint_resume")]
     public string? MultiprintResume { get; set; }
 
+    [Column("takeaway")]
+    public bool? Takeaway { get; set; }
+
+    [Column("table_stand_number")]
+    public string? TableStandNumber { get; set; }
+
+    [Column("use_self_order_online_payment")]
+    public bool? UseSelfOrderOnlinePayment { get; set; }
+
+    // [Column("employee_id")]
+    // public Guid? EmployeeId { get; set; }
+
+    // [Column("cashier")]
+    // public string? Cashier { get; set; }
+
     // [Many2one]
     [ForeignKey("AccountMove")]
     // [InverseProperty("PosOrder")] //Many2one
-    public virtual AccountMove? AccountMoveNavigation { get; set; }
+    public virtual AccountMove? AccountMove1 { get; set; }
+
+    // [One2many]
+    [ForeignKey("ReversedPosOrderId")]
+    [InverseProperty("ReversedPosOrder")]
+    public virtual ICollection<AccountMove> AccountMoveNavigation { get; set; }
+
+    // v16-Compat
+    // [Many2one]
+    //[ForeignKey("AccountMove")]
+    // [InverseProperty("PosOrder")] //Many2one
+    //public virtual AccountMove? AccountMoveNavigation { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosOrderId")]
+    [InverseProperty("PosOrder")]
+    public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("PosOrder")] //Many2one
     public virtual ResCompany? Company { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ConfigId")]
+    // [InverseProperty("PosOrder")] //Many2one
+    public virtual PosConfig? Config { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -174,6 +246,11 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [ForeignKey("PartnerId")]
     // [InverseProperty("PosOrder")] //Many2one
     public virtual ResPartner? Partner { get; set; }
+
+    // [One2many]
+    [ForeignKey("PosOrderId")]
+    [InverseProperty("PosOrder")]
+    public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [One2many]
     [ForeignKey("OrderId")]

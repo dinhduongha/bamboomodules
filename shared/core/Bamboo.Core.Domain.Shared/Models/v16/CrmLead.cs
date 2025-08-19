@@ -12,16 +12,16 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_lead")]
-//[Index("CompanyId", Name = "crm_lead_company_id_index")]
+//[Index("CompanyId", Name = "crm_lead__company_id_index")]
+//[Index("DateLastStageUpdate", Name = "crm_lead__date_last_stage_update_index")]
+//[Index("LostReasonId", Name = "crm_lead__lost_reason_id_index")]
+//[Index("PartnerId", Name = "crm_lead__partner_id_index")]
+//[Index("Priority", Name = "crm_lead__priority_index")]
+//[Index("StageId", Name = "crm_lead__stage_id_index")]
+//[Index("TeamId", Name = "crm_lead__team_id_index")]
+//[Index("Type", Name = "crm_lead__type_index")]
+//[Index("UserId", Name = "crm_lead__user_id_index")]
 //[Index("CreateDate", "TeamId", Name = "crm_lead_create_date_team_id_idx")]
-//[Index("DateLastStageUpdate", Name = "crm_lead_date_last_stage_update_index")]
-//[Index("LostReasonId", Name = "crm_lead_lost_reason_id_index")]
-//[Index("PartnerId", Name = "crm_lead_partner_id_index")]
-//[Index("Priority", Name = "crm_lead_priority_index")]
-//[Index("StageId", Name = "crm_lead_stage_id_index")]
-//[Index("TeamId", Name = "crm_lead_team_id_index")]
-//[Index("Type", Name = "crm_lead_type_index")]
-//[Index("UserId", Name = "crm_lead_user_id_index")]
 //[Index("UserId", "TeamId", "Type", Name = "crm_lead_user_id_team_id_type_index")]
 public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -123,6 +123,9 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("email_from")]
     public string? EmailFrom { get; set; }
 
+    [Column("email_domain_criterion")]
+    public string? EmailDomainCriterion { get; set; }
+
     [Column("phone")]
     public string? Phone { get; set; }
 
@@ -175,6 +178,9 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("recurring_revenue_monthly_prorated")]
     public decimal? RecurringRevenueMonthlyProrated { get; set; }
 
+    [Column("recurring_revenue_prorated")]
+    public decimal? RecurringRevenueProrated { get; set; }
+
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -183,6 +189,9 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("date_action_last", TypeName = "timestamp without time zone")]
     public DateTime? DateActionLast { get; set; }
+
+    [Column("date_automation_last", TypeName = "timestamp without time zone")]
+    public DateTime? DateAutomationLast { get; set; }
 
     [Column("date_open", TypeName = "timestamp without time zone")]
     public DateTime? DateOpen { get; set; }
@@ -388,34 +397,46 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")]
     // [InverseProperty("CrmLead")]
-    // public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")]
     // [InverseProperty("CrmLeadNavigation")]
-    // public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass1 { get; set; }
+    public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass1 { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")]
     // [InverseProperty("CrmLead")]
-    // public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerNavigation { get; set; }
+    public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerNavigation { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")]
     // [InverseProperty("CrmLead")]
-    // public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+    public virtual ICollection<CrmLeadLost> CrmLeadLost { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmLeadId")] //Many2many
+    // [InverseProperty("CrmLead")] //Many2many
+    public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    //[NotMapped] //Many2many // Hidden
+    // [ForeignKey("CrmLeadId")]
+    // [InverseProperty("CrmLead")]
+    //public virtual ICollection<EventRegistration> EventRegistration { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("OpportunityId")]
     // [InverseProperty("Opportunity")]
-    // public virtual ICollection<CrmMergeOpportunity> Merge { get; set; }
+    public virtual ICollection<CrmMergeOpportunity> Merge { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

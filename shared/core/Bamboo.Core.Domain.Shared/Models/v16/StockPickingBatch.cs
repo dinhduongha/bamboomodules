@@ -12,9 +12,9 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_picking_batch")]
-//[Index("CompanyId", Name = "stock_picking_batch_company_id_index")]
-//[Index("PickingTypeId", Name = "stock_picking_batch_picking_type_id_index")]
-//[Index("State", Name = "stock_picking_batch_state_index")]
+//[Index("CompanyId", Name = "stock_picking_batch__company_id_index")]
+//[Index("PickingTypeId", Name = "stock_picking_batch__picking_type_id_index")]
+//[Index("State", Name = "stock_picking_batch__state_index")]
 public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -46,8 +46,15 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("name")]
     public string? Name { get; set; }
 
+    [Column("description")]
+    public string? Description { get; set; }
+
     [Column("state")]
     public string? State { get; set; }
+
+    [JsonField]
+    [Column("properties", TypeName = "jsonb")]
+    public string? Properties { get; set; }
 
     [Column("is_wave")]
     public bool? IsWave { get; set; }
@@ -61,6 +68,21 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("vehicle_id")]
+    public Guid? VehicleId { get; set; }
+
+    [Column("vehicle_category_id")]
+    public Guid? VehicleCategoryId { get; set; }
+
+    [Column("dock_id")]
+    public Guid? DockId { get; set; }
+
+    [Column("driver_id")]
+    public Guid? DriverId { get; set; }
+
+    [Column("end_date", TypeName = "timestamp without time zone")]
+    public DateTime? EndDate { get; set; }
+
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("StockPickingBatch")] //Many2one
@@ -70,6 +92,16 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("CreatorId")]
     // [InverseProperty("StockPickingBatchCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("DockId")]
+    // [InverseProperty("StockPickingBatch")] //Many2one
+    public virtual StockLocation? Dock { get; set; }
+
+    // [Many2one]
+    [ForeignKey("DriverId")]
+    // [InverseProperty("StockPickingBatch")] //Many2one
+    public virtual ResPartner? Driver { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
@@ -105,6 +137,16 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("UserId")]
     // [InverseProperty("StockPickingBatchUser")] //Many2one
     public virtual ResUsers? User { get; set; }
+
+    // [Many2one]
+    [ForeignKey("VehicleId")]
+    // [InverseProperty("StockPickingBatch")] //Many2one
+    public virtual FleetVehicle? Vehicle { get; set; }
+
+    // [Many2one]
+    [ForeignKey("VehicleCategoryId")]
+    // [InverseProperty("StockPickingBatch")] //Many2one
+    public virtual FleetVehicleModelCategory? VehicleCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

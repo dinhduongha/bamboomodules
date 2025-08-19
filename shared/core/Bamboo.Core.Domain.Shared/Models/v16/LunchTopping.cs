@@ -69,8 +69,8 @@ public partial class LunchTopping: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ToppingId")]
     // [InverseProperty("Topping")]
-    // public virtual ICollection<LunchOrder> Order { get; set; }
+    public virtual ICollection<LunchOrder> Order { get; set; }
 }

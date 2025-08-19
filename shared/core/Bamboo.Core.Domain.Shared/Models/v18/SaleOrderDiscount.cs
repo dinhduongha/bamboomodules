@@ -65,8 +65,8 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("SaleOrderDiscountId")] //Many2many
-    // [InverseProperty("SaleOrderDiscount")] //Many2many
+    [InverseProperty("SaleOrderDiscount")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

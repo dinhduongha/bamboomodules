@@ -25,6 +25,9 @@ public partial class EventTypeTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
 

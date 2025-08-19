@@ -57,4 +57,10 @@ public partial class CrmLeadLost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     [ForeignKey("LastModifierId")]
     // [InverseProperty("CrmLeadLostWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("CrmLeadLostId")] //Many2many
+    // [InverseProperty("CrmLeadLost")] //Many2many
+    public virtual ICollection<CrmLead> CrmLead { get; set; }
 }

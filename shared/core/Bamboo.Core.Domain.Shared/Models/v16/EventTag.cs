@@ -12,6 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_tag")]
+//[Index("IsPublished", Name = "event_tag__is_published_index")]
+//[Index("WebsiteId", Name = "event_tag__website_id_index")]
 public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -53,6 +55,12 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("website_id")]
+    public Guid? WebsiteId { get; set; }
+
+    [Column("is_published")]
+    public bool? IsPublished { get; set; }
+
     // [Many2one]
     [ForeignKey("CategoryId")]
     // [InverseProperty("EventTag")] //Many2one
@@ -64,19 +72,24 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [ForeignKey("WebsiteId")]
+    // [InverseProperty("EventTag")] //Many2one
+    public virtual Website? Website { get; set; }
+
+    // [Many2one]
     [ForeignKey("LastModifierId")]
     // [InverseProperty("EventTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTagId")]
     // [InverseProperty("EventTag")]
-    // public virtual ICollection<EventEvent> EventEvent { get; set; }
+    public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTagId")]
     // [InverseProperty("EventTag")]
-    // public virtual ICollection<EventType> EventType { get; set; }
+    public virtual ICollection<EventType> EventType { get; set; }
 }

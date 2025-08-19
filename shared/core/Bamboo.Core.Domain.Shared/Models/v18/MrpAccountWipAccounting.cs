@@ -70,8 +70,8 @@ public partial class MrpAccountWipAccounting: FullAuditedAggregateRoot<Guid>, IE
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("MrpAccountWipAccountingId")] //Many2many
-    // [InverseProperty("MrpAccountWipAccounting")] //Many2many
+    [InverseProperty("MrpAccountWipAccounting")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 }

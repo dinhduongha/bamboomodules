@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_followers")]
+//[Index("PartnerId", Name = "mail_followers__partner_id_index")]
+//[Index("ResId", Name = "mail_followers__res_id_index")]
+//[Index("ResModel", Name = "mail_followers__res_model_index")]
 //[Index("ResModel", "ResId", "PartnerId", Name = "mail_followers_mail_followers_res_partner_res_model_id_uniq", IsUnique = true)]
-//[Index("PartnerId", Name = "mail_followers_partner_id_index")]
-//[Index("ResId", Name = "mail_followers_res_id_index")]
-//[Index("ResModel", Name = "mail_followers_res_model_index")]
 public partial class MailFollowers: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

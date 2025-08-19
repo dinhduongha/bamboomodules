@@ -28,6 +28,9 @@ public partial class HrLeaveAccrualPlan: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("time_off_type_id")]
     public Guid? TimeOffTypeId { get; set; }
 
+    [Column("carryover_day")]
+    public long? CarryoverDay { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -40,11 +43,34 @@ public partial class HrLeaveAccrualPlan: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("transition_mode")]
     public string? TransitionMode { get; set; }
 
+    [Column("accrued_gain_time")]
+    public string? AccruedGainTime { get; set; }
+
+    [Column("carryover_date")]
+    public string? CarryoverDate { get; set; }
+
+    [Column("carryover_month")]
+    public string? CarryoverMonth { get; set; }
+
+    [Column("added_value_type")]
+    public string? AddedValueType { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("is_based_on_worked_time")]
+    public bool? IsBasedOnWorkedTime { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    // [Many2one]
+    [ForeignKey("TenantId")]
+    // [InverseProperty("HrLeaveAccrualPlan")] //Many2one
+    public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -60,6 +86,11 @@ public partial class HrLeaveAccrualPlan: FullAuditedAggregateRoot<Guid>, IEntity
     [ForeignKey("AccrualPlanId")]
     [InverseProperty("AccrualPlan")]
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
+
+    // [One2many]
+    [ForeignKey("AccrualPlanId")]
+    [InverseProperty("AccrualPlan")]
+    public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("TimeOffTypeId")]

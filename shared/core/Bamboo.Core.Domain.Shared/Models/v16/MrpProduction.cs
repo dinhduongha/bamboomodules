@@ -12,12 +12,13 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mrp_production")]
-//[Index("CompanyId", Name = "mrp_production_company_id_index")]
+//[Index("CompanyId", Name = "mrp_production__company_id_index")]
 //[Index("DatePlannedStart", Name = "mrp_production_date_planned_start_index")]
+//[Index("DateStart", Name = "mrp_production__date_start_index")]
+//[Index("PickingTypeId", Name = "mrp_production__picking_type_id_index")]
+//[Index("ReservationState", Name = "mrp_production__reservation_state_index")]
+//[Index("State", Name = "mrp_production__state_index")]
 //[Index("Name", "CompanyId", Name = "mrp_production_name_uniq", IsUnique = true)]
-//[Index("PickingTypeId", Name = "mrp_production_picking_type_id_index")]
-//[Index("ReservationState", Name = "mrp_production_reservation_state_index")]
-//[Index("State", Name = "mrp_production_state_index")]
 public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -54,6 +55,9 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("location_dest_id")]
     public Guid? LocationDestId { get; set; }
+
+    [Column("location_final_id")]
+    public Guid? LocationFinalId { get; set; }
 
     [Column("bom_id")]
     public Guid? BomId { get; set; }
@@ -115,6 +119,9 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("allow_workorder_dependencies")]
     public bool? AllowWorkorderDependencies { get; set; }
 
+    [Column("is_outdated_bom")]
+    public bool? IsOutdatedBom { get; set; }
+
     [Column("date_planned_start", TypeName = "timestamp without time zone")]
     public DateTime? DatePlannedStart { get; set; }
 
@@ -144,6 +151,12 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("extra_cost")]
     public double? ExtraCost { get; set; }
+
+    [Column("project_id")]
+    public Guid? ProjectId { get; set; }
+
+    [Column("sale_line_id")]
+    public Guid? SaleLineId { get; set; }
 
     [Column("subcontractor_id")]
     public Guid? SubcontractorId { get; set; }
@@ -182,6 +195,11 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
+    [ForeignKey("LocationFinalId")]
+    // [InverseProperty("MrpProductionLocationFinal")] //Many2one
+    public virtual StockLocation? LocationFinal { get; set; }
+
+    // [Many2one]
     [ForeignKey("LocationSrcId")]
     // [InverseProperty("MrpProductionLocationSrc")] //Many2one
     public virtual StockLocation? LocationSrc { get; set; }
@@ -190,6 +208,11 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LotProducingId")]
     // [InverseProperty("MrpProduction")] //Many2one
     public virtual StockLot? LotProducing { get; set; }
+
+    // [One2many]
+    [ForeignKey("ProductionId")]
+    [InverseProperty("Production")]
+    public virtual ICollection<MrpBatchProduce> MrpBatchProduce { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
@@ -256,6 +279,16 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     // [InverseProperty("MrpProductionProductionLocation")] //Many2one
     public virtual StockLocation? ProductionLocation { get; set; }
 
+    // [Many2one]
+    [ForeignKey("ProjectId")]
+    // [InverseProperty("MrpProduction")] //Many2one
+    public virtual ProjectProject? Project { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SaleLineId")]
+    // [InverseProperty("MrpProduction")] //Many2one
+    public virtual SaleOrderLine? SaleLine { get; set; }
+
     // [One2many]
     [ForeignKey("ProductionId")]
     [InverseProperty("Production")]
@@ -302,32 +335,62 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpProductionId")]
     // [InverseProperty("MrpProduction")]
-    // public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
+    public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpProductionId")]
     // [InverseProperty("MrpProduction")]
-    // public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarning { get; set; }
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpProductionId")]
     // [InverseProperty("MrpProduction")]
-    // public virtual ICollection<MrpImmediateProduction> MrpImmediateProduction { get; set; }
+    public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpProductionId")]
     // [InverseProperty("MrpProduction")]
-    // public virtual ICollection<MrpProductionBackorder> MrpProductionBackorder { get; set; }
+    public virtual ICollection<MrpAccountWipAccounting> MrpAccountWipAccounting { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpProductionId")]
     // [InverseProperty("MrpProduction")]
-    // public virtual ICollection<StockLandedCost> StockLandedCost { get; set; }
+    public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarning { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MrpProductionId")]
+    // [InverseProperty("MrpProduction")]
+    public virtual ICollection<MrpImmediateProduction> MrpImmediateProduction { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MrpProductionId")]
+    // [InverseProperty("MrpProduction")]
+    public virtual ICollection<MrpProductionBackorder> MrpProductionBackorder { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MrpProductionId")]
+    // [InverseProperty("MrpProduction")]
+    public virtual ICollection<PickingLabelType> PickingLabelType { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MrpProductionId")]
+    // [InverseProperty("MrpProduction")]
+    public virtual ICollection<StockLandedCost> StockLandedCost { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("ProductionId")] //Many2many
+    // [InverseProperty("Production")] //Many2many
+    public virtual ICollection<ProductTemplateAttributeValue> TemplateAttributeValue { get; set; }
 }

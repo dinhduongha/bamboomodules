@@ -25,6 +25,9 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("sequence")]
+    public long? Sequence { get; set; }
+
     [Column("root_report_id")]
     public Guid? RootReportId { get; set; }
 
@@ -37,27 +40,52 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("load_more_limit")]
     public long? LoadMoreLimit { get; set; }
 
+    [Column("prefix_groups_threshold")]
+    public long? PrefixGroupsThreshold { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    // v16-Compat
+    //[Column("chart_template")]
+    //public string? ChartTemplate { get; set; }
+
     [Column("availability_condition")]
     public string? AvailabilityCondition { get; set; }
+
+    [Column("integer_rounding")]
+    public string? IntegerRounding { get; set; }
 
     [Column("default_opening_date_filter")]
     public string? DefaultOpeningDateFilter { get; set; }
 
+    [Column("currency_translation")]
+    public string? CurrencyTranslation { get; set; }
+
     [Column("filter_multi_company")]
     public string? FilterMultiCompany { get; set; }
+
+    [Column("filter_hide_0_lines")]
+    public string? FilterHide0Lines { get; set; }
 
     [Column("filter_hierarchy")]
     public string? FilterHierarchy { get; set; }
 
+    [Column("filter_account_type")]
+    public string? FilterAccountType { get; set; }
+
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
+
+    [Column("active")]
+    public bool? Active { get; set; }
+
+    [Column("use_sections")]
+    public bool? UseSections { get; set; }
 
     [Column("only_tax_exigible")]
     public bool? OnlyTaxExigible { get; set; }
@@ -89,14 +117,21 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("filter_analytic")]
     public bool? FilterAnalytic { get; set; }
 
-    [Column("filter_account_type")]
-    public bool? FilterAccountType { get; set; }
+    // v16-Compat
+    //[Column("filter_account_type")]
+    //public bool? FilterAccountType { get; set; }
 
     [Column("filter_partner")]
     public bool? FilterPartner { get; set; }
 
     [Column("filter_fiscal_position")]
     public bool? FilterFiscalPosition { get; set; }
+
+    [Column("filter_aml_ir_filters")]
+    public bool? FilterAmlIrFilters { get; set; }
+
+    [Column("filter_budgets")]
+    public bool? FilterBudgets { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -143,4 +178,16 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("LastModifierId")]
     // [InverseProperty("AccountReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("SubReportId")] //Many2many
+    // [InverseProperty("SubReport")] //Many2many
+    public virtual ICollection<AccountReport> MainReport { get; set; }
+
+    // [Many2many] // Normal
+    // [NotMapped] //Many2many // Normal
+    // [ForeignKey("MainReportId")] //Many2many
+    // [InverseProperty("MainReport")] //Many2many
+    public virtual ICollection<AccountReport> SubReport { get; set; }
 }

@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_route")]
-//[Index("CompanyId", Name = "stock_route_company_id_index")]
+//[Index("CompanyId", Name = "stock_route__company_id_index")]
 public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -69,6 +69,9 @@ public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("sale_selectable")]
     public bool? SaleSelectable { get; set; }
 
+    [Column("shipping_selectable")]
+    public bool? ShippingSelectable { get; set; }
+
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("StockRoute")] //Many2one
@@ -83,6 +86,11 @@ public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("RouteId")]
     [InverseProperty("Route")]
     public virtual ICollection<PosConfig> PosConfig { get; set; }
+
+    // [One2many]
+    [ForeignKey("RouteId")]
+    [InverseProperty("Route")]
+    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
     // [One2many]
     [ForeignKey("RouteId")]
@@ -151,10 +159,10 @@ public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<ProductCategory> Categ { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("RouteId")]
     // [InverseProperty("Route")]
-    // public virtual ICollection<StockMove> Move { get; set; }
+    public virtual ICollection<StockMove> Move { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
@@ -169,16 +177,22 @@ public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<ProductTemplate> Product { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockRouteId")]
-    // [InverseProperty("StockRoute")]
-    // public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("RouteId")]
+    // [InverseProperty("Route")]
+    public virtual ICollection<DeliveryCarrier> Shipping { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    //[NotMapped] //Many2many // Hidden
     // [ForeignKey("StockRouteId")]
     // [InverseProperty("StockRoute")]
-    // public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
+    //public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockRouteId")]
+    // [InverseProperty("StockRoute")]
+    public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

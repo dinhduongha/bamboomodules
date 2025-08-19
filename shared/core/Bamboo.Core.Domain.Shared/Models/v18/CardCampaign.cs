@@ -178,8 +178,8 @@ public partial class CardCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("CardCampaignId")] //Many2many
-    // [InverseProperty("CardCampaign")] //Many2many
+    [InverseProperty("CardCampaign")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<CardCampaignTag> CardCampaignTag { get; set; }
 }

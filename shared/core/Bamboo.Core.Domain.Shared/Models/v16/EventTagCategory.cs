@@ -12,7 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("event_tag_category")]
-//[Index("IsPublished", Name = "event_tag_category_is_published_index")]
+//[Index("IsPublished", Name = "event_tag_category__is_published_index")]
+//[Index("WebsiteId", Name = "event_tag_category__website_id_index")]
 public partial class EventTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -45,6 +46,9 @@ public partial class EventTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("website_id")]
+    public Guid? WebsiteId { get; set; }
+
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
@@ -57,6 +61,11 @@ public partial class EventTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDt
     [ForeignKey("CategoryId")]
     [InverseProperty("Category")]
     public virtual ICollection<EventTag> EventTag { get; set; }
+
+    // [Many2one]
+    [ForeignKey("WebsiteId")]
+    // [InverseProperty("EventTagCategory")] //Many2one
+    public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]

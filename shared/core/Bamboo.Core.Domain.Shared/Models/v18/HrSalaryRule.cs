@@ -184,8 +184,8 @@ public partial class HrSalaryRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("RuleId")]
-    // [InverseProperty("Rule")]
-    // public virtual ICollection<HrPayrollStructure> Struct { get; set; }
+    // [ForeignKey("RuleId")] //Many2many
+    // [InverseProperty("Rule")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<HrPayrollStructure> Struct { get; set; }
 }

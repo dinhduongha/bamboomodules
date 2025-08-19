@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("crm_team")]
-//[Index("CompanyId", Name = "crm_team_company_id_index")]
+//[Index("CompanyId", Name = "crm_team__company_id_index")]
 public partial class CrmTeam: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

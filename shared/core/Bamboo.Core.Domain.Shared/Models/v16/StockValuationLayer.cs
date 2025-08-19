@@ -12,9 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_valuation_layer")]
+//[Index("LotId", Name = "stock_valuation_layer__lot_id_index")]
+//[Index("StockMoveId", Name = "stock_valuation_layer__stock_move_id_index")]
+//[Index("StockValuationLayerId", Name = "stock_valuation_layer__stock_valuation_layer_id_index")]
 //[Index("ProductId", "RemainingQty", "StockMoveId", "CompanyId", "CreateDate", Name = "stock_valuation_layer_index")]
-//[Index("StockMoveId", Name = "stock_valuation_layer_stock_move_id_index")]
-//[Index("StockValuationLayerId", Name = "stock_valuation_layer_stock_valuation_layer_id_index")]
 public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -30,6 +31,9 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
+    [Column("categ_id")]
+    public Guid? CategId { get; set; }
+
     [Column("stock_valuation_layer_id")]
     public Guid? StockValuationLayerId { get; set; }
 
@@ -41,6 +45,9 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("account_move_line_id")]
     public Guid? AccountMoveLineId { get; set; }
+
+    [Column("lot_id")]
+    public Guid? LotId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -89,6 +96,11 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     // [Many2one]
+    [ForeignKey("CategId")]
+    // [InverseProperty("StockValuationLayer")] //Many2one
+    public virtual ProductCategory? Categ { get; set; }
+
+    // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual ResCompany? Company { get; set; }
@@ -102,6 +114,11 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
     [ForeignKey("StockValuationLayerId")]
     [InverseProperty("StockValuationLayerNavigation")]
     public virtual ICollection<StockValuationLayer> InverseStockValuationLayerNavigation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LotId")]
+    // [InverseProperty("StockValuationLayer")] //Many2one
+    public virtual StockLot? Lot { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
@@ -127,4 +144,10 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
     [ForeignKey("LastModifierId")]
     // [InverseProperty("StockValuationLayerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockValuationLayerId")]
+    // [InverseProperty("StockValuationLayer")]
+    public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluation { get; set; }
 }

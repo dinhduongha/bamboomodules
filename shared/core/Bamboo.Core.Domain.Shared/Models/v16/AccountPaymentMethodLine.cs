@@ -56,6 +56,11 @@ public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, I
     public Guid? PaymentProviderId { get; set; }
 
     // [One2many]
+    [ForeignKey("PreferredPaymentMethodLineId")]
+    [InverseProperty("PreferredPaymentMethodLine")]
+    public virtual ICollection<AccountMove> AccountMove { get; set; }
+
+    // [One2many]
     [ForeignKey("PaymentMethodLineId")]
     [InverseProperty("PaymentMethodLine")]
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
@@ -69,6 +74,11 @@ public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, I
     [ForeignKey("CreatorId")]
     // [InverseProperty("AccountPaymentMethodLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [One2many]
+    [ForeignKey("PaymentMethodLineId")]
+    [InverseProperty("PaymentMethodLine")]
+    public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
@@ -94,4 +104,10 @@ public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, I
     [ForeignKey("LastModifierId")]
     // [InverseProperty("AccountPaymentMethodLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountPaymentMethodLineId")]
+    // [InverseProperty("AccountPaymentMethodLine")]
+    public virtual ICollection<ResCompany> ResCompany { get; set; }
 }

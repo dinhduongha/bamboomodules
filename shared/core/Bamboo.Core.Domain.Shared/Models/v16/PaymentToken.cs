@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_token")]
-//[Index("CompanyId", Name = "payment_token_company_id_index")]
+//[Index("CompanyId", Name = "payment_token__company_id_index")]
 public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -28,6 +28,9 @@ public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
+
+    [Column("payment_method_id")]
+    public Guid? PaymentMethodId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -56,6 +59,9 @@ public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [Column("authorize_profile")]
+    public string? AuthorizeProfile { get; set; }
+
     // [One2many]
     [ForeignKey("PaymentTokenId")]
     [InverseProperty("PaymentToken")]
@@ -80,6 +86,11 @@ public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [ForeignKey("PartnerId")]
     // [InverseProperty("PaymentToken")] //Many2one
     public virtual ResPartner? Partner { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PaymentMethodId")]
+    // [InverseProperty("PaymentToken")] //Many2one
+    public virtual PaymentMethod? PaymentMethod { get; set; }
 
     // [One2many]
     [ForeignKey("TokenId")]

@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_session")]
-//[Index("ConfigId", Name = "pos_session_config_id_index")]
-//[Index("MoveId", Name = "pos_session_move_id_index")]
-//[Index("State", Name = "pos_session_state_index")]
+//[Index("ConfigId", Name = "pos_session__config_id_index")]
+//[Index("MoveId", Name = "pos_session__move_id_index")]
+//[Index("State", Name = "pos_session__state_index")]
+//[Index("UserId", Name = "pos_session__user_id_index")]
 //[Index("Name", Name = "pos_session_uniq_name", IsUnique = true)]
-//[Index("UserId", Name = "pos_session_user_id_index")]
 public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -57,6 +57,9 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
+    [Column("access_token")]
+    public string? AccessToken { get; set; }
+
     [Column("name")]
     public string? Name { get; set; }
 
@@ -65,6 +68,9 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("opening_notes")]
     public string? OpeningNotes { get; set; }
+
+    [Column("closing_notes")]
+    public string? ClosingNotes { get; set; }
 
     [Column("cash_register_balance_end_real")]
     public decimal? CashRegisterBalanceEndReal { get; set; }
@@ -93,8 +99,11 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("closing_notes")]
-    public string? ClosingNotes { get; set; }
+    // [Column("closing_notes")]
+    // public string? ClosingNotes { get; set; }
+
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
 
     // [One2many]
     [ForeignKey("PosSessionId")]
@@ -120,6 +129,11 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("CreatorId")]
     // [InverseProperty("PosSessionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
+
+    // [Many2one]
+    [ForeignKey("EmployeeId")]
+    // [InverseProperty("PosSession")] //Many2one
+    public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]

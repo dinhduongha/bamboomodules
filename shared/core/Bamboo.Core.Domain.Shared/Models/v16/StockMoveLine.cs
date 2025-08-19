@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("stock_move_line")]
-//[Index("CompanyId", Name = "stock_move_line_company_id_index")]
-//[Index("MoveId", Name = "stock_move_line_move_id_index")]
-//[Index("PickingId", Name = "stock_move_line_picking_id_index")]
-//[Index("ProductId", Name = "stock_move_line_product_id_index")]
+//[Index("CompanyId", Name = "stock_move_line__company_id_index")]
+//[Index("MoveId", Name = "stock_move_line__move_id_index")]
+//[Index("PickingId", Name = "stock_move_line__picking_id_index")]
+//[Index("ProductId", Name = "stock_move_line__product_id_index")]
 public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -83,6 +83,14 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("description_picking")]
     public string? DescriptionPicking { get; set; }
 
+    [Column("quantity")]
+    public decimal? Quantity { get; set; }
+
+    [Column("quantity_product_uom")]
+    public decimal? QuantityProductUom { get; set; }
+
+    [Column("picked")]
+    public bool? Picked { get; set; }
     [Column("reserved_qty")]
     public decimal? ReservedQty { get; set; }
 
@@ -107,6 +115,9 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("production_id")]
     public Guid? ProductionId { get; set; }
 
+    [Column("carrier_id")]
+    public Guid? CarrierId { get; set; }
+
     [JsonField]
     [Column("carrier_name", TypeName = "jsonb")]
     public string? CarrierName { get; set; }
@@ -121,6 +132,11 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [ForeignKey("BatchId")]
     // [InverseProperty("StockMoveLine")] //Many2one
     public virtual StockPickingBatch? Batch { get; set; }
+
+    // [Many2one]
+    [ForeignKey("CarrierId")]
+    // [InverseProperty("StockMoveLine")] //Many2one
+    public virtual DeliveryCarrier? Carrier { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
@@ -208,6 +224,12 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     // [InverseProperty("ProduceLine")] //Many2many
     public virtual ICollection<StockMoveLine> ConsumeLine { get; set; }
 
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockMoveLineId")]
+    // [InverseProperty("StockMoveLine")]
+    public virtual ICollection<LotLabelLayout> LotLabelLayout { get; set; }
+
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal
     // [ForeignKey("ConsumeLineId")] //Many2many
@@ -215,14 +237,14 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public virtual ICollection<StockMoveLine> ProduceLine { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockMoveLineId")]
     // [InverseProperty("StockMoveLine")]
-    // public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
+    public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockMoveLineId")]
     // [InverseProperty("StockMoveLine")]
-    // public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
+    public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
 }

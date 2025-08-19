@@ -48,8 +48,8 @@ public partial class HrPayslipEmployees: FullAuditedEntity<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("PayslipId")] //Many2many
-    // [InverseProperty("Payslip")] //Many2many
+    [InverseProperty("Payslip")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<HrEmployee> Employee { get; set; }
 }

@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("data_recycle_record")]
-//[Index("ResId", Name = "data_recycle_record_res_id_index")]
+//[Index("ResId", Name = "data_recycle_record__res_id_index")]
 public partial class DataRecycleRecord: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

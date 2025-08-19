@@ -12,11 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("repair_order")]
-//[Index("CompanyId", Name = "repair_order_company_id_index")]
 //[Index("InvoiceMethod", Name = "repair_order_invoice_method_index")]
-//[Index("LocationId", Name = "repair_order_location_id_index")]
+//[Index("CompanyId", Name = "repair_order__company_id_index")]
+//[Index("LocationId", Name = "repair_order__location_id_index")]
 //[Index("Name", Name = "repair_order_name", IsUnique = true)]
-//[Index("PartnerId", Name = "repair_order_partner_id_index")]
+//[Index("PartnerId", Name = "repair_order__partner_id_index")]
 public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -28,7 +28,15 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
+
+    [Column("partner_id")]
+    public Guid? PartnerId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
+    [Column("move_id")]
+    public Guid? MoveId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
@@ -39,8 +47,17 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("product_uom")]
     public Guid? ProductUom { get; set; }
 
-    [Column("partner_id")]
-    public Guid? PartnerId { get; set; }
+    [Column("lot_id")]
+    public Guid? LotId { get; set; }
+
+    // [Column("partner_id")]
+    // public Guid? PartnerId { get; set; }
+
+    [Column("picking_type_id")]
+    public Guid? PickingTypeId { get; set; }
+
+    [Column("procurement_group_id")]
+    public Guid? ProcurementGroupId { get; set; }
 
     [Column("address_id")]
     public Guid? AddressId { get; set; }
@@ -48,8 +65,20 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
-    [Column("lot_id")]
-    public Guid? LotId { get; set; }
+    [Column("product_location_src_id")]
+    public Guid? ProductLocationSrcId { get; set; }
+
+    [Column("product_location_dest_id")]
+    public Guid? ProductLocationDestId { get; set; }
+
+    [Column("location_dest_id")]
+    public Guid? LocationDestId { get; set; }
+
+    [Column("parts_location_id")]
+    public Guid? PartsLocationId { get; set; }
+
+    [Column("recycle_location_id")]
+    public Guid? RecycleLocationId { get; set; }
 
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
@@ -60,14 +89,12 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("invoice_id")]
     public Guid? InvoiceId { get; set; }
 
-    [Column("move_id")]
-    public Guid? MoveId { get; set; }
-
-    [Column("user_id")]
-    public Guid? UserId { get; set; }
 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
+
+    [Column("sale_order_line_id")]
+    public Guid? SaleOrderLineId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
@@ -93,6 +120,10 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("priority")]
     public string? Priority { get; set; }
 
+    [JsonField]
+    [Column("repair_properties", TypeName = "jsonb")]
+    public string? RepairProperties { get; set; }
+
     [Column("schedule_date")]
     public DateTime? ScheduleDate { get; set; }
 
@@ -107,6 +138,18 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("product_qty")]
     public decimal? ProductQty { get; set; }
+
+    [Column("under_warranty")]
+    public bool? UnderWarranty { get; set; }
+
+    [Column("is_parts_available")]
+    public bool? IsPartsAvailable { get; set; }
+
+    [Column("is_parts_late")]
+    public bool? IsPartsLate { get; set; }
+
+    // [Column("schedule_date", TypeName = "timestamp without time zone")]
+    // public DateTime? ScheduleDate { get; set; }
 
     [Column("invoiced")]
     public bool? Invoiced { get; set; }
@@ -152,7 +195,13 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     // [Many2one]
     [ForeignKey("LocationId")]
     // [InverseProperty("RepairOrder")] //Many2one
+    // [InverseProperty("RepairOrderLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
+
+    // [Many2one]
+    [ForeignKey("LocationDestId")]
+    // [InverseProperty("RepairOrderLocationDest")] //Many2one
+    public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("LotId")]
@@ -172,6 +221,7 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     // [Many2one]
     [ForeignKey("PartnerId")]
     // [InverseProperty("RepairOrderPartner")] //Many2one
+    // [InverseProperty("RepairOrder")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
@@ -180,9 +230,19 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResPartner? PartnerInvoice { get; set; }
 
     // [Many2one]
+    [ForeignKey("PartsLocationId")]
+    // [InverseProperty("RepairOrderPartsLocation")] //Many2one
+    public virtual StockLocation? PartsLocation { get; set; }
+
+    // [Many2one]
     [ForeignKey("PickingId")]
     // [InverseProperty("RepairOrder")] //Many2one
     public virtual StockPicking? Picking { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PickingTypeId")]
+    // [InverseProperty("RepairOrder")] //Many2one
+    public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
     [ForeignKey("PricelistId")]
@@ -190,14 +250,34 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ProductPricelist? Pricelist { get; set; }
 
     // [Many2one]
+    [ForeignKey("ProcurementGroupId")]
+    // [InverseProperty("RepairOrder")] //Many2one
+    public virtual ProcurementGroup? ProcurementGroup { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProductId")]
     // [InverseProperty("RepairOrder")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
+    [ForeignKey("ProductLocationDestId")]
+    // [InverseProperty("RepairOrderProductLocationDest")] //Many2one
+    public virtual StockLocation? ProductLocationDest { get; set; }
+
+    // [Many2one]
+    [ForeignKey("ProductLocationSrcId")]
+    // [InverseProperty("RepairOrderProductLocationSrc")] //Many2one
+    public virtual StockLocation? ProductLocationSrc { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProductUom")]
     // [InverseProperty("RepairOrder")] //Many2one
     public virtual UomUom? ProductUomNavigation { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RecycleLocationId")]
+    // [InverseProperty("RepairOrderRecycleLocation")] //Many2one
+    public virtual StockLocation? RecycleLocation { get; set; }
 
     // [One2many]
     [ForeignKey("RepairId")]
@@ -213,6 +293,11 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("SaleOrderId")]
     // [InverseProperty("RepairOrder")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SaleOrderLineId")]
+    // [InverseProperty("RepairOrder")] //Many2one
+    public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [One2many]
     [ForeignKey("RepairId")]

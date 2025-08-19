@@ -1562,7 +1562,8 @@ namespace Bamboo.Core.Application.Services
             //             res['qty_available']['string'] = _('Produced Qty')
             // return res
             */
-            return await base.FieldsGetAsync();
+            //return await base.FieldsGetAsync();
+            return default;
         }
 
         protected async Task<List<Dictionary<string, object>>> FilterApplicableAttributesInternalAsync(Guid attributes_by_ptal_id)

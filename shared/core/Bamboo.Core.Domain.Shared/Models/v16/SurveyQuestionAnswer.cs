@@ -93,4 +93,10 @@ public partial class SurveyQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEnti
     [ForeignKey("LastModifierId")]
     // [InverseProperty("SurveyQuestionAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    //[NotMapped] //Many2many // Hidden
+    // [ForeignKey("SurveyQuestionAnswerId")]
+    // [InverseProperty("SurveyQuestionAnswer")]
+    //public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 }

@@ -25,6 +25,9 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? OrganizationUnitId  { get; set; }
     
 
+    [Column("route_id")]
+    public Guid? RouteId { get; set; }
+
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
@@ -58,6 +61,17 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("quantity")]
     public double? Quantity { get; set; }
 
+    [Column("supplier_id")]
+    public Guid? SupplierId { get; set; }
+
+    [Column("bom_id")]
+    public Guid? BomId { get; set; }
+
+    // [Many2one]
+    [ForeignKey("BomId")]
+    // [InverseProperty("ProductReplenish")] //Many2one
+    public virtual MrpBom? Bom { get; set; }
+
     // [Many2one]
     [ForeignKey("TenantId")]
     // [InverseProperty("ProductReplenish")] //Many2one
@@ -82,6 +96,16 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [ForeignKey("ProductUomId")]
     // [InverseProperty("ProductReplenish")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
+
+    // [Many2one]
+    [ForeignKey("RouteId")]
+    // [InverseProperty("ProductReplenish")] //Many2one
+    public virtual StockRoute? Route { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SupplierId")]
+    // [InverseProperty("ProductReplenish")] //Many2one
+    public virtual ProductSupplierinfo? Supplier { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]

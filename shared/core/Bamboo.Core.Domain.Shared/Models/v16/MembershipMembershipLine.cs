@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("membership_membership_line")]
-//[Index("Partner", Name = "membership_membership_line_partner_index")]
+//[Index("Partner", Name = "membership_membership_line__partner_index")]
 public partial class MembershipMembershipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

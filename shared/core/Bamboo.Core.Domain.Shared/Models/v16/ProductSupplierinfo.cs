@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_supplierinfo")]
-//[Index("CompanyId", Name = "product_supplierinfo_company_id_index")]
-//[Index("ProductTmplId", Name = "product_supplierinfo_product_tmpl_id_index")]
+//[Index("CompanyId", Name = "product_supplierinfo__company_id_index")]
+//[Index("ProductTmplId", Name = "product_supplierinfo__product_tmpl_id_index")]
 public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -69,6 +69,9 @@ public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("price")]
     public decimal? Price { get; set; }
 
+    [Column("discount")]
+    public decimal? Discount { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -103,6 +106,11 @@ public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntit
     // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
+    // [One2many]
+    [ForeignKey("SupplierId")]
+    [InverseProperty("Supplier")]
+    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+
     // [Many2one]
     [ForeignKey("ProductTmplId")]
     // [InverseProperty("ProductSupplierinfo")] //Many2one
@@ -124,8 +132,8 @@ public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntit
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductSupplierinfoId")]
     // [InverseProperty("ProductSupplierinfo")]
-    // public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfo { get; set; }
+    public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfo { get; set; }
 }

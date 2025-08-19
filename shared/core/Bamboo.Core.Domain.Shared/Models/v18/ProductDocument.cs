@@ -71,14 +71,14 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductDocumentId")]
-    // [InverseProperty("ProductDocument")]
-    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
     // [ForeignKey("ProductDocumentId")] //Many2many
     // [InverseProperty("ProductDocument")] //Many2many
+    [NotMapped] //Many2many // Hidden
+    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [Many2many] // Normal
+    // [ForeignKey("ProductDocumentId")] //Many2many
+    [InverseProperty("ProductDocument")] //Many2many
+    // [NotMapped] //Many2many // Normal
     public virtual ICollection<SalePdfFormField> SalePdfFormField { get; set; }
 }

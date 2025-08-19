@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("slide_channel_tag_group")]
-//[Index("IsPublished", Name = "slide_channel_tag_group_is_published_index")]
-//[Index("Sequence", Name = "slide_channel_tag_group_sequence_index")]
+//[Index("IsPublished", Name = "slide_channel_tag_group__is_published_index")]
+//[Index("Sequence", Name = "slide_channel_tag_group__sequence_index")]
 public partial class SlideChannelTagGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]

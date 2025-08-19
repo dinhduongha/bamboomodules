@@ -43,6 +43,9 @@ public partial class LoyaltyGenerateWizard: FullAuditedEntity<Guid>, IEntityDto<
     [Column("valid_until")]
     public DateTime? ValidUntil { get; set; }
 
+    [Column("description")]
+    public string? Description { get; set; }
+
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

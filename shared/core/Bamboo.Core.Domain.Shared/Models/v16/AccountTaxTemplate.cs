@@ -134,16 +134,16 @@ public partial class AccountTaxTemplate: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TaxId")]
     // [InverseProperty("Tax")]
-    // public virtual ICollection<AccountAccountTemplate> Account { get; set; }
+    public virtual ICollection<AccountAccountTemplate> Account { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxTemplateId")]
     // [InverseProperty("AccountTaxTemplate")]
-    // public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplate { get; set; }
+    public virtual ICollection<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplate { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

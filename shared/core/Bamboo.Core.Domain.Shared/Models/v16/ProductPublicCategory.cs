@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_public_category")]
-//[Index("ParentId", Name = "product_public_category_parent_id_index")]
-//[Index("ParentPath", Name = "product_public_category_parent_path_index")]
-//[Index("Sequence", Name = "product_public_category_sequence_index")]
-//[Index("WebsiteId", Name = "product_public_category_website_id_index")]
+//[Index("ParentId", Name = "product_public_category__parent_id_index")]
+//[Index("ParentPath", Name = "product_public_category__parent_path_index")]
+//[Index("Sequence", Name = "product_public_category__sequence_index")]
+//[Index("WebsiteId", Name = "product_public_category__website_id_index")]
 public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -32,11 +32,11 @@ public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
 
-    [Column("parent_id")]
-    public Guid? ParentId { get; set; }
-
     [Column("sequence")]
     public long? Sequence { get; set; }
+
+    [Column("parent_id")]
+    public Guid? ParentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -73,6 +73,10 @@ public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEnt
     [JsonField]
     [Column("website_description", TypeName = "jsonb")]
     public string? WebsiteDescription { get; set; }
+
+    [JsonField]
+    [Column("website_footer", TypeName = "jsonb")]
+    public string? WebsiteFooter { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

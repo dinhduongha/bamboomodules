@@ -12,10 +12,10 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("payment_transaction")]
-//[Index("CompanyId", Name = "payment_transaction_company_id_index")]
-//[Index("Operation", Name = "payment_transaction_operation_index")]
+//[Index("CompanyId", Name = "payment_transaction__company_id_index")]
+//[Index("Operation", Name = "payment_transaction__operation_index")]
+//[Index("State", Name = "payment_transaction__state_index")]
 //[Index("Reference", Name = "payment_transaction_reference_uniq", IsUnique = true)]
-//[Index("State", Name = "payment_transaction_state_index")]
 public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -31,6 +31,9 @@ public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
+
+    [Column("payment_method_id")]
+    public Guid? PaymentMethodId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -134,6 +137,9 @@ public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }
 
+    [Column("pos_order_id")]
+    public Guid? PosOrderId { get; set; }
+
     [Column("is_donation")]
     public bool? IsDonation { get; set; }
 
@@ -188,6 +194,16 @@ public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual AccountPayment? Payment { get; set; }
 
     // [Many2one]
+    [ForeignKey("PaymentMethodId")]
+    // [InverseProperty("PaymentTransaction")] //Many2one
+    public virtual PaymentMethod? PaymentMethod { get; set; }
+
+    // [Many2one]
+    [ForeignKey("PosOrderId")]
+    // [InverseProperty("PaymentTransaction")] //Many2one
+    public virtual PosOrder? PosOrder { get; set; }
+
+    // [Many2one]
     [ForeignKey("ProviderId")]
     // [InverseProperty("PaymentTransaction")] //Many2one
     public virtual PaymentProvider? Provider { get; set; }
@@ -208,10 +224,16 @@ public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntity
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("TransactionId")]
     // [InverseProperty("Transaction")]
-    // public virtual ICollection<AccountMove> Invoice { get; set; }
+    public virtual ICollection<AccountMove> Invoice { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PaymentTransactionId")]
+    // [InverseProperty("PaymentTransaction")]
+    public virtual ICollection<PaymentCaptureWizard> PaymentCaptureWizard { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

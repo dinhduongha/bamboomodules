@@ -78,14 +78,17 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("exhibitor_menu")]
     public bool? ExhibitorMenu { get; set; }
 
+    [Column("meeting_room_allow_creation")]
+    public bool? MeetingRoomAllowCreation { get; set; }
+
     [Column("website_track")]
     public bool? WebsiteTrack { get; set; }
 
     [Column("website_track_proposal")]
     public bool? WebsiteTrackProposal { get; set; }
 
-    [Column("meeting_room_allow_creation")]
-    public bool? MeetingRoomAllowCreation { get; set; }
+    // [Column("meeting_room_allow_creation")]
+    // public bool? MeetingRoomAllowCreation { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -133,10 +136,10 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTypeId")]
     // [InverseProperty("EventType")]
-    // public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
+    public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
 
     // [Many2many] // Normal
     // [NotMapped] //Many2many // Normal

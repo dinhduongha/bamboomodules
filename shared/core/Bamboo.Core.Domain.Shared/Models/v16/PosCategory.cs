@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("pos_category")]
-//[Index("ParentId", Name = "pos_category_parent_id_index")]
+//[Index("ParentId", Name = "pos_category__parent_id_index")]
 public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -32,6 +32,9 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("sequence")]
     public long? Sequence { get; set; }
 
+    [Column("color")]
+    public long? Color { get; set; }
+
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -47,6 +50,12 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [Column("hour_until")]
+    public double? HourUntil { get; set; }
+
+    [Column("hour_after")]
+    public double? HourAfter { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
@@ -84,20 +93,33 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosCategoryId")]
     // [InverseProperty("PosCategory")]
-    // public virtual ICollection<PosConfig> PosConfig { get; set; }
+    public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    [NotMapped] //Many2many // Hidden
     // [ForeignKey("CategoryId")]
     // [InverseProperty("Category")]
-    // public virtual ICollection<RestaurantPrinter> Printer { get; set; }
+    public virtual ICollection<PosPrinter> Printer { get; set; }
+
+    // v16-Compat
+    // [Many2many] // ManyToMany Hidden
+    //[NotMapped] //Many2many // Hidden
+    // [ForeignKey("CategoryId")]
+    // [InverseProperty("Category")]
+    //public virtual ICollection<RestaurantPrinter> Printer { get; set; }
 
     // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
+    //[NotMapped] //Many2many // Hidden
     // [ForeignKey("PosCategoryId")]
     // [InverseProperty("PosCategory")]
-    // public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
+    //public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+
+    // [Many2many] // ManyToMany Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosCategoryId")]
+    // [InverseProperty("PosCategory")]
+    public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 }

@@ -12,8 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_leave_allocation")]
-//[Index("DateFrom", Name = "hr_leave_allocation_date_from_index")]
-//[Index("EmployeeId", Name = "hr_leave_allocation_employee_id_index")]
+//[Index("DateFrom", Name = "hr_leave_allocation__date_from_index")]
+//[Index("EmployeeId", Name = "hr_leave_allocation__employee_id_index")]
 public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -48,6 +48,9 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("approver_id")]
     public Guid? ApproverId { get; set; }
 
+    [Column("second_approver_id")]
+    public Guid? SecondApproverId { get; set; }
+
     [Column("mode_company_id")]
     public Guid? ModeCompanyId { get; set; }
 
@@ -65,6 +68,9 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
+
+    [Column("name")]
+    public string? Name { get; set; }
 
     [Column("private_name")]
     public string? PrivateName { get; set; }
@@ -84,11 +90,20 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("date_to")]
     public DateTime? DateTo { get; set; }
 
+    [Column("last_executed_carryover_date")]
+    public DateTime? LastExecutedCarryoverDate { get; set; }
+
     [Column("lastcall")]
     public DateTime? Lastcall { get; set; }
 
+    [Column("actual_lastcall")]
+    public DateTime? ActualLastcall { get; set; }
+
     [Column("nextcall")]
     public DateTime? Nextcall { get; set; }
+
+    [Column("carried_over_days_expiration_date")]
+    public DateTime? CarriedOverDaysExpirationDate { get; set; }
 
     [Column("notes")]
     public string? Notes { get; set; }
@@ -96,6 +111,8 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("active")]
     public bool? Active { get; set; }
 
+    [Column("already_accrued")]
+    public bool? AlreadyAccrued { get; set; }
     [Column("multi_employee")]
     public bool? MultiEmployee { get; set; }
 
@@ -107,6 +124,15 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("number_of_days")]
     public double? NumberOfDays { get; set; }
+
+    [Column("number_of_hours_display")]
+    public double? NumberOfHoursDisplay { get; set; }
+
+    [Column("yearly_accrued_amount")]
+    public double? YearlyAccruedAmount { get; set; }
+
+    [Column("expiring_carryover_days")]
+    public double? ExpiringCarryoverDays { get; set; }
 
     [Column("overtime_id")]
     public Guid? OvertimeId { get; set; }
@@ -144,6 +170,7 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
     // [Many2one]
     [ForeignKey("EmployeeCompanyId")]
     // [InverseProperty("HrLeaveAllocationEmployeeCompany")] //Many2one
+    // [InverseProperty("HrLeaveAllocation")] //Many2one
     public virtual ResCompany? EmployeeCompany { get; set; }
 
     // [Many2one]
@@ -185,6 +212,11 @@ public partial class HrLeaveAllocation: FullAuditedAggregateRoot<Guid>, IEntityD
     [ForeignKey("ParentId")]
     // [InverseProperty("InverseParent")] //Many2one
     public virtual HrLeaveAllocation? Parent { get; set; }
+
+    // [Many2one]
+    [ForeignKey("SecondApproverId")]
+    // [InverseProperty("HrLeaveAllocationSecondApprover")] //Many2one
+    public virtual HrEmployee? SecondApprover { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
