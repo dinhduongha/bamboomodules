@@ -625,10 +625,21 @@ def refactor_entity_file(content, schema_map):
     def transform_relationship(match):
         attributes_block_str = match.group(1)
         property_line_str = match.group(2)
+        prop_type = match.group(3)
         prop_name = match.group(4)
         
         full_original_block = (attributes_block_str + property_line_str)
         indent = ' ' * (len(property_line_str) - len(property_line_str.lstrip(' ')))
+        if prop_type.startswith("ICollection<"):
+            peer_entity_match = re.search(r'ICollection<(\w+)>', prop_type)
+            if peer_entity_match:
+                peer_entity = peer_entity_match.group(1)
+                #if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                #    result = ["", f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out"]
+                #    #result.append(full_original_block.strip())
+                #    for line in full_original_block.splitlines():
+                #        if line.strip(): result.append(line)
+                #    return "\n".join(result)
         rel_info = schema_map.get(class_name, {}).get('properties', {}).get(prop_name, {})
         rel_type = rel_info.get('relationship', 'unknown')
         
@@ -641,13 +652,17 @@ def refactor_entity_file(content, schema_map):
             if class_name in COMMENT_OUT_O2M_RELATIONSHIPS:
                 result.append(f"\n\n{indent}// [One2many] - RELATIONSHIP COMMENTED OUT FOR '{class_name}'")
                 if not has_fk_attr and 'foreign_key' in rel_info:
-                    result.append(f"{indent}// [ForeignKey(\"{rel_info['foreign_key']}\")]")                
+                    result.append(f"{indent}// [One2many] [ForeignKey(\"{rel_info['foreign_key']}\")]")
+                if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    result.append(f"\n{indent}// [NotMapped] // Peer relationship ({peer_entity}) is commented out")
                 for line in full_original_block.splitlines():
                     if line.strip(): result.append(f"{indent}// {line.strip()}")
             else: # Xử lý bình thường
                 result.append(f"\n\n{indent}// [One2many]")
                 if not has_fk_attr and 'foreign_key' in rel_info:
-                    result.append(f"{indent}[ForeignKey(\"{rel_info['foreign_key']}\")]")
+                    result.append(f"{indent}// [One2many] [ForeignKey(\"{rel_info['foreign_key']}\")]")
+                if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    result.append( f"{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
                 #result.append(full_original_block.strip())
                 for line in full_original_block.splitlines():
                     if line.strip(): result.append(line)
@@ -661,6 +676,10 @@ def refactor_entity_file(content, schema_map):
             is_fluent_m2m = rel_info.get('is_fluent_m2m', False)            
             if is_fluent_m2m: # M2M tường minh -> giữ lại
                 result.append(f"\n\n{indent}// [Many2many] // Normal")
+                if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    result.append(f"{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                else:
+                    result.append(f"{indent}// [NotMapped] //Many2many // Normal")
                 for line in full_original_block.splitlines():
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -668,13 +687,14 @@ def refactor_entity_file(content, schema_map):
                             result.append(f"{line_indent}// {line.strip()} //Many2many")
                         elif line.strip().startswith(("[InverseProperty")):
                             result.append(f"{line_indent}{line.strip()} //Many2many")
-                            result.append(f"{indent}// [NotMapped] //Many2many // Normal")
                         else:
                             result.append(line)
                         #result.append(f"{line_indent} {line.strip()}")
             else: # M2M ẩn -> comment out
                 result.append(f"\n\n{indent}// [Many2many] // Hidden")
-                result.append(f"{indent}// [NotMapped] //Many2many // Hidden")
+                if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                result.append(f"{indent}// [NotMapped] //Many2many // Hidden M2M")
                 for line in full_original_block.splitlines():
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -682,6 +702,11 @@ def refactor_entity_file(content, schema_map):
         
         elif rel_type == 'ManyToManyHidden':
             result.append(f"\n\n{indent}// [Many2many] // ManyToMany Hidden")
+            if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+            else:
+                result.append(f"{indent}[NotMapped] //Many2many // Hidden")
+
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -690,7 +715,6 @@ def refactor_entity_file(content, schema_map):
                         result.append(f"{line_indent}// {line.strip()} //Many2many")
                     elif line.strip().startswith(("[InverseProperty")):
                         result.append(f"{line_indent}// {line.strip()} //Many2many")
-                        result.append(f"{indent}[NotMapped] //Many2many // Hidden")
                     else:
                         result.append(line)
 
@@ -699,7 +723,8 @@ def refactor_entity_file(content, schema_map):
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     if line.strip().startswith(("[InverseProperty")):
-                        result.append(f"{indent}// {line.strip()} //Many2one")
+                        continue
+                        #result.append(f"{indent}// {line.strip()} //Many2one")
                     else:
                         result.append(line)
         else:
