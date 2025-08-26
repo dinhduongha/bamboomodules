@@ -9,6 +9,9 @@ import textwrap
 # THÊM TÊN CÁC LỚP (CLASS) BẠN MUỐN COI LÀ "BẢNG HỆ THỐNG" VÀO ĐÂY
 # Ví dụ: ["MyCustomSystemTable", "AnotherSpecialOne"]
 MANUAL_SYSTEM_ENTITIES = [
+    "IrModuleModule",
+    "IrModuleCategory",
+    "IrModuleModuleDependency",    
     "AuthTotpDevice"
     "AuthTotpWizard"
     "ReportLayout", 
@@ -63,45 +66,78 @@ COMMENT_OUT_M2M_RELATIONSHIPS = [
 # Có nhiều bảng tham chiếu đến nó, vậy thì để các bảng đó quyết định quan hệ.
 # Thêm tên các lớp (class) vào đây.
 COMMENT_OUT_O2M_RELATIONSHIPS = [
-    "AccountAccount", # 14
-    #"AccountAnalyticAccount", # 6
-    #"AccountFiscalPosition",
-    #"AccountJournal", # 20
-    #"AccountMove", # 11
-    #"AccountPayment", # 15
-    #"AccountTax", # 15
-    #"CrmLead", # 8
-    #"CrmTeam", # 8
-    #"EventEvent",
-    #"HrDepartment", # 8
-    #"HrEmployee", # 8   
     "IrAttachment", # 13
     #"IrModel",
     #"IrModelFields",
     #"IrModuleModule",
     #"IrUiView",
-    #"MailActivityType",
-    #"MailMessage",
-    #"MailTemplate",
-    #"MrpProduction", # 7
-    "ProductProduct",
-    #"ProductTemplate", # 15
-    #"ProjectProject",
+    #"ResBank",
     "ResCompany",
-    "ResCountry", # 7
-    "ResCurrency", # 
-    #"ResGroups", # 17
-    "ResPartner", # 25
-    #"ResPartnerCategory", # 5
-    "ResUsers", # 23
-    #"SaleOrder",
-    #"SaleOrderLine",
-    #"StockLocation",
-    #"StockPicking", # 9
-    #"StockPickingType",
-    #"StockWarehouse", # 7
-    #"UomUom", # 7
-    "Website"
+    "ResCountry",
+    "ResCountryState",
+    "ResCurrency", 
+    #"ResGroups",
+    #"ResLang",
+    "ResPartner",
+    #"ResPartnerBank",
+    #"ResPartnerCategory",
+    "ResUsers",
+    "AccountAccount",
+    #"AccountAnalyticAccount", # 12
+    #"AccountFiscalPosition",  # 10
+    #"AccountJournal", # 35
+    #"AccountMove", # 22
+    #"AccountMoveLine", # 8
+    #"AccountPayment", # 8
+    #"AccountTax", # 9
+    #"CrmLead", # 6
+    #"CrmTeam", # 18
+    #"EventEvent", # 16
+    #"EventType", # 7
+    #"FleetVehicle", # 7
+    #"GamificationBadge", #6
+    #"HrContract", # 6
+    #"HrDepartment", # 17
+    #"HrEmployee", # 44   
+    #"HrWorkLocation", 10
+    #"MailActivityType", #9
+    #"MailAlias", #7
+    #"MailingMailing", #11
+    #"MailMessage", # 18
+    #"MailTemplate", #32
+    #"MrpBom", # 8
+    #"MrpProduction", # 12
+    #"PosOrder", # 8
+    #"PosSession", # 8
+    #"ProcurementGroup", # 10
+    #"ProductCategory", # 10
+    #"ProductPricelist", # 8    
+    "ProductProduct",   # 68
+    #"ProductTemplate", # 12
+    #"ProjectProject",  # 15
+    #"ProjectTask",  # 7    
+    #"ResourceCalendar", #12
+    #"SaleOrder",   # 23
+    #"SaleOrderLine", # 18
+    #"SlideChannel", # 6
+    #"SlideSlide", # 7
+    #"SmsTemplate", # 7    
+    #"StockLocation", # 54
+    #"StockLot", # 9
+    #"StockMove", # 8    
+    #"StockPicking", # 11
+    #"StockPickingType", # 27
+    #"StockQuantPackage", # 6
+    #"StockRoute", # 11
+    #"StockRule", # 11        
+    #"StockWarehouse", # 14
+    #"SurveyQuestion", # 6
+    #"SurveySurvey", # 8    
+    "UomUom", # 27
+    #"UtmCampaign", # 11
+    #"UtmMedium", # 8
+    #"UtmSource", # 9        
+    "Website"   # 38
 ]
 
 PROPERTIES_TO_CLEAN_WITHMANY = [
@@ -316,20 +352,56 @@ def analyze_and_transform_fluent_block(entity_name, body_content, schema_map):
         
         if is_processed: continue
 
-        for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
-            pattern = re.compile(r'^(\s*)(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))(\s*\.WithMany\([^)]+\);?)$')
-            match = pattern.match(line.strip())
-            if match:
-                indent = ' ' * (len(line) - len(line.lstrip(' ')))
-                has_one_part = match.group(2)
-                original_full_line = line.strip()
-                commented_line = f"{indent}// {original_full_line}"
-                new_line = f"{indent}{has_one_part}.WithMany()"
-                new_lines.append(commented_line)
-                new_lines.append(new_line)
-                is_processed = True
-                break
+        # for prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+        #     pattern = re.compile(r'^(\s*)(entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\))(\s*\.WithMany\([^)]+\);?)$')
+        #     match = pattern.match(line.strip())
+        #     if match:
+        #         indent = ' ' * (len(line) - len(line.lstrip(' ')))
+        #         has_one_part = match.group(2)
+        #         original_full_line = line.strip()
+        #         commented_line = f"{indent}// {original_full_line}"
+        #         new_line = f"{indent}{has_one_part}.WithMany()"
+        #         new_lines.append(commented_line)
+        #         new_lines.append(new_line)
+        #         is_processed = True
+        #         break
+
+        # --- QUY TẮC MỚI CHO HasOne ---
+        if line.strip().startswith("entity.HasOne"):
+            end_index = find_statement_end_index(lines, i)
+            statement_lines = lines[i : end_index + 1]
+            statement_content = "\n".join(statement_lines)
+            
+            prop_match = re.search(r'HasOne\(d\s*=>\s*d\.(\w+)\)', statement_content)
+            if prop_match:
+                prop_name = prop_match.group(1)
+                
+                # Logic kiểm tra 2 điều kiện
+                should_clean = False
+                # 1. Kiểm tra theo tên thuộc tính
+                if prop_name in PROPERTIES_TO_CLEAN_WITHMANY:
+                    should_clean = True
+                else:
+                    # 2. Kiểm tra theo kiểu dữ liệu của thuộc tính
+                    prop_type = schema_map.get(entity_name, {}).get('properties', {}).get(prop_name, {}).get('type')
+                    if prop_type and prop_type in COMMENT_OUT_O2M_RELATIONSHIPS:
+                        should_clean = True
+
+                if should_clean:
+                    print(f"    -> Đơn giản hóa .WithMany() cho thuộc tính '{prop_name}'")
+                    original_statement_cleaned = " ".join(l.strip() for l in statement_lines)
+                    indent = ' ' * (len(line) - len(line.lstrip(' ')))
+                    
+                    new_lines.append(f"{indent}// {original_statement_cleaned}")
+                    
+                    transformed_statement = re.sub(r'\.WithMany\([^)]*\)', '.WithMany()', statement_content)
+                    new_lines.extend(transformed_statement.splitlines())
+                    
+                    i = end_index + 1
+                    is_processed = True
         
+        if is_processed: continue
+
         if is_processed:
             i += 1
             continue
@@ -630,11 +702,13 @@ def refactor_entity_file(content, schema_map):
         
         full_original_block = (attributes_block_str + property_line_str)
         indent = ' ' * (len(property_line_str) - len(property_line_str.lstrip(' ')))
+        peer_enable = True
         if prop_type.startswith("ICollection<"):
             peer_entity_match = re.search(r'ICollection<(\w+)>', prop_type)
             if peer_entity_match:
                 peer_entity = peer_entity_match.group(1)
-                #if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                    peer_enable = False
                 #    result = ["", f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out"]
                 #    #result.append(full_original_block.strip())
                 #    for line in full_original_block.splitlines():
@@ -676,6 +750,7 @@ def refactor_entity_file(content, schema_map):
             is_fluent_m2m = rel_info.get('is_fluent_m2m', False)            
             if is_fluent_m2m: # M2M tường minh -> giữ lại
                 result.append(f"\n\n{indent}// [Many2many] // Normal")
+                # result.append(f"{indent}// [NotMapped] //Many2many // Normal")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
                     result.append(f"{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
                 else:
@@ -684,14 +759,17 @@ def refactor_entity_file(content, schema_map):
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
                         if line.strip().startswith(("[ForeignKey")):
-                            result.append(f"{line_indent}// {line.strip()} //Many2many")
+                            result.append(f"{line_indent}// {line.strip()} //Many2many // Normal")
                         elif line.strip().startswith(("[InverseProperty")):
-                            result.append(f"{line_indent}{line.strip()} //Many2many")
+                            if peer_enable:
+                                result.append(f"{line_indent}{line.strip()} //Many2many // Normal")
+                            else:
+                                result.append(f"{line_indent}// {line.strip()} //Many2many // Normal")
                         else:
                             result.append(line)
                         #result.append(f"{line_indent} {line.strip()}")
             else: # M2M ẩn -> comment out
-                result.append(f"\n\n{indent}// [Many2many] // Hidden")
+                result.append(f"\n\n{indent}// [Many2many] // ManyToMany Hidden M2M")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
                     result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
                 result.append(f"{indent}// [NotMapped] //Many2many // Hidden M2M")
@@ -701,20 +779,21 @@ def refactor_entity_file(content, schema_map):
                         result.append(f"{line_indent}// {line.strip()}")
         
         elif rel_type == 'ManyToManyHidden':
-            result.append(f"\n\n{indent}// [Many2many] // ManyToMany Hidden")
-            if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
-                result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
-            else:
-                result.append(f"{indent}[NotMapped] //Many2many // Hidden")
+            result.append(f"\n\n{indent}// [Many2many] // Hidden")
+            result.append(f"{indent}[NotMapped] //Many2many // Hidden")
+            # if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+            #     result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+            # else:
+            #     result.append(f"{indent}[NotMapped] //Many2many // Hidden")
 
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
                     #result.append(f"{line_indent}// {line.strip()}")
                     if line.strip().startswith(("[ForeignKey")):
-                        result.append(f"{line_indent}// {line.strip()} //Many2many")
+                        result.append(f"{line_indent}// {line.strip()} //Many2many // Hidden")
                     elif line.strip().startswith(("[InverseProperty")):
-                        result.append(f"{line_indent}// {line.strip()} //Many2many")
+                        result.append(f"{line_indent}// {line.strip()} //Many2many // Hidden")
                     else:
                         result.append(line)
 
@@ -745,9 +824,15 @@ def refactor_entity_file(content, schema_map):
     
     # Xác định lại kế thừa dựa trên kết quả xử lý quan hệ
     if one2many_found_in_file[0]:
-        content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
+        if should_add_multitenancy:
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
+        else:
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject', content, count=1)
     else:
-        content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
+        if should_add_multitenancy:
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
+        else:
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject', content, count=1)
 
 #using System;
 #using System.Collections.Generic;
@@ -782,8 +867,7 @@ using Volo.Abp.MultiTenancy;"""
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    """
+    public Guid? OrganizationUnitId  { get; set; }"""
     else:
         id_replacement = r"public Guid Id { get => base.Id; set => base.Id = value; }"
     content = re.sub(r'public\s+Guid\s+Id\s*{\s*get;\s*set;\s*}', id_replacement, content)
