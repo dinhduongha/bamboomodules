@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -40,21 +41,17 @@ public partial class IrDemoFailure: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrDemoFailureCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ModuleId")]
-    // [InverseProperty("IrDemoFailure")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("IrDemoFailure")] //Many2one
     public virtual IrDemoFailureWizard? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrDemoFailureWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

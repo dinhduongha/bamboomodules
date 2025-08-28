@@ -23,7 +23,6 @@ public partial class SmsComposer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -84,26 +83,21 @@ public partial class SmsComposer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsComposerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingId")]
-    // [InverseProperty("SmsComposer")] //Many2one
     public virtual MailingMailing? Mailing { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("SmsComposer")] //Many2one
     public virtual SmsTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("UtmCampaignId")]
-    // [InverseProperty("SmsComposer")] //Many2one
     public virtual UtmCampaign? UtmCampaign { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsComposerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

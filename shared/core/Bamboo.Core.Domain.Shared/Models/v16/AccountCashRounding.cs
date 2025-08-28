@@ -23,7 +23,6 @@ public partial class AccountCashRounding: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -59,22 +58,22 @@ public partial class AccountCashRounding: FullAuditedAggregateRoot<Guid>, IEntit
     public double? Rounding { get; set; }
 
     // [One2many]
-    [ForeignKey("InvoiceCashRoundingId")]
-    [InverseProperty("InvoiceCashRounding")]
+    // [One2many] [ForeignKey("InvoiceCashRoundingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("InvoiceCashRounding")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountCashRoundingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RoundingMethod")]
-    [InverseProperty("RoundingMethodNavigation")]
+    // [One2many] [ForeignKey("RoundingMethod")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RoundingMethodNavigation")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountCashRoundingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

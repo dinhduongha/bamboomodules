@@ -24,7 +24,6 @@ public partial class PosNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -46,17 +45,15 @@ public partial class PosNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosNoteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosNoteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("PosNoteId")] //Many2many
-    // [InverseProperty("PosNote")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosNoteId")] //Many2many // Hidden
+    // [InverseProperty("PosNote")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

@@ -50,28 +50,25 @@ public partial class PosPrinter: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PosPrinter")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosPrinterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosPrinterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("PrinterId")] //Many2many
-    [InverseProperty("Printer")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PrinterId")] // Many2many // Normal
+    // [InverseProperty("Printer")] // Many2many // Normal
     public virtual ICollection<PosCategory> Category { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("PrinterId")] //Many2many
-    // [InverseProperty("Printer")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PrinterId")] //Many2many // Hidden
+    // [InverseProperty("Printer")] //Many2many // Hidden
     public virtual ICollection<PosConfig> Config { get; set; }
 }

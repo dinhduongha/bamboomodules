@@ -47,31 +47,29 @@ public partial class HrContributionRegister: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrContributionRegister")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrContributionRegisterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RegisterId")]
-    [InverseProperty("Register")]
+    // [One2many] [ForeignKey("RegisterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Register")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
-    [ForeignKey("RegisterId")]
-    [InverseProperty("Register")]
+    // [One2many] [ForeignKey("RegisterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Register")] // One2many
     public virtual ICollection<HrSalaryRule> HrSalaryRule { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("HrContributionRegister")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrContributionRegisterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

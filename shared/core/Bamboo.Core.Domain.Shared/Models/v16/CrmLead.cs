@@ -34,7 +34,6 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -44,9 +43,6 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("medium_id")]
     public Guid? MediumId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("message_bounce")]
     public long? MessageBounce { get; set; }
@@ -187,9 +183,6 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("date_closed", TypeName = "timestamp without time zone")]
     public DateTime? DateClosed { get; set; }
 
-    [Column("date_action_last", TypeName = "timestamp without time zone")]
-    public DateTime? DateActionLast { get; set; }
-
     [Column("date_automation_last", TypeName = "timestamp without time zone")]
     public DateTime? DateAutomationLast { get; set; }
 
@@ -257,202 +250,176 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public decimal? PartnerLongitude { get; set; }
 
     // [One2many]
-    [ForeignKey("OpportunityId")]
-    [InverseProperty("Opportunity")]
+    // [One2many] [ForeignKey("OpportunityId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Opportunity")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLeadCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LeadId")]
-    [InverseProperty("Lead")]
+    // [One2many] [ForeignKey("LeadId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartner { get; set; }
 
     // [One2many]
-    [ForeignKey("LeadId")]
-    [InverseProperty("Lead")]
+    // [One2many] [ForeignKey("LeadId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("LeadId")]
-    [InverseProperty("Lead")]
+    // [One2many] [ForeignKey("LeadId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmLeadAssignation> CrmLeadAssignation { get; set; }
 
     // [One2many]
-    [ForeignKey("LeadId")]
-    [InverseProperty("Lead")]
+    // [One2many] [ForeignKey("LeadId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmQuotationPartner> CrmQuotationPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("EventLeadRuleId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual EventLeadRule? EventLeadRule { get; set; }
 
     // [Many2one]
     [ForeignKey("LangId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual ResLang? Lang { get; set; }
 
     // [Many2one]
     [ForeignKey("LeadMiningRequestId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual CrmIapLeadMiningRequest? LeadMiningRequest { get; set; }
 
     // [Many2one]
     [ForeignKey("LostReasonId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual CrmLostReason? LostReason { get; set; }
 
     // [Many2one]
     [ForeignKey("MediumId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual UtmMedium? Medium { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("CrmLead")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("CrmLeadPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerAssignedId")]
-    // [InverseProperty("CrmLeadPartnerAssigned")] //Many2one
     public virtual ResPartner? PartnerAssigned { get; set; }
 
     // [Many2one]
     [ForeignKey("RecurringPlan")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual CrmRecurringPlan? RecurringPlanNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("RevealRuleId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual CrmRevealRule? RevealRule { get; set; }
 
     // [One2many]
-    [ForeignKey("OpportunityId")]
-    [InverseProperty("Opportunity")]
+    // [One2many] [ForeignKey("OpportunityId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Opportunity")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("SourceId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual CrmStage? Stage { get; set; }
 
     // [Many2one]
     [ForeignKey("StateId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual ResCountryState? State { get; set; }
 
     // [Many2one]
     [ForeignKey("TeamId")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
     [ForeignKey("Title")]
-    // [InverseProperty("CrmLead")] //Many2one
     public virtual ResPartnerTitle? TitleNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrmLeadUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLeadWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmLeadId")]
-    // [InverseProperty("CrmLead")]
+    // [ForeignKey("CrmLeadId")] //Many2many // Hidden
+    // [InverseProperty("CrmLead")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmLeadId")]
-    // [InverseProperty("CrmLeadNavigation")]
+    // [ForeignKey("CrmLeadId")] //Many2many // Hidden
+    // [InverseProperty("CrmLeadNavigation")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass1 { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmLeadId")]
-    // [InverseProperty("CrmLead")]
+    // [ForeignKey("CrmLeadId")] //Many2many // Hidden
+    // [InverseProperty("CrmLead")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmLeadId")]
-    // [InverseProperty("CrmLead")]
+    // [ForeignKey("CrmLeadId")] //Many2many // Hidden
+    // [InverseProperty("CrmLead")] //Many2many // Hidden
     public virtual ICollection<CrmLeadLost> CrmLeadLost { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmLeadId")] //Many2many
-    // [InverseProperty("CrmLead")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmLeadId")] // Many2many // Normal
+    // [InverseProperty("CrmLead")] // Many2many // Normal
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmLeadId")]
-    // [InverseProperty("CrmLead")]
-    //public virtual ICollection<EventRegistration> EventRegistration { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("OpportunityId")]
-    // [InverseProperty("Opportunity")]
+    // [ForeignKey("OpportunityId")] //Many2many // Hidden
+    // [InverseProperty("Opportunity")] //Many2many // Hidden
     public virtual ICollection<CrmMergeOpportunity> Merge { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LeadId")] //Many2many
-    // [InverseProperty("Lead")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("LeadId")] // Many2many // Normal
+    // [InverseProperty("Lead")] // Many2many // Normal
     public virtual ICollection<ResPartner> PartnerNavigation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LeadId")] //Many2many
-    // [InverseProperty("Lead")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("LeadId")] // Many2many // Normal
+    // [InverseProperty("Lead")] // Many2many // Normal
     public virtual ICollection<CrmTag> Tag { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmLeadId")] //Many2many
-    // [InverseProperty("CrmLead")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmLeadId")] // Many2many // Normal
+    // [InverseProperty("CrmLead")] // Many2many // Normal
     public virtual ICollection<WebsiteVisitor> WebsiteVisitor { get; set; }
 }

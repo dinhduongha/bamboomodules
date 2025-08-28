@@ -23,7 +23,6 @@ public partial class MicrosoftCalendarAccountReset: FullAuditedEntity<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -48,16 +47,13 @@ public partial class MicrosoftCalendarAccountReset: FullAuditedEntity<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MicrosoftCalendarAccountResetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("MicrosoftCalendarAccountResetUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MicrosoftCalendarAccountResetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class LinkTracker: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -63,46 +62,43 @@ public partial class LinkTracker: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [One2many]
-    [ForeignKey("LinkTrackerId")]
-    [InverseProperty("LinkTracker")]
+    // [One2many] [ForeignKey("LinkTrackerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LinkTracker")] // One2many
     public virtual ICollection<CardCampaign> CardCampaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LinkTrackerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LinkId")]
-    [InverseProperty("Link")]
+    // [One2many] [ForeignKey("LinkId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Link")] // One2many
     public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
     // [One2many]
-    [ForeignKey("LinkId")]
-    [InverseProperty("Link")]
+    // [One2many] [ForeignKey("LinkId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Link")] // One2many
     public virtual ICollection<LinkTrackerCode> LinkTrackerCode { get; set; }
 
     // [Many2one]
     [ForeignKey("MassMailingId")]
-    // [InverseProperty("LinkTracker")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("MediumId")]
-    // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmMedium? Medium { get; set; }
 
     // [Many2one]
     [ForeignKey("SourceId")]
-    // [InverseProperty("LinkTracker")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LinkTrackerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

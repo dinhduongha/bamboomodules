@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -24,7 +25,6 @@ public partial class ResPartnerBank: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -83,71 +83,63 @@ public partial class ResPartnerBank: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("include_reference")]
     public bool? IncludeReference { get; set; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     // [One2many]
-    [ForeignKey("BankAccountId")]
-    [InverseProperty("BankAccount")]
+    // [One2many] [ForeignKey("BankAccountId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BankAccount")] // One2many
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [One2many]
-    [ForeignKey("PartnerBankId")]
-    [InverseProperty("PartnerBank")]
+    // [One2many] [ForeignKey("PartnerBankId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PartnerBank")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
-    [ForeignKey("PartnerBankId")]
-    [InverseProperty("PartnerBank")]
+    // [One2many] [ForeignKey("PartnerBankId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PartnerBank")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PartnerBankId")]
-    [InverseProperty("PartnerBank")]
+    // [One2many] [ForeignKey("PartnerBankId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PartnerBank")] // One2many
     public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
 
     // [One2many]
-    [ForeignKey("ResPartnerBankId")]
-    [InverseProperty("ResPartnerBank")]
+    // [One2many] [ForeignKey("ResPartnerBankId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResPartnerBank")] // One2many
     public virtual ICollection<AccountSetupBankManualConfig> AccountSetupBankManualConfig { get; set; }
 
     // [Many2one]
     [ForeignKey("BankId")]
-    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResBank? Bank { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerBankCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [One2many]
-    [ForeignKey("BankAccountId")]
-    [InverseProperty("BankAccount")]
+    // [One2many] [ForeignKey("BankAccountId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BankAccount")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ResPartnerBank")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ResPartnerBank")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerBankWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -50,27 +50,23 @@ public partial class LunchTopping: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LunchTopping")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchToppingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SupplierId")]
-    // [InverseProperty("LunchTopping")] //Many2one
     public virtual LunchSupplier? Supplier { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchToppingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ToppingId")]
-    // [InverseProperty("Topping")]
+    // [ForeignKey("ToppingId")] //Many2many // Hidden
+    // [InverseProperty("Topping")] //Many2many // Hidden
     public virtual ICollection<LunchOrder> Order { get; set; }
 }

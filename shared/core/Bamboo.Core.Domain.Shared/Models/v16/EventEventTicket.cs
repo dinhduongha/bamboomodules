@@ -23,7 +23,6 @@ public partial class EventEventTicket: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -77,51 +76,51 @@ public partial class EventEventTicket: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventEventTicketCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventEventTicket")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTicketId")]
-    [InverseProperty("EventTicket")]
+    // [One2many] [ForeignKey("EventTicketId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventTicket")] // One2many
     public virtual ICollection<EventEventConfigurator> EventEventConfigurator { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTicketId")]
-    [InverseProperty("EventTicket")]
+    // [One2many] [ForeignKey("EventTicketId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventTicket")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventEventTicket")] //Many2one
     public virtual EventType? EventType { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTicketId")]
-    [InverseProperty("EventTicket")]
+    // [One2many] [ForeignKey("EventTicketId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventTicket")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("EventEventTicket")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTicketId")]
-    [InverseProperty("EventTicket")]
+    // [One2many] [ForeignKey("EventTicketId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventTicket")] // One2many
     public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTicketId")]
-    [InverseProperty("EventTicket")]
+    // [One2many] [ForeignKey("EventTicketId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventTicket")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventEventTicketWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class EventQuiz: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_track_id")]
     public Guid? EventTrackId { get; set; }
@@ -52,31 +51,29 @@ public partial class EventQuiz: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventQuizCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventQuiz")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("QuizId")]
-    [InverseProperty("Quiz")]
+    // [One2many] [ForeignKey("QuizId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Quiz")] // One2many
     public virtual ICollection<EventQuizQuestion> EventQuizQuestion { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTrackId")]
-    // [InverseProperty("EventQuiz")] //Many2one
     public virtual EventTrack? EventTrack { get; set; }
 
     // [One2many]
-    [ForeignKey("QuizId")]
-    [InverseProperty("Quiz")]
+    // [One2many] [ForeignKey("QuizId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Quiz")] // One2many
     public virtual ICollection<EventTrack> EventTrackNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventQuizWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

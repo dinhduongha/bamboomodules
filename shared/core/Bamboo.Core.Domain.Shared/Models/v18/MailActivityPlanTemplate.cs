@@ -23,7 +23,6 @@ public partial class MailActivityPlanTemplate: FullAuditedEntity<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("plan_id")]
     public Guid? PlanId { get; set; }
@@ -69,26 +68,21 @@ public partial class MailActivityPlanTemplate: FullAuditedEntity<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    // [InverseProperty("MailActivityPlanTemplate")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailActivityPlanTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PlanId")]
-    // [InverseProperty("MailActivityPlanTemplate")] //Many2one
     public virtual MailActivityPlan? Plan { get; set; }
 
     // [Many2one]
     [ForeignKey("ResponsibleId")]
-    // [InverseProperty("MailActivityPlanTemplateResponsible")] //Many2one
     public virtual ResUsers? Responsible { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailActivityPlanTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

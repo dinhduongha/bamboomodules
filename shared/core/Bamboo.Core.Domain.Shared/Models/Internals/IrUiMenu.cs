@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -55,32 +56,31 @@ public partial class IrUiMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrUiMenuCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<IrUiMenu> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual IrUiMenu? Parent { get; set; }
 
     // [One2many]
-    [ForeignKey("MenuId")]
-    [InverseProperty("Menu")]
+    // [One2many] [ForeignKey("MenuId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Menu")] // One2many
     public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrUiMenuWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MenuId")] //Many2many
-    // [InverseProperty("Menu")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MenuId")] // Many2many // Normal
+    // [InverseProperty("Menu")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 }

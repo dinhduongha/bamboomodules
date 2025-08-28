@@ -23,7 +23,6 @@ public partial class MailIceServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -51,11 +50,9 @@ public partial class MailIceServer: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailIceServerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailIceServerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

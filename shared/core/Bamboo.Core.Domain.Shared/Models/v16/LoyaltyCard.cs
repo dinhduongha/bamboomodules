@@ -25,10 +25,6 @@ public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("program_id")]
     public Guid? ProgramId { get; set; }
@@ -68,77 +64,71 @@ public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LoyaltyCard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [One2many]
-    [ForeignKey("CouponId")]
-    [InverseProperty("Coupon")]
+    // [One2many] [ForeignKey("CouponId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Coupon")] // One2many
     public virtual ICollection<CouponShare> CouponShare { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyCardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CardId")]
-    [InverseProperty("Card")]
+    // [One2many] [ForeignKey("CardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Card")] // One2many
     public virtual ICollection<LoyaltyCardUpdateBalance> LoyaltyCardUpdateBalance { get; set; }
 
     // [One2many]
-    [ForeignKey("CardId")]
-    [InverseProperty("Card")]
+    // [One2many] [ForeignKey("CardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Card")] // One2many
     public virtual ICollection<LoyaltyHistory> LoyaltyHistory { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("LoyaltyCard")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("LoyaltyCard")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("LoyaltyCard")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
-    [ForeignKey("CouponId")]
-    [InverseProperty("Coupon")]
+    // [One2many] [ForeignKey("CouponId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Coupon")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("LoyaltyCard")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [One2many]
-    [ForeignKey("CouponId")]
-    [InverseProperty("Coupon")]
+    // [One2many] [ForeignKey("CouponId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Coupon")] // One2many
     public virtual ICollection<SaleOrderCouponPoints> SaleOrderCouponPoints { get; set; }
 
     // [One2many]
-    [ForeignKey("CouponId")]
-    [InverseProperty("Coupon")]
+    // [One2many] [ForeignKey("CouponId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Coupon")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SourcePosOrderId")]
-    // [InverseProperty("LoyaltyCard")] //Many2one
     public virtual PosOrder? SourcePosOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyCardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("LoyaltyCardId")]
-    // [InverseProperty("LoyaltyCardNavigation")]
+    // [ForeignKey("LoyaltyCardId")] //Many2many // Hidden
+    // [InverseProperty("LoyaltyCardNavigation")] //Many2many // Hidden
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

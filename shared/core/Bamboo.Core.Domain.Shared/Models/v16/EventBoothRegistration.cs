@@ -24,7 +24,6 @@ public partial class EventBoothRegistration: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sale_order_line_id")]
     public Guid? SaleOrderLineId { get; set; }
@@ -49,9 +48,6 @@ public partial class EventBoothRegistration: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("contact_phone")]
     public string? ContactPhone { get; set; }
-
-    [Column("contact_mobile")]
-    public string? ContactMobile { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -79,26 +75,21 @@ public partial class EventBoothRegistration: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventBoothRegistrationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventBoothId")]
-    // [InverseProperty("EventBoothRegistration")] //Many2one
     public virtual EventBooth? EventBooth { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("EventBoothRegistration")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    // [InverseProperty("EventBoothRegistration")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventBoothRegistrationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

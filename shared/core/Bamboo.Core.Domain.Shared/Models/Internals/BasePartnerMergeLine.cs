@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BasePartnerMergeLine: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
@@ -46,22 +46,20 @@ public partial class BasePartnerMergeLine: FullAuditedAggregateRoot<Guid>, IEnti
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("CurrentLineId")]
-    [InverseProperty("CurrentLine")]
+    // [One2many] [ForeignKey("CurrentLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CurrentLine")] // One2many
     public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BasePartnerMergeLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("BasePartnerMergeLine")] //Many2one
     public virtual BasePartnerMergeAutomaticWizard? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BasePartnerMergeLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

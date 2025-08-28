@@ -25,7 +25,6 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("message_id")]
     public Guid? MessageId { get; set; }
@@ -71,16 +70,13 @@ public partial class MailLinkPreview: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailLinkPreviewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageId")]
-    // [InverseProperty("MailLinkPreview")] //Many2one
     public virtual MailMessage? Message { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailLinkPreviewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

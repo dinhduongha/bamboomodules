@@ -24,7 +24,6 @@ public partial class CrmIapLeadSeniority: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -47,21 +46,21 @@ public partial class CrmIapLeadSeniority: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmIapLeadSeniorityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SeniorityId")]
-    [InverseProperty("Seniority")]
+    // [One2many] [ForeignKey("SeniorityId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Seniority")] // One2many
     public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
     // [One2many]
-    [ForeignKey("SeniorityId")]
-    [InverseProperty("Seniority")]
+    // [One2many] [ForeignKey("SeniorityId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Seniority")] // One2many
     public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmIapLeadSeniorityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

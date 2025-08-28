@@ -24,7 +24,6 @@ public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -67,67 +66,59 @@ public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("WebsiteVisitor")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteVisitorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LivechatVisitorId")]
-    [InverseProperty("LivechatVisitor")]
+    // [One2many] [ForeignKey("LivechatVisitorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LivechatVisitor")] // One2many
     public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [One2many]
-    [ForeignKey("VisitorId")]
-    [InverseProperty("Visitor")]
+    // [One2many] [ForeignKey("VisitorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Visitor")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many]
-    [ForeignKey("VisitorId")]
-    [InverseProperty("Visitor")]
+    // [One2many] [ForeignKey("VisitorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Visitor")] // One2many
     public virtual ICollection<EventTrackVisitor> EventTrackVisitor { get; set; }
 
     // [Many2one]
     [ForeignKey("LangId")]
-    // [InverseProperty("WebsiteVisitor")] //Many2one
     public virtual ResLang? Lang { get; set; }
 
     // [Many2one]
     [ForeignKey("LivechatOperatorId")]
-    // [InverseProperty("WebsiteVisitorLivechatOperator")] //Many2one
     public virtual ResPartner? LivechatOperator { get; set; }
-
-    // [One2many]
-    [ForeignKey("LivechatVisitorId")]
-    [InverseProperty("LivechatVisitor")]
-    public virtual ICollection<MailChannel> MailChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("WebsiteVisitorPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsiteVisitor")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [One2many]
-    [ForeignKey("VisitorId")]
-    [InverseProperty("Visitor")]
+    // [One2many] [ForeignKey("VisitorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Visitor")] // One2many
     public virtual ICollection<WebsiteTrack> WebsiteTrack { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteVisitorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("WebsiteVisitorId")]
-    // [InverseProperty("WebsiteVisitor")]
+    // [ForeignKey("WebsiteVisitorId")] //Many2many // Hidden
+    // [InverseProperty("WebsiteVisitor")] //Many2many // Hidden
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 }

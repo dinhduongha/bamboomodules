@@ -23,7 +23,6 @@ public partial class MaintenanceStage: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -52,16 +51,15 @@ public partial class MaintenanceStage: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MaintenanceStageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("StageId")]
-    [InverseProperty("Stage")]
+    // [One2many] [ForeignKey("StageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Stage")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MaintenanceStageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

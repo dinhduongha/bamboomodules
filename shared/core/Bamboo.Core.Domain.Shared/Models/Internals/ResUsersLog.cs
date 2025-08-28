@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,18 +13,12 @@ namespace Bamboo.Core.Models;
 
 [Table("res_users_log")]
 //[Index("CreateUid", Name = "res_users_log__create_uid_index")]
-public partial class ResUsersLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
@@ -41,11 +36,9 @@ public partial class ResUsersLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResUsersLogCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResUsersLogWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class AuthTotpRateLimitLog: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -52,16 +51,13 @@ public partial class AuthTotpRateLimitLog: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AuthTotpRateLimitLogCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("AuthTotpRateLimitLogUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AuthTotpRateLimitLogWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

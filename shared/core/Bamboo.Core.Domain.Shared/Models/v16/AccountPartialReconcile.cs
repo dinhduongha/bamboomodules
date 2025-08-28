@@ -25,7 +25,6 @@ public partial class AccountPartialReconcile: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("debit_move_id")]
     public Guid? DebitMoveId { get; set; }
@@ -70,52 +69,44 @@ public partial class AccountPartialReconcile: FullAuditedAggregateRoot<Guid>, IE
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("TaxCashBasisRecId")]
-    [InverseProperty("TaxCashBasisRec")]
+    // [One2many] [ForeignKey("TaxCashBasisRecId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TaxCashBasisRec")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountPartialReconcile")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPartialReconcileCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CreditCurrencyId")]
-    // [InverseProperty("AccountPartialReconcileCreditCurrency")] //Many2one
     public virtual ResCurrency? CreditCurrency { get; set; }
 
     // [Many2one]
     [ForeignKey("CreditMoveId")]
-    // [InverseProperty("AccountPartialReconcileCreditMove")] //Many2one
     public virtual AccountMoveLine? CreditMove { get; set; }
 
     // [Many2one]
     [ForeignKey("DebitCurrencyId")]
-    // [InverseProperty("AccountPartialReconcileDebitCurrency")] //Many2one
     public virtual ResCurrency? DebitCurrency { get; set; }
 
     // [Many2one]
     [ForeignKey("DebitMoveId")]
-    // [InverseProperty("AccountPartialReconcileDebitMove")] //Many2one
     public virtual AccountMoveLine? DebitMove { get; set; }
 
     // [Many2one]
     [ForeignKey("ExchangeMoveId")]
-    // [InverseProperty("AccountPartialReconcile")] //Many2one
     public virtual AccountMove? ExchangeMove { get; set; }
 
     // [Many2one]
     [ForeignKey("FullReconcileId")]
-    // [InverseProperty("AccountPartialReconcile")] //Many2one
     public virtual AccountFullReconcile? FullReconcile { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPartialReconcileWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

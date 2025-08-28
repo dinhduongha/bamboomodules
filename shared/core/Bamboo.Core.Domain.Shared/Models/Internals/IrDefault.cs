@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -25,7 +26,6 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }
@@ -53,26 +53,21 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("IrDefault")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrDefaultCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FieldId")]
-    // [InverseProperty("IrDefault")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("IrDefaultUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrDefaultWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

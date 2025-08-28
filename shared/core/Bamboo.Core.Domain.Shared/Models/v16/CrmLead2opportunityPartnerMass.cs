@@ -23,7 +23,6 @@ public partial class CrmLead2opportunityPartnerMass: FullAuditedEntity<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("lead_id")]
     public Guid? LeadId { get; set; }
@@ -63,49 +62,43 @@ public partial class CrmLead2opportunityPartnerMass: FullAuditedEntity<Guid>, IE
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLead2opportunityPartnerMassCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LeadId")]
-    // [InverseProperty("CrmLead2opportunityPartnerMassNavigation")] //Many2one
     public virtual CrmLead? Lead { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("CrmLead2opportunityPartnerMass")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("TeamId")]
-    // [InverseProperty("CrmLead2opportunityPartnerMass")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrmLead2opportunityPartnerMassUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLead2opportunityPartnerMassWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmLead2opportunityPartnerMassId")] //Many2many
-    // [InverseProperty("CrmLead2opportunityPartnerMass")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmLead2opportunityPartnerMassId")] // Many2many // Normal
+    // [InverseProperty("CrmLead2opportunityPartnerMass")] // Many2many // Normal
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmLead2opportunityPartnerMassId")] //Many2many
-    // [InverseProperty("CrmLead2opportunityPartnerMass1")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmLead2opportunityPartnerMassId")] // Many2many // Normal
+    // [InverseProperty("CrmLead2opportunityPartnerMass1")] // Many2many // Normal
     public virtual ICollection<CrmLead> CrmLeadNavigation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmLead2opportunityPartnerMassId")] //Many2many
-    // [InverseProperty("CrmLead2opportunityPartnerMass")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("CrmLead2opportunityPartnerMassId")] // Many2many // Normal
+    // [InverseProperty("CrmLead2opportunityPartnerMass")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

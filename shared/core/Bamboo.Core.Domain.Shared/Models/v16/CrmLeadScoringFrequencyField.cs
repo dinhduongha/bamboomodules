@@ -23,7 +23,6 @@ public partial class CrmLeadScoringFrequencyField: FullAuditedEntity<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }
@@ -42,22 +41,19 @@ public partial class CrmLeadScoringFrequencyField: FullAuditedEntity<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLeadScoringFrequencyFieldCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FieldId")]
-    // [InverseProperty("CrmLeadScoringFrequencyField")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLeadScoringFrequencyFieldWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmLeadScoringFrequencyFieldId")]
-    // [InverseProperty("CrmLeadScoringFrequencyField")]
+    // [ForeignKey("CrmLeadScoringFrequencyFieldId")] //Many2many // Hidden
+    // [InverseProperty("CrmLeadScoringFrequencyField")] //Many2many // Hidden
     public virtual ICollection<CrmLeadPlsUpdate> CrmLeadPlsUpdate { get; set; }
 }

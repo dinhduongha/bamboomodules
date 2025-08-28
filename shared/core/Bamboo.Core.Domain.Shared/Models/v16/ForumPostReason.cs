@@ -23,7 +23,6 @@ public partial class ForumPostReason: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -46,16 +45,15 @@ public partial class ForumPostReason: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ForumPostReasonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ClosedReasonId")]
-    [InverseProperty("ClosedReason")]
+    // [One2many] [ForeignKey("ClosedReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ClosedReason")] // One2many
     public virtual ICollection<ForumPost> ForumPost { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ForumPostReasonWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

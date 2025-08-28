@@ -28,10 +28,6 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("config_id")]
     public Guid? ConfigId { get; set; }
@@ -99,79 +95,70 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // [Column("closing_notes")]
-    // public string? ClosingNotes { get; set; }
-
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
 
     // [One2many]
-    [ForeignKey("PosSessionId")]
-    [InverseProperty("PosSession")]
+    // [One2many] [ForeignKey("PosSessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosSession")] // One2many
     public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
     // [One2many]
-    [ForeignKey("PosSessionId")]
-    [InverseProperty("PosSession")]
+    // [One2many] [ForeignKey("PosSessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosSession")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("CashJournalId")]
-    // [InverseProperty("PosSession")] //Many2one
     public virtual AccountJournal? CashJournal { get; set; }
 
     // [Many2one]
     [ForeignKey("ConfigId")]
-    // [InverseProperty("PosSession")] //Many2one
     public virtual PosConfig? Config { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosSessionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("PosSession")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("PosSession")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("PosSession")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
     // [One2many]
-    [ForeignKey("PosSessionId")]
-    [InverseProperty("PosSession")]
+    // [One2many] [ForeignKey("PosSessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosSession")] // One2many
     public virtual ICollection<PosDailySalesReportsWizard> PosDailySalesReportsWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("SessionId")]
-    [InverseProperty("Session")]
+    // [One2many] [ForeignKey("SessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Session")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("SessionId")]
-    [InverseProperty("Session")]
+    // [One2many] [ForeignKey("SessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Session")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PosSessionId")]
-    [InverseProperty("PosSession")]
+    // [One2many] [ForeignKey("PosSessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosSession")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("PosSessionUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosSessionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

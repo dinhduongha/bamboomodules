@@ -23,7 +23,6 @@ public partial class HrHolidaysCancelLeave: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("leave_id")]
     public Guid? LeaveId { get; set; }
@@ -45,16 +44,13 @@ public partial class HrHolidaysCancelLeave: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrHolidaysCancelLeaveCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LeaveId")]
-    // [InverseProperty("HrHolidaysCancelLeave")] //Many2one
     public virtual HrLeave? Leave { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrHolidaysCancelLeaveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -53,27 +53,23 @@ public partial class HrLeaveMandatoryDay: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrLeaveMandatoryDay")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrLeaveMandatoryDayCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceCalendarId")]
-    // [InverseProperty("HrLeaveMandatoryDay")] //Many2one
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrLeaveMandatoryDayWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("HrLeaveMandatoryDayId")] //Many2many
-    [InverseProperty("HrLeaveMandatoryDay")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrLeaveMandatoryDayId")] // Many2many // Normal
+    // [InverseProperty("HrLeaveMandatoryDay")] // Many2many // Normal
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 }

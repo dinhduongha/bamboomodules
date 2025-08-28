@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -45,17 +46,16 @@ public partial class ResPartnerTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("TagId")]
-    // [InverseProperty("Tag")]
-    // public virtual ICollection<ResPartner> Partner { get; set; }
+    // [Many2many] // Hidden
+
+    [NotMapped] //Many2many // Hidden // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("TagId")] //Many2many // Hidden
+    // [InverseProperty("Tag")] //Many2many // Hidden
+    public virtual ICollection<ResPartner> Partner { get; set; }
 }

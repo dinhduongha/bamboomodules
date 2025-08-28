@@ -23,7 +23,6 @@ public partial class AssetModify: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("method_number")]
     public long? MethodNumber { get; set; }
@@ -51,11 +50,9 @@ public partial class AssetModify: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AssetModifyCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AssetModifyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

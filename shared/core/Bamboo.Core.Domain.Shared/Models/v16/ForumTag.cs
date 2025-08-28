@@ -25,13 +25,9 @@ public partial class ForumTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("forum_id")]
     public Guid? ForumId { get; set; }
@@ -75,33 +71,19 @@ public partial class ForumTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ForumTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ForumId")]
-    // [InverseProperty("ForumTag")] //Many2one
     public virtual ForumForum? Forum { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ForumTag")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ForumTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ForumTagId")]
-    // [InverseProperty("ForumTag")]
-    public virtual ICollection<ForumPost> ForumNavigation { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ForumTagId")]
-    // [InverseProperty("ForumTag")]
+    // [ForeignKey("ForumTagId")] //Many2many // Hidden
+    // [InverseProperty("ForumTag")] //Many2many // Hidden
     public virtual ICollection<ForumPost> ForumPost { get; set; }
 }

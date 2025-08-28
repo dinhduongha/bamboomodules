@@ -24,7 +24,6 @@ public partial class DataRecycleRecord: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("recycle_model_id")]
     public Guid? RecycleModelId { get; set; }
@@ -55,26 +54,21 @@ public partial class DataRecycleRecord: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("DataRecycleRecord")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DataRecycleRecordCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RecycleModelId")]
-    // [InverseProperty("DataRecycleRecord")] //Many2one
     public virtual DataRecycleModel? RecycleModel { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("DataRecycleRecord")] //Many2one
     public virtual IrModel? ResModel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DataRecycleRecordWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

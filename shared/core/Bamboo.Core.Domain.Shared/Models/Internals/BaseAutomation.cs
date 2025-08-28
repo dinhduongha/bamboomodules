@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,10 +23,6 @@ public partial class BaseAutomation: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("action_server_id")]
-    public Guid? ActionServerId { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -92,54 +89,44 @@ public partial class BaseAutomation: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
-    [ForeignKey("ActionServerId")]
-    // [InverseProperty("BaseAutomation")] //Many2one
-    public virtual IrActServer? ActionServer { get; set; }
-
-    // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BaseAutomationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("BaseAutomationId")]
-    [InverseProperty("BaseAutomation")]
+    // [One2many] [ForeignKey("BaseAutomationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BaseAutomation")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("BaseAutomation")] //Many2one
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("TrgDateId")]
-    // [InverseProperty("BaseAutomation")] //Many2one
     public virtual IrModelFields? TrgDate { get; set; }
 
     // [Many2one]
     [ForeignKey("TrgDateCalendarId")]
-    // [InverseProperty("BaseAutomation")] //Many2one
     public virtual ResourceCalendar? TrgDateCalendar { get; set; }
 
     // [Many2one]
     [ForeignKey("TrgSelectionFieldId")]
-    // [InverseProperty("BaseAutomation")] //Many2one
     public virtual IrModelFieldsSelection? TrgSelectionField { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BaseAutomationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BaseAutomationId")] //Many2many
-    // [InverseProperty("BaseAutomationNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("BaseAutomationId")] // Many2many // Normal
+    // [InverseProperty("BaseAutomationNavigation")] // Many2many // Normal
     public virtual ICollection<IrModelFields> IrModelFields { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BaseAutomationId")] //Many2many
-    // [InverseProperty("BaseAutomation1")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("BaseAutomationId")] // Many2many // Normal
+    // [InverseProperty("BaseAutomation1")] // Many2many // Normal
     public virtual ICollection<IrModelFields> IrModelFieldsNavigation { get; set; }
 }

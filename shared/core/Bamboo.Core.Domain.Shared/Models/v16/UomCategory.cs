@@ -23,7 +23,6 @@ public partial class UomCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -46,16 +45,15 @@ public partial class UomCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("UomCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    [NotMapped] // One2many // Peer relationship (UomUom) is commented out
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<UomUom> UomUom { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("UomCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

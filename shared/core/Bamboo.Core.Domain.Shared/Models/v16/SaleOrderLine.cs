@@ -29,7 +29,6 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("order_id")]
     public Guid? OrderId { get; set; }
@@ -100,9 +99,6 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("discount")]
     public decimal? Discount { get; set; }
-
-    [Column("price_reduce")]
-    public decimal? PriceReduce { get; set; }
 
     [Column("price_subtotal")]
     public decimal? PriceSubtotal { get; set; }
@@ -217,225 +213,221 @@ public partial class SaleOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [One2many]
     // [One2many] [ForeignKey("SoLine")]
-    [InverseProperty("SoLineNavigation")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SoLineNavigation")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ComboItemId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ProductComboItem? ComboItem { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CouponId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual LoyaltyCard? Coupon { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleOrderLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [Many2one]
     [ForeignKey("EventBoothCategoryId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual EventBoothCategory? EventBoothCategory { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<EventBoothConfigurator> EventBoothConfigurator { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<EventBoothRegistration> EventBoothRegistration { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTicketId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual EventEventTicket? EventTicket { get; set; }
 
     // [Many2one]
     [ForeignKey("ExpenseId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual HrExpense? Expense { get; set; }
 
     // [One2many]
-    [ForeignKey("LinkedLineId")]
-    [InverseProperty("LinkedLine")]
+    // [One2many] [ForeignKey("LinkedLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LinkedLine")] // One2many
     public virtual ICollection<SaleOrderLine> InverseLinkedLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LinkedLineId")]
-    // [InverseProperty("InverseLinkedLine")] //Many2one
     public virtual SaleOrderLine? LinkedLine { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderPartnerId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ResPartner? OrderPartner { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValue { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductPackagingId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ProductPackaging? ProductPackaging { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUom")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual UomUom? ProductUomNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<ProjectMilestone> ProjectMilestone { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderLineId")]
-    [InverseProperty("SaleOrderLine")]
+    // [One2many] [ForeignKey("SaleOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual LoyaltyReward? Reward { get; set; }
 
     // [Many2one]
     [ForeignKey("RouteId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual StockRoute? Route { get; set; }
 
     // [One2many]
-    [ForeignKey("LineId")]
-    [InverseProperty("Line")]
+    // [One2many] [ForeignKey("LineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Line")] // One2many
     public virtual ICollection<SaleOrderOption> SaleOrderOption { get; set; }
 
     // [Many2one]
     [ForeignKey("SalesmanId")]
-    // [InverseProperty("SaleOrderLineSalesman")] //Many2one
     public virtual ResUsers? Salesman { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleLineId")]
-    [InverseProperty("SaleLine")]
+    // [One2many] [ForeignKey("SaleLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleLine")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [Many2one]
     [ForeignKey("TaskId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual ProjectTask? Task { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("SaleOrderLine")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleOrderLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SaleOrderLineId")] //Many2many
-    // [InverseProperty("SaleOrderLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SaleOrderLineId")] // Many2many // Normal
+    // [InverseProperty("SaleOrderLine")] // Many2many // Normal
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("OrderLineId")]
-    // [InverseProperty("OrderLine")]
+    // [ForeignKey("OrderLineId")] //Many2many // Hidden
+    // [InverseProperty("OrderLine")] //Many2many // Hidden
     public virtual ICollection<AccountMoveLine> InvoiceLine { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SaleOrderLineId")] //Many2many
-    // [InverseProperty("SaleOrderLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SaleOrderLineId")] // Many2many // Normal
+    // [InverseProperty("SaleOrderLine")] // Many2many // Normal
     public virtual ICollection<ProductDocument> ProductDocument { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SaleOrderLineId")] //Many2many
-    // [InverseProperty("SaleOrderLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SaleOrderLineId")] // Many2many // Normal
+    // [InverseProperty("SaleOrderLine")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

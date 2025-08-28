@@ -136,119 +136,101 @@ public partial class PosOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("points_cost")]
     public double? PointsCost { get; set; }
 
-    // [Column("note")]
-    // public string? Note { get; set; }
-
-    // [Column("uuid")]
-    // public string? Uuid { get; set; }
-
-    [Column("mp_skip")]
-    public bool? MpSkip { get; set; }
-
     // [Many2one]
     [ForeignKey("ComboId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ProductCombo? Combo { get; set; }
 
     // [Many2one]
     [ForeignKey("ComboItemId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ProductComboItem? ComboItem { get; set; }
 
     // [Many2one]
     [ForeignKey("ComboParentId")]
-    // [InverseProperty("InverseComboParent")] //Many2one
     public virtual PosOrderLine? ComboParent { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CouponId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual LoyaltyCard? Coupon { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosOrderLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderLineId")]
-    [InverseProperty("PosOrderLine")]
+    // [One2many] [ForeignKey("PosOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrderLine")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTicketId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual EventEventTicket? EventTicket { get; set; }
 
     // [One2many]
-    [ForeignKey("ComboParentId")]
-    [InverseProperty("ComboParent")]
+    // [One2many] [ForeignKey("ComboParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ComboParent")] // One2many
     public virtual ICollection<PosOrderLine> InverseComboParent { get; set; }
 
     // [One2many]
-    [ForeignKey("RefundedOrderlineId")]
-    [InverseProperty("RefundedOrderline")]
+    // [One2many] [ForeignKey("RefundedOrderlineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RefundedOrderline")] // One2many
     public virtual ICollection<PosOrderLine> InverseRefundedOrderline { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual PosOrder? Order { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderLineId")]
-    [InverseProperty("PosOrderLine")]
+    // [One2many] [ForeignKey("PosOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrderLine")] // One2many
     public virtual ICollection<PosPackOperationLot> PosPackOperationLot { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderLineId")]
-    [InverseProperty("PosOrderLine")]
+    // [One2many] [ForeignKey("PosOrderLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrderLine")] // One2many
     public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValue { get; set; }
 
     // [Many2one]
     [ForeignKey("RefundedOrderlineId")]
-    // [InverseProperty("InverseRefundedOrderline")] //Many2one
     public virtual PosOrderLine? RefundedOrderline { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual LoyaltyReward? Reward { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderOriginId")]
-    // [InverseProperty("PosOrderLine")] //Many2one
     public virtual SaleOrder? SaleOrderOrigin { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosOrderLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PosOrderLineId")] //Many2many
-    // [InverseProperty("PosOrderLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PosOrderLineId")] // Many2many // Normal
+    // [InverseProperty("PosOrderLine")] // Many2many // Normal
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PosOrderLineId")] //Many2many
-    // [InverseProperty("PosOrderLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PosOrderLineId")] // Many2many // Normal
+    // [InverseProperty("PosOrderLine")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

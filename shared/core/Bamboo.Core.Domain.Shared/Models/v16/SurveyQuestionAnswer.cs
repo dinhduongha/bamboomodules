@@ -23,7 +23,6 @@ public partial class SurveyQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("question_id")]
     public Guid? QuestionId { get; set; }
@@ -61,42 +60,35 @@ public partial class SurveyQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SurveyQuestionAnswerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MatrixQuestionId")]
-    // [InverseProperty("SurveyQuestionAnswerMatrixQuestion")] //Many2one
     public virtual SurveyQuestion? MatrixQuestion { get; set; }
 
     // [Many2one]
     [ForeignKey("QuestionId")]
-    // [InverseProperty("SurveyQuestionAnswerQuestion")] //Many2one
     public virtual SurveyQuestion? Question { get; set; }
 
     // [One2many]
-    [ForeignKey("TriggeringAnswerId")]
-    [InverseProperty("TriggeringAnswer")]
-    public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
-
-    // [One2many]
-    [ForeignKey("MatrixRowId")]
-    [InverseProperty("MatrixRow")]
+    // [One2many] [ForeignKey("MatrixRowId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MatrixRow")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineMatrixRow { get; set; }
 
     // [One2many]
-    [ForeignKey("SuggestedAnswerId")]
-    [InverseProperty("SuggestedAnswer")]
+    // [One2many] [ForeignKey("SuggestedAnswerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SuggestedAnswer")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineSuggestedAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SurveyQuestionAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    // [ForeignKey("SurveyQuestionAnswerId")]
-    // [InverseProperty("SurveyQuestionAnswer")]
-    //public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("SurveyQuestionAnswerId")] //Many2many // Hidden
+    // [InverseProperty("SurveyQuestionAnswer")] //Many2many // Hidden
+    public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 }

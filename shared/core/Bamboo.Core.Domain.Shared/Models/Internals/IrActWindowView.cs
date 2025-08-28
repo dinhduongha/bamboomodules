@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -47,21 +48,17 @@ public partial class IrActWindowView: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("ActWindowId")]
-    // [InverseProperty("IrActWindowView")] //Many2one
     public virtual IrActWindow? ActWindow { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrActWindowViewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("IrActWindowViewNavigation")] //Many2one
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrActWindowViewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

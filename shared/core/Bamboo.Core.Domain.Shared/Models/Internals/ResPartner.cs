@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -14,8 +15,6 @@ namespace Bamboo.Core.Models;
 //[Index("CommercialPartnerId", Name = "res_partner__commercial_partner_id_index")]
 //[Index("CompanyId", Name = "res_partner__company_id_index")]
 //[Index("CompleteName", Name = "res_partner__complete_name_index")]
-//[Index("Date", Name = "res_partner_date_index")]
-//[Index("DisplayName", Name = "res_partner_display_name_index")]
 //[Index("IsPublished", Name = "res_partner__is_published_index")]
 //[Index("Name", Name = "res_partner__name_index")]
 //[Index("ParentId", Name = "res_partner__parent_id_index")]
@@ -73,9 +72,6 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("complete_name")]
     public string? CompleteName { get; set; }
 
-    [Column("display_name")]
-    public string? DisplayName { get; set; }
-
     [Column("ref")]
     public string? Ref { get; set; }
 
@@ -131,9 +127,6 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("barcode", TypeName = "jsonb")]
     public string? Barcode { get; set; }
 
-    [Column("date")]
-    public DateTime? Date { get; set; }
-
     [Column("comment")]
     public string? Comment { get; set; }
 
@@ -158,9 +151,6 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     [Column("message_bounce")]
     public long? MessageBounce { get; set; }
 
@@ -170,18 +160,9 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("signup_type")]
     public string? SignupType { get; set; }
 
-    [Column("signup_expiration", TypeName = "timestamp without time zone")]
-    public DateTime? SignupExpiration { get; set; }
-
-    [Column("signup_token")]
-    public string? SignupToken { get; set; }
-
     [JsonField]
     [Column("specific_property_product_pricelist", TypeName = "jsonb")]
     public string? SpecificPropertyProductPricelist { get; set; }
-
-    [Column("team_id")]
-    public Guid? TeamId { get; set; }
 
     [Column("partner_gid")]
     public Guid? PartnerGid { get; set; }
@@ -271,9 +252,6 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("peppol_eas")]
     public string? PeppolEas { get; set; }
 
-    [Column("last_time_entries_checked", TypeName = "timestamp without time zone")]
-    public DateTime? LastTimeEntriesChecked { get; set; }
-
     [Column("sale_warn")]
     public string? SaleWarn { get; set; }
 
@@ -323,9 +301,6 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("latest_followup_sequence")]
     public long? LatestFollowupSequence { get; set; }
-
-    [Column("latest_followup_level_id_without_lit")]
-    public Guid? LatestFollowupLevelIdWithoutLit { get; set; }
 
     [Column("payment_next_action_date")]
     public DateTime? PaymentNextActionDate { get; set; }
@@ -449,998 +424,1017 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("vies_valid")]
     public bool? ViesValid { get; set; }
 
-    // [Column("city_id")]
-    // public Guid? CityId { get; set; }
-
     [JsonField]
     [Column("peppol_verification_state", TypeName = "jsonb")]
     public string? PeppolVerificationState { get; set; }
 
-    // [Column("street_name")]
-    // public string? StreetName { get; set; }
-
-    // [Column("street_number")]
-    // public string? StreetNumber { get; set; }
-
-    // [Column("street_number2")]
-    // public string? StreetNumber2 { get; set; }
-
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountAnalyticAccount) is commented out
     // public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountAnalyticDistributionModel) is commented out
     // public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountAnalyticLine) is commented out
     // public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountAssetAsset) is commented out
     // public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountAutopostBillsWizard) is commented out
     // public virtual ICollection<AccountAutopostBillsWizard> AccountAutopostBillsWizard { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountBankStatementLine) is commented out
     // public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("CommercialPartnerId")]
-    // [InverseProperty("CommercialPartner")]
+    // [One2many] [ForeignKey("CommercialPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("CommercialPartner")] // One2many // Peer relationship (AccountMove) is commented out
     // public virtual ICollection<AccountMove> AccountMoveCommercialPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountMoveLine) is commented out
     // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountMove) is commented out
     // public virtual ICollection<AccountMove> AccountMovePartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerShippingId")]
-    // [InverseProperty("PartnerShipping")]
+    // [One2many] [ForeignKey("PartnerShippingId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerShipping")] // One2many // Peer relationship (AccountMove) is commented out
     // public virtual ICollection<AccountMove> AccountMovePartnerShipping { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountPayment) is commented out
     // public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountPaymentRegister) is commented out
     // public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (AccountReconcileModelPartnerMapping) is commented out
     // public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMapping { get; set; }
 
     // [Many2one]
     [ForeignKey("Activation")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResPartnerActivation? ActivationNavigation { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (ApplicantSendMail) is commented out
     // public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [Many2one]
     [ForeignKey("AssignedPartnerId")]
-    // [InverseProperty("InverseAssignedPartner")] //Many2one
     public virtual ResPartner? AssignedPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("AssociateMember")]
-    // [InverseProperty("InverseAssociateMemberNavigation")] //Many2one
     public virtual ResPartner? AssociateMemberNavigation { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("DstPartnerId")]
-    // [InverseProperty("DstPartner")]
+    // [One2many] [ForeignKey("DstPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("DstPartner")] // One2many // Peer relationship (BasePartnerMergeAutomaticWizard) is commented out
     // public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizard { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (BillToPoWizard) is commented out
     // public virtual ICollection<BillToPoWizard> BillToPoWizard { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (BlogPost) is commented out
     // public virtual ICollection<BlogPost> BlogPost { get; set; }
 
     // [Many2one]
     [ForeignKey("BuyerId")]
-    // [InverseProperty("ResPartnerBuyer")] //Many2one
     public virtual ResUsers? Buyer { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CalendarAttendee) is commented out
     // public virtual ICollection<CalendarAttendee> CalendarAttendee { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CalendarFilters) is commented out
     // public virtual ICollection<CalendarFilters> CalendarFilters { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (CandidateSendMail) is commented out
     // public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OperatorPartnerId")]
-    // [InverseProperty("OperatorPartner")]
+    // [One2many] [ForeignKey("OperatorPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("OperatorPartner")] // One2many // Peer relationship (ChatbotScript) is commented out
     // public virtual ICollection<ChatbotScript> ChatbotScript { get; set; }
 
     // [Many2one]
     [ForeignKey("CityId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCity? CityNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("CommercialPartnerId")]
-    // [InverseProperty("InverseCommercialPartner")] //Many2one
     public virtual ResPartner? CommercialPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CrmLead2opportunityPartner) is commented out
     // public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CrmLead2opportunityPartnerMass) is commented out
     // public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerAssignedId")]
-    // [InverseProperty("PartnerAssigned")]
+    // [One2many] [ForeignKey("PartnerAssignedId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerAssigned")] // One2many // Peer relationship (CrmLeadAssignation) is commented out
     // public virtual ICollection<CrmLeadAssignation> CrmLeadAssignation { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CrmLeadForwardToPartner) is commented out
     // public virtual ICollection<CrmLeadForwardToPartner> CrmLeadForwardToPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CrmLead) is commented out
     // public virtual ICollection<CrmLead> CrmLeadPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerAssignedId")]
-    // [InverseProperty("PartnerAssigned")]
+    // [One2many] [ForeignKey("PartnerAssignedId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerAssigned")] // One2many // Peer relationship (CrmLead) is commented out
     // public virtual ICollection<CrmLead> CrmLeadPartnerAssigned { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (CrmQuotationPartner) is commented out
     // public virtual ICollection<CrmQuotationPartner> CrmQuotationPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("LivechatOperatorId")]
-    // [InverseProperty("LivechatOperator")]
+    // [One2many] [ForeignKey("LivechatOperatorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("LivechatOperator")] // One2many // Peer relationship (DiscussChannel) is commented out
     // public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (DiscussChannelMember) is commented out
     // public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (EventBooth) is commented out
     // public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (EventBoothRegistration) is commented out
     // public virtual ICollection<EventBoothRegistration> EventBoothRegistration { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressId")]
-    // [InverseProperty("Address")]
+    // [One2many] [ForeignKey("AddressId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Address")] // One2many // Peer relationship (EventEvent) is commented out
     // public virtual ICollection<EventEvent> EventEventAddress { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OrganizerId")]
-    // [InverseProperty("Organizer")]
+    // [One2many] [ForeignKey("OrganizerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Organizer")] // One2many // Peer relationship (EventEvent) is commented out
     // public virtual ICollection<EventEvent> EventEventOrganizer { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (EventRegistration) is commented out
     // public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (EventSponsor) is commented out
     // public virtual ICollection<EventSponsor> EventSponsor { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (EventTrack) is commented out
     // public virtual ICollection<EventTrack> EventTrack { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (EventTrackVisitor) is commented out
     // public virtual ICollection<EventTrackVisitor> EventTrackVisitor { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("DriverId")]
-    // [InverseProperty("Driver")]
+    // [One2many] [ForeignKey("DriverId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Driver")] // One2many // Peer relationship (FleetVehicleAssignationLog) is commented out
     // public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("DriverId")]
-    // [InverseProperty("Driver")]
+    // [One2many] [ForeignKey("DriverId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Driver")] // One2many // Peer relationship (FleetVehicle) is commented out
     // public virtual ICollection<FleetVehicle> FleetVehicleDriver { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("FutureDriverId")]
-    // [InverseProperty("FutureDriver")]
+    // [One2many] [ForeignKey("FutureDriverId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("FutureDriver")] // One2many // Peer relationship (FleetVehicle) is commented out
     // public virtual ICollection<FleetVehicle> FleetVehicleFutureDriver { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("InsurerId")]
-    // [InverseProperty("Insurer")]
+    // [One2many] [ForeignKey("InsurerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Insurer")] // One2many // Peer relationship (FleetVehicleLogContract) is commented out
     // public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContract { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PurchaserId")]
-    // [InverseProperty("Purchaser")]
+    // [One2many] [ForeignKey("PurchaserId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Purchaser")] // One2many // Peer relationship (FleetVehicleLogServices) is commented out
     // public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServicesPurchaser { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("VendorId")]
-    // [InverseProperty("Vendor")]
+    // [One2many] [ForeignKey("VendorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Vendor")] // One2many // Peer relationship (FleetVehicleLogServices) is commented out
     // public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServicesVendor { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (FleetVehicleSendMail) is commented out
     // public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [Many2one]
     [ForeignKey("GradeId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResPartnerGrade? Grade { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (HrCandidate) is commented out
     // public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (HrContributionRegister) is commented out
     // public virtual ICollection<HrContributionRegister> HrContributionRegister { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<HrApplicant> HrApplicant { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressId")]
-    // [InverseProperty("Address")]
+    // [One2many] [ForeignKey("AddressId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Address")] // One2many // Peer relationship (HrEmployee) is commented out
     // public virtual ICollection<HrEmployee> HrEmployeeAddress { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressHomeId")]
-    // [InverseProperty("AddressHome")]
-    // public virtual ICollection<HrEmployee> HrEmployeeAddressHome { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("WorkContactId")]
-    // [InverseProperty("WorkContact")]
+    // [One2many] [ForeignKey("WorkContactId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("WorkContact")] // One2many // Peer relationship (HrEmployee) is commented out
     // public virtual ICollection<HrEmployee> HrEmployeeWorkContact { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("VendorId")]
-    // [InverseProperty("Vendor")]
+    // [One2many] [ForeignKey("VendorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Vendor")] // One2many // Peer relationship (HrExpense) is commented out
     // public virtual ICollection<HrExpense> HrExpense { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressId")]
-    // [InverseProperty("Address")]
-    // public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressId")]
-    // [InverseProperty("Address")]
+    // [One2many] [ForeignKey("AddressId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Address")] // One2many // Peer relationship (HrJob) is commented out
     // public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressId")]
-    // [InverseProperty("Address")]
+    // [One2many] [ForeignKey("AddressId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Address")] // One2many // Peer relationship (HrWorkLocation) is commented out
     // public virtual ICollection<HrWorkLocation> HrWorkLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("IndustryId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResPartnerIndustry? Industry { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AssignedPartnerId")]
-    // [InverseProperty("AssignedPartner")]
+    // [One2many] [ForeignKey("AssignedPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("AssignedPartner")] // One2many
     // public virtual ICollection<ResPartner> InverseAssignedPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AssociateMember")]
-    // [InverseProperty("AssociateMemberNavigation")]
+    // [One2many] [ForeignKey("AssociateMember")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("AssociateMemberNavigation")] // One2many
     // public virtual ICollection<ResPartner> InverseAssociateMemberNavigation { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("CommercialPartnerId")]
-    // [InverseProperty("CommercialPartner")]
+    // [One2many] [ForeignKey("CommercialPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("CommercialPartner")] // One2many
     // public virtual ICollection<ResPartner> InverseCommercialPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("ParentId")]
-    // [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Parent")] // One2many
     // public virtual ICollection<ResPartner> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("InvoiceTemplatePdfReportId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual IrActReportXml? InvoiceTemplatePdfReport { get; set; }
 
-    // [Many2one]
-    [ForeignKey("LatestFollowupLevelIdWithoutLit")]
-    // [InverseProperty("ResPartner")] //Many2one
-    public virtual FollowupLine? LatestFollowupLevelIdWithoutLitNavigation { get; set; }
-
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (LoyaltyCard) is commented out
     // public virtual ICollection<LoyaltyCard> LoyaltyCard { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (LunchSupplier) is commented out
     // public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("RequestPartnerId")]
-    // [InverseProperty("RequestPartner")]
+    // [One2many] [ForeignKey("RequestPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("RequestPartner")] // One2many // Peer relationship (MailActivity) is commented out
     // public virtual ICollection<MailActivity> MailActivity { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("LivechatOperatorId")]
-    // [InverseProperty("LivechatOperator")]
-    // public virtual ICollection<MailChannel> MailChannel { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<MailChannelMember> MailChannelMember { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (MailComposeMessage) is commented out
     // public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (MailFollowers) is commented out
     // public virtual ICollection<MailFollowers> MailFollowers { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (MailGroupMember) is commented out
     // public virtual ICollection<MailGroupMember> MailGroupMember { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (MailMessage) is commented out
     // public virtual ICollection<MailMessage> MailMessage { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (MailMessageReaction) is commented out
     // public virtual ICollection<MailMessageReaction> MailMessageReaction { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (MailNotification) is commented out
     // public virtual ICollection<MailNotification> MailNotificationAuthor { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
+    // [One2many] [ForeignKey("ResPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ResPartner")] // One2many // Peer relationship (MailNotification) is commented out
     // public virtual ICollection<MailNotification> MailNotificationResPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (MailPushDevice) is commented out
     // public virtual ICollection<MailPushDevice> MailPushDevice { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (MailScheduledMessage) is commented out
     // public virtual ICollection<MailScheduledMessage> MailScheduledMessage { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (MaintenanceEquipment) is commented out
     // public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("Partner")]
-    // [InverseProperty("PartnerNavigation")]
+    // [One2many] [ForeignKey("Partner")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerNavigation")] // One2many // Peer relationship (MembershipMembershipLine) is commented out
     // public virtual ICollection<MembershipMembershipLine> MembershipMembershipLine { get; set; }
 
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ResPartner")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("SubcontractorId")]
-    // [InverseProperty("Subcontractor")]
+    // [One2many] [ForeignKey("SubcontractorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Subcontractor")] // One2many // Peer relationship (MrpProduction) is commented out
     // public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual ResPartner? Parent { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PaymentLinkWizard) is commented out
     // public virtual ICollection<PaymentLinkWizard> PaymentLinkWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentResponsibleId")]
-    // [InverseProperty("ResPartnerPaymentResponsible")] //Many2one
     public virtual ResUsers? PaymentResponsible { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PaymentToken) is commented out
     // public virtual ICollection<PaymentToken> PaymentToken { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PaymentTransaction) is commented out
     // public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PortalWizardUser) is commented out
     // public virtual ICollection<PortalWizardUser> PortalWizardUser { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PosOrder) is commented out
     // public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProcurementGroup) is commented out
     // public virtual ICollection<ProcurementGroup> ProcurementGroup { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProductSupplierinfo) is commented out
     // public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProductWishlist) is commented out
     // public virtual ICollection<ProductWishlist> ProductWishlist { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProjectCollaborator) is commented out
     // public virtual ICollection<ProjectCollaborator> ProjectCollaborator { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<ProjectCreateSaleOrder> ProjectCreateSaleOrder { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProjectProject) is commented out
     // public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProjectShareCollaboratorWizard) is commented out
     // public virtual ICollection<ProjectShareCollaboratorWizard> ProjectShareCollaboratorWizard { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ProjectTask) is commented out
     // public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("DestAddressId")]
-    // [InverseProperty("DestAddress")]
+    // [One2many] [ForeignKey("DestAddressId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("DestAddress")] // One2many // Peer relationship (PurchaseOrder) is commented out
     // public virtual ICollection<PurchaseOrder> PurchaseOrderDestAddress { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PurchaseOrderLine) is commented out
     // public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PurchaseOrder) is commented out
     // public virtual ICollection<PurchaseOrder> PurchaseOrderPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("VendorId")]
-    // [InverseProperty("Vendor")]
+    // [One2many] [ForeignKey("VendorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Vendor")] // One2many // Peer relationship (PurchaseRequisition) is commented out
     // public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (PurchaseRequisitionCreateAlternative) is commented out
     // public virtual ICollection<PurchaseRequisitionCreateAlternative> PurchaseRequisitionCreateAlternative { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (RatingRating) is commented out
     // public virtual ICollection<RatingRating> RatingRatingPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PublisherId")]
-    // [InverseProperty("Publisher")]
+    // [One2many] [ForeignKey("PublisherId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Publisher")] // One2many // Peer relationship (RatingRating) is commented out
     // public virtual ICollection<RatingRating> RatingRatingPublisher { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("RatedPartnerId")]
-    // [InverseProperty("RatedPartner")]
+    // [One2many] [ForeignKey("RatedPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("RatedPartner")] // One2many // Peer relationship (RatingRating) is commented out
     // public virtual ICollection<RatingRating> RatingRatingRatedPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (RecurringPayment) is commented out
     // public virtual ICollection<RecurringPayment> RecurringPayment { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (RecurringPaymentLine) is commented out
     // public virtual ICollection<RecurringPaymentLine> RecurringPaymentLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (RepairOrder) is commented out
     // public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AddressId")]
-    // [InverseProperty("Address")]
-    // public virtual ICollection<RepairOrder> RepairOrderAddress { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<RepairOrder> RepairOrderPartner { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerInvoiceId")]
-    // [InverseProperty("PartnerInvoice")]
-    // public virtual ICollection<RepairOrder> RepairOrderPartnerInvoice { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many
     // public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ResPartnerAutocompleteSync) is commented out
     // public virtual ICollection<ResPartnerAutocompleteSync> ResPartnerAutocompleteSync { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ResPartnerBank) is commented out
     // public virtual ICollection<ResPartnerBank> ResPartnerBank { get; set; }
 
     // [Many2one]
-    // [InverseProperty("Partner")] //Many2one
     public virtual ResPartnerIap? ResPartnerIap { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many
     // public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("GuestId")]
-    // [InverseProperty("Guest")]
+    // [One2many] [ForeignKey("GuestId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Guest")] // One2many // Peer relationship (ResUsersSettingsVolumes) is commented out
     // public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumesGuest { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (ResUsersSettingsVolumes) is commented out
     // public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumesPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (SaleOrderCancel) is commented out
     // public virtual ICollection<SaleOrderCancel> SaleOrderCancel { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OrderPartnerId")]
-    // [InverseProperty("OrderPartner")]
+    // [One2many] [ForeignKey("OrderPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("OrderPartner")] // One2many // Peer relationship (SaleOrderLine) is commented out
     // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SaleOrder) is commented out
     // public virtual ICollection<SaleOrder> SaleOrderPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerInvoiceId")]
-    // [InverseProperty("PartnerInvoice")]
+    // [One2many] [ForeignKey("PartnerInvoiceId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerInvoice")] // One2many // Peer relationship (SaleOrder) is commented out
     // public virtual ICollection<SaleOrder> SaleOrderPartnerInvoice { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerShippingId")]
-    // [InverseProperty("PartnerShipping")]
+    // [One2many] [ForeignKey("PartnerShippingId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerShipping")] // One2many // Peer relationship (SaleOrder) is commented out
     // public virtual ICollection<SaleOrder> SaleOrderPartnerShipping { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SlideChannelPartner) is commented out
     // public virtual ICollection<SlideChannelPartner> SlideChannelPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SlideSlidePartner) is commented out
     // public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SmsSms) is commented out
     // public virtual ICollection<SmsSms> SmsSms { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SnailmailLetter) is commented out
     // public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SnailmailLetterMissingRequiredFields) is commented out
     // public virtual ICollection<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
 
     // [Many2one]
     [ForeignKey("StateId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResCountryState? State { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OwnerId")]
-    // [InverseProperty("Owner")]
+    // [One2many] [ForeignKey("OwnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Owner")] // One2many // Peer relationship (StockMoveLine) is commented out
     // public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (StockMove) is commented out
     // public virtual ICollection<StockMove> StockMovePartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("RestrictPartnerId")]
-    // [InverseProperty("RestrictPartner")]
+    // [One2many] [ForeignKey("RestrictPartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("RestrictPartner")] // One2many // Peer relationship (StockMove) is commented out
     // public virtual ICollection<StockMove> StockMoveRestrictPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("DriverId")]
-    // [InverseProperty("Driver")]
+    // [One2many] [ForeignKey("DriverId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Driver")] // One2many // Peer relationship (StockPickingBatch) is commented out
     // public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OwnerId")]
-    // [InverseProperty("Owner")]
+    // [One2many] [ForeignKey("OwnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Owner")] // One2many // Peer relationship (StockPicking) is commented out
     // public virtual ICollection<StockPicking> StockPickingOwner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (StockPicking) is commented out
     // public virtual ICollection<StockPicking> StockPickingPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OwnerId")]
-    // [InverseProperty("Owner")]
+    // [One2many] [ForeignKey("OwnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Owner")] // One2many // Peer relationship (StockQuant) is commented out
     // public virtual ICollection<StockQuant> StockQuant { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerAddressId")]
-    // [InverseProperty("PartnerAddress")]
+    // [One2many] [ForeignKey("PartnerAddressId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerAddress")] // One2many // Peer relationship (StockRule) is commented out
     // public virtual ICollection<StockRule> StockRule { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("OwnerId")]
-    // [InverseProperty("Owner")]
+    // [One2many] [ForeignKey("OwnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Owner")] // One2many // Peer relationship (StockScrap) is commented out
     // public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (StockWarehouse) is commented out
     // public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("ProductSupplierId")]
-    // [InverseProperty("ProductSupplier")]
+    // [One2many] [ForeignKey("ProductSupplierId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductSupplier")] // One2many // Peer relationship (StockWarehouseOrderpoint) is commented out
     // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointProductSupplier { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("VendorId")]
-    // [InverseProperty("Vendor")]
+    // [One2many] [ForeignKey("VendorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Vendor")] // One2many // Peer relationship (StockWarehouseOrderpoint) is commented out
     // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpointVendor { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("VendorId")]
-    // [InverseProperty("Vendor")]
-    // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
-
-    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("AuthorId")]
-    // [InverseProperty("Author")]
+    // [One2many] [ForeignKey("AuthorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Author")] // One2many // Peer relationship (SurveyInvite) is commented out
     // public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (SurveyUserInput) is commented out
     // public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
-    [ForeignKey("TeamId")]
-    // [InverseProperty("ResPartner")] //Many2one
-    public virtual CrmTeam? Team { get; set; }
-
-    // [Many2one]
     [ForeignKey("Title")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual ResPartnerTitle? TitleNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ResPartnerUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("ResPartner")] //Many2one
     public virtual Website? WebsiteNavigation { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("LivechatOperatorId")]
-    // [InverseProperty("LivechatOperator")]
+    // [One2many] [ForeignKey("LivechatOperatorId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("LivechatOperator")] // One2many // Peer relationship (WebsiteVisitor) is commented out
     // public virtual ICollection<WebsiteVisitor> WebsiteVisitorLivechatOperator { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
+    // [One2many] [ForeignKey("PartnerId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Partner")] // One2many // Peer relationship (WebsiteVisitor) is commented out
     // public virtual ICollection<WebsiteVisitor> WebsiteVisitorPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalance { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalance { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReport { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReport { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplate { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedger { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedger { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardNavigation { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardNavigation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ResPartnerId")] //Many2many
-    // [InverseProperty("ResPartner")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ResPartnerId")] // Many2many // Normal
+    // [InverseProperty("ResPartner")] // Many2many // Normal
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<ResPartnerCategory> Category { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")] //Many2many // Hidden
+    // [InverseProperty("Partner")] //Many2many // Hidden
+    public virtual ICollection<ResPartnerCategory> Category { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<SurveyInvite> Invite { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")] //Many2many // Hidden
+    // [InverseProperty("Partner")] //Many2many // Hidden
+    public virtual ICollection<SurveyInvite> Invite { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<IrActServer> IrActServer { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<IrActServer> IrActServer { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("PartnerNavigation")]
-    // public virtual ICollection<CrmLead> Lead { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")] //Many2many // Hidden
+    // [InverseProperty("PartnerNavigation")] //Many2many // Hidden
+    public virtual ICollection<CrmLead> Lead { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<MailMail> MailMail { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<MailMail> MailMail { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartnerNavigation")]
-    // public virtual ICollection<MailMessage> MailMessage1 { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartnerNavigation")] //Many2many // Hidden
+    public virtual ICollection<MailMessage> MailMessage1 { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<MailMessage> MailMessageNavigation { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<MailMessage> MailMessageNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<MailScheduledMessage> MailScheduledMessageNavigation { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<MailScheduledMessage> MailScheduledMessageNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<MailWizardInvite> MailWizardInvite { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<MailWizardInvite> MailWizardInvite { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<FleetVehicleModel> Model { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")] //Many2many // Hidden
+    // [InverseProperty("Partner")] //Many2many // Hidden
+    public virtual ICollection<FleetVehicleModel> Model { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<MrpBom> MrpBom { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<MrpBom> MrpBom { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<PortalShare> PortalShare { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<PortalShare> PortalShare { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<PortalWizard> PortalWizard { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<PortalWizard> PortalWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<ProductProduct> ProductProduct { get; set; }
+    // [Many2many] // Hidden
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<ProjectShareWizard> ProjectShareWizard { get; set; }
+    [NotMapped] //Many2many // Hidden // Peer relationship (ProductProduct) is commented out
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerId")]
-    // [InverseProperty("ResPartner")]
-    // public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<ProjectShareWizard> ProjectShareWizard { get; set; }
+
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerId")] //Many2many // Hidden
+    // [InverseProperty("ResPartner")] //Many2many // Hidden
+    public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PartnerId")] //Many2many
-    // [InverseProperty("Partner")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PartnerId")] // Many2many // Normal
+    // [InverseProperty("Partner")] // Many2many // Normal
     public virtual ICollection<ResPartnerTag> Tag { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PartnerId")]
-    // [InverseProperty("Partner")]
-    // public virtual ICollection<MailComposeMessage> Wizard { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PartnerId")] //Many2many // Hidden
+    // [InverseProperty("Partner")] //Many2many // Hidden
+    public virtual ICollection<MailComposeMessage> Wizard { get; set; }
 }

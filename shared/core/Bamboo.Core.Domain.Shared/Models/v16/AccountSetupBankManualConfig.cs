@@ -23,7 +23,6 @@ public partial class AccountSetupBankManualConfig: FullAuditedEntity<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_partner_bank_id")]
     public Guid? ResPartnerBankId { get; set; }
@@ -48,16 +47,13 @@ public partial class AccountSetupBankManualConfig: FullAuditedEntity<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountSetupBankManualConfigCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ResPartnerBankId")]
-    // [InverseProperty("AccountSetupBankManualConfig")] //Many2one
     public virtual ResPartnerBank? ResPartnerBank { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountSetupBankManualConfigWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

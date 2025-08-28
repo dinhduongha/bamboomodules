@@ -25,7 +25,6 @@ public partial class MailGroupMessage: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_group_id")]
     public Guid? MailGroupId { get; set; }
@@ -59,41 +58,37 @@ public partial class MailGroupMessage: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailGroupMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("GroupMessageParentId")]
-    // [InverseProperty("InverseGroupMessageParent")] //Many2one
     public virtual MailGroupMessage? GroupMessageParent { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupMessageParentId")]
-    [InverseProperty("GroupMessageParent")]
+    // [One2many] [ForeignKey("GroupMessageParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GroupMessageParent")] // One2many
     public virtual ICollection<MailGroupMessage> InverseGroupMessageParent { get; set; }
 
     // [Many2one]
     [ForeignKey("MailGroupId")]
-    // [InverseProperty("MailGroupMessage")] //Many2one
     public virtual MailGroup? MailGroup { get; set; }
 
     // [One2many]
-    [ForeignKey("MailGroupMessageId")]
-    [InverseProperty("MailGroupMessage")]
+    // [One2many] [ForeignKey("MailGroupMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailGroupMessage")] // One2many
     public virtual ICollection<MailGroupMessageReject> MailGroupMessageReject { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("MailGroupMessage")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("ModeratorId")]
-    // [InverseProperty("MailGroupMessageModerator")] //Many2one
     public virtual ResUsers? Moderator { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailGroupMessageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

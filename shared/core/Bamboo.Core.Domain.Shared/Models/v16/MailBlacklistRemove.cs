@@ -23,7 +23,6 @@ public partial class MailBlacklistRemove: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,11 +44,9 @@ public partial class MailBlacklistRemove: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailBlacklistRemoveCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailBlacklistRemoveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

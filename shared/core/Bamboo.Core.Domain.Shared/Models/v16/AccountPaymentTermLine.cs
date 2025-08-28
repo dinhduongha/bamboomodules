@@ -24,22 +24,9 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("nb_days")]
     public long? NbDays { get; set; }
-
-    [Column("months")]
-    public long? Months { get; set; }
-
-    [Column("days")]
-    public long? Days { get; set; }
-
-    [Column("days_after")]
-    public long? DaysAfter { get; set; }
-
-    [Column("discount_days")]
-    public long? DiscountDays { get; set; }
 
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }
@@ -62,30 +49,21 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("value_amount")]
     public decimal? ValueAmount { get; set; }
 
-    [Column("end_month")]
-    public bool? EndMonth { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("discount_percentage")]
-    public double? DiscountPercentage { get; set; }
-
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPaymentTermLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentId")]
-    // [InverseProperty("AccountPaymentTermLine")] //Many2one
     public virtual AccountPaymentTerm? Payment { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPaymentTermLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

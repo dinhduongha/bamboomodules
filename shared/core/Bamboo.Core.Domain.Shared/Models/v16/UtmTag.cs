@@ -24,7 +24,6 @@ public partial class UtmTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -47,17 +46,15 @@ public partial class UtmTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("UtmTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("UtmTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CampaignId")]
-    // [InverseProperty("Campaign")]
+    // [ForeignKey("CampaignId")] //Many2many // Hidden
+    // [InverseProperty("Campaign")] //Many2many // Hidden
     public virtual ICollection<UtmCampaign> Tag { get; set; }
 }

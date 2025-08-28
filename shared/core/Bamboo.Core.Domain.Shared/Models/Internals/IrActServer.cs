@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -158,121 +159,99 @@ public partial class IrActServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    // [InverseProperty("IrActServer")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("ActivityUserId")]
-    // [InverseProperty("IrActServerActivityUser")] //Many2one
     public virtual ResUsers? ActivityUser { get; set; }
 
     // [Many2one]
     [ForeignKey("BaseAutomationId")]
-    // [InverseProperty("IrActServer")] //Many2one
     public virtual BaseAutomation? BaseAutomation { get; set; }
-
-    // [One2many]
-    [ForeignKey("ActionServerId")]
-    [InverseProperty("ActionServer")]
-    public virtual ICollection<BaseAutomation> BaseAutomations { get; set; }
 
     // [Many2one]
     [ForeignKey("BindingModelId")]
-    // [InverseProperty("IrActServerBindingModel")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrActServerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CrudModelId")]
-    // [InverseProperty("IrActServerCrudModel")] //Many2one
     public virtual IrModel? CrudModel { get; set; }
 
     // [One2many]
-    [ForeignKey("IrActionsServerId")]
-    [InverseProperty("IrActionsServer")]
+    // [One2many] [ForeignKey("IrActionsServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("IrActionsServer")] // One2many
     public virtual ICollection<IrCron> IrCron { get; set; }
-
-    // [One2many]
-    [ForeignKey("ServerId")]
-    [InverseProperty("Server")]
-    public virtual ICollection<IrServerObjectLines> IrServerObjectLines { get; set; }
 
     // [Many2one]
     [ForeignKey("LinkFieldId")]
-    // [InverseProperty("IrActServer")] //Many2one
     public virtual IrModelFields? LinkField { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("IrActServerModel")] //Many2one
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("SelectionValue")]
-    // [InverseProperty("IrActServer")] //Many2one
     public virtual IrModelFieldsSelection? SelectionValueNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    // [InverseProperty("IrActServer")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("IrActServer")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("UpdateFieldId")]
-    // [InverseProperty("IrActServerUpdateField")] //Many2one
     public virtual IrModelFields? UpdateField { get; set; }
 
     // [Many2one]
     [ForeignKey("UpdateRelatedModelId")]
-    // [InverseProperty("IrActServerUpdateRelatedModel")] //Many2one
     public virtual IrModel? UpdateRelatedModel { get; set; }
 
     // [One2many]
-    [ForeignKey("ActionServerId")]
-    [InverseProperty("ActionServer")]
+    // [One2many] [ForeignKey("ActionServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ActionServer")] // One2many
     public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilter { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrActServerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ServerId")] //Many2many
-    // [InverseProperty("Server")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ServerId")] // Many2many // Normal
+    // [InverseProperty("Server")] // Many2many // Normal
     public virtual ICollection<IrActServer> Action { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ServerId")] //Many2many
-    // [InverseProperty("Server")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ServerId")] // Many2many // Normal
+    // [InverseProperty("Server")] // Many2many // Normal
     public virtual ICollection<IrModelFields> Field { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ActId")] //Many2many
-    // [InverseProperty("Act")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ActId")] // Many2many // Normal
+    // [InverseProperty("Act")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("IrActServerId")] //Many2many
-    // [InverseProperty("IrActServer")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("IrActServerId")] // Many2many // Normal
+    // [InverseProperty("IrActServer")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ActionId")] //Many2many
-    // [InverseProperty("Action")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ActionId")] // Many2many // Normal
+    // [InverseProperty("Action")] // Many2many // Normal
     public virtual ICollection<IrActServer> Server { get; set; }
 }

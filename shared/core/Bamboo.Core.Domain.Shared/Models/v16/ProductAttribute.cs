@@ -25,7 +25,6 @@ public partial class ProductAttribute: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -63,37 +62,37 @@ public partial class ProductAttribute: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("ProductAttribute")] //Many2one
     public virtual ProductAttributeCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductAttributeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AttributeId")]
-    [InverseProperty("Attribute")]
+    // [One2many] [ForeignKey("AttributeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Attribute")] // One2many
     public virtual ICollection<ProductAttributeValue> ProductAttributeValue { get; set; }
 
     // [One2many]
-    [ForeignKey("AttributeId")]
-    [InverseProperty("Attribute")]
+    // [One2many] [ForeignKey("AttributeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Attribute")] // One2many
     public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLine { get; set; }
 
     // [One2many]
-    [ForeignKey("AttributeId")]
-    [InverseProperty("Attribute")]
+    // [One2many] [ForeignKey("AttributeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Attribute")] // One2many
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductAttributeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductAttributeId")] //Many2many
-    // [InverseProperty("ProductAttribute")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductAttributeId")] // Many2many // Normal
+    // [InverseProperty("ProductAttribute")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

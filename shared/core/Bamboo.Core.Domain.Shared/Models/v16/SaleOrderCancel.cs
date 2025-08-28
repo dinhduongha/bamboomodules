@@ -24,7 +24,6 @@ public partial class SaleOrderCancel: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -47,9 +46,6 @@ public partial class SaleOrderCancel: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     [Column("subject")]
     public string? Subject { get; set; }
 
-    [Column("email_from")]
-    public string? EmailFrom { get; set; }
-
     [Column("body")]
     public string? Body { get; set; }
 
@@ -61,26 +57,21 @@ public partial class SaleOrderCancel: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("SaleOrderCancel")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleOrderCancelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("SaleOrderCancel")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("SaleOrderCancel")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleOrderCancelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

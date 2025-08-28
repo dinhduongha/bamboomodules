@@ -23,7 +23,6 @@ public partial class CouponShare: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -51,26 +50,21 @@ public partial class CouponShare: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CouponId")]
-    // [InverseProperty("CouponShare")] //Many2one
     public virtual LoyaltyCard? Coupon { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CouponShareCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("CouponShare")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("CouponShare")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CouponShareWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

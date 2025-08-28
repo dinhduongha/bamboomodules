@@ -23,10 +23,6 @@ public partial class MailingContact: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("message_bounce")]
     public long? MessageBounce { get; set; }
@@ -75,48 +71,35 @@ public partial class MailingContact: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("MailingContact")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingContactCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ContactId")]
-    [InverseProperty("Contact")]
-    public virtual ICollection<MailingContactListRel> MailingContactListRel { get; set; }
-
-    // [One2many]
-    [ForeignKey("ContactId")]
-    [InverseProperty("Contact")]
+    // [One2many] [ForeignKey("ContactId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contact")] // One2many
     public virtual ICollection<MailingSubscription> MailingSubscription { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("MailingContact")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("TitleId")]
-    // [InverseProperty("MailingContact")] //Many2one
     public virtual ResPartnerTitle? Title { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingContactWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailingContactId")]
-    // [InverseProperty("MailingContact")]
+    // [ForeignKey("MailingContactId")] //Many2many // Hidden
+    // [InverseProperty("MailingContact")] //Many2many // Hidden
     public virtual ICollection<MailingContactToList> MailingContactToList { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailingContactId")] //Many2many
-    // [InverseProperty("MailingContact")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailingContactId")] // Many2many // Normal
+    // [InverseProperty("MailingContact")] // Many2many // Normal
     public virtual ICollection<ResPartnerCategory> ResPartnerCategory { get; set; }
 }

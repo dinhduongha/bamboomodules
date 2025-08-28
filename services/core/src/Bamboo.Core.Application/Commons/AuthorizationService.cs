@@ -162,7 +162,7 @@ namespace Bamboo.Core.Application.Services.Commons
                 if (user == null)
                     return new List<Guid>();
 
-                groups = user.Gids.Select(g => g.Id).ToList();
+                groups = user.Gid.Select(g => g.Id).ToList();
                 _memoryCache.Set(cacheKey, groups, TimeSpan.FromMinutes(10));
             }
             return groups;

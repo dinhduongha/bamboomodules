@@ -26,10 +26,6 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -85,71 +81,61 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPickingBatchCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DockId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
     public virtual StockLocation? Dock { get; set; }
 
     // [Many2one]
     [ForeignKey("DriverId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
     public virtual ResPartner? Driver { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PickingTypeId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
     // [One2many]
-    [ForeignKey("WaveId")]
-    [InverseProperty("Wave")]
+    // [One2many] [ForeignKey("WaveId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wave")] // One2many
     public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
 
     // [One2many]
-    [ForeignKey("BatchId")]
-    [InverseProperty("Batch")]
+    // [One2many] [ForeignKey("BatchId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Batch")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("BatchId")]
-    [InverseProperty("Batch")]
+    // [One2many] [ForeignKey("BatchId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Batch")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [One2many]
-    [ForeignKey("BatchId")]
-    [InverseProperty("Batch")]
+    // [One2many] [ForeignKey("BatchId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Batch")] // One2many
     public virtual ICollection<StockPickingToBatch> StockPickingToBatch { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("StockPickingBatchUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("VehicleId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
     public virtual FleetVehicle? Vehicle { get; set; }
 
     // [Many2one]
     [ForeignKey("VehicleCategoryId")]
-    // [InverseProperty("StockPickingBatch")] //Many2one
     public virtual FleetVehicleModelCategory? VehicleCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPickingBatchWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

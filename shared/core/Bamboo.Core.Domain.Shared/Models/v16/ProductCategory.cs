@@ -25,7 +25,6 @@ public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -107,83 +106,89 @@ public partial class ProductCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [One2many]
     // [One2many] [ForeignKey("ProductCategId")]
-    [InverseProperty("ProductCateg")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductCateg")] // One2many
     public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicability { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("ProductCategId")]
-    [InverseProperty("ProductCateg")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductCateg")] // One2many
     public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<ProductCategory> InverseParent { get; set; }
 
     // [One2many]
-    [ForeignKey("DiscountProductCategoryId")]
-    [InverseProperty("DiscountProductCategory")]
+    // [One2many] [ForeignKey("DiscountProductCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DiscountProductCategory")] // One2many
     public virtual ICollection<LoyaltyReward> LoyaltyReward { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductCategoryId")]
-    [InverseProperty("ProductCategory")]
+    // [One2many] [ForeignKey("ProductCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductCategory")] // One2many
     public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual ProductCategory? Parent { get; set; }
 
     // [One2many]
-    [ForeignKey("CategId")]
-    [InverseProperty("Categ")]
+    // [One2many] [ForeignKey("CategId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Categ")] // One2many
     public virtual ICollection<ProductPricelistItem> ProductPricelistItem { get; set; }
 
     // [One2many]
-    [ForeignKey("CategId")]
-    [InverseProperty("Categ")]
+    // [One2many] [ForeignKey("CategId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Categ")] // One2many
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("RemovalStrategyId")]
-    // [InverseProperty("ProductCategory")] //Many2one
     public virtual ProductRemoval? RemovalStrategy { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<StockPutawayRule> StockPutawayRule { get; set; }
 
     // [One2many]
-    [ForeignKey("CategId")]
-    [InverseProperty("Categ")]
+    // [One2many] [ForeignKey("CategId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Categ")] // One2many
     public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductCategoryId")]
-    [InverseProperty("ProductCategory")]
+    // [One2many] [ForeignKey("ProductCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductCategory")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CategId")]
-    // [InverseProperty("Categ")]
+    // [ForeignKey("CategId")] //Many2many // Hidden
+    // [InverseProperty("Categ")] //Many2many // Hidden
     public virtual ICollection<StockRoute> Route { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductCategoryId")]
-    // [InverseProperty("ProductCategory")]
+    // [ForeignKey("ProductCategoryId")] //Many2many // Hidden
+    // [InverseProperty("ProductCategory")] //Many2many // Hidden
     public virtual ICollection<StockPickingType> StockPickingType { get; set; }
 }

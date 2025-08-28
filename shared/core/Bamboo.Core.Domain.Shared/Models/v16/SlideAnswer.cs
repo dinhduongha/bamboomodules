@@ -23,7 +23,6 @@ public partial class SlideAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -56,16 +55,13 @@ public partial class SlideAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideAnswerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("QuestionId")]
-    // [InverseProperty("SlideAnswer")] //Many2one
     public virtual SlideQuestion? Question { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

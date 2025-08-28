@@ -23,7 +23,6 @@ public partial class ExpiryPickingConfirmation: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -42,34 +41,31 @@ public partial class ExpiryPickingConfirmation: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ExpiryPickingConfirmationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkorderId")]
-    // [InverseProperty("ExpiryPickingConfirmation")] //Many2one
     public virtual MrpWorkorder? Workorder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ExpiryPickingConfirmationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ExpiryPickingConfirmationId")] //Many2many
-    // [InverseProperty("ExpiryPickingConfirmation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ExpiryPickingConfirmationId")] // Many2many // Normal
+    // [InverseProperty("ExpiryPickingConfirmation")] // Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ExpiryPickingConfirmationId")] //Many2many
-    // [InverseProperty("ExpiryPickingConfirmation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ExpiryPickingConfirmationId")] // Many2many // Normal
+    // [InverseProperty("ExpiryPickingConfirmation")] // Many2many // Normal
     public virtual ICollection<StockLot> StockLot { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ExpiryPickingConfirmationId")] //Many2many
-    // [InverseProperty("ExpiryPickingConfirmation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ExpiryPickingConfirmationId")] // Many2many // Normal
+    // [InverseProperty("ExpiryPickingConfirmation")] // Many2many // Normal
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

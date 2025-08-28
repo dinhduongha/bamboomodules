@@ -24,7 +24,6 @@ public partial class HrAttendanceOvertime: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -55,26 +54,25 @@ public partial class HrAttendanceOvertime: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrAttendanceOvertimeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrAttendanceOvertime")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [One2many]
-    [ForeignKey("OvertimeId")]
-    [InverseProperty("Overtime")]
+    // [One2many] [ForeignKey("OvertimeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Overtime")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
-    [ForeignKey("OvertimeId")]
-    [InverseProperty("Overtime")]
+    // [One2many] [ForeignKey("OvertimeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Overtime")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrAttendanceOvertimeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

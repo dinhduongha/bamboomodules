@@ -59,21 +59,17 @@ public partial class AccountLockException: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountLockException")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountLockExceptionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("AccountLockExceptionUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountLockExceptionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

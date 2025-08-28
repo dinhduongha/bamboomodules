@@ -23,7 +23,6 @@ public partial class SmsResendRecipient: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sms_resend_id")]
     public Guid? SmsResendId { get; set; }
@@ -54,21 +53,17 @@ public partial class SmsResendRecipient: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsResendRecipientCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("NotificationId")]
-    // [InverseProperty("SmsResendRecipient")] //Many2one
     public virtual MailNotification? Notification { get; set; }
 
     // [Many2one]
     [ForeignKey("SmsResendId")]
-    // [InverseProperty("SmsResendRecipient")] //Many2one
     public virtual SmsResend? SmsResend { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsResendRecipientWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,8 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_act_url")]
 //[Index("Path", Name = "ir_act_url_path_unique", IsUnique = true)]
-//public partial class IrActUrl: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
-public partial class IrActionsActUrl: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class IrActUrl: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -62,16 +62,13 @@ public partial class IrActionsActUrl: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("BindingModelId")]
-    // [InverseProperty("IrActUrl")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrActUrlCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrActUrlWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

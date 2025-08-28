@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_tracking_value")]
-//[Index("Field", Name = "mail_tracking_value__field_index")]
+//[Index("FieldId", Name = "mail_tracking_value__field_id_index")]
 //[Index("MailMessageId", Name = "mail_tracking_value__mail_message_id_index")]
 public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -25,10 +25,6 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("field")]
-    public Guid? Field { get; set; }
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }
@@ -45,20 +41,11 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
 
-    [Column("tracking_sequence")]
-    public long? TrackingSequence { get; set; }
-
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("field_desc")]
-    public string? FieldDesc { get; set; }
-
-    [Column("field_type")]
-    public string? FieldType { get; set; }
 
     [Column("old_value_char")]
     public string? OldValueChar { get; set; }
@@ -91,42 +78,26 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("old_value_float")]
     public double? OldValueFloat { get; set; }
 
-    [Column("old_value_monetary")]
-    public double? OldValueMonetary { get; set; }
-
     [Column("new_value_float")]
     public double? NewValueFloat { get; set; }
 
-    [Column("new_value_monetary")]
-    public double? NewValueMonetary { get; set; }
-
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailTrackingValueCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("MailTrackingValue")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
-    [ForeignKey("Field")]
-    // [InverseProperty("MailTrackingValue")] //Many2one
-    public virtual IrModelFields? FieldNavigation { get; set; }
-
-    // [Many2one]
     [ForeignKey("FieldId")]
-    // [InverseProperty("MailTrackingValue")] //Many2one
-    public virtual IrModelFields? ModelField { get; set; }
+    public virtual IrModelFields? Field { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("MailTrackingValue")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailTrackingValueWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

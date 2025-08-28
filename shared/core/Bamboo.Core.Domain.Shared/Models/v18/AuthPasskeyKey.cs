@@ -24,7 +24,6 @@ public partial class AuthPasskeyKey: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sign_count")]
     public long? SignCount { get; set; }
@@ -52,11 +51,9 @@ public partial class AuthPasskeyKey: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AuthPasskeyKeyCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AuthPasskeyKeyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -47,36 +47,37 @@ public partial class StockStorageCategory: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockStorageCategory")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockStorageCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("StorageCategoryId")]
-    [InverseProperty("StorageCategory")]
+    // [One2many] [ForeignKey("StorageCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StorageCategory")] // One2many
     public virtual ICollection<StockLocation> StockLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("StorageCategoryId")]
-    [InverseProperty("StorageCategory")]
+    // [One2many] [ForeignKey("StorageCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StorageCategory")] // One2many
     public virtual ICollection<StockPutawayRule> StockPutawayRule { get; set; }
 
     // [One2many]
-    [ForeignKey("StorageCategoryId")]
-    [InverseProperty("StorageCategory")]
+    // [One2many] [ForeignKey("StorageCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StorageCategory")] // One2many
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 
     // [One2many]
-    [ForeignKey("StorageCategoryId")]
-    [InverseProperty("StorageCategory")]
+    // [One2many] [ForeignKey("StorageCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StorageCategory")] // One2many
     public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacity { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockStorageCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

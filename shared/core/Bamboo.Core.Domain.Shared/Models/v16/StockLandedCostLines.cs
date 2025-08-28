@@ -23,7 +23,6 @@ public partial class StockLandedCostLines: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("cost_id")]
     public Guid? CostId { get; set; }
@@ -57,31 +56,27 @@ public partial class StockLandedCostLines: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("StockLandedCostLines")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("CostId")]
-    // [InverseProperty("StockLandedCostLines")] //Many2one
     public virtual StockLandedCost? Cost { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockLandedCostLinesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockLandedCostLines")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("CostLineId")]
-    [InverseProperty("CostLine")]
+    // [One2many] [ForeignKey("CostLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CostLine")] // One2many
     public virtual ICollection<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockLandedCostLinesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

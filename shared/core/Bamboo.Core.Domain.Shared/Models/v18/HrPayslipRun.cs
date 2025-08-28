@@ -24,7 +24,6 @@ public partial class HrPayslipRun: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -58,21 +57,19 @@ public partial class HrPayslipRun: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayslipRunCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PayslipRunId")]
-    [InverseProperty("PayslipRun")]
+    // [One2many] [ForeignKey("PayslipRunId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PayslipRun")] // One2many
     public virtual ICollection<HrPayslip> HrPayslip { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("HrPayslipRun")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayslipRunWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -12,8 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("onboarding_progress")]
-//[Index("OnboardingId", "CompanyId", Name = "onboarding_progress_onboarding_company_uniq", IsUnique = true)]
-public partial class OnboardingProgress: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class OnboardingProgress: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -48,32 +47,23 @@ public partial class OnboardingProgress: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("OnboardingProgress")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("OnboardingProgressCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OnboardingId")]
-    // [InverseProperty("OnboardingProgress")] //Many2one
     public virtual OnboardingOnboarding? Onboarding { get; set; }
-
-    // [One2many]
-    //[ForeignKey("ProgressId")]
-    //[InverseProperty("Progress")]
-    //public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("OnboardingProgressWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    //[NotMapped] //Many2many // Normal
-    [ForeignKey("OnboardingProgressId")] //Many2many
-    [InverseProperty("OnboardingProgress")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("OnboardingProgressId")] // Many2many // Normal
+    // [InverseProperty("OnboardingProgress")] // Many2many // Normal
     public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 }

@@ -47,22 +47,19 @@ public partial class AccountTaxReportWizard: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountTaxReportWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountTaxReportWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountTaxReportWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountTaxReportWizardId")] //Many2many
-    // [InverseProperty("AccountTaxReportWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountTaxReportWizardId")] // Many2many // Normal
+    // [InverseProperty("AccountTaxReportWizard")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

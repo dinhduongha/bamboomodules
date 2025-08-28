@@ -23,7 +23,6 @@ public partial class PrivacyLookupWizard: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("log_id")]
     public Guid? LogId { get; set; }
@@ -51,21 +50,19 @@ public partial class PrivacyLookupWizard: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PrivacyLookupWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LogId")]
-    // [InverseProperty("PrivacyLookupWizard")] //Many2one
     public virtual PrivacyLog? Log { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PrivacyLookupWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

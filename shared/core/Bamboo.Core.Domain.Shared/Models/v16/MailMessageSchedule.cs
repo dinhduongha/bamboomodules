@@ -23,7 +23,6 @@ public partial class MailMessageSchedule: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
@@ -48,16 +47,13 @@ public partial class MailMessageSchedule: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailMessageScheduleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("MailMessageSchedule")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailMessageScheduleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

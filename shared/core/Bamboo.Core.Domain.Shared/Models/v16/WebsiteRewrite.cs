@@ -25,7 +25,6 @@ public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -65,21 +64,17 @@ public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteRewriteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RouteId")]
-    // [InverseProperty("WebsiteRewrite")] //Many2one
     public virtual WebsiteRoute? Route { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsiteRewrite")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteRewriteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

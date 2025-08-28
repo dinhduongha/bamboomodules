@@ -23,10 +23,6 @@ public partial class LunchSupplier: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -111,57 +107,49 @@ public partial class LunchSupplier: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchSupplierCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CronId")]
-    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual IrCron? Cron { get; set; }
 
     // [One2many]
-    [ForeignKey("SupplierId")]
-    [InverseProperty("Supplier")]
+    // [One2many] [ForeignKey("SupplierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Supplier")] // One2many
     public virtual ICollection<LunchOrder> LunchOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("SupplierId")]
-    [InverseProperty("Supplier")]
+    // [One2many] [ForeignKey("SupplierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Supplier")] // One2many
     public virtual ICollection<LunchProduct> LunchProduct { get; set; }
 
     // [One2many]
-    [ForeignKey("SupplierId")]
-    [InverseProperty("Supplier")]
+    // [One2many] [ForeignKey("SupplierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Supplier")] // One2many
     public virtual ICollection<LunchTopping> LunchTopping { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("LunchSupplier")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("LunchSupplier")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("ResponsibleId")]
-    // [InverseProperty("LunchSupplierResponsible")] //Many2one
     public virtual ResUsers? Responsible { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchSupplierWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LunchSupplierId")] //Many2many
-    // [InverseProperty("LunchSupplier")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("LunchSupplierId")] // Many2many // Normal
+    // [InverseProperty("LunchSupplier")] // Many2many // Normal
     public virtual ICollection<LunchLocation> LunchLocation { get; set; }
 }

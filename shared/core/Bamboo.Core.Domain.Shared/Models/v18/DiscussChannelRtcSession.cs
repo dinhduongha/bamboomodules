@@ -25,7 +25,6 @@ public partial class DiscussChannelRtcSession: FullAuditedAggregateRoot<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("channel_member_id")]
     public Guid? ChannelMemberId { get; set; }
@@ -59,26 +58,23 @@ public partial class DiscussChannelRtcSession: FullAuditedAggregateRoot<Guid>, I
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("DiscussChannelRtcSession")] //Many2one
     public virtual DiscussChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("ChannelMemberId")]
-    // [InverseProperty("DiscussChannelRtcSession")] //Many2one
     public virtual DiscussChannelMember? ChannelMember { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DiscussChannelRtcSessionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RtcInvitingSessionId")]
-    [InverseProperty("RtcInvitingSession")]
+    // [One2many] [ForeignKey("RtcInvitingSessionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RtcInvitingSession")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DiscussChannelRtcSessionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

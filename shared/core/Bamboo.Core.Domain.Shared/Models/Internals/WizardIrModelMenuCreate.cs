@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("wizard_ir_model_menu_create")]
-public partial class WizardIrModelMenuCreate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WizardIrModelMenuCreate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("menu_id")]
     public Guid? MenuId { get; set; }
@@ -44,16 +38,13 @@ public partial class WizardIrModelMenuCreate: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WizardIrModelMenuCreateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MenuId")]
-    // [InverseProperty("WizardIrModelMenuCreate")] //Many2one
     public virtual IrUiMenu? Menu { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WizardIrModelMenuCreateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

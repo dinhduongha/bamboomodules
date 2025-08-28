@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_analytic_account")]
 //[Index("Code", Name = "account_analytic_account__code_index")]
-public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,11 +23,7 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId { get; set; }
-
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("plan_id")]
     public Guid? PlanId { get; set; }
@@ -61,166 +57,134 @@ public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IE
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountId")]
-    [InverseProperty("Account")]
+    // [One2many] [ForeignKey("AccountId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Account")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineAccount { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountId")]
-    [InverseProperty("Account")]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
-
-    // [One2many]
     // [One2many] [ForeignKey("XPlan2Id")]
-    [InverseProperty("XPlan2")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("XPlan2")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan2 { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("XPlan3Id")]
-    [InverseProperty("XPlan3")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("XPlan3")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineXPlan3 { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AccountAnalyticId")]
-    [InverseProperty("AccountAnalytic")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccountAnalytic")] // One2many
     public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AccountAnalyticId")]
-    [InverseProperty("AccountAnalytic")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccountAnalytic")] // One2many
     public virtual ICollection<AccountAssetCategory> AccountAssetCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAnalyticAccount")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAnalyticAccountCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AnalyticAccount")] // One2many
     public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AnalyticAccount")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AnalyticAccount")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AnalyticAccount")] // One2many
     public virtual ICollection<HrSalaryRule> HrSalaryRule { get; set; }
-
-
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("AccountAnalyticAccount")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
-    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("CostsHourAccountId")]
-    [InverseProperty("CostsHourAccount")]
-    public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountAnalyticAccount")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PlanId")]
-    // [InverseProperty("AccountAnalyticAccountPlan")] //Many2one
     public virtual AccountAnalyticPlan? Plan { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AccountId")]
-    [InverseProperty("Account")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Account")] // One2many
     public virtual ICollection<ProjectProject> ProjectProjectAccount { get; set; }
 
     // [One2many]
-    // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
-    public virtual ICollection<ProjectProject> ProjectProject { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
-    public virtual ICollection<ProjectTask> ProjectTask { get; set; }
-
-    // [One2many]
     // [One2many] [ForeignKey("XPlan2Id")]
-    [InverseProperty("XPlan2")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("XPlan2")] // One2many
     public virtual ICollection<ProjectProject> ProjectProjectXPlan2 { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("XPlan3Id")]
-    [InverseProperty("XPlan3")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("XPlan3")] // One2many
     public virtual ICollection<ProjectProject> ProjectProjectXPlan3 { get; set; }
 
     // [Many2one]
     [ForeignKey("RootPlanId")]
-    // [InverseProperty("AccountAnalyticAccountRootPlan")] //Many2one
     public virtual AccountAnalyticPlan? RootPlan { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("AnalyticAccountId")]
-    [InverseProperty("AnalyticAccount")]
-    public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAnalyticAccountWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAnalyticAccountId")]
-    // [InverseProperty("AccountAnalyticAccount")]
+    // [ForeignKey("AccountAnalyticAccountId")] //Many2many // Hidden
+    // [InverseProperty("AccountAnalyticAccount")] //Many2many // Hidden
     public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAnalyticAccountId")]
-    // [InverseProperty("AccountAnalyticAccount")]
+    // [ForeignKey("AccountAnalyticAccountId")] //Many2many // Hidden
+    // [InverseProperty("AccountAnalyticAccount")] //Many2many // Hidden
     public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAnalyticAccountId")]
-    // [InverseProperty("AccountAnalyticAccount")]
+    // [ForeignKey("AccountAnalyticAccountId")] //Many2many // Hidden
+    // [InverseProperty("AccountAnalyticAccount")] //Many2many // Hidden
     public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountAnalyticAccountId")] //Many2many
-    // [InverseProperty("AccountAnalyticAccount")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountAnalyticAccountId")] // Many2many // Normal
+    // [InverseProperty("AccountAnalyticAccount")] // Many2many // Normal
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
-    // INVESTIGATE
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountAnalyticAccountId")] //Many2many
-    // [InverseProperty("AccountAnalyticAccount")] //Many2many
-    //public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountAnalyticAccountId")] // Many2many // Normal
+    // [InverseProperty("AccountAnalyticAccount")] // Many2many // Normal
+    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
-    // INVESTIGATE
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountAnalyticAccountId")] //Many2many
-    // [InverseProperty("AccountAnalyticAccount")] //Many2many
-    //public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountAnalyticAccountId")] // Many2many // Normal
+    // [InverseProperty("AccountAnalyticAccount")] // Many2many // Normal
+    public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 }

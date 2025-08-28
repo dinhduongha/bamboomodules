@@ -23,7 +23,6 @@ public partial class SalePaymentProviderOnboardingWizard: FullAuditedEntity<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -34,17 +33,8 @@ public partial class SalePaymentProviderOnboardingWizard: FullAuditedEntity<Guid
     [Column("payment_method")]
     public string? PaymentMethod { get; set; }
 
-    [Column("paypal_user_type")]
-    public string? PaypalUserType { get; set; }
-
     [Column("paypal_email_account")]
     public string? PaypalEmailAccount { get; set; }
-
-    [Column("paypal_seller_account")]
-    public string? PaypalSellerAccount { get; set; }
-
-    [Column("paypal_pdt_token")]
-    public string? PaypalPdtToken { get; set; }
 
     [Column("manual_name")]
     public string? ManualName { get; set; }
@@ -66,11 +56,9 @@ public partial class SalePaymentProviderOnboardingWizard: FullAuditedEntity<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SalePaymentProviderOnboardingWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SalePaymentProviderOnboardingWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

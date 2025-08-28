@@ -23,7 +23,6 @@ public partial class AccountResequenceWizard: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -51,17 +50,15 @@ public partial class AccountResequenceWizard: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountResequenceWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountResequenceWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountResequenceWizardId")] //Many2many
-    // [InverseProperty("AccountResequenceWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountResequenceWizardId")] // Many2many // Normal
+    // [InverseProperty("AccountResequenceWizard")] // Many2many // Normal
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 }

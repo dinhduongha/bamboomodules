@@ -23,7 +23,6 @@ public partial class BarcodeNomenclature: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -50,22 +49,22 @@ public partial class BarcodeNomenclature: FullAuditedAggregateRoot<Guid>, IEntit
     public bool? IsGs1Nomenclature { get; set; }
 
     // [One2many]
-    [ForeignKey("BarcodeNomenclatureId")]
-    [InverseProperty("BarcodeNomenclature")]
+    // [One2many] [ForeignKey("BarcodeNomenclatureId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BarcodeNomenclature")] // One2many
     public virtual ICollection<BarcodeRule> BarcodeRule { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BarcodeNomenclatureCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("NomenclatureId")]
-    [InverseProperty("Nomenclature")]
+    // [One2many] [ForeignKey("NomenclatureId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("Nomenclature")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BarcodeNomenclatureWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

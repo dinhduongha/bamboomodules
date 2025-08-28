@@ -25,7 +25,6 @@ public partial class SlideChannelTagGroup: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -51,16 +50,15 @@ public partial class SlideChannelTagGroup: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideChannelTagGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<SlideChannelTag> SlideChannelTag { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideChannelTagGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

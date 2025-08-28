@@ -25,7 +25,6 @@ public partial class SaleOrderTemplateOption: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sale_order_template_id")]
     public Guid? SaleOrderTemplateId { get; set; }
@@ -57,31 +56,25 @@ public partial class SaleOrderTemplateOption: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("SaleOrderTemplateOption")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleOrderTemplateOptionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("SaleOrderTemplateOption")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderTemplateId")]
-    // [InverseProperty("SaleOrderTemplateOption")] //Many2one
     public virtual SaleOrderTemplate? SaleOrderTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("UomId")]
-    // [InverseProperty("SaleOrderTemplateOption")] //Many2one
     public virtual UomUom? Uom { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleOrderTemplateOptionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

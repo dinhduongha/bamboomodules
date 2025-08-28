@@ -23,7 +23,6 @@ public partial class AuthOauthProvider: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -70,16 +69,15 @@ public partial class AuthOauthProvider: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AuthOauthProviderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("OauthProviderId")]
-    [InverseProperty("OauthProvider")]
+    // [One2many] [ForeignKey("OauthProviderId")]
+    [NotMapped] // One2many // Peer relationship (ResUsers) is commented out
+    // [InverseProperty("OauthProvider")] // One2many
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AuthOauthProviderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

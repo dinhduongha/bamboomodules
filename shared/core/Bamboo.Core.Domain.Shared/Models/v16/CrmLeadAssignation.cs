@@ -23,7 +23,6 @@ public partial class CrmLeadAssignation: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("forward_id")]
     public Guid? ForwardId { get; set; }
@@ -57,26 +56,21 @@ public partial class CrmLeadAssignation: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLeadAssignationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ForwardId")]
-    // [InverseProperty("CrmLeadAssignation")] //Many2one
     public virtual CrmLeadForwardToPartner? Forward { get; set; }
 
     // [Many2one]
     [ForeignKey("LeadId")]
-    // [InverseProperty("CrmLeadAssignation")] //Many2one
     public virtual CrmLead? Lead { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerAssignedId")]
-    // [InverseProperty("CrmLeadAssignation")] //Many2one
     public virtual ResPartner? PartnerAssigned { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLeadAssignationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

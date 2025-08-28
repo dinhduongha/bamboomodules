@@ -26,7 +26,6 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("channel_id")]
     public Guid? ChannelId { get; set; }
@@ -55,9 +54,6 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("last_invitation_date", TypeName = "timestamp without time zone")]
     public DateTime? LastInvitationDate { get; set; }
 
-    [Column("completed")]
-    public bool? Completed { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -69,21 +65,17 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("SlideChannelPartner")] //Many2one
     public virtual SlideChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideChannelPartnerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("SlideChannelPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideChannelPartnerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

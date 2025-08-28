@@ -28,10 +28,6 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("forum_id")]
     public Guid? ForumId { get; set; }
@@ -121,9 +117,6 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("last_activity_date", TypeName = "timestamp without time zone")]
     public DateTime? LastActivityDate { get; set; }
 
-    [Column("bump_date", TypeName = "timestamp without time zone")]
-    public DateTime? BumpDate { get; set; }
-
     [Column("closed_date", TypeName = "timestamp without time zone")]
     public DateTime? ClosedDate { get; set; }
 
@@ -132,75 +125,57 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("ClosedReasonId")]
-    // [InverseProperty("ForumPost")] //Many2one
     public virtual ForumPostReason? ClosedReason { get; set; }
 
     // [Many2one]
     [ForeignKey("ClosedUid")]
-    // [InverseProperty("ForumPostClosedU")] //Many2one
     public virtual ResUsers? ClosedU { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ForumPostCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FlagUserId")]
-    // [InverseProperty("ForumPostFlagUser")] //Many2one
     public virtual ResUsers? FlagUser { get; set; }
 
     // [Many2one]
     [ForeignKey("ForumId")]
-    // [InverseProperty("ForumPost")] //Many2one
     public virtual ForumForum? Forum { get; set; }
 
     // [One2many]
-    [ForeignKey("PostId")]
-    [InverseProperty("Post")]
+    // [One2many] [ForeignKey("PostId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Post")] // One2many
     public virtual ICollection<ForumPostVote> ForumPostVote { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<ForumPost> InverseParent { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ForumPost")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ModeratorId")]
-    // [InverseProperty("ForumPostModerator")] //Many2one
     public virtual ResUsers? Moderator { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual ForumPost? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ForumPostWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ForumPostId")] //Many2many
-    // [InverseProperty("ForumPost")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ForumPostId")] // Many2many // Normal
+    // [InverseProperty("ForumPost")] // Many2many // Normal
     public virtual ICollection<ForumTag> ForumTag { get; set; }
 
-    // v16-Compat
     // [Many2many] // Normal
-    //[NotMapped] //Many2many // Normal
-    // [ForeignKey("ForumId")] //Many2many
-    // [InverseProperty("ForumNavigation")] //Many2many
-    //public virtual ICollection<ForumTag> ForumTag { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ForumPostId")] //Many2many
-    // [InverseProperty("ForumPost")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("ForumPostId")] // Many2many // Normal
+    // [InverseProperty("ForumPost")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -67,16 +68,13 @@ public partial class ResDeviceLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IA
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResDeviceLogCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ResDeviceLogUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResDeviceLogWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

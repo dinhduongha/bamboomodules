@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -55,21 +56,17 @@ public partial class IrModelConstraint: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrModelConstraintCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("Model")]
-    // [InverseProperty("IrModelConstraint")] //Many2one
     public virtual IrModel? ModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("Module")]
-    // [InverseProperty("IrModelConstraint")] //Many2one
     public virtual IrModuleModule? ModuleNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrModelConstraintWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class FleetVehicleModelBrand: FullAuditedAggregateRoot<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("model_count")]
     public long? ModelCount { get; set; }
@@ -48,21 +47,21 @@ public partial class FleetVehicleModelBrand: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleModelBrandCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("BrandId")]
-    [InverseProperty("Brand")]
+    // [One2many] [ForeignKey("BrandId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Brand")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 
     // [One2many]
-    [ForeignKey("BrandId")]
-    [InverseProperty("Brand")]
+    // [One2many] [ForeignKey("BrandId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Brand")] // One2many
     public virtual ICollection<FleetVehicleModel> FleetVehicleModel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleModelBrandWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

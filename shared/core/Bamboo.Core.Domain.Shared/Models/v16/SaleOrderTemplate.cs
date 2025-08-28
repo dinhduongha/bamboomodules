@@ -70,47 +70,47 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("SaleOrderTemplateNavigation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleOrderTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("SaleOrderTemplate")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderTemplateId")]
-    [InverseProperty("SaleOrderTemplate")]
+    // [One2many] [ForeignKey("SaleOrderTemplateId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderTemplateId")]
-    [InverseProperty("SaleOrderTemplate")]
+    // [One2many] [ForeignKey("SaleOrderTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderTemplateId")]
-    [InverseProperty("SaleOrderTemplate")]
+    // [One2many] [ForeignKey("SaleOrderTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLine { get; set; }
 
     // [One2many]
-    [ForeignKey("SaleOrderTemplateId")]
-    [InverseProperty("SaleOrderTemplate")]
+    // [One2many] [ForeignKey("SaleOrderTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOption { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleOrderTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("SaleOrderTemplateId")]
-    // [InverseProperty("SaleOrderTemplate")]
+    // [ForeignKey("SaleOrderTemplateId")] //Many2many // Hidden
+    // [InverseProperty("SaleOrderTemplate")] //Many2many // Hidden
     public virtual ICollection<QuotationDocument> QuotationDocument { get; set; }
 }

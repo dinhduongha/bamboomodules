@@ -24,7 +24,6 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -58,36 +57,29 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LinkTrackerClickCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LinkId")]
-    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual LinkTracker? Link { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingTraceId")]
-    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual MailingTrace? MailingTrace { get; set; }
 
     // [Many2one]
     [ForeignKey("MassMailingId")]
-    // [InverseProperty("LinkTrackerClick")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LinkTrackerClickWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

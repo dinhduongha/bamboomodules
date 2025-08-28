@@ -38,16 +38,13 @@ public partial class AccountFinancialYearOp: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountFinancialYearOp")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountFinancialYearOpCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountFinancialYearOpWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

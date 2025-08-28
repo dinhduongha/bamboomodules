@@ -23,7 +23,6 @@ public partial class ChatRoom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("lang_id")]
     public Guid? LangId { get; set; }
@@ -57,26 +56,25 @@ public partial class ChatRoom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChatRoomCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ChatRoomId")]
-    [InverseProperty("ChatRoom")]
+    // [One2many] [ForeignKey("ChatRoomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ChatRoom")] // One2many
     public virtual ICollection<EventMeetingRoom> EventMeetingRoom { get; set; }
 
     // [One2many]
-    [ForeignKey("ChatRoomId")]
-    [InverseProperty("ChatRoom")]
+    // [One2many] [ForeignKey("ChatRoomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ChatRoom")] // One2many
     public virtual ICollection<EventSponsor> EventSponsor { get; set; }
 
     // [Many2one]
     [ForeignKey("LangId")]
-    // [InverseProperty("ChatRoom")] //Many2one
     public virtual ResLang? Lang { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChatRoomWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

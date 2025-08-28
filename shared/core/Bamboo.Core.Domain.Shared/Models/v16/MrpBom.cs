@@ -26,10 +26,6 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }
@@ -90,98 +86,93 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MrpBom")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpBomCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("MrpBom")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
 
     // [Many2one]
     [ForeignKey("PickingTypeId")]
-    // [InverseProperty("MrpBom")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MrpBom")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("MrpBom")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("MrpBom")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("MrpBom")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [One2many]
-    [ForeignKey("BomId")]
-    [InverseProperty("Bom")]
+    // [One2many] [ForeignKey("BomId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bom")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpBomWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MrpBomId")]
-    // [InverseProperty("MrpBom")]
+    // [ForeignKey("MrpBomId")] //Many2many // Hidden
+    // [InverseProperty("MrpBom")] //Many2many // Hidden
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpBomId")] //Many2many
-    // [InverseProperty("MrpBom")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("MrpBomId")] // Many2many // Normal
+    // [InverseProperty("MrpBom")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

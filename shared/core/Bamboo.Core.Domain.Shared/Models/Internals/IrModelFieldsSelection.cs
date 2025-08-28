@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -45,27 +46,26 @@ public partial class IrModelFieldsSelection: FullAuditedAggregateRoot<Guid>, IEn
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("TrgSelectionFieldId")]
-    [InverseProperty("TrgSelectionField")]
+    // [One2many] [ForeignKey("TrgSelectionFieldId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TrgSelectionField")] // One2many
     public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrModelFieldsSelectionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FieldId")]
-    // [InverseProperty("IrModelFieldsSelection")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
     // [One2many]
-    [ForeignKey("SelectionValue")]
-    [InverseProperty("SelectionValueNavigation")]
+    // [One2many] [ForeignKey("SelectionValue")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SelectionValueNavigation")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrModelFieldsSelectionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

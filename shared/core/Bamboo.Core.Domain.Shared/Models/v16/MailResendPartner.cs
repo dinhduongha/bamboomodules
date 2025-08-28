@@ -23,13 +23,9 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("notification_id")]
     public Guid? NotificationId { get; set; }
-
-    [Column("partner_id")]
-    public Guid? PartnerId { get; set; }
 
     [Column("resend_wizard_id")]
     public Guid? ResendWizardId { get; set; }
@@ -54,26 +50,17 @@ public partial class MailResendPartner: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailResendPartnerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("NotificationId")]
-    // [InverseProperty("MailResendPartner")] //Many2one
     public virtual MailNotification? Notification { get; set; }
 
     // [Many2one]
-    [ForeignKey("PartnerId")]
-    // [InverseProperty("MailResendPartner")] //Many2one
-    public virtual ResPartner? Partner { get; set; }
-
-    // [Many2one]
     [ForeignKey("ResendWizardId")]
-    // [InverseProperty("MailResendPartner")] //Many2one
     public virtual MailResendMessage? ResendWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailResendPartnerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

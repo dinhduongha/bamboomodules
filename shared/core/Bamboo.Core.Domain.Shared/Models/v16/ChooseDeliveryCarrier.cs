@@ -23,7 +23,6 @@ public partial class ChooseDeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("order_id")]
     public Guid? OrderId { get; set; }
@@ -57,21 +56,17 @@ public partial class ChooseDeliveryCarrier: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CarrierId")]
-    // [InverseProperty("ChooseDeliveryCarrier")] //Many2one
     public virtual DeliveryCarrier? Carrier { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChooseDeliveryCarrierCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("ChooseDeliveryCarrier")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChooseDeliveryCarrierWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

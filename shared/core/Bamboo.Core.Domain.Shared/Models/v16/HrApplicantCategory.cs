@@ -24,7 +24,6 @@ public partial class HrApplicantCategory: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -46,23 +45,21 @@ public partial class HrApplicantCategory: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrApplicantCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrApplicantCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrApplicantCategoryId")]
-    // [InverseProperty("HrApplicantCategory")]
+    // [ForeignKey("HrApplicantCategoryId")] //Many2many // Hidden
+    // [InverseProperty("HrApplicantCategory")] //Many2many // Hidden
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrApplicantCategoryId")]
-    // [InverseProperty("HrApplicantCategory")]
+    // [ForeignKey("HrApplicantCategoryId")] //Many2many // Hidden
+    // [InverseProperty("HrApplicantCategory")] //Many2many // Hidden
     public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 }

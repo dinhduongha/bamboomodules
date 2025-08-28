@@ -27,7 +27,6 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -94,93 +93,83 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockQuantCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
     [ForeignKey("LotId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
     // [Many2one]
     [ForeignKey("OwnerId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual ResPartner? Owner { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual StockQuantPackage? Package { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("StorageCategoryId")]
-    // [InverseProperty("StockQuant")] //Many2one
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("StockQuantUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockQuantWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuant")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuant")] //Many2many // Hidden
     public virtual ICollection<StockInventoryAdjustmentName> StockInventoryAdjustmentName { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuant")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuant")] //Many2many // Hidden
     public virtual ICollection<StockInventoryConflict> StockInventoryConflict { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuantNavigation")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuantNavigation")] //Many2many // Hidden
     public virtual ICollection<StockInventoryConflict> StockInventoryConflictNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuant")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuant")] //Many2many // Hidden
     public virtual ICollection<StockInventoryWarning> StockInventoryWarning { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuant")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuant")] //Many2many // Hidden
     public virtual ICollection<StockQuantRelocate> StockQuantRelocate { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuant")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuant")] //Many2many // Hidden
     public virtual ICollection<StockRequestCount> StockRequestCount { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockQuantId")]
-    // [InverseProperty("StockQuant")]
+    // [ForeignKey("StockQuantId")] //Many2many // Hidden
+    // [InverseProperty("StockQuant")] //Many2many // Hidden
     public virtual ICollection<StockTrackConfirmation> StockTrackConfirmation { get; set; }
 }

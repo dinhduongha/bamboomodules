@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_compose_message")]
-public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailComposeMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,7 +23,6 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -33,9 +32,6 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
-
-    [Column("res_id")]
-    public Guid? ResId { get; set; }
 
     [Column("res_domain_user_id")]
     public Guid? ResDomainUserId { get; set; }
@@ -97,9 +93,6 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("body")]
     public string? Body { get; set; }
 
-    [Column("active_domain")]
-    public string? ActiveDomain { get; set; }
-
     [Column("res_ids")]
     public string? ResIds { get; set; }
 
@@ -109,15 +102,6 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("email_add_signature")]
     public bool? EmailAddSignature { get; set; }
 
-    [Column("use_active_domain")]
-    public bool? UseActiveDomain { get; set; }
-
-    [Column("is_log")]
-    public bool? IsLog { get; set; }
-
-    [Column("notify")]
-    public bool? Notify { get; set; }
-
     [Column("reply_to_force_new")]
     public bool? ReplyToForceNew { get; set; }
 
@@ -126,9 +110,6 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("auto_delete_keep_log")]
     public bool? AutoDeleteKeepLog { get; set; }
-
-    [Column("auto_delete_message")]
-    public bool? AutoDeleteMessage { get; set; }
 
     [Column("force_send")]
     public bool? ForceSend { get; set; }
@@ -151,92 +132,73 @@ public partial class MailComposeMessage: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("mass_mailing_name")]
     public string? MassMailingName { get; set; }
 
-    // [One2many]
-    [ForeignKey("ComposerId")]
-    [InverseProperty("Composer")]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSend { get; set; }
-
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailComposeMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailActivityTypeId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailActivityType? MailActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("MailServerId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual IrMailServer? MailServer { get; set; }
 
     // [Many2one]
     [ForeignKey("MassMailingId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailMessage? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("RecordAliasDomainId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailAliasDomain? RecordAliasDomain { get; set; }
 
     // [Many2one]
     [ForeignKey("RecordCompanyId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual ResCompany? RecordCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("ResDomainUserId")]
-    // [InverseProperty("MailComposeMessageResDomainUser")] //Many2one
     public virtual ResUsers? ResDomainUser { get; set; }
 
     // [Many2one]
     [ForeignKey("SubtypeId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailMessageSubtype? Subtype { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("MailComposeMessage")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailComposeMessageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WizardId")] //Many2many
-    // [InverseProperty("Wizard")] //Many2many
-    // [InverseProperty("WizardNavigation")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("WizardId")] // Many2many // Normal
+    // [InverseProperty("WizardNavigation")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailComposeMessageId")] //Many2many
-    // [InverseProperty("MailComposeMessage")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailComposeMessageId")] // Many2many // Normal
+    // [InverseProperty("MailComposeMessage")] // Many2many // Normal
     public virtual ICollection<MailingList> MailingList { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WizardId")] //Many2many
-    // [InverseProperty("Wizard")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("WizardId")] // Many2many // Normal
+    // [InverseProperty("Wizard")] // Many2many // Normal
     public virtual ICollection<ResPartner> Partner { get; set; }
 }

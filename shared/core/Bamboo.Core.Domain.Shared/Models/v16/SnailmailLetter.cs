@@ -23,7 +23,6 @@ public partial class SnailmailLetter: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -96,61 +95,53 @@ public partial class SnailmailLetter: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("AttachmentId")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual IrAttachment? Attachment { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SnailmailLetterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LetterId")]
-    [InverseProperty("Letter")]
+    // [One2many] [ForeignKey("LetterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Letter")] // One2many
     public virtual ICollection<MailNotification> MailNotification { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageId")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual MailMessage? Message { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportTemplate")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual IrActReportXml? ReportTemplateNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("LetterId")]
-    [InverseProperty("Letter")]
+    // [One2many] [ForeignKey("LetterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Letter")] // One2many
     public virtual ICollection<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
 
     // [Many2one]
     [ForeignKey("StateId")]
-    // [InverseProperty("SnailmailLetter")] //Many2one
     public virtual ResCountryState? StateNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("SnailmailLetterUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SnailmailLetterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

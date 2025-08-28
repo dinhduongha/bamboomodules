@@ -26,7 +26,6 @@ public partial class StockStorageCategoryCapacity: FullAuditedEntity<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("storage_category_id")]
     public Guid? StorageCategoryId { get; set; }
@@ -54,26 +53,21 @@ public partial class StockStorageCategoryCapacity: FullAuditedEntity<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockStorageCategoryCapacityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageTypeId")]
-    // [InverseProperty("StockStorageCategoryCapacity")] //Many2one
     public virtual StockPackageType? PackageType { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockStorageCategoryCapacity")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("StorageCategoryId")]
-    // [InverseProperty("StockStorageCategoryCapacity")] //Many2one
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockStorageCategoryCapacityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

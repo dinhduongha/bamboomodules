@@ -23,7 +23,6 @@ public partial class MembershipInvoice: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -45,16 +44,13 @@ public partial class MembershipInvoice: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MembershipInvoiceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MembershipInvoice")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MembershipInvoiceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

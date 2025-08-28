@@ -25,13 +25,9 @@ public partial class BlogPost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
@@ -86,11 +82,6 @@ public partial class BlogPost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("teaser_manual", TypeName = "jsonb")]
     public string? TeaserManual { get; set; }
 
-    // v16-Compat
-    //[Column("teaser_manual")]
-    //public string? TeaserManual { get; set; }
-
-
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
 
@@ -114,37 +105,27 @@ public partial class BlogPost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("BlogPost")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("BlogId")]
-    // [InverseProperty("BlogPost")] //Many2one
     public virtual BlogBlog? Blog { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BlogPostCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("BlogPost")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("BlogPost")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BlogPostWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("BlogPostId")]
-    // [InverseProperty("BlogPost")]
+    // [ForeignKey("BlogPostId")] //Many2many // Hidden
+    // [InverseProperty("BlogPost")] //Many2many // Hidden
     public virtual ICollection<BlogTag> BlogTag { get; set; }
 }

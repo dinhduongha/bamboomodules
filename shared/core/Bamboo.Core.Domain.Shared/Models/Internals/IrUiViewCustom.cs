@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -43,21 +44,17 @@ public partial class IrUiViewCustom: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrUiViewCustomCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RefId")]
-    // [InverseProperty("IrUiViewCustom")] //Many2one
     public virtual IrUiView? Ref { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("IrUiViewCustomUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrUiViewCustomWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

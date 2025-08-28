@@ -90,27 +90,25 @@ public partial class DigestDigest: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("DigestDigest")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DigestDigestCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("DigestId")]
-    [InverseProperty("Digest")]
+    // [One2many] [ForeignKey("DigestId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Digest")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DigestDigestWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DigestDigestId")] //Many2many
-    // [InverseProperty("DigestDigest")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("DigestDigestId")] // Many2many // Normal
+    // [InverseProperty("DigestDigest")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

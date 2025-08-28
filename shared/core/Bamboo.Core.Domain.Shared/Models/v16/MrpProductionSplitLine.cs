@@ -23,7 +23,6 @@ public partial class MrpProductionSplitLine: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mrp_production_split_id")]
     public Guid? MrpProductionSplitId { get; set; }
@@ -51,21 +50,17 @@ public partial class MrpProductionSplitLine: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpProductionSplitLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MrpProductionSplitId")]
-    // [InverseProperty("MrpProductionSplitLine")] //Many2one
     public virtual MrpProductionSplit? MrpProductionSplit { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("MrpProductionSplitLineUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpProductionSplitLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class MrpBatchProduce: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("production_id")]
     public Guid? ProductionId { get; set; }
@@ -60,16 +59,13 @@ public partial class MrpBatchProduce: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpBatchProduceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductionId")]
-    // [InverseProperty("MrpBatchProduce")] //Many2one
     public virtual MrpProduction? Production { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpBatchProduceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

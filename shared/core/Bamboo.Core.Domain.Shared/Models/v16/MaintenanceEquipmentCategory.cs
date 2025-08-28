@@ -23,10 +23,6 @@ public partial class MaintenanceEquipmentCategory: FullAuditedAggregateRoot<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }
@@ -66,41 +62,33 @@ public partial class MaintenanceEquipmentCategory: FullAuditedAggregateRoot<Guid
 
     // [Many2one]
     [ForeignKey("AliasId")]
-    // [InverseProperty("MaintenanceEquipmentCategory")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MaintenanceEquipmentCategory")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MaintenanceEquipmentCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("MaintenanceEquipmentCategory")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("TechnicianUserId")]
-    // [InverseProperty("MaintenanceEquipmentCategoryTechnicianUser")] //Many2one
     public virtual ResUsers? TechnicianUser { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MaintenanceEquipmentCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

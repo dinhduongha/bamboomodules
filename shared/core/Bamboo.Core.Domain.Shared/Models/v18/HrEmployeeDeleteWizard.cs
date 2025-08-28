@@ -23,7 +23,6 @@ public partial class HrEmployeeDeleteWizard: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class HrEmployeeDeleteWizard: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrEmployeeDeleteWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrEmployeeDeleteWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("HrEmployeeDeleteWizardId")] //Many2many
-    [InverseProperty("HrEmployeeDeleteWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrEmployeeDeleteWizardId")] // Many2many // Normal
+    // [InverseProperty("HrEmployeeDeleteWizard")] // Many2many // Normal
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

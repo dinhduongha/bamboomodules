@@ -23,7 +23,6 @@ public partial class StockInventoryConflict: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,23 +38,21 @@ public partial class StockInventoryConflict: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockInventoryConflictCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockInventoryConflictWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockInventoryConflictId")] //Many2many
-    // [InverseProperty("StockInventoryConflict")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockInventoryConflictId")] // Many2many // Normal
+    // [InverseProperty("StockInventoryConflict")] // Many2many // Normal
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockInventoryConflictId")] //Many2many
-    // [InverseProperty("StockInventoryConflictNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockInventoryConflictId")] // Many2many // Normal
+    // [InverseProperty("StockInventoryConflictNavigation")] // Many2many // Normal
     public virtual ICollection<StockQuant> StockQuantNavigation { get; set; }
 }

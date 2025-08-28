@@ -24,7 +24,6 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -59,52 +58,38 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("AccountAccountTag")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAccountTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAccountTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAccountTagId")]
-    // [InverseProperty("AccountAccountTag")]
+    // [Many2many] // Hidden
+
+    [NotMapped] //Many2many // Hidden // Peer relationship (AccountAccount) is commented out
+    // [ForeignKey("AccountAccountTagId")] //Many2many // Hidden
+    // [InverseProperty("AccountAccountTag")] //Many2many // Hidden
     public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAccountTagId")]
-    // [InverseProperty("AccountAccountTag")]
-    public virtual ICollection<AccountAccountTemplate> AccountAccountTemplate { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAccountTagId")]
-    // [InverseProperty("AccountAccountTag")]
+    // [ForeignKey("AccountAccountTagId")] //Many2many // Hidden
+    // [InverseProperty("AccountAccountTag")] //Many2many // Hidden
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAccountTagId")]
-    // [InverseProperty("AccountAccountTag")]
+    // [ForeignKey("AccountAccountTagId")] //Many2many // Hidden
+    // [InverseProperty("AccountAccountTag")] //Many2many // Hidden
     public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAccountTagId")]
-    // [InverseProperty("AccountAccountTag")]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplate { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAccountTagId")]
-    // [InverseProperty("AccountAccountTag")]
+    // [ForeignKey("AccountAccountTagId")] //Many2many // Hidden
+    // [InverseProperty("AccountAccountTag")] //Many2many // Hidden
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

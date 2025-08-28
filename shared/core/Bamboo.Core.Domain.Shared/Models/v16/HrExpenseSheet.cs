@@ -24,16 +24,12 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
-
-    [Column("address_id")]
-    public Guid? AddressId { get; set; }
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
@@ -52,12 +48,6 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
-
-    [Column("bank_journal_id")]
-    public Guid? BankJournalId { get; set; }
-
-    [Column("account_move_id")]
-    public Guid? AccountMoveId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -89,9 +79,6 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("total_tax_amount")]
     public decimal? TotalTaxAmount { get; set; }
 
-    [Column("total_amount_taxes")]
-    public decimal? TotalAmountTaxes { get; set; }
-
     [Column("amount_residual")]
     public decimal? AmountResidual { get; set; }
 
@@ -105,101 +92,70 @@ public partial class HrExpenseSheet: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("ExpenseSheetId")]
-    [InverseProperty("ExpenseSheet")]
+    // [One2many] [ForeignKey("ExpenseSheetId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ExpenseSheet")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
-
-    // v16-Compat
-    // [Many2one]
-    //[ForeignKey("AccountMoveId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
-    //public virtual AccountMove? AccountMove { get; set; }
-
-    // [Many2one]
-    [ForeignKey("AddressId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
-    public virtual ResPartner? Address { get; set; }
-
-    // [Many2one]
-    [ForeignKey("BankJournalId")]
-    // [InverseProperty("HrExpenseSheetBankJournal")] //Many2one
-    public virtual AccountJournal? BankJournal { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrExpenseSheetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeJournalId")]
-    // [InverseProperty("HrExpenseSheetEmployeeJournal")] //Many2one
     public virtual AccountJournal? EmployeeJournal { get; set; }
 
     // [One2many]
-    [ForeignKey("SheetId")]
-    [InverseProperty("Sheet")]
+    // [One2many] [ForeignKey("SheetId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Sheet")] // One2many
     public virtual ICollection<HrExpense> HrExpense { get; set; }
-
-    // v16-Compat
-    // [One2many]
-    //[ForeignKey("HrExpenseSheetId")]
-    //[InverseProperty("HrExpenseSheet")]
-    //public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("HrExpenseSheetJournal")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentMethodLineId")]
-    // [InverseProperty("HrExpenseSheet")] //Many2one
     public virtual AccountPaymentMethodLine? PaymentMethodLine { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("HrExpenseSheetUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrExpenseSheetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrExpenseSheetId")]
-    // [InverseProperty("HrExpenseSheet")]
+    // [ForeignKey("HrExpenseSheetId")] //Many2many // Hidden
+    // [InverseProperty("HrExpenseSheet")] //Many2many // Hidden
     public virtual ICollection<HrExpenseApproveDuplicate> HrExpenseApproveDuplicate { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    //[ForeignKey("HrExpenseSheetId")]
-    //[InverseProperty("HrExpenseSheet")]
+    // [ForeignKey("HrExpenseSheetId")] //Many2many // Hidden
+    // [InverseProperty("HrExpenseSheet")] //Many2many // Hidden
     public virtual ICollection<HrExpenseRefuseWizard> HrExpenseRefuseWizard { get; set; }
 }

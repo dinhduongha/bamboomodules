@@ -23,7 +23,6 @@ public partial class RecurringPayment: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -66,31 +65,27 @@ public partial class RecurringPayment: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("RecurringPayment")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RecurringPaymentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("RecurringPayment")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
-    [ForeignKey("RecurringPaymentId")]
-    [InverseProperty("RecurringPayment")]
+    // [One2many] [ForeignKey("RecurringPaymentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RecurringPayment")] // One2many
     public virtual ICollection<RecurringPaymentLine> RecurringPaymentLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("RecurringPayment")] //Many2one
     public virtual AccountRecurringTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RecurringPaymentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

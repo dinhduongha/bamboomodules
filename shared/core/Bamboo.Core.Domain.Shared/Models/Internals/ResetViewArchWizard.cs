@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class ResetViewArchWizard: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("view_id")]
     public Guid? ViewId { get; set; }
@@ -47,21 +47,17 @@ public partial class ResetViewArchWizard: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CompareViewId")]
-    // [InverseProperty("ResetViewArchWizardCompareView")] //Many2one
     public virtual IrUiView? CompareView { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResetViewArchWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("ResetViewArchWizardView")] //Many2one
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResetViewArchWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class AccountMergeWizard: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -41,23 +40,22 @@ public partial class AccountMergeWizard: FullAuditedAggregateRoot<Guid>, IEntity
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<AccountMergeWizardLine> AccountMergeWizardLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountMergeWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountMergeWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("AccountMergeWizardId")] //Many2many
-    [InverseProperty("AccountMergeWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (AccountAccount) is commented out
+    // [ForeignKey("AccountMergeWizardId")] // Many2many // Normal
+    // [InverseProperty("AccountMergeWizard")] // Many2many // Normal
     public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 }

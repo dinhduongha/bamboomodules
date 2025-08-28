@@ -23,7 +23,6 @@ public partial class PosPackOperationLot: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("pos_order_line_id")]
     public Guid? PosOrderLineId { get; set; }
@@ -45,16 +44,13 @@ public partial class PosPackOperationLot: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosPackOperationLotCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PosOrderLineId")]
-    // [InverseProperty("PosPackOperationLot")] //Many2one
     public virtual PosOrderLine? PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosPackOperationLotWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class SmsTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sms_template_id")]
     public Guid? SmsTemplateId { get; set; }
@@ -48,16 +47,13 @@ public partial class SmsTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsTemplatePreviewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    // [InverseProperty("SmsTemplatePreview")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsTemplatePreviewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

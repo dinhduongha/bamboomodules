@@ -23,7 +23,6 @@ public partial class UomUom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
@@ -59,163 +58,177 @@ public partial class UomUom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     [Column("timesheet_widget")]
     public string? TimesheetWidget { get; set; }
 
-    // [One2many]
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
     // [One2many] [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (AccountAnalyticLine) is commented out
+    // public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (AccountMoveLine) is commented out
+    // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("AssociatedUomId")]
-    [InverseProperty("AssociatedUom")]
-    public virtual ICollection<BarcodeRule> BarcodeRule { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("AssociatedUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("AssociatedUom")] // One2many // Peer relationship (BarcodeRule) is commented out
+    // public virtual ICollection<BarcodeRule> BarcodeRule { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("UomUom")] //Many2one
     public virtual UomCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("UomUomCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<HrExpense> HrExpense { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (HrExpense) is commented out
+    // public virtual ICollection<HrExpense> HrExpense { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<MrpBom> MrpBom { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (MrpBom) is commented out
+    // public virtual ICollection<MrpBom> MrpBom { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (MrpBomByproduct) is commented out
+    // public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (MrpBomLine) is commented out
+    // public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<MrpProduction> MrpProduction { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (MrpProduction) is commented out
+    // public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (MrpUnbuild) is commented out
+    // public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (MrpWorkorder) is commented out
+    // public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (ProductReplenish) is commented out
+    // public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
-    // [One2many]
-    [ForeignKey("UomId")]
-    [InverseProperty("Uom")]
-    public virtual ICollection<ProductTemplate> ProductTemplateUom { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("UomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Uom")] // One2many // Peer relationship (ProductTemplate) is commented out
+    // public virtual ICollection<ProductTemplate> ProductTemplateUom { get; set; }
 
-    // [One2many]
-    [ForeignKey("UomPoId")]
-    [InverseProperty("UomPo")]
-    public virtual ICollection<ProductTemplate> ProductTemplateUomPo { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("UomPoId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("UomPo")] // One2many // Peer relationship (ProductTemplate) is commented out
+    // public virtual ICollection<ProductTemplate> ProductTemplateUomPo { get; set; }
 
-    // [One2many]
-    [ForeignKey("UomId")]
-    [InverseProperty("Uom")]
-    public virtual ICollection<ProjectUpdate> ProjectUpdate { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("UomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Uom")] // One2many // Peer relationship (ProjectUpdate) is commented out
+    // public virtual ICollection<ProjectUpdate> ProjectUpdate { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUom")]
-    [InverseProperty("ProductUomNavigation")]
-    public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUom")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUomNavigation")] // One2many // Peer relationship (PurchaseOrderLine) is commented out
+    // public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<PurchaseRequisitionLine> PurchaseRequisitionLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (PurchaseRequisitionLine) is commented out
+    // public virtual ICollection<PurchaseRequisitionLine> PurchaseRequisitionLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUom")]
-    [InverseProperty("ProductUomNavigation")]
-    public virtual ICollection<RepairFee> RepairFee { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUom")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUomNavigation")] // One2many // Peer relationship (RepairOrder) is commented out
+    // public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUom")]
-    [InverseProperty("ProductUomNavigation")]
-    public virtual ICollection<RepairLine> RepairLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProjectTimeModeId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProjectTimeMode")] // One2many
+    // public virtual ICollection<ResCompany> ResCompanyProjectTimeMode { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUom")]
-    [InverseProperty("ProductUomNavigation")]
-    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("TimesheetEncodeUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("TimesheetEncodeUom")] // One2many
+    // public virtual ICollection<ResCompany> ResCompanyTimesheetEncodeUom { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProjectTimeModeId")]
-    [InverseProperty("ProjectTimeMode")]
-    public virtual ICollection<ResCompany> ResCompanyProjectTimeMode { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUom")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUomNavigation")] // One2many // Peer relationship (SaleOrderLine) is commented out
+    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("TimesheetEncodeUomId")]
-    [InverseProperty("TimesheetEncodeUom")]
-    public virtual ICollection<ResCompany> ResCompanyTimesheetEncodeUom { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("UomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Uom")] // One2many // Peer relationship (SaleOrderOption) is commented out
+    // public virtual ICollection<SaleOrderOption> SaleOrderOption { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUom")]
-    [InverseProperty("ProductUomNavigation")]
-    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (SaleOrderTemplateLine) is commented out
+    // public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("UomId")]
-    [InverseProperty("Uom")]
-    public virtual ICollection<SaleOrderOption> SaleOrderOption { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("UomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Uom")] // One2many // Peer relationship (SaleOrderTemplateOption) is commented out
+    // public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOption { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLine { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (StockLot) is commented out
+    // public virtual ICollection<StockLot> StockLot { get; set; }
 
-    // [One2many]
-    [ForeignKey("UomId")]
-    [InverseProperty("Uom")]
-    public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOption { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUom")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUomNavigation")] // One2many // Peer relationship (StockMove) is commented out
+    // public virtual ICollection<StockMove> StockMove { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<StockLot> StockLot { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (StockMoveLine) is commented out
+    // public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
-    // [One2many]
-    [ForeignKey("ProductUom")]
-    [InverseProperty("ProductUomNavigation")]
-    public virtual ICollection<StockMove> StockMove { get; set; }
-
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
-
-    // [One2many]
-    [ForeignKey("ProductUomId")]
-    [InverseProperty("ProductUom")]
-    public virtual ICollection<StockScrap> StockScrap { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'UomUom'
+    // [One2many] [ForeignKey("ProductUomId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("ProductUom")] // One2many // Peer relationship (StockScrap) is commented out
+    // public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("UomUomWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

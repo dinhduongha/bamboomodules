@@ -23,7 +23,6 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("dest_location_id")]
     public Guid? DestLocationId { get; set; }
@@ -48,27 +47,23 @@ public partial class StockQuantRelocate: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockQuantRelocateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DestLocationId")]
-    // [InverseProperty("StockQuantRelocate")] //Many2one
     public virtual StockLocation? DestLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("DestPackageId")]
-    // [InverseProperty("StockQuantRelocate")] //Many2one
     public virtual StockQuantPackage? DestPackage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockQuantRelocateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("StockQuantRelocateId")] //Many2many
-    [InverseProperty("StockQuantRelocate")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockQuantRelocateId")] // Many2many // Normal
+    // [InverseProperty("StockQuantRelocate")] // Many2many // Normal
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 }

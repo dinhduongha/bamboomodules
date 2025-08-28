@@ -23,7 +23,6 @@ public partial class PosCloseSessionWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -51,16 +50,13 @@ public partial class PosCloseSessionWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("PosCloseSessionWizard")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosCloseSessionWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosCloseSessionWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

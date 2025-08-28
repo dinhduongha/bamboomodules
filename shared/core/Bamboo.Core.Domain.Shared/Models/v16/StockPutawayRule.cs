@@ -25,7 +25,6 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -65,47 +64,39 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual ProductCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPutawayRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationInId")]
-    // [InverseProperty("StockPutawayRuleLocationIn")] //Many2one
     public virtual StockLocation? LocationIn { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationOutId")]
-    // [InverseProperty("StockPutawayRuleLocationOut")] //Many2one
     public virtual StockLocation? LocationOut { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("StorageCategoryId")]
-    // [InverseProperty("StockPutawayRule")] //Many2one
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPutawayRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockPutawayRuleId")] //Many2many
-    // [InverseProperty("StockPutawayRule")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockPutawayRuleId")] // Many2many // Normal
+    // [InverseProperty("StockPutawayRule")] // Many2many // Normal
     public virtual ICollection<StockPackageType> StockPackageType { get; set; }
 }

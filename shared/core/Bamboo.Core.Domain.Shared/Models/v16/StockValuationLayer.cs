@@ -87,67 +87,57 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("AccountMoveId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual AccountMove? AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountMoveLineId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CategId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual ProductCategory? Categ { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockValuationLayerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("StockValuationLayerId")]
-    [InverseProperty("StockValuationLayerNavigation")]
+    // [One2many] [ForeignKey("StockValuationLayerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StockValuationLayerNavigation")] // One2many
     public virtual ICollection<StockValuationLayer> InverseStockValuationLayerNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LotId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("StockLandedCostId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual StockLandedCost? StockLandedCost { get; set; }
 
     // [Many2one]
     [ForeignKey("StockMoveId")]
-    // [InverseProperty("StockValuationLayer")] //Many2one
     public virtual StockMove? StockMove { get; set; }
 
     // [Many2one]
     [ForeignKey("StockValuationLayerId")]
-    // [InverseProperty("InverseStockValuationLayerNavigation")] //Many2one
     public virtual StockValuationLayer? StockValuationLayerNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockValuationLayerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockValuationLayerId")]
-    // [InverseProperty("StockValuationLayer")]
+    // [ForeignKey("StockValuationLayerId")] //Many2many // Hidden
+    // [InverseProperty("StockValuationLayer")] //Many2many // Hidden
     public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluation { get; set; }
 }

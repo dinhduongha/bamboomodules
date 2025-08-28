@@ -25,7 +25,6 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
@@ -87,9 +86,6 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     [Column("price_max_margin")]
     public decimal? PriceMaxMargin { get; set; }
 
-    [Column("active")]
-    public bool? Active { get; set; }
-
     [Column("date_start", TypeName = "timestamp without time zone")]
     public DateTime? DateStart { get; set; }
 
@@ -107,46 +103,37 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("BasePricelistId")]
-    // [InverseProperty("ProductPricelistItemBasePricelist")] //Many2one
     public virtual ProductPricelist? BasePricelist { get; set; }
 
     // [Many2one]
     [ForeignKey("CategId")]
-    // [InverseProperty("ProductPricelistItem")] //Many2one
     public virtual ProductCategory? Categ { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductPricelistItem")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductPricelistItemCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("ProductPricelistItem")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("PricelistId")]
-    // [InverseProperty("ProductPricelistItemPricelist")] //Many2one
     public virtual ProductPricelist? Pricelist { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("ProductPricelistItem")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductPricelistItem")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductPricelistItemWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

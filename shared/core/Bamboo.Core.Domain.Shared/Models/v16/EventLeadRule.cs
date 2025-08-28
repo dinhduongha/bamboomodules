@@ -23,7 +23,6 @@ public partial class EventLeadRule: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -67,48 +66,43 @@ public partial class EventLeadRule: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("EventLeadRule")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventLeadRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("EventLeadRuleId")]
-    [InverseProperty("EventLeadRule")]
+    // [One2many] [ForeignKey("EventLeadRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventLeadRule")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventLeadRule")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("LeadSalesTeamId")]
-    // [InverseProperty("EventLeadRule")] //Many2one
     public virtual CrmTeam? LeadSalesTeam { get; set; }
 
     // [Many2one]
     [ForeignKey("LeadUserId")]
-    // [InverseProperty("EventLeadRuleLeadUser")] //Many2one
     public virtual ResUsers? LeadUser { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventLeadRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EventLeadRuleId")] //Many2many
-    // [InverseProperty("EventLeadRule")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventLeadRuleId")] // Many2many // Normal
+    // [InverseProperty("EventLeadRule")] // Many2many // Normal
     public virtual ICollection<CrmTag> CrmTag { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EventLeadRuleId")] //Many2many
-    // [InverseProperty("EventLeadRule")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventLeadRuleId")] // Many2many // Normal
+    // [InverseProperty("EventLeadRule")] // Many2many // Normal
     public virtual ICollection<EventType> EventType { get; set; }
 }

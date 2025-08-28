@@ -39,26 +39,25 @@ public partial class FollowupFollowup: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("FollowupFollowup")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FollowupFollowupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("FollowupId")]
-    [InverseProperty("Followup")]
+    // [One2many] [ForeignKey("FollowupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Followup")] // One2many
     public virtual ICollection<FollowupLine> FollowupLine { get; set; }
 
     // [One2many]
-    [ForeignKey("FollowupId")]
-    [InverseProperty("Followup")]
+    // [One2many] [ForeignKey("FollowupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Followup")] // One2many
     public virtual ICollection<FollowupPrint> FollowupPrint { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FollowupFollowupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

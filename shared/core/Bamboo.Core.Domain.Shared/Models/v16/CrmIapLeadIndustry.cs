@@ -24,7 +24,6 @@ public partial class CrmIapLeadIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -53,23 +52,21 @@ public partial class CrmIapLeadIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmIapLeadIndustryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmIapLeadIndustryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmIapLeadIndustryId")]
-    // [InverseProperty("CrmIapLeadIndustry")]
+    // [ForeignKey("CrmIapLeadIndustryId")] //Many2many // Hidden
+    // [InverseProperty("CrmIapLeadIndustry")] //Many2many // Hidden
     public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmIapLeadIndustryId")]
-    // [InverseProperty("CrmIapLeadIndustry")]
+    // [ForeignKey("CrmIapLeadIndustryId")] //Many2many // Hidden
+    // [InverseProperty("CrmIapLeadIndustry")] //Many2many // Hidden
     public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 }

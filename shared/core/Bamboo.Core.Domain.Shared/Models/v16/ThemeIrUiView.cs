@@ -23,7 +23,6 @@ public partial class ThemeIrUiView: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("priority")]
     public long? Priority { get; set; }
@@ -70,21 +69,21 @@ public partial class ThemeIrUiView: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ThemeIrUiViewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ThemeTemplateId")]
-    [InverseProperty("ThemeTemplate")]
+    // [One2many] [ForeignKey("ThemeTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ThemeTemplate")] // One2many
     public virtual ICollection<IrUiView> IrUiView { get; set; }
 
     // [One2many]
-    [ForeignKey("ViewId")]
-    [InverseProperty("View")]
+    // [One2many] [ForeignKey("ViewId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("View")] // One2many
     public virtual ICollection<ThemeWebsitePage> ThemeWebsitePage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ThemeIrUiViewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

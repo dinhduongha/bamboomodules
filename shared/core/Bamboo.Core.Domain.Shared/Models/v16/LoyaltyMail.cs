@@ -23,7 +23,6 @@ public partial class LoyaltyMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("program_id")]
     public Guid? ProgramId { get; set; }
@@ -57,26 +56,21 @@ public partial class LoyaltyMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyMailCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("LoyaltyMail")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("PosReportPrintId")]
-    // [InverseProperty("LoyaltyMail")] //Many2one
     public virtual IrActReportXml? PosReportPrint { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("LoyaltyMail")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyMailWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

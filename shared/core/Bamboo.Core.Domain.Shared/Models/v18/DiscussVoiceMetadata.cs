@@ -24,7 +24,6 @@ public partial class DiscussVoiceMetadata: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("attachment_id")]
     public Guid? AttachmentId { get; set; }
@@ -43,16 +42,13 @@ public partial class DiscussVoiceMetadata: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("AttachmentId")]
-    // [InverseProperty("DiscussVoiceMetadata")] //Many2one
     public virtual IrAttachment? Attachment { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DiscussVoiceMetadataCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DiscussVoiceMetadataWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

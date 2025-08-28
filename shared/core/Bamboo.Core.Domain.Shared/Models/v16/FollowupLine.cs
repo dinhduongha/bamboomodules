@@ -24,7 +24,6 @@ public partial class FollowupLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("followup_id")]
     public Guid? FollowupId { get; set; }
@@ -70,37 +69,28 @@ public partial class FollowupLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("FollowupLineId")]
-    [InverseProperty("FollowupLine")]
+    // [One2many] [ForeignKey("FollowupLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FollowupLine")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FollowupLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmailTemplateId")]
-    // [InverseProperty("FollowupLine")] //Many2one
     public virtual MailTemplate? EmailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("FollowupId")]
-    // [InverseProperty("FollowupLine")] //Many2one
     public virtual FollowupFollowup? Followup { get; set; }
 
     // [Many2one]
     [ForeignKey("ManualActionResponsibleId")]
-    // [InverseProperty("FollowupLineManualActionResponsible")] //Many2one
     public virtual ResUsers? ManualActionResponsible { get; set; }
-
-    // [One2many]
-    [ForeignKey("LatestFollowupLevelIdWithoutLit")]
-    [InverseProperty("LatestFollowupLevelIdWithoutLitNavigation")]
-    public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FollowupLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

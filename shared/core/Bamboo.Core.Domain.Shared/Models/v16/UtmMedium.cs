@@ -24,7 +24,6 @@ public partial class UtmMedium: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,52 +44,58 @@ public partial class UtmMedium: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("UtmMediumCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
-    [ForeignKey("UtmMediumId")]
-    [InverseProperty("UtmMedium")]
+    // [One2many] [ForeignKey("UtmMediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UtmMedium")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<LinkTracker> LinkTracker { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [One2many]
-    [ForeignKey("MediumId")]
-    [InverseProperty("Medium")]
+    // [One2many] [ForeignKey("MediumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Medium")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("UtmMediumWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

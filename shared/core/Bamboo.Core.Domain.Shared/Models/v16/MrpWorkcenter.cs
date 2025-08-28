@@ -26,7 +26,6 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("resource_id")]
     public Guid? ResourceId { get; set; }
@@ -85,9 +84,6 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("oee_target")]
     public double? OeeTarget { get; set; }
 
-    [Column("costs_hour_account_id")]
-    public Guid? CostsHourAccountId { get; set; }
-
     [Column("expense_account_id")]
     public Guid? ExpenseAccountId { get; set; }
 
@@ -97,80 +93,73 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MrpWorkcenter")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
-    [ForeignKey("CostsHourAccountId")]
-    // [InverseProperty("MrpWorkcenter")] //Many2one
-    public virtual AccountAnalyticAccount? CostsHourAccount { get; set; }
-
-    // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpWorkcenterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ExpenseAccountId")]
-    // [InverseProperty("MrpWorkcenter")] //Many2one
     public virtual AccountAccount? ExpenseAccount { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkcenterId")]
-    [InverseProperty("Workcenter")]
+    // [One2many] [ForeignKey("WorkcenterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkcenterId")]
-    [InverseProperty("Workcenter")]
+    // [One2many] [ForeignKey("WorkcenterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacity { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkcenterId")]
-    [InverseProperty("Workcenter")]
+    // [One2many] [ForeignKey("WorkcenterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivity { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkcenterId")]
-    [InverseProperty("Workcenter")]
+    // [One2many] [ForeignKey("WorkcenterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceId")]
-    // [InverseProperty("MrpWorkcenter")] //Many2one
     public virtual ResourceResource? Resource { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceCalendarId")]
-    // [InverseProperty("MrpWorkcenter")] //Many2one
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpWorkcenterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MrpWorkcenterId")]
-    // [InverseProperty("MrpWorkcenter")]
+    // [ForeignKey("MrpWorkcenterId")] //Many2many // Hidden
+    // [InverseProperty("MrpWorkcenter")] //Many2many // Hidden
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WorkcenterId")] //Many2many
-    // [InverseProperty("Workcenter")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("WorkcenterId")] // Many2many // Normal
+    // [InverseProperty("Workcenter")] // Many2many // Normal
     public virtual ICollection<MrpWorkcenter> AlternativeWorkcenter { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpWorkcenterId")] //Many2many
-    // [InverseProperty("MrpWorkcenter")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpWorkcenterId")] // Many2many // Normal
+    // [InverseProperty("MrpWorkcenter")] // Many2many // Normal
     public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTag { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AlternativeWorkcenterId")] //Many2many
-    // [InverseProperty("AlternativeWorkcenter")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AlternativeWorkcenterId")] // Many2many // Normal
+    // [InverseProperty("AlternativeWorkcenter")] // Many2many // Normal
     public virtual ICollection<MrpWorkcenter> Workcenter { get; set; }
 }

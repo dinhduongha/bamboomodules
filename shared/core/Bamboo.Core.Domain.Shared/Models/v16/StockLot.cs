@@ -25,10 +25,6 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -85,92 +81,85 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockLot")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockLotCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("StockLot")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("StockLot")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [One2many]
-    [ForeignKey("LotProducingId")]
-    [InverseProperty("LotProducing")]
+    // [One2many] [ForeignKey("LotProducingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LotProducing")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockLot")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("StockLot")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
-    public virtual ICollection<RepairLine> RepairLine { get; set; }
-
-    // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("OrderFinishedLotId")]
-    [InverseProperty("OrderFinishedLot")]
+    // [One2many] [ForeignKey("OrderFinishedLotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("OrderFinishedLot")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
 
     // [One2many]
-    [ForeignKey("LotId")]
-    [InverseProperty("Lot")]
+    // [One2many] [ForeignKey("LotId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Lot")] // One2many
     public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockLotWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockLotId")]
-    // [InverseProperty("StockLot")]
+    // [ForeignKey("StockLotId")] //Many2many // Hidden
+    // [InverseProperty("StockLot")] //Many2many // Hidden
     public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
 }

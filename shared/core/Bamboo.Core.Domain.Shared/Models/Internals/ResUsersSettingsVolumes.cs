@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -14,18 +15,12 @@ namespace Bamboo.Core.Models;
 //[Index("GuestId", Name = "res_users_settings_volumes__guest_id_index")]
 //[Index("PartnerId", Name = "res_users_settings_volumes__partner_id_index")]
 //[Index("UserSettingId", Name = "res_users_settings_volumes__user_setting_id_index")]
-public partial class ResUsersSettingsVolumes: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersSettingsVolumes: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
     [Column("user_setting_id")]
     public Guid? UserSettingId { get; set; }
 
@@ -52,26 +47,21 @@ public partial class ResUsersSettingsVolumes: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResUsersSettingsVolumesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("GuestId")]
-    // [InverseProperty("ResUsersSettingsVolumesGuest")] //Many2one
     public virtual ResPartner? Guest { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ResUsersSettingsVolumesPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("UserSettingId")]
-    // [InverseProperty("ResUsersSettingsVolumes")] //Many2one
     public virtual ResUsersSettings? UserSetting { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResUsersSettingsVolumesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

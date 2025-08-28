@@ -41,16 +41,13 @@ public partial class AccountSecureEntriesWizard: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountSecureEntriesWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountSecureEntriesWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountSecureEntriesWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

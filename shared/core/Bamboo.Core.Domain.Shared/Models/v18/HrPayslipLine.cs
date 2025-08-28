@@ -27,7 +27,6 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -134,71 +133,57 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("AccountCredit")]
-    // [InverseProperty("HrPayslipLineAccountCreditNavigation")] //Many2one
     public virtual AccountAccount? AccountCreditNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountDebit")]
-    // [InverseProperty("HrPayslipLineAccountDebitNavigation")] //Many2one
     public virtual AccountAccount? AccountDebitNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountTaxId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual AccountTax? AccountTax { get; set; }
 
     // [Many2one]
     [ForeignKey("AnalyticAccountId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrSalaryRuleCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ContractId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayslipLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentRuleId")]
-    // [InverseProperty("HrPayslipLineParentRule")] //Many2one
     public virtual HrSalaryRule? ParentRule { get; set; }
 
     // [Many2one]
     [ForeignKey("RegisterId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrContributionRegister? Register { get; set; }
 
     // [Many2one]
     [ForeignKey("SalaryRuleId")]
-    // [InverseProperty("HrPayslipLineSalaryRule")] //Many2one
     public virtual HrSalaryRule? SalaryRule { get; set; }
 
     // [Many2one]
     [ForeignKey("SlipId")]
-    // [InverseProperty("HrPayslipLine")] //Many2one
     public virtual HrPayslip? Slip { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayslipLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class EventLeadRequest: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -34,6 +33,5 @@ public partial class EventLeadRequest: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventLeadRequest")] //Many2one
     public virtual EventEvent? Event { get; set; }
 }

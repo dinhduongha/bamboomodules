@@ -23,7 +23,6 @@ public partial class CalendarAttendee: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -57,21 +56,17 @@ public partial class CalendarAttendee: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarAttendeeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("CalendarAttendee")] //Many2one
     public virtual CalendarEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("CalendarAttendee")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarAttendeeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

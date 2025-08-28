@@ -24,7 +24,6 @@ public partial class BlogTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -43,17 +42,16 @@ public partial class BlogTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDto
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<BlogTag> BlogTag { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BlogTagCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BlogTagCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

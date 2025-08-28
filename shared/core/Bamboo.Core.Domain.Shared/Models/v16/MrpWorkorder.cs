@@ -25,7 +25,6 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -78,12 +77,6 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("qty_reported_from_previous_wo")]
     public decimal? QtyReportedFromPreviousWo { get; set; }
 
-    [Column("date_planned_start", TypeName = "timestamp without time zone")]
-    public DateTime? DatePlannedStart { get; set; }
-
-    [Column("date_planned_finished", TypeName = "timestamp without time zone")]
-    public DateTime? DatePlannedFinished { get; set; }
-
     [Column("date_start", TypeName = "timestamp without time zone")]
     public DateTime? DateStart { get; set; }
 
@@ -108,108 +101,89 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("costs_hour")]
     public double? CostsHour { get; set; }
 
-    [Column("mo_analytic_account_line_id")]
-    public Guid? MoAnalyticAccountLineId { get; set; }
-
-    [Column("wc_analytic_account_line_id")]
-    public Guid? WcAnalyticAccountLineId { get; set; }
-
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpWorkorderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkorderId")]
-    [InverseProperty("Workorder")]
+    // [One2many] [ForeignKey("WorkorderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workorder")] // One2many
     public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
 
     // [Many2one]
     [ForeignKey("LeaveId")]
-    // [InverseProperty("MrpWorkorder")] //Many2one
     public virtual ResourceCalendarLeaves? Leave { get; set; }
 
-    // [Many2one]
-    [ForeignKey("MoAnalyticAccountLineId")]
-    // [InverseProperty("MrpWorkorderMoAnalyticAccountLine")] //Many2one
-    public virtual AccountAnalyticLine? MoAnalyticAccountLine { get; set; }
-
     // [One2many]
-    [ForeignKey("WorkorderId")]
-    [InverseProperty("Workorder")]
+    // [One2many] [ForeignKey("WorkorderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workorder")] // One2many
     public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivity { get; set; }
 
     // [Many2one]
     [ForeignKey("OperationId")]
-    // [InverseProperty("MrpWorkorder")] //Many2one
     public virtual MrpRoutingWorkcenter? Operation { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MrpWorkorder")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("MrpWorkorder")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductionId")]
-    // [InverseProperty("MrpWorkorder")] //Many2one
     public virtual MrpProduction? Production { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkorderId")]
-    [InverseProperty("Workorder")]
+    // [One2many] [ForeignKey("WorkorderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workorder")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkorderId")]
-    [InverseProperty("Workorder")]
+    // [One2many] [ForeignKey("WorkorderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workorder")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkorderId")]
-    [InverseProperty("Workorder")]
+    // [One2many] [ForeignKey("WorkorderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Workorder")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [Many2one]
-    [ForeignKey("WcAnalyticAccountLineId")]
-    // [InverseProperty("MrpWorkorderWcAnalyticAccountLine")] //Many2one
-    public virtual AccountAnalyticLine? WcAnalyticAccountLine { get; set; }
-
-    // [Many2one]
     [ForeignKey("WorkcenterId")]
-    // [InverseProperty("MrpWorkorder")] //Many2one
     public virtual MrpWorkcenter? Workcenter { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpWorkorderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpWorkorderId")] //Many2many
-    // [InverseProperty("MrpWorkorder")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpWorkorderId")] // Many2many // Normal
+    // [InverseProperty("MrpWorkorder")] // Many2many // Normal
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpWorkorderId")] //Many2many
-    // [InverseProperty("MrpWorkorderNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpWorkorderId")] // Many2many // Normal
+    // [InverseProperty("MrpWorkorderNavigation")] // Many2many // Normal
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineNavigation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WorkorderId")] //Many2many
-    // [InverseProperty("Workorder")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("WorkorderId")] // Many2many // Normal
+    // [InverseProperty("Workorder")] // Many2many // Normal
     public virtual ICollection<MrpWorkorder> BlockedBy { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BlockedById")] //Many2many
-    // [InverseProperty("BlockedBy")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("BlockedById")] // Many2many // Normal
+    // [InverseProperty("BlockedBy")] // Many2many // Normal
     public virtual ICollection<MrpWorkorder> Workorder { get; set; }
 }

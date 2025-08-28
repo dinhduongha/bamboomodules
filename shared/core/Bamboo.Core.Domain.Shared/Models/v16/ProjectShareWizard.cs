@@ -23,7 +23,6 @@ public partial class ProjectShareWizard: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -37,14 +36,8 @@ public partial class ProjectShareWizard: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("res_model")]
     public string? ResModel { get; set; }
 
-    [Column("access_mode")]
-    public string? AccessMode { get; set; }
-
     [Column("note")]
     public string? Note { get; set; }
-
-    [Column("display_access_mode")]
-    public bool? DisplayAccessMode { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -54,22 +47,21 @@ public partial class ProjectShareWizard: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectShareWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentWizardId")]
-    [InverseProperty("ParentWizard")]
+    // [One2many] [ForeignKey("ParentWizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ParentWizard")] // One2many
     public virtual ICollection<ProjectShareCollaboratorWizard> ProjectShareCollaboratorWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectShareWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProjectShareWizardId")] //Many2many
-    // [InverseProperty("ProjectShareWizard")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("ProjectShareWizardId")] // Many2many // Normal
+    // [InverseProperty("ProjectShareWizard")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

@@ -26,7 +26,6 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -63,36 +62,29 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("BadgeId")]
-    // [InverseProperty("GamificationBadgeUser")] //Many2one
     public virtual GamificationBadge? Badge { get; set; }
 
     // [Many2one]
     [ForeignKey("ChallengeId")]
-    // [InverseProperty("GamificationBadgeUser")] //Many2one
     public virtual GamificationChallenge? Challenge { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationBadgeUserCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("GamificationBadgeUser")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("SenderId")]
-    // [InverseProperty("GamificationBadgeUserSender")] //Many2one
     public virtual ResUsers? Sender { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("GamificationBadgeUserUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationBadgeUserWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

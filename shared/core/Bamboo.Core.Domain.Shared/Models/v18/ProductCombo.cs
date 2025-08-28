@@ -24,7 +24,6 @@ public partial class ProductCombo: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -46,32 +45,31 @@ public partial class ProductCombo: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductCombo")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductComboCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ComboId")]
-    [InverseProperty("Combo")]
+    // [One2many] [ForeignKey("ComboId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Combo")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ComboId")]
-    [InverseProperty("Combo")]
+    // [One2many] [ForeignKey("ComboId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Combo")] // One2many
     public virtual ICollection<ProductComboItem> ProductComboItem { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductComboWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("ProductComboId")] //Many2many
-    // [InverseProperty("ProductCombo")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductComboId")] //Many2many // Hidden
+    // [InverseProperty("ProductCombo")] //Many2many // Hidden
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

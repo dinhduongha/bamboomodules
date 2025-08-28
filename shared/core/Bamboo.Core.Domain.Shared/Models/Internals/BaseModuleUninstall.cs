@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BaseModuleUninstall: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("module_id")]
     public Guid? ModuleId { get; set; }
@@ -44,16 +44,13 @@ public partial class BaseModuleUninstall: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BaseModuleUninstallCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ModuleId")]
-    // [InverseProperty("BaseModuleUninstall")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BaseModuleUninstallWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class ProjectProjectStageDeleteWizard: FullAuditedEntity<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class ProjectProjectStageDeleteWizard: FullAuditedEntity<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectProjectStageDeleteWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectProjectStageDeleteWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("ProjectProjectStageDeleteWizardId")] //Many2many
-    [InverseProperty("ProjectProjectStageDeleteWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProjectProjectStageDeleteWizardId")] // Many2many // Normal
+    // [InverseProperty("ProjectProjectStageDeleteWizard")] // Many2many // Normal
     public virtual ICollection<ProjectProjectStage> ProjectProjectStage { get; set; }
 }

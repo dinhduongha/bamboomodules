@@ -23,7 +23,6 @@ public partial class StockTrackConfirmation: FullAuditedAggregateRoot<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,28 +38,27 @@ public partial class StockTrackConfirmation: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockTrackConfirmationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<StockTrackLine> StockTrackLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockTrackConfirmationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockTrackConfirmationId")] //Many2many
-    // [InverseProperty("StockTrackConfirmation")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
+    // [ForeignKey("StockTrackConfirmationId")] // Many2many // Normal
+    // [InverseProperty("StockTrackConfirmation")] // Many2many // Normal
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockTrackConfirmationId")] //Many2many
-    // [InverseProperty("StockTrackConfirmation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockTrackConfirmationId")] // Many2many // Normal
+    // [InverseProperty("StockTrackConfirmation")] // Many2many // Normal
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 }

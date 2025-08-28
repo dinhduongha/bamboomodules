@@ -25,10 +25,6 @@ public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("survey_id")]
     public Guid? SurveyId { get; set; }
@@ -93,9 +89,6 @@ public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("scoring_percentage")]
     public double? ScoringPercentage { get; set; }
 
-    // [Column("scoring_total")]
-    // public double? ScoringTotal { get; set; }
-
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
 
@@ -107,62 +100,45 @@ public partial class SurveyUserInput: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("ApplicantId")]
-    // [InverseProperty("SurveyUserInput")] //Many2one
     public virtual HrApplicant? Applicant { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SurveyUserInputCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
-
-    // [One2many]
-    [ForeignKey("ResponseId")]
-    [InverseProperty("Response")]
-    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [Many2one]
     [ForeignKey("LastDisplayedPageId")]
-    // [InverseProperty("SurveyUserInputNavigation")] //Many2one
     public virtual SurveyQuestion? LastDisplayedPage { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("SurveyUserInput")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("SurveyUserInput")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("SlideId")]
-    // [InverseProperty("SurveyUserInput")] //Many2one
     public virtual SlideSlide? Slide { get; set; }
 
     // [Many2one]
     [ForeignKey("SlidePartnerId")]
-    // [InverseProperty("SurveyUserInput")] //Many2one
     public virtual SlideSlidePartner? SlidePartner { get; set; }
 
     // [Many2one]
     [ForeignKey("SurveyId")]
-    // [InverseProperty("SurveyUserInput")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
     // [One2many]
-    [ForeignKey("UserInputId")]
-    [InverseProperty("UserInput")]
+    // [One2many] [ForeignKey("UserInputId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UserInput")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SurveyUserInputWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SurveyUserInputId")] //Many2many
-    // [InverseProperty("SurveyUserInput")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SurveyUserInputId")] // Many2many // Normal
+    // [InverseProperty("SurveyUserInput")] // Many2many // Normal
     public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 }

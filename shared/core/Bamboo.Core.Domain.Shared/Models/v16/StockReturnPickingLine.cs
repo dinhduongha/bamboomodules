@@ -23,7 +23,6 @@ public partial class StockReturnPickingLine: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -54,26 +53,21 @@ public partial class StockReturnPickingLine: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockReturnPickingLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("StockReturnPickingLine")] //Many2one
     public virtual StockMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockReturnPickingLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("StockReturnPickingLine")] //Many2one
     public virtual StockReturnPicking? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockReturnPickingLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

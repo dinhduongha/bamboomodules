@@ -23,7 +23,6 @@ public partial class GamificationBadgeUserWizard: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -51,26 +50,21 @@ public partial class GamificationBadgeUserWizard: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("BadgeId")]
-    // [InverseProperty("GamificationBadgeUserWizard")] //Many2one
     public virtual GamificationBadge? Badge { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationBadgeUserWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("GamificationBadgeUserWizard")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("GamificationBadgeUserWizardUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationBadgeUserWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

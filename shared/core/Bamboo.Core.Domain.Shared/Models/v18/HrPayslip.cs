@@ -24,7 +24,6 @@ public partial class HrPayslip: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("struct_id")]
     public Guid? StructId { get; set; }
@@ -85,61 +84,55 @@ public partial class HrPayslip: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ContractId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayslipCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [One2many]
-    [ForeignKey("PayslipId")]
-    [InverseProperty("Payslip")]
+    // [One2many] [ForeignKey("PayslipId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Payslip")] // One2many
     public virtual ICollection<HrPayslipInput> HrPayslipInput { get; set; }
 
     // [One2many]
-    [ForeignKey("SlipId")]
-    [InverseProperty("Slip")]
+    // [One2many] [ForeignKey("SlipId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Slip")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
-    [ForeignKey("PayslipId")]
-    [InverseProperty("Payslip")]
+    // [One2many] [ForeignKey("PayslipId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Payslip")] // One2many
     public virtual ICollection<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("PayslipRunId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrPayslipRun? PayslipRun { get; set; }
 
     // [Many2one]
     [ForeignKey("StructId")]
-    // [InverseProperty("HrPayslip")] //Many2one
     public virtual HrPayrollStructure? Struct { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayslipWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

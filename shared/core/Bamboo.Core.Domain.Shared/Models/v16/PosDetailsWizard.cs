@@ -23,7 +23,6 @@ public partial class PosDetailsWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,17 +44,15 @@ public partial class PosDetailsWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosDetailsWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosDetailsWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PosDetailsWizardId")] //Many2many
-    // [InverseProperty("PosDetailsWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PosDetailsWizardId")] // Many2many // Normal
+    // [InverseProperty("PosDetailsWizard")] // Many2many // Normal
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

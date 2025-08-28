@@ -25,7 +25,6 @@ public partial class GamificationKarmaTracking: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -65,16 +64,13 @@ public partial class GamificationKarmaTracking: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationKarmaTrackingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("GamificationKarmaTrackingUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationKarmaTrackingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

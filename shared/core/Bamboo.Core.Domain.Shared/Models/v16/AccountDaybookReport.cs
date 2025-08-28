@@ -23,7 +23,6 @@ public partial class AccountDaybookReport: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -48,23 +47,21 @@ public partial class AccountDaybookReport: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountDaybookReportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountDaybookReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ReportLineId")] //Many2many
-    // [InverseProperty("ReportLine1")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (AccountAccount) is commented out
+    // [ForeignKey("ReportLineId")] // Many2many // Normal
+    // [InverseProperty("ReportLine1")] // Many2many // Normal
     public virtual ICollection<AccountAccount> Account { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountDaybookReportId")] //Many2many
-    // [InverseProperty("AccountDaybookReport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountDaybookReportId")] // Many2many // Normal
+    // [InverseProperty("AccountDaybookReport")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -54,9 +53,6 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("has_seats_limitation")]
     public bool? HasSeatsLimitation { get; set; }
 
-    [Column("auto_confirm")]
-    public bool? AutoConfirm { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -68,9 +64,6 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("community_menu")]
     public bool? CommunityMenu { get; set; }
-
-    [Column("menu_register_cta")]
-    public bool? MenuRegisterCta { get; set; }
 
     [Column("booth_menu")]
     public bool? BoothMenu { get; set; }
@@ -87,63 +80,65 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("website_track_proposal")]
     public bool? WebsiteTrackProposal { get; set; }
 
-    // [Column("meeting_room_allow_creation")]
-    // public bool? MeetingRoomAllowCreation { get; set; }
-
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventEventTicket> EventEventTicket { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventQuestion> EventQuestion { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventTypeBooth> EventTypeBooth { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventTypeMail> EventTypeMail { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTypeId")]
-    [InverseProperty("EventType")]
+    // [One2many] [ForeignKey("EventTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventTypeTicket> EventTypeTicket { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventType")]
+    // [ForeignKey("EventTypeId")] //Many2many // Hidden
+    // [InverseProperty("EventType")] //Many2many // Hidden
     public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EventTypeId")] //Many2many
-    // [InverseProperty("EventType")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventTypeId")] // Many2many // Normal
+    // [InverseProperty("EventType")] // Many2many // Normal
     public virtual ICollection<EventTag> EventTag { get; set; }
 }

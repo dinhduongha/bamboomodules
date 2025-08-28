@@ -23,7 +23,6 @@ public partial class MrpProductionBackorderLine: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mrp_production_backorder_id")]
     public Guid? MrpProductionBackorderId { get; set; }
@@ -48,21 +47,17 @@ public partial class MrpProductionBackorderLine: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpProductionBackorderLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MrpProductionId")]
-    // [InverseProperty("MrpProductionBackorderLine")] //Many2one
     public virtual MrpProduction? MrpProduction { get; set; }
 
     // [Many2one]
     [ForeignKey("MrpProductionBackorderId")]
-    // [InverseProperty("MrpProductionBackorderLine")] //Many2one
     public virtual MrpProductionBackorder? MrpProductionBackorder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpProductionBackorderLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

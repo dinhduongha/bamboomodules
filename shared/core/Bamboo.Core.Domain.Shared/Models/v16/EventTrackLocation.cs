@@ -23,7 +23,6 @@ public partial class EventTrackLocation: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -45,16 +44,15 @@ public partial class EventTrackLocation: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTrackLocationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LocationId")]
-    [InverseProperty("Location")]
+    // [One2many] [ForeignKey("LocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Location")] // One2many
     public virtual ICollection<EventTrack> EventTrack { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTrackLocationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

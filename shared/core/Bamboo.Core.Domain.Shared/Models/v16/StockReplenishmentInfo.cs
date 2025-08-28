@@ -23,7 +23,6 @@ public partial class StockReplenishmentInfo: FullAuditedAggregateRoot<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("orderpoint_id")]
     public Guid? OrderpointId { get; set; }
@@ -42,27 +41,25 @@ public partial class StockReplenishmentInfo: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockReplenishmentInfoCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderpointId")]
-    // [InverseProperty("StockReplenishmentInfo")] //Many2one
     public virtual StockWarehouseOrderpoint? Orderpoint { get; set; }
 
     // [One2many]
-    [ForeignKey("ReplenishmentInfoId")]
-    [InverseProperty("ReplenishmentInfo")]
+    // [One2many] [ForeignKey("ReplenishmentInfoId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReplenishmentInfo")] // One2many
     public virtual ICollection<StockReplenishmentOption> StockReplenishmentOption { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockReplenishmentInfoWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockReplenishmentInfoId")] //Many2many
-    // [InverseProperty("StockReplenishmentInfo")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockReplenishmentInfoId")] // Many2many // Normal
+    // [InverseProperty("StockReplenishmentInfo")] // Many2many // Normal
     public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
 }

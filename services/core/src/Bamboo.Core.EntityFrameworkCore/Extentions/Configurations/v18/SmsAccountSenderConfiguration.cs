@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Bamboo.Core.Models;
-// Cần thêm using đến namespace chứa entity của bạn ở đây
-// Ví dụ: using YourProject.Entities;
 
 namespace Bamboo.Core.EntityFrameworkCore
 {
@@ -15,48 +14,52 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
             entity.HasKey(e => e.Id).HasName("sms_account_sender_pkey");
 
-            entity.ToTable("sms_account_sender");
+                        entity.ToTable("sms_account_sender");
 
-            entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.TenantId);
 
-            entity.HasIndex(e => e.OrganizationUnitId);
+                        entity.HasIndex(e => e.OrganizationUnitId);
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("next_uuid()")
-                .HasColumnName("id");
+                        entity.Property(e => e.Id)
+                            .HasDefaultValueSql("next_uuid()")
+                            .HasColumnName("id");
 
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+                        entity.Property(e => e.TenantId).HasColumnName("company_id");
 
-            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
-            entity.Property(e => e.CreationTime)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("create_date");
-            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-            entity.Property(e => e.SenderName).HasColumnName("sender_name");
-            entity.Property(e => e.LastModificationTime)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("write_date");
-            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+                        entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.AccountId).HasColumnName("account_id");
+                        entity.Property(e => e.CreationTime)
+                            .HasDefaultValueSql("now()")
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("create_date");
+                        entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.SenderName).HasColumnName("sender_name");
+                        entity.Property(e => e.LastModificationTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("write_date");
+                        entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            // entity.HasOne(d => d.Account).WithMany(p => p.SmsAccountSender)
-            entity.HasOne(d => d.Account).WithMany()
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("sms_account_sender_account_id_fkey");
+                        // entity.HasOne(d => d.Account).WithMany(p => p.SmsAccountSender) .HasForeignKey(d => d.AccountId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("sms_account_sender_account_id_fkey");
+                        entity.HasOne(d => d.Account).WithMany()
+                            .HasForeignKey(d => d.AccountId)
+                            .OnDelete(DeleteBehavior.Cascade)
+                            .HasConstraintName("sms_account_sender_account_id_fkey");
 
-            // entity.HasOne(d => d.CreateU).WithMany(p => p.SmsAccountSenderCreateU)
-            entity.HasOne(d => d.CreateU).WithMany()
-                .HasForeignKey(d => d.CreatorId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("sms_account_sender_create_uid_fkey");
+                        // entity.HasOne(d => d.CreateU).WithMany(p => p.SmsAccountSenderCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("sms_account_sender_create_uid_fkey");
+                        entity.HasOne(d => d.CreateU).WithMany()
+                            .HasForeignKey(d => d.CreatorId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("sms_account_sender_create_uid_fkey");
 
-            // entity.HasOne(d => d.WriteU).WithMany(p => p.SmsAccountSenderWriteU)
-            entity.HasOne(d => d.WriteU).WithMany()
-                .HasForeignKey(d => d.LastModifierId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("sms_account_sender_write_uid_fkey");
+                        // entity.HasOne(d => d.WriteU).WithMany(p => p.SmsAccountSenderWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("sms_account_sender_write_uid_fkey");
+                        entity.HasOne(d => d.WriteU).WithMany()
+                            .HasForeignKey(d => d.LastModifierId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("sms_account_sender_write_uid_fkey");
+
+                entity.TryConfigureExtraProperties();
+                entity.TryConfigureObjectExtensions();
+                entity.TryConfigureConcurrencyStamp();
             });
         }
     }

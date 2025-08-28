@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
-using Bamboo.Core.Models;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Entities;
+
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application
 {

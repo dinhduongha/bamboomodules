@@ -23,7 +23,6 @@ public partial class HrContractAdvantageTemplate: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -54,11 +53,9 @@ public partial class HrContractAdvantageTemplate: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrContractAdvantageTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrContractAdvantageTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

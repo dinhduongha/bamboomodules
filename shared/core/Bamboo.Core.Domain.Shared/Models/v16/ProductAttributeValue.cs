@@ -14,7 +14,6 @@ namespace Bamboo.Core.Models;
 [Table("product_attribute_value")]
 //[Index("AttributeId", Name = "product_attribute_value__attribute_id_index")]
 //[Index("Sequence", Name = "product_attribute_value__sequence_index")]
-//[Index("Name", "AttributeId", Name = "product_attribute_value_value_company_uniq", IsUnique = true)]
 public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -26,7 +25,6 @@ public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -67,32 +65,31 @@ public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("AttributeId")]
-    // [InverseProperty("ProductAttributeValue")] //Many2one
     public virtual ProductAttribute? Attribute { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductAttributeValueCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductAttributeValueId")]
-    [InverseProperty("ProductAttributeValue")]
+    // [One2many] [ForeignKey("ProductAttributeValueId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductAttributeValue")] // One2many
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 
     // [One2many]
-    [ForeignKey("AttributeValueId")]
-    [InverseProperty("AttributeValue")]
+    // [One2many] [ForeignKey("AttributeValueId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AttributeValue")] // One2many
     public virtual ICollection<UpdateProductAttributeValue> UpdateProductAttributeValue { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductAttributeValueWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductAttributeValueId")] //Many2many
-    // [InverseProperty("ProductAttributeValue")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductAttributeValueId")] // Many2many // Normal
+    // [InverseProperty("ProductAttributeValue")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLine { get; set; }
 }

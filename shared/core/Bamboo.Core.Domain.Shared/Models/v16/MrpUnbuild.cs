@@ -24,10 +24,6 @@ public partial class MrpUnbuild: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -73,71 +69,59 @@ public partial class MrpUnbuild: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("BomId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpUnbuildCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("MrpUnbuildLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationDestId")]
-    // [InverseProperty("MrpUnbuildLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("LotId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("MoId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual MrpProduction? Mo { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("MrpUnbuild")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [One2many]
-    [ForeignKey("ConsumeUnbuildId")]
-    [InverseProperty("ConsumeUnbuild")]
+    // [One2many] [ForeignKey("ConsumeUnbuildId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ConsumeUnbuild")] // One2many
     public virtual ICollection<StockMove> StockMoveConsumeUnbuild { get; set; }
 
     // [One2many]
-    [ForeignKey("UnbuildId")]
-    [InverseProperty("Unbuild")]
+    // [One2many] [ForeignKey("UnbuildId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Unbuild")] // One2many
     public virtual ICollection<StockMove> StockMoveUnbuild { get; set; }
 
     // [One2many]
-    [ForeignKey("UnbuildId")]
-    [InverseProperty("Unbuild")]
+    // [One2many] [ForeignKey("UnbuildId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Unbuild")] // One2many
     public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuild { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpUnbuildWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

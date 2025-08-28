@@ -12,7 +12,6 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_edi_proxy_client_user")]
-//[Index("EdiIdentification", "EdiFormatId", Name = "account_edi_proxy_client_user_unique_edi_identification_per_for", IsUnique = true)]
 //[Index("IdClient", Name = "account_edi_proxy_client_user_unique_id_client", IsUnique = true)]
 public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -28,9 +27,6 @@ public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, 
 
     [Column("private_key_id")]
     public Guid? PrivateKeyId { get; set; }
-
-    [Column("edi_format_id")]
-    public Guid? EdiFormatId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -62,39 +58,28 @@ public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [Column("private_key")]
-    public byte[]? PrivateKey { get; set; }
-
     [Column("peppol_verification_code")]
     public string? PeppolVerificationCode { get; set; }
 
     // [One2many]
-    [ForeignKey("EdiUserId")]
-    [InverseProperty("EdiUser")]
+    // [One2many] [ForeignKey("EdiUserId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EdiUser")] // One2many
     public virtual ICollection<AccountPeppolServiceWizard> AccountPeppolServiceWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountEdiProxyClientUser")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountEdiProxyClientUserCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PrivateKeyId")]
-    // [InverseProperty("AccountEdiProxyClientUser")] //Many2one
-    public virtual CertificateKey? PrivateKeyCert { get; set; }
-
-    // [Many2one]
-    [ForeignKey("EdiFormatId")]
-    // [InverseProperty("AccountEdiProxyClientUser")] //Many2one
-    public virtual AccountEdiFormat? EdiFormat { get; set; }
+    public virtual CertificateKey? PrivateKey { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountEdiProxyClientUserWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

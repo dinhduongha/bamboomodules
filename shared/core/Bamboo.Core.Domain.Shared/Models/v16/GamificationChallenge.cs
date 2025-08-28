@@ -23,10 +23,6 @@ public partial class GamificationChallenge: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("manager_id")]
     public Guid? ManagerId { get; set; }
@@ -110,83 +106,67 @@ public partial class GamificationChallenge: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationChallengeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ChallengeId")]
-    [InverseProperty("Challenge")]
+    // [One2many] [ForeignKey("ChallengeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Challenge")] // One2many
     public virtual ICollection<GamificationBadgeUser> GamificationBadgeUser { get; set; }
 
     // [One2many]
-    [ForeignKey("ChallengeId")]
-    [InverseProperty("Challenge")]
+    // [One2many] [ForeignKey("ChallengeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Challenge")] // One2many
     public virtual ICollection<GamificationChallengeLine> GamificationChallengeLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ChallengeId")]
-    [InverseProperty("Challenge")]
+    // [One2many] [ForeignKey("ChallengeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Challenge")] // One2many
     public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
     // [Many2one]
     [ForeignKey("ManagerId")]
-    // [InverseProperty("GamificationChallengeManager")] //Many2one
     public virtual ResUsers? Manager { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("GamificationChallenge")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ReportMessageGroupId")]
-    // [InverseProperty("GamificationChallenge")] //Many2one
     public virtual DiscussChannel? ReportMessageGroup { get; set; }
-
-    // // [Many2one]
-    // [ForeignKey("ReportMessageGroupId")]
-    // // [InverseProperty("GamificationChallenge")] //Many2one
-    // public virtual MailChannel? ReportMessageGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportTemplateId")]
-    // [InverseProperty("GamificationChallenge")] //Many2one
     public virtual MailTemplate? ReportTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardId")]
-    // [InverseProperty("GamificationChallengeReward")] //Many2one
     public virtual GamificationBadge? Reward { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardFirstId")]
-    // [InverseProperty("GamificationChallengeRewardFirst")] //Many2one
     public virtual GamificationBadge? RewardFirst { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardSecondId")]
-    // [InverseProperty("GamificationChallengeRewardSecond")] //Many2one
     public virtual GamificationBadge? RewardSecond { get; set; }
 
     // [Many2one]
     [ForeignKey("RewardThirdId")]
-    // [InverseProperty("GamificationChallengeRewardThird")] //Many2one
     public virtual GamificationBadge? RewardThird { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationChallengeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("GamificationChallengeId")] //Many2many
-    // [InverseProperty("GamificationChallenge")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("GamificationChallengeId")] // Many2many // Normal
+    // [InverseProperty("GamificationChallenge")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("GamificationChallengeId")] //Many2many
-    // [InverseProperty("GamificationChallengeNavigation")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("GamificationChallengeId")] // Many2many // Normal
+    // [InverseProperty("GamificationChallengeNavigation")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsersNavigation { get; set; }
 }

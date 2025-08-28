@@ -23,7 +23,6 @@ public partial class EventMailRegistration: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("scheduler_id")]
     public Guid? SchedulerId { get; set; }
@@ -51,21 +50,17 @@ public partial class EventMailRegistration: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventMailRegistrationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RegistrationId")]
-    // [InverseProperty("EventMailRegistration")] //Many2one
     public virtual EventRegistration? Registration { get; set; }
 
     // [Many2one]
     [ForeignKey("SchedulerId")]
-    // [InverseProperty("EventMailRegistration")] //Many2one
     public virtual EventMail? Scheduler { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventMailRegistrationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

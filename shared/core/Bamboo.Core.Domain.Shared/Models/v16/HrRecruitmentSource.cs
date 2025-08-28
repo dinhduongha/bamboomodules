@@ -23,7 +23,6 @@ public partial class HrRecruitmentSource: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("source_id")]
     public Guid? SourceId { get; set; }
@@ -51,31 +50,25 @@ public partial class HrRecruitmentSource: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("AliasId")]
-    // [InverseProperty("HrRecruitmentSource")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrRecruitmentSourceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JobId")]
-    // [InverseProperty("HrRecruitmentSource")] //Many2one
     public virtual HrJob? Job { get; set; }
 
     // [Many2one]
     [ForeignKey("MediumId")]
-    // [InverseProperty("HrRecruitmentSource")] //Many2one
     public virtual UtmMedium? Medium { get; set; }
 
     // [Many2one]
     [ForeignKey("SourceId")]
-    // [InverseProperty("HrRecruitmentSource")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrRecruitmentSourceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

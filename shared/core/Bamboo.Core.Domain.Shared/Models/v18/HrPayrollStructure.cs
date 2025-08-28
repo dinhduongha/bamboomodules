@@ -50,42 +50,41 @@ public partial class HrPayrollStructure: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrPayrollStructure")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayrollStructureCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("StructId")]
-    [InverseProperty("Struct")]
+    // [One2many] [ForeignKey("StructId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Struct")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
-    [ForeignKey("StructId")]
-    [InverseProperty("Struct")]
+    // [One2many] [ForeignKey("StructId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Struct")] // One2many
     public virtual ICollection<HrPayslip> HrPayslip { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<HrPayrollStructure> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual HrPayrollStructure? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayrollStructureWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("StructId")] //Many2many
-    [InverseProperty("Struct")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StructId")] // Many2many // Normal
+    // [InverseProperty("Struct")] // Many2many // Normal
     public virtual ICollection<HrSalaryRule> Rule { get; set; }
 }

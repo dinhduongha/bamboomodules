@@ -23,7 +23,6 @@ public partial class ThemeWebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("view_id")]
     public Guid? ViewId { get; set; }
@@ -66,26 +65,25 @@ public partial class ThemeWebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ThemeWebsitePageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PageId")]
-    [InverseProperty("Page")]
+    // [One2many] [ForeignKey("PageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Page")] // One2many
     public virtual ICollection<ThemeWebsiteMenu> ThemeWebsiteMenu { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("ThemeWebsitePage")] //Many2one
     public virtual ThemeIrUiView? View { get; set; }
 
     // [One2many]
-    [ForeignKey("ThemeTemplateId")]
-    [InverseProperty("ThemeTemplate")]
+    // [One2many] [ForeignKey("ThemeTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ThemeTemplate")] // One2many
     public virtual ICollection<WebsitePage> WebsitePage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ThemeWebsitePageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class DeliveryPriceRule: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -63,16 +62,13 @@ public partial class DeliveryPriceRule: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CarrierId")]
-    // [InverseProperty("DeliveryPriceRule")] //Many2one
     public virtual DeliveryCarrier? Carrier { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DeliveryPriceRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DeliveryPriceRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -41,27 +41,25 @@ public partial class AccountBudgetPost: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountBudgetPost")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountBudgetPostCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("GeneralBudgetId")]
-    [InverseProperty("GeneralBudget")]
+    // [One2many] [ForeignKey("GeneralBudgetId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GeneralBudget")] // One2many
     public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountBudgetPostWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BudgetId")] //Many2many
-    // [InverseProperty("Budget")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (AccountAccount) is commented out
+    // [ForeignKey("BudgetId")] // Many2many // Normal
+    // [InverseProperty("Budget")] // Many2many // Normal
     public virtual ICollection<AccountAccount> Account { get; set; }
 }

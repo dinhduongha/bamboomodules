@@ -296,7 +296,9 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         var lstTypes = new List<System.Type>();
         lstTypes.Add(typeof(AccountAccount));
         lstTypes.Add(typeof(AccountAccountTag));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountAccountTemplate));
+#endif
         lstTypes.Add(typeof(AccountAccountType));
         lstTypes.Add(typeof(AccountAccruedOrdersWizard));
         lstTypes.Add(typeof(AccountAgedTrialBalance));
@@ -311,14 +313,18 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(AccountAutomaticEntryWizard));
         lstTypes.Add(typeof(AccountBalanceReport));
         lstTypes.Add(typeof(AccountBankStatement));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountBankStatementImport));
         lstTypes.Add(typeof(AccountBankStatementImportJournalCreation));
+#endif
         lstTypes.Add(typeof(AccountBankStatementLine));
         lstTypes.Add(typeof(AccountBankbookReport));
         lstTypes.Add(typeof(AccountBudgetPost));
         lstTypes.Add(typeof(AccountCashRounding));
         lstTypes.Add(typeof(AccountCashbookReport));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountChartTemplate));
+#endif
         lstTypes.Add(typeof(AccountCommonAccountReport));
         lstTypes.Add(typeof(AccountCommonJournalReport));
         lstTypes.Add(typeof(AccountCommonPartnerReport));
@@ -330,16 +336,24 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(AccountFinancialYearOp));
         lstTypes.Add(typeof(AccountFiscalPosition));
         lstTypes.Add(typeof(AccountFiscalPositionAccount));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountFiscalPositionAccountTemplate));
+#endif        
         lstTypes.Add(typeof(AccountFiscalPositionTax));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountFiscalPositionTaxTemplate));
         lstTypes.Add(typeof(AccountFiscalPositionTemplate));
+#endif        
         lstTypes.Add(typeof(AccountFiscalYear));
         lstTypes.Add(typeof(AccountFullReconcile));
         lstTypes.Add(typeof(AccountGroup));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountGroupTemplate));
+#endif        
         lstTypes.Add(typeof(AccountIncoterms));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountInvoiceSend));
+#endif        
         lstTypes.Add(typeof(AccountJournal));
         lstTypes.Add(typeof(AccountJournalGroup));
         lstTypes.Add(typeof(AccountMove));
@@ -355,9 +369,13 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(AccountPrintJournal));
         lstTypes.Add(typeof(AccountReconcileModel));
         lstTypes.Add(typeof(AccountReconcileModelLine));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountReconcileModelLineTemplate));
+#endif
         lstTypes.Add(typeof(AccountReconcileModelPartnerMapping));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountReconcileModelTemplate));
+#endif        
         lstTypes.Add(typeof(AccountRecurringTemplate));
         lstTypes.Add(typeof(AccountReport));
         lstTypes.Add(typeof(AccountReportColumn));
@@ -371,12 +389,16 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(AccountTax));
         lstTypes.Add(typeof(AccountTaxGroup));
         lstTypes.Add(typeof(AccountTaxRepartitionLine));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountTaxRepartitionLineTemplate));
+#endif        
         lstTypes.Add(typeof(AccountTaxReportWizard));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(AccountTaxTemplate));
         lstTypes.Add(typeof(AccountTourUploadBill));
         lstTypes.Add(typeof(AccountTourUploadBillEmailConfirm));
         lstTypes.Add(typeof(AccountUnreconcile));
+#endif        
         lstTypes.Add(typeof(AccountingReport));
         lstTypes.Add(typeof(ApplicantGetRefuseReason));
         lstTypes.Add(typeof(ApplicantSendMail));
@@ -390,6 +412,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(BaseEnableProfilingWizard));
         lstTypes.Add(typeof(BaseImportImport));
         lstTypes.Add(typeof(BaseImportMapping));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(BaseImportTestsModelsChar));
         lstTypes.Add(typeof(BaseImportTestsModelsCharNoreadonly));
         lstTypes.Add(typeof(BaseImportTestsModelsCharReadonly));
@@ -405,6 +428,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(BaseImportTestsModelsO2m));
         lstTypes.Add(typeof(BaseImportTestsModelsO2mChild));
         lstTypes.Add(typeof(BaseImportTestsModelsPreview));
+#endif        
         lstTypes.Add(typeof(BaseLanguageExport));
         lstTypes.Add(typeof(BaseLanguageImport));
         lstTypes.Add(typeof(BaseLanguageInstall));
@@ -474,7 +498,9 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(HrApplicant));
         lstTypes.Add(typeof(HrApplicantCategory));
         lstTypes.Add(typeof(HrApplicantRefuseReason));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(HrApplicantSkill));
+#endif        
         lstTypes.Add(typeof(HrAttendance));
         lstTypes.Add(typeof(HrAttendanceOvertime));
         lstTypes.Add(typeof(HrContract));
@@ -499,12 +525,16 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(HrLeaveAccrualLevel));
         lstTypes.Add(typeof(HrLeaveAccrualPlan));
         lstTypes.Add(typeof(HrLeaveAllocation));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(HrLeaveStressDay));
+#endif        
         lstTypes.Add(typeof(HrLeaveType));
         lstTypes.Add(typeof(HrPayrollStructureType));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(HrPlan));
         lstTypes.Add(typeof(HrPlanActivityType));
         lstTypes.Add(typeof(HrPlanWizard));
+#endif        
         lstTypes.Add(typeof(HrRecruitmentDegree));
         lstTypes.Add(typeof(HrRecruitmentSource));
         lstTypes.Add(typeof(HrRecruitmentStage));
@@ -518,7 +548,7 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrActClient));
         lstTypes.Add(typeof(IrActReportXml));
         lstTypes.Add(typeof(IrActServer));
-        lstTypes.Add(typeof(IrActionsActUrl));
+        //lstTypes.Add(typeof(IrActionsActUrl));
         lstTypes.Add(typeof(IrActWindow));
         lstTypes.Add(typeof(IrActWindowView));
         lstTypes.Add(typeof(IrActions));
@@ -549,11 +579,15 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(IrModuleModuleDependency));
         lstTypes.Add(typeof(IrModuleModuleExclusion));
         lstTypes.Add(typeof(IrProfile));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(IrProperty));
+#endif        
         lstTypes.Add(typeof(IrRule));
         lstTypes.Add(typeof(IrSequence));
         lstTypes.Add(typeof(IrSequenceDateRange));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(IrServerObjectLines));
+#endif        
         lstTypes.Add(typeof(IrUiMenu));
         lstTypes.Add(typeof(IrUiView));
         lstTypes.Add(typeof(IrUiViewCustom));
@@ -571,9 +605,11 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(MailAlias));
         lstTypes.Add(typeof(MailBlacklist));
         lstTypes.Add(typeof(MailBlacklistRemove));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(MailChannel));
         lstTypes.Add(typeof(MailChannelMember));
         lstTypes.Add(typeof(MailChannelRtcSession));
+#endif        
         lstTypes.Add(typeof(MailComposeMessage));
         lstTypes.Add(typeof(MailFollowers));
         lstTypes.Add(typeof(MailGatewayAllowed));
@@ -588,7 +624,9 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(MailNotification));
         lstTypes.Add(typeof(MailResendMessage));
         lstTypes.Add(typeof(MailResendPartner));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(MailShortcode));
+#endif        
         lstTypes.Add(typeof(MailTemplate));
         lstTypes.Add(typeof(MailTemplatePreview));
         lstTypes.Add(typeof(MailTemplateReset));
@@ -604,9 +642,11 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(MrpBomLine));
         lstTypes.Add(typeof(MrpConsumptionWarning));
         lstTypes.Add(typeof(MrpConsumptionWarningLine));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(MrpDocument));
         lstTypes.Add(typeof(MrpImmediateProduction));
         lstTypes.Add(typeof(MrpImmediateProductionLine));
+#endif        
         lstTypes.Add(typeof(MrpProduction));
         lstTypes.Add(typeof(MrpProductionBackorder));
         lstTypes.Add(typeof(MrpProductionBackorderLine));
@@ -622,11 +662,15 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(MrpWorkcenterProductivityLossType));
         lstTypes.Add(typeof(MrpWorkcenterTag));
         lstTypes.Add(typeof(MrpWorkorder));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(NoteNote));
         lstTypes.Add(typeof(NoteStage));
         lstTypes.Add(typeof(NoteTag));
+#endif        
         lstTypes.Add(typeof(PartnerStatRel));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(PaymentIcon));
+#endif        
         lstTypes.Add(typeof(PaymentLinkWizard));
         lstTypes.Add(typeof(PaymentProvider));
         lstTypes.Add(typeof(PaymentProviderOnboardingWizard));
@@ -651,7 +695,9 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(PosPayment));
         lstTypes.Add(typeof(PosPaymentMethod));
         lstTypes.Add(typeof(PosSession));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(PosSessionCheckProductWizard));
+#endif        
         lstTypes.Add(typeof(PrivacyLog));
         lstTypes.Add(typeof(PrivacyLookupWizard));
         lstTypes.Add(typeof(PrivacyLookupWizardLine));
@@ -693,17 +739,23 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(RatingRating));
         lstTypes.Add(typeof(RecurringPayment));
         lstTypes.Add(typeof(RecurringPaymentLine));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(RepairFee));
         lstTypes.Add(typeof(RepairLine));
+#endif        
         lstTypes.Add(typeof(RepairOrder));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(RepairOrderMakeInvoice));
+#endif        
         lstTypes.Add(typeof(RepairTags));
         lstTypes.Add(typeof(ReportLayout));
         lstTypes.Add(typeof(ReportPaperformat));
         lstTypes.Add(typeof(ResBank));
         lstTypes.Add(typeof(ResCompany));
         lstTypes.Add(typeof(ResConfig));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(ResConfigInstaller));
+#endif        
         lstTypes.Add(typeof(ResConfigSettings));
         lstTypes.Add(typeof(ResCountry));
         lstTypes.Add(typeof(ResCountryGroup));
@@ -747,18 +799,24 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(SmsTemplate));
         lstTypes.Add(typeof(SmsTemplatePreview));
         lstTypes.Add(typeof(SmsTemplateReset));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(SnailmailConfirmInvoice));
+#endif        
         lstTypes.Add(typeof(SnailmailLetter));
         lstTypes.Add(typeof(SnailmailLetterFormatError));
         lstTypes.Add(typeof(SnailmailLetterMissingRequiredFields));
         lstTypes.Add(typeof(SpreadsheetDashboard));
         lstTypes.Add(typeof(SpreadsheetDashboardGroup));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(StockAssignSerial));
+#endif        
         lstTypes.Add(typeof(StockBackorderConfirmation));
         lstTypes.Add(typeof(StockBackorderConfirmationLine));
         lstTypes.Add(typeof(StockChangeProductQty));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(StockImmediateTransfer));
         lstTypes.Add(typeof(StockImmediateTransferLine));
+#endif        
         lstTypes.Add(typeof(StockInventoryAdjustmentName));
         lstTypes.Add(typeof(StockInventoryConflict));
         lstTypes.Add(typeof(StockInventoryWarning));
@@ -784,7 +842,9 @@ public partial class %NameModel%ClientProxy : ClientProxyBase<I%NameModel%AppSer
         lstTypes.Add(typeof(StockRoute));
         lstTypes.Add(typeof(StockRule));
         lstTypes.Add(typeof(StockRulesReport));
+#if ODOO16_ENABLE
         lstTypes.Add(typeof(StockSchedulerCompute));
+#endif        
         lstTypes.Add(typeof(StockScrap));
         lstTypes.Add(typeof(StockStorageCategory));
         lstTypes.Add(typeof(StockStorageCategoryCapacity));

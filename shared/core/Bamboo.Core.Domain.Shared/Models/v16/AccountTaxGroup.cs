@@ -23,7 +23,6 @@ public partial class AccountTaxGroup: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -49,10 +48,6 @@ public partial class AccountTaxGroup: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("pos_receipt_label")]
     public string? PosReceiptLabel { get; set; }
 
-    // v
-    //[Column("preceding_subtotal")]16-Compat
-    //public string? PrecedingSubtotal { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -68,53 +63,42 @@ public partial class AccountTaxGroup: FullAuditedAggregateRoot<Guid>, IEntityDto
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("TaxGroupId")]
-    [InverseProperty("TaxGroup")]
+    // [One2many] [ForeignKey("TaxGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TaxGroup")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("TaxGroupId")]
-    [InverseProperty("TaxGroup")]
+    // [One2many] [ForeignKey("TaxGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TaxGroup")] // One2many
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 
     // [Many2one]
     [ForeignKey("AdvanceTaxPaymentAccountId")]
-    // [InverseProperty("AccountTaxGroupAdvanceTaxPaymentAccount")] //Many2one
     public virtual AccountAccount? AdvanceTaxPaymentAccount { get; set; }
-
-
-    // [One2many]
-    [ForeignKey("TaxGroupId")]
-    [InverseProperty("TaxGroup")]
-    public virtual ICollection<AccountTaxTemplate> AccountTaxTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountTaxGroup")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("AccountTaxGroup")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountTaxGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TaxPayableAccountId")]
-    // [InverseProperty("AccountTaxGroupTaxPayableAccount")] //Many2one
     public virtual AccountAccount? TaxPayableAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("TaxReceivableAccountId")]
-    // [InverseProperty("AccountTaxGroupTaxReceivableAccount")] //Many2one
     public virtual AccountAccount? TaxReceivableAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountTaxGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

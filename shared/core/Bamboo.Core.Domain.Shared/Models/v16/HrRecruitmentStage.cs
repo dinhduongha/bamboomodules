@@ -23,7 +23,6 @@ public partial class HrRecruitmentStage: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -70,32 +69,31 @@ public partial class HrRecruitmentStage: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrRecruitmentStageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LastStageId")]
-    [InverseProperty("LastStage")]
+    // [One2many] [ForeignKey("LastStageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LastStage")] // One2many
     public virtual ICollection<HrApplicant> HrApplicantLastStage { get; set; }
 
     // [One2many]
-    [ForeignKey("StageId")]
-    [InverseProperty("Stage")]
+    // [One2many] [ForeignKey("StageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Stage")] // One2many
     public virtual ICollection<HrApplicant> HrApplicantStage { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("HrRecruitmentStage")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrRecruitmentStageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrRecruitmentStageId")] //Many2many
-    // [InverseProperty("HrRecruitmentStage")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrRecruitmentStageId")] // Many2many // Normal
+    // [InverseProperty("HrRecruitmentStage")] // Many2many // Normal
     public virtual ICollection<HrJob> HrJob { get; set; }
 }

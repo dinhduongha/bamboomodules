@@ -27,7 +27,6 @@ public partial class SlideSlidePartner: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
@@ -64,31 +63,27 @@ public partial class SlideSlidePartner: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("SlideSlidePartner")] //Many2one
     public virtual SlideChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideSlidePartnerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("SlideSlidePartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("SlideId")]
-    // [InverseProperty("SlideSlidePartner")] //Many2one
     public virtual SlideSlide? Slide { get; set; }
 
     // [One2many]
-    [ForeignKey("SlidePartnerId")]
-    [InverseProperty("SlidePartner")]
+    // [One2many] [ForeignKey("SlidePartnerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SlidePartner")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideSlidePartnerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

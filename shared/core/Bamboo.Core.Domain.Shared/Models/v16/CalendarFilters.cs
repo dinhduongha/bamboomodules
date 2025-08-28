@@ -26,7 +26,6 @@ public partial class CalendarFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -54,21 +53,17 @@ public partial class CalendarFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarFiltersCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("CalendarFilters")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CalendarFiltersUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarFiltersWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

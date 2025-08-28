@@ -24,7 +24,6 @@ public partial class DeliveryZipPrefix: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -43,17 +42,15 @@ public partial class DeliveryZipPrefix: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DeliveryZipPrefixCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DeliveryZipPrefixWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ZipPrefixId")]
-    // [InverseProperty("ZipPrefix")]
+    // [ForeignKey("ZipPrefixId")] //Many2many // Hidden
+    // [InverseProperty("ZipPrefix")] //Many2many // Hidden
     public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
 }

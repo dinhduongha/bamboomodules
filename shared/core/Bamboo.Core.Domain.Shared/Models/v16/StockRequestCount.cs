@@ -23,7 +23,6 @@ public partial class StockRequestCount: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -51,22 +50,19 @@ public partial class StockRequestCount: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockRequestCountCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("StockRequestCountUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockRequestCountWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockRequestCountId")] //Many2many
-    // [InverseProperty("StockRequestCount")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockRequestCountId")] // Many2many // Normal
+    // [InverseProperty("StockRequestCount")] // Many2many // Normal
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 }

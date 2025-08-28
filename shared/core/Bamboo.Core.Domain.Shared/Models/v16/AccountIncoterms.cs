@@ -23,7 +23,6 @@ public partial class AccountIncoterms: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -48,32 +47,34 @@ public partial class AccountIncoterms: FullAuditedAggregateRoot<Guid>, IEntityDt
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("InvoiceIncotermId")]
-    [InverseProperty("InvoiceIncoterm")]
+    // [One2many] [ForeignKey("InvoiceIncotermId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("InvoiceIncoterm")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountIncotermsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("IncotermId")]
-    [InverseProperty("Incoterm")]
+    // [One2many] [ForeignKey("IncotermId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Incoterm")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("IncotermId")]
-    [InverseProperty("Incoterm")]
+    // [One2many] [ForeignKey("IncotermId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("Incoterm")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
-    [ForeignKey("Incoterm")]
-    [InverseProperty("IncotermNavigation")]
+    // [One2many] [ForeignKey("Incoterm")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("IncotermNavigation")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountIncotermsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

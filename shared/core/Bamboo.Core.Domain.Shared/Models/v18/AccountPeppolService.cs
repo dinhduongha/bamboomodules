@@ -23,7 +23,6 @@ public partial class AccountPeppolService: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
@@ -51,16 +50,13 @@ public partial class AccountPeppolService: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPeppolServiceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("AccountPeppolService")] //Many2one
     public virtual AccountPeppolServiceWizard? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPeppolServiceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

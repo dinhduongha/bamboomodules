@@ -25,7 +25,6 @@ public partial class AccountEdiDocument: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
@@ -59,26 +58,21 @@ public partial class AccountEdiDocument: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("AttachmentId")]
-    // [InverseProperty("AccountEdiDocument")] //Many2one
     public virtual IrAttachment? Attachment { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountEdiDocumentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EdiFormatId")]
-    // [InverseProperty("AccountEdiDocument")] //Many2one
     public virtual AccountEdiFormat? EdiFormat { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("AccountEdiDocument")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountEdiDocumentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

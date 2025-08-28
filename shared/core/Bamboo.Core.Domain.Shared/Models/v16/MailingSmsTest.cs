@@ -23,7 +23,6 @@ public partial class MailingSmsTest: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mailing_id")]
     public Guid? MailingId { get; set; }
@@ -45,16 +44,13 @@ public partial class MailingSmsTest: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingSmsTestCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingId")]
-    // [InverseProperty("MailingSmsTest")] //Many2one
     public virtual MailingMailing? Mailing { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingSmsTestWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

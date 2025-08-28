@@ -23,7 +23,6 @@ public partial class HrDepartureReason: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -49,21 +48,21 @@ public partial class HrDepartureReason: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrDepartureReasonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("DepartureReasonId")]
-    [InverseProperty("DepartureReason")]
+    // [One2many] [ForeignKey("DepartureReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DepartureReason")] // One2many
     public virtual ICollection<HrDepartureWizard> HrDepartureWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("DepartureReasonId")]
-    [InverseProperty("DepartureReason")]
+    // [One2many] [ForeignKey("DepartureReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DepartureReason")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrDepartureReasonWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,10 +23,6 @@ public partial class StockLandedCost: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("account_move_id")]
     public Guid? AccountMoveId { get; set; }
@@ -69,63 +65,55 @@ public partial class StockLandedCost: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("AccountJournalId")]
-    // [InverseProperty("StockLandedCost")] //Many2one
     public virtual AccountJournal? AccountJournal { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountMoveId")]
-    // [InverseProperty("StockLandedCostAccountMove")] //Many2one
     public virtual AccountMove? AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockLandedCost")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockLandedCostCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("StockLandedCost")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
     // [One2many]
-    [ForeignKey("CostId")]
-    [InverseProperty("Cost")]
+    // [One2many] [ForeignKey("CostId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Cost")] // One2many
     public virtual ICollection<StockLandedCostLines> StockLandedCostLines { get; set; }
 
     // [One2many]
-    [ForeignKey("CostId")]
-    [InverseProperty("Cost")]
+    // [One2many] [ForeignKey("CostId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Cost")] // One2many
     public virtual ICollection<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
 
     // [One2many]
-    [ForeignKey("StockLandedCostId")]
-    [InverseProperty("StockLandedCost")]
+    // [One2many] [ForeignKey("StockLandedCostId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StockLandedCost")] // One2many
     public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
 
     // [Many2one]
     [ForeignKey("VendorBillId")]
-    // [InverseProperty("StockLandedCostVendorBill")] //Many2one
     public virtual AccountMove? VendorBill { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockLandedCostWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockLandedCostId")] //Many2many
-    // [InverseProperty("StockLandedCost")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockLandedCostId")] // Many2many // Normal
+    // [InverseProperty("StockLandedCost")] // Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockLandedCostId")] //Many2many
-    // [InverseProperty("StockLandedCost")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockLandedCostId")] // Many2many // Normal
+    // [InverseProperty("StockLandedCost")] // Many2many // Normal
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

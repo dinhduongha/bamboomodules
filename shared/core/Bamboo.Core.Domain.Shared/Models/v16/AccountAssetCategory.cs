@@ -25,10 +25,6 @@ public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("account_analytic_id")]
     public Guid? AccountAnalyticId { get; set; }
@@ -102,56 +98,45 @@ public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("AccountAnalyticId")]
-    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual AccountAnalyticAccount? AccountAnalytic { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountAssetId")]
-    // [InverseProperty("AccountAssetCategoryAccountAsset")] //Many2one
     public virtual AccountAccount? AccountAsset { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountDepreciationId")]
-    // [InverseProperty("AccountAssetCategoryAccountDepreciation")] //Many2one
     public virtual AccountAccount? AccountDepreciation { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountDepreciationExpenseId")]
-    // [InverseProperty("AccountAssetCategoryAccountDepreciationExpense")] //Many2one
     public virtual AccountAccount? AccountDepreciationExpense { get; set; }
 
     // [One2many]
-    [ForeignKey("AssetCategoryId")]
-    [InverseProperty("AssetCategory")]
+    // [One2many] [ForeignKey("AssetCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AssetCategory")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAssetCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountAssetCategory")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("AccountAssetCategory")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAssetCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

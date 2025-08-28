@@ -25,7 +25,6 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_input_id")]
     public Guid? UserInputId { get; set; }
@@ -89,36 +88,29 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SurveyUserInputLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MatrixRowId")]
-    // [InverseProperty("SurveyUserInputLineMatrixRow")] //Many2one
     public virtual SurveyQuestionAnswer? MatrixRow { get; set; }
 
     // [Many2one]
     [ForeignKey("QuestionId")]
-    // [InverseProperty("SurveyUserInputLine")] //Many2one
     public virtual SurveyQuestion? Question { get; set; }
 
     // [Many2one]
     [ForeignKey("SuggestedAnswerId")]
-    // [InverseProperty("SurveyUserInputLineSuggestedAnswer")] //Many2one
     public virtual SurveyQuestionAnswer? SuggestedAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("SurveyId")]
-    // [InverseProperty("SurveyUserInputLine")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
     // [Many2one]
     [ForeignKey("UserInputId")]
-    // [InverseProperty("SurveyUserInputLine")] //Many2one
     public virtual SurveyUserInput? UserInput { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SurveyUserInputLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

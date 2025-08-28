@@ -27,10 +27,6 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -142,99 +138,86 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("ApplicantId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual HrApplicant? Applicant { get; set; }
 
     // [One2many]
-    [ForeignKey("EventId")]
-    [InverseProperty("Event")]
+    // [One2many] [ForeignKey("EventId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Event")] // One2many
     public virtual ICollection<CalendarAttendee> CalendarAttendee { get; set; }
 
     // [One2many]
-    [ForeignKey("Record")]
-    [InverseProperty("RecordNavigation")]
+    // [One2many] [ForeignKey("Record")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RecordNavigation")] // One2many
     public virtual ICollection<CalendarPopoverDeleteWizard> CalendarPopoverDeleteWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("BaseEventId")]
-    [InverseProperty("BaseEvent")]
+    // [One2many] [ForeignKey("BaseEventId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BaseEvent")] // One2many
     public virtual ICollection<CalendarRecurrence> CalendarRecurrence { get; set; }
 
     // [Many2one]
     [ForeignKey("CandidateId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarEventCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MeetingId")]
-    [InverseProperty("Meeting")]
+    // [One2many] [ForeignKey("MeetingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Meeting")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
-    [ForeignKey("CalendarEventId")]
-    [InverseProperty("CalendarEvent")]
+    // [One2many] [ForeignKey("CalendarEventId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CalendarEvent")] // One2many
     public virtual ICollection<MailActivity> MailActivity { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("OpportunityId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual CrmLead? Opportunity { get; set; }
 
     // [Many2one]
     [ForeignKey("RecurrenceId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual CalendarRecurrence? Recurrence { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CalendarEventUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("VideocallChannelId")]
-    // [InverseProperty("CalendarEvent")] //Many2one
     public virtual DiscussChannel? VideocallChannel { get; set; }
 
     // [Many2one]
-    // [ForeignKey("VideocallChannelId")]
-    // // [InverseProperty("CalendarEvent")] //Many2one
-    // public virtual MailChannel? VideocallChannel { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarEventWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CalendarEventId")] //Many2many
-    // [InverseProperty("CalendarEvent")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CalendarEventId")] // Many2many // Normal
+    // [InverseProperty("CalendarEvent")] // Many2many // Normal
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CalendarEventId")]
-    // [InverseProperty("CalendarEvent")]
+    // [Many2many] // Hidden
+
+    [NotMapped] //Many2many // Hidden // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("CalendarEventId")] //Many2many // Hidden
+    // [InverseProperty("CalendarEvent")] //Many2many // Hidden
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EventId")] //Many2many
-    // [InverseProperty("Event")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventId")] // Many2many // Normal
+    // [InverseProperty("Event")] // Many2many // Normal
     public virtual ICollection<CalendarEventType> Type { get; set; }
 }

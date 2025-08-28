@@ -23,7 +23,6 @@ public partial class CalendarAlarm: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("duration")]
     public long? Duration { get; set; }
@@ -67,27 +66,23 @@ public partial class CalendarAlarm: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarAlarmCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("CalendarAlarm")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    // [InverseProperty("CalendarAlarm")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarAlarmWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CalendarAlarmId")]
-    // [InverseProperty("CalendarAlarm")]
+    // [ForeignKey("CalendarAlarmId")] //Many2many // Hidden
+    // [InverseProperty("CalendarAlarm")] //Many2many // Hidden
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 }

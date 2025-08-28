@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -37,16 +38,13 @@ public partial class ResPartnerAutocompleteSync: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerAutocompleteSyncCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ResPartnerAutocompleteSync")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerAutocompleteSyncWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

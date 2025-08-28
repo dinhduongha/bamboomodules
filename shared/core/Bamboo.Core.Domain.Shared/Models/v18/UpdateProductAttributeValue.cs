@@ -23,7 +23,6 @@ public partial class UpdateProductAttributeValue: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("attribute_value_id")]
     public Guid? AttributeValueId { get; set; }
@@ -45,16 +44,13 @@ public partial class UpdateProductAttributeValue: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("AttributeValueId")]
-    // [InverseProperty("UpdateProductAttributeValue")] //Many2one
     public virtual ProductAttributeValue? AttributeValue { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("UpdateProductAttributeValueCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("UpdateProductAttributeValueWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

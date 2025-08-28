@@ -23,7 +23,6 @@ public partial class ProjectCreateInvoice: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
@@ -45,21 +44,17 @@ public partial class ProjectCreateInvoice: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectCreateInvoiceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("ProjectCreateInvoice")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderId")]
-    // [InverseProperty("ProjectCreateInvoice")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectCreateInvoiceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class ThemeIrAsset: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -63,16 +62,15 @@ public partial class ThemeIrAsset: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ThemeIrAssetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ThemeTemplateId")]
-    [InverseProperty("ThemeTemplate")]
+    // [One2many] [ForeignKey("ThemeTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ThemeTemplate")] // One2many
     public virtual ICollection<IrAsset> IrAsset { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ThemeIrAssetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

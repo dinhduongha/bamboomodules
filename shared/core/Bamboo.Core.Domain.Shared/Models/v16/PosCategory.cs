@@ -24,7 +24,6 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -59,67 +58,43 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<PosCategory> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual PosCategory? Parent { get; set; }
-
-    // [One2many]
-    [ForeignKey("IfaceStartCategId")]
-    [InverseProperty("IfaceStartCateg")]
-    public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
-
-    // [One2many]
-    [ForeignKey("PosCategId")]
-    [InverseProperty("PosCateg")]
-    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
-
-    // [One2many]
-    [ForeignKey("PosIfaceStartCategId")]
-    [InverseProperty("PosIfaceStartCateg")]
-    public virtual ICollection<ResConfigSettings> ResConfigSettingsNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosCategoryId")]
-    // [InverseProperty("PosCategory")]
+    // [ForeignKey("PosCategoryId")] //Many2many // Hidden
+    // [InverseProperty("PosCategory")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CategoryId")]
-    // [InverseProperty("Category")]
+    // [ForeignKey("CategoryId")] //Many2many // Hidden
+    // [InverseProperty("Category")] //Many2many // Hidden
     public virtual ICollection<PosPrinter> Printer { get; set; }
 
-    // v16-Compat
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    // [ForeignKey("CategoryId")]
-    // [InverseProperty("Category")]
-    //public virtual ICollection<RestaurantPrinter> Printer { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosCategoryId")]
-    // [InverseProperty("PosCategory")]
-    //public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosCategoryId")]
-    // [InverseProperty("PosCategory")]
+    // [ForeignKey("PosCategoryId")] //Many2many // Hidden
+    // [InverseProperty("PosCategory")] //Many2many // Hidden
+    public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
+
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("PosCategoryId")] //Many2many // Hidden
+    // [InverseProperty("PosCategory")] //Many2many // Hidden
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class StockBackorderConfirmationLine: FullAuditedEntity<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("backorder_confirmation_id")]
     public Guid? BackorderConfirmationId { get; set; }
@@ -48,21 +47,17 @@ public partial class StockBackorderConfirmationLine: FullAuditedEntity<Guid>, IE
 
     // [Many2one]
     [ForeignKey("BackorderConfirmationId")]
-    // [InverseProperty("StockBackorderConfirmationLine")] //Many2one
     public virtual StockBackorderConfirmation? BackorderConfirmation { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockBackorderConfirmationLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PickingId")]
-    // [InverseProperty("StockBackorderConfirmationLine")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockBackorderConfirmationLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

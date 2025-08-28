@@ -23,7 +23,6 @@ public partial class ChangeProductionQty: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mo_id")]
     public Guid? MoId { get; set; }
@@ -45,16 +44,13 @@ public partial class ChangeProductionQty: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChangeProductionQtyCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MoId")]
-    // [InverseProperty("ChangeProductionQty")] //Many2one
     public virtual MrpProduction? Mo { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChangeProductionQtyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

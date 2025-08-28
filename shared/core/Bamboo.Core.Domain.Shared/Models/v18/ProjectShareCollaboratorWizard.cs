@@ -23,7 +23,6 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_wizard_id")]
     public Guid? ParentWizardId { get; set; }
@@ -51,21 +50,17 @@ public partial class ProjectShareCollaboratorWizard: FullAuditedEntity<Guid>, IE
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectShareCollaboratorWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentWizardId")]
-    // [InverseProperty("ProjectShareCollaboratorWizard")] //Many2one
     public virtual ProjectShareWizard? ParentWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ProjectShareCollaboratorWizard")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectShareCollaboratorWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

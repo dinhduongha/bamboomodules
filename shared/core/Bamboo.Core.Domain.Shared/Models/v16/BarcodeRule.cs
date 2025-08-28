@@ -23,7 +23,6 @@ public partial class BarcodeRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("barcode_nomenclature_id")]
     public Guid? BarcodeNomenclatureId { get; set; }
@@ -69,21 +68,17 @@ public partial class BarcodeRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("AssociatedUomId")]
-    // [InverseProperty("BarcodeRule")] //Many2one
     public virtual UomUom? AssociatedUom { get; set; }
 
     // [Many2one]
     [ForeignKey("BarcodeNomenclatureId")]
-    // [InverseProperty("BarcodeRule")] //Many2one
     public virtual BarcodeNomenclature? BarcodeNomenclature { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BarcodeRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BarcodeRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

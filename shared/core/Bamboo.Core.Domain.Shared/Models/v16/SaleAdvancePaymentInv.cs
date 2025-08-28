@@ -23,16 +23,9 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("product_id")]
-    public Guid? ProductId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
-
-    [Column("deposit_account_id")]
-    public Guid? DepositAccountId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -72,43 +65,23 @@ public partial class SaleAdvancePaymentInv: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("SaleAdvancePaymentInv")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleAdvancePaymentInvCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("SaleAdvancePaymentInv")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
-    [ForeignKey("DepositAccountId")]
-    // [InverseProperty("SaleAdvancePaymentInv")] //Many2one
-    public virtual AccountAccount? DepositAccount { get; set; }
-
-    // [Many2one]
-    [ForeignKey("ProductId")]
-    // [InverseProperty("SaleAdvancePaymentInv")] //Many2one
-    public virtual ProductProduct? Product { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleAdvancePaymentInvWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SaleAdvancePaymentInvId")] //Many2many
-    // [InverseProperty("SaleAdvancePaymentInv")] //Many2many
-    public virtual ICollection<AccountTax> AccountTax { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SaleAdvancePaymentInvId")] //Many2many
-    // [InverseProperty("SaleAdvancePaymentInv")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SaleAdvancePaymentInvId")] // Many2many // Normal
+    // [InverseProperty("SaleAdvancePaymentInv")] // Many2many // Normal
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

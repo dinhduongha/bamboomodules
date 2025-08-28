@@ -23,7 +23,6 @@ public partial class AccountPeppolServiceWizard: FullAuditedAggregateRoot<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("edi_user_id")]
     public Guid? EdiUserId { get; set; }
@@ -45,22 +44,20 @@ public partial class AccountPeppolServiceWizard: FullAuditedAggregateRoot<Guid>,
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<AccountPeppolService> AccountPeppolService { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPeppolServiceWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EdiUserId")]
-    // [InverseProperty("AccountPeppolServiceWizard")] //Many2one
     public virtual AccountEdiProxyClientUser? EdiUser { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPeppolServiceWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

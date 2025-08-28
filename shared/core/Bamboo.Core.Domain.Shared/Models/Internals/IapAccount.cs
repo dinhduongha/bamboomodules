@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class IapAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("service_id")]
     public Guid? ServiceId { get; set; }
@@ -35,9 +35,6 @@ public partial class IapAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("name")]
     public string? Name { get; set; }
-
-    [Column("service_name")]
-    public string? ServiceName { get; set; }
 
     [Column("account_token")]
     public string? AccountToken { get; set; }
@@ -65,43 +62,43 @@ public partial class IapAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IapAccountCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ServiceId")]
-    // [InverseProperty("IapAccount")] //Many2one
     public virtual IapService? Service { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountId")]
-    [InverseProperty("Account")]
+    // [One2many] [ForeignKey("AccountId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Account")] // One2many
     public virtual ICollection<SmsAccountCode> SmsAccountCode { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountId")]
-    [InverseProperty("Account")]
+    // [One2many] [ForeignKey("AccountId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Account")] // One2many
     public virtual ICollection<SmsAccountPhone> SmsAccountPhone { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountId")]
-    [InverseProperty("Account")]
+    // [One2many] [ForeignKey("AccountId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Account")] // One2many
     public virtual ICollection<SmsAccountSender> SmsAccountSender { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IapAccountWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("IapAccountId")] //Many2many
-    // [InverseProperty("IapAccount")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCompany) is commented out
+    // [ForeignKey("IapAccountId")] // Many2many // Normal
+    // [InverseProperty("IapAccount")] // Many2many // Normal
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("IapAccountId")] //Many2many
-    // [InverseProperty("IapAccount")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("IapAccountId")] // Many2many // Normal
+    // [InverseProperty("IapAccount")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

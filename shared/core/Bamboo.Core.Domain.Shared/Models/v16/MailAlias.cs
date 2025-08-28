@@ -12,7 +12,6 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("mail_alias")]
-//[Index("AliasName", Name = "mail_alias_alias_unique", IsUnique = true)]
 public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -24,16 +23,12 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("alias_domain_id")]
     public Guid? AliasDomainId { get; set; }
 
     [Column("alias_model_id")]
     public Guid? AliasModelId { get; set; }
-
-    [Column("alias_user_id")]
-    public Guid? AliasUserId { get; set; }
 
     [Column("alias_force_thread_id")]
     public Guid? AliasForceThreadId { get; set; }
@@ -79,67 +74,64 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasDomainId")]
-    // [InverseProperty("MailAlias")] //Many2one
     public virtual MailAliasDomain? AliasDomain { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasModelId")]
-    // [InverseProperty("MailAliasAliasModel")] //Many2one
     public virtual IrModel? AliasModel { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasParentModelId")]
-    // [InverseProperty("MailAliasAliasParentModel")] //Many2one
     public virtual IrModel? AliasParentModel { get; set; }
 
     // [Many2one]
-    [ForeignKey("AliasUserId")]
-    // [InverseProperty("MailAliasAliasUser")] //Many2one
-    public virtual ResUsers? AliasUser { get; set; }
-
-    // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailAliasCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<CrmTeam> CrmTeam { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<MailGroup> MailGroup { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategory { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasId")]
-    [InverseProperty("Alias")]
+    // [One2many] [ForeignKey("AliasId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Alias")] // One2many
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailAliasWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

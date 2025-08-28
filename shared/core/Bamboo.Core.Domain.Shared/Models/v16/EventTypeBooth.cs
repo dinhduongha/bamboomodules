@@ -23,7 +23,6 @@ public partial class EventTypeBooth: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
@@ -48,25 +47,21 @@ public partial class EventTypeBooth: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("price")]
-    public decimal? Price { get; set; }
+    public double? Price { get; set; }
 
     // [Many2one]
     [ForeignKey("BoothCategoryId")]
-    // [InverseProperty("EventTypeBooth")] //Many2one
     public virtual EventBoothCategory? BoothCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTypeBoothCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventTypeBooth")] //Many2one
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTypeBoothWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,10 +23,6 @@ public partial class FleetVehicleLogServices: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("vehicle_id")]
     public Guid VehicleId { get; set; }
@@ -87,61 +83,45 @@ public partial class FleetVehicleLogServices: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("AccountMoveLineId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
     public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleLogServicesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ManagerId")]
-    // [InverseProperty("FleetVehicleLogServicesManager")] //Many2one
     public virtual ResUsers? Manager { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("OdometerId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
     public virtual FleetVehicleOdometer? Odometer { get; set; }
 
     // [Many2one]
     [ForeignKey("PurchaserId")]
-    // [InverseProperty("FleetVehicleLogServicesPurchaser")] //Many2one
     public virtual ResPartner? Purchaser { get; set; }
 
     // [Many2one]
     [ForeignKey("PurchaserEmployeeId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
     public virtual HrEmployee? PurchaserEmployee { get; set; }
 
     // [Many2one]
     [ForeignKey("ServiceTypeId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
     public virtual FleetServiceType? ServiceType { get; set; }
 
     // [Many2one]
     [ForeignKey("VehicleId")]
-    // [InverseProperty("FleetVehicleLogServices")] //Many2one
     public virtual FleetVehicle Vehicle { get; set; } = null!;
 
     // [Many2one]
     [ForeignKey("VendorId")]
-    // [InverseProperty("FleetVehicleLogServicesVendor")] //Many2one
     public virtual ResPartner? Vendor { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleLogServicesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

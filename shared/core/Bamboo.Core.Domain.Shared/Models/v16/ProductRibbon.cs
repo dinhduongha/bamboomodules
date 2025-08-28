@@ -23,7 +23,6 @@ public partial class ProductRibbon: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -40,13 +39,6 @@ public partial class ProductRibbon: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("position")]
     public string? Position { get; set; }
 
-    [Column("html_class")]
-    public string? HtmlClass { get; set; }
-
-    [JsonField]
-    [Column("html", TypeName = "jsonb")]
-    public string? Html { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -59,26 +51,21 @@ public partial class ProductRibbon: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductRibbonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("VariantRibbonId")]
-    [InverseProperty("VariantRibbon")]
+    // [One2many] [ForeignKey("VariantRibbonId")]
+    [NotMapped] // One2many // Peer relationship (ProductProduct) is commented out
+    // [InverseProperty("VariantRibbon")] // One2many
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [One2many]
-    [ForeignKey("RibbonId")]
-    [InverseProperty("Ribbon")]
-    public virtual ICollection<ProductTag> ProductTag { get; set; }
-
-    // [One2many]
-    [ForeignKey("WebsiteRibbonId")]
-    [InverseProperty("WebsiteRibbon")]
+    // [One2many] [ForeignKey("WebsiteRibbonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WebsiteRibbon")] // One2many
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductRibbonWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

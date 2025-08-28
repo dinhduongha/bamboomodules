@@ -23,7 +23,6 @@ public partial class ValidateAccountMove: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -48,17 +47,15 @@ public partial class ValidateAccountMove: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ValidateAccountMoveCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ValidateAccountMoveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ValidateAccountMoveId")] //Many2many
-    // [InverseProperty("ValidateAccountMove")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ValidateAccountMoveId")] // Many2many // Normal
+    // [InverseProperty("ValidateAccountMove")] // Many2many // Normal
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 }

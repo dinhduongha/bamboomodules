@@ -30,7 +30,6 @@ public partial class RatingRating: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
@@ -106,41 +105,33 @@ public partial class RatingRating: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RatingRatingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageId")]
-    // [InverseProperty("RatingRating")] //Many2one
     public virtual MailMessage? Message { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentResModelId")]
-    // [InverseProperty("RatingRatingParentResModelNavigation")] //Many2one
     public virtual IrModel? ParentResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("RatingRatingPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PublisherId")]
-    // [InverseProperty("RatingRatingPublisher")] //Many2one
     public virtual ResPartner? Publisher { get; set; }
 
     // [Many2one]
     [ForeignKey("RatedPartnerId")]
-    // [InverseProperty("RatingRatingRatedPartner")] //Many2one
     public virtual ResPartner? RatedPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("RatingRatingResModelNavigation")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RatingRatingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

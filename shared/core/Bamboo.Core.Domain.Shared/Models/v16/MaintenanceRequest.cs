@@ -24,10 +24,6 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("owner_user_id")]
     public Guid? OwnerUserId { get; set; }
@@ -124,56 +120,41 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceEquipmentCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MaintenanceRequestCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("EquipmentId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceEquipment? Equipment { get; set; }
 
     // [Many2one]
     [ForeignKey("MaintenanceTeamId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceTeam? MaintenanceTeam { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("OwnerUserId")]
-    // [InverseProperty("MaintenanceRequestOwnerUser")] //Many2one
     public virtual ResUsers? OwnerUser { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("MaintenanceRequest")] //Many2one
     public virtual MaintenanceStage? Stage { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("MaintenanceRequestUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MaintenanceRequestWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

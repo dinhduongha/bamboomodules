@@ -23,7 +23,6 @@ public partial class CrmIapLeadMiningRequest: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("lead_number")]
     public long? LeadNumber { get; set; }
@@ -84,66 +83,61 @@ public partial class CrmIapLeadMiningRequest: FullAuditedAggregateRoot<Guid>, IE
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmIapLeadMiningRequestCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LeadMiningRequestId")]
-    [InverseProperty("LeadMiningRequest")]
+    // [One2many] [ForeignKey("LeadMiningRequestId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LeadMiningRequest")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [Many2one]
     [ForeignKey("PreferredRoleId")]
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2one
     public virtual CrmIapLeadRole? PreferredRole { get; set; }
 
     // [Many2one]
     [ForeignKey("SeniorityId")]
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2one
     public virtual CrmIapLeadSeniority? Seniority { get; set; }
 
     // [Many2one]
     [ForeignKey("TeamId")]
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrmIapLeadMiningRequestUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmIapLeadMiningRequestWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
+    // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustry { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
-    // [InverseProperty("CrmIapLeadMiningRequestNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
+    // [InverseProperty("CrmIapLeadMiningRequestNavigation")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadRole> CrmIapLeadRole { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
+    // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<CrmTag> CrmTag { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
+    // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<ResCountry> ResCountry { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmIapLeadMiningRequestId")] //Many2many
-    // [InverseProperty("CrmIapLeadMiningRequest")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
+    // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
+    // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<ResCountryState> ResCountryState { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -161,9 +160,6 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("product_page_grid_columns")]
     public long? ProductPageGridColumns { get; set; }
 
-    [Column("shop_default_sort")]
-    public string? ShopDefaultSort { get; set; }
-
     [Column("show_line_subtotals_tax_selection")]
     public string? ShowLineSubtotalsTaxSelection { get; set; }
 
@@ -176,8 +172,8 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("shop_gap")]
     public string? ShopGap { get; set; }
 
-    // [Column("shop_default_sort")]
-    // public string? ShopDefaultSort { get; set; }
+    [Column("shop_default_sort")]
+    public string? ShopDefaultSort { get; set; }
 
     [Column("product_page_image_layout")]
     public string? ProductPageImageLayout { get; set; }
@@ -192,16 +188,12 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public string? EcommerceAccess { get; set; }
 
     [JsonField]
-    [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
-    public string? PreventZeroPriceSaleText { get; set; }
-
-    [JsonField]
     [Column("contact_us_button_url", TypeName = "jsonb")]
     public string? ContactUsButtonUrl { get; set; }
 
-    // [JsonField]
-    // [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
-    // public string? PreventZeroPriceSaleText { get; set; }
+    [JsonField]
+    [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
+    public string? PreventZeroPriceSaleText { get; set; }
 
     [Column("enabled_portal_reorder_button")]
     public bool? EnabledPortalReorderButton { get; set; }
@@ -211,9 +203,6 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     [Column("prevent_zero_price_sale")]
     public bool? PreventZeroPriceSale { get; set; }
-
-    // [Column("enabled_portal_reorder_button")]
-    // public bool? EnabledPortalReorderButton { get; set; }
 
     [Column("cart_abandoned_delay")]
     public double? CartAbandonedDelay { get; set; }
@@ -236,281 +225,302 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("forum_count")]
     public long? ForumCount { get; set; }
 
-    [Column("forums_count")]
-    public long? ForumsCount { get; set; }
-
     [Column("events_app_name")]
     public string? EventsAppName { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (AccountMove) is commented out
     // public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (BlogBlog) is commented out
     // public virtual ICollection<BlogBlog> BlogBlog { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (BlogPost) is commented out
     // public virtual ICollection<BlogPost> BlogPost { get; set; }
 
     // [Many2one]
     [ForeignKey("CartRecoveryMailTemplateId")]
-    // [InverseProperty("Website")] //Many2one
     public virtual MailTemplate? CartRecoveryMailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("Website")] //Many2one
     public virtual ImLivechatChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("WebsiteNavigation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (CouponShare) is commented out
     // public virtual ICollection<CouponShare> CouponShare { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CrmDefaultTeamId")]
-    // [InverseProperty("WebsiteCrmDefaultTeam")] //Many2one
     public virtual CrmTeam? CrmDefaultTeam { get; set; }
 
     // [Many2one]
     [ForeignKey("CrmDefaultUserId")]
-    // [InverseProperty("WebsiteCrmDefaultUser")] //Many2one
     public virtual ResUsers? CrmDefaultUser { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (CrmRevealRule) is commented out
     // public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultLangId")]
-    // [InverseProperty("Website")] //Many2one
     public virtual ResLang? DefaultLang { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (DeliveryCarrier) is commented out
     // public virtual ICollection<DeliveryCarrier> DeliveryCarrier { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (EventEvent) is commented out
     // public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (EventTag) is commented out
     // public virtual ICollection<EventTag> EventTag { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (EventTagCategory) is commented out
     // public virtual ICollection<EventTagCategory> EventTagCategory { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ForumForum) is commented out
     // public virtual ICollection<ForumForum> ForumForum { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (HrJob) is commented out
     // public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (IrAsset) is commented out
     // public virtual ICollection<IrAsset> IrAsset { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many
     // public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (IrUiView) is commented out
     // public virtual ICollection<IrUiView> IrUiView { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (LoyaltyProgram) is commented out
     // public virtual ICollection<LoyaltyProgram> LoyaltyProgram { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (LoyaltyRule) is commented out
     // public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2one]
     [ForeignKey("NewsletterId")]
-    // [InverseProperty("Website")] //Many2one
     public virtual MailingList? Newsletter { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (PaymentProvider) is commented out
     // public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ProductPricelist) is commented out
     // public virtual ICollection<ProductPricelist> ProductPricelist { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ProductPublicCategory) is commented out
     // public virtual ICollection<ProductPublicCategory> ProductPublicCategory { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ProductTag) is commented out
     // public virtual ICollection<ProductTag> ProductTag { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ProductTemplate) is commented out
     // public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ProductWishlist) is commented out
     // public virtual ICollection<ProductWishlist> ProductWishlist { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many
     // public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (ResConfigSettings) is commented out
     // public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsiteNavigation")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("WebsiteNavigation")] // One2many
     // public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many
     // public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (SaleOrder) is commented out
     // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("SalespersonId")]
-    // [InverseProperty("WebsiteSalesperson")] //Many2one
     public virtual ResUsers? Salesperson { get; set; }
 
     // [Many2one]
     [ForeignKey("SalesteamId")]
-    // [InverseProperty("WebsiteSalesteam")] //Many2one
     public virtual CrmTeam? Salesteam { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (SlideChannel) is commented out
     // public virtual ICollection<SlideChannel> SlideChannel { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (StockPicking) is commented out
     // public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
     [ForeignKey("ThemeId")]
-    // [InverseProperty("WebsiteNavigation")] //Many2one
     public virtual IrModuleModule? Theme { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("WebsiteUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("Website")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsiteControllerPage) is commented out
     // public virtual ICollection<WebsiteControllerPage> WebsiteControllerPage { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsiteMenu) is commented out
     // public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsitePage) is commented out
     // public virtual ICollection<WebsitePage> WebsitePage { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsitePageProperties) is commented out
     // public virtual ICollection<WebsitePageProperties> WebsitePageProperties { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsitePagePropertiesBase) is commented out
     // public virtual ICollection<WebsitePagePropertiesBase> WebsitePagePropertiesBase { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsiteRewrite) is commented out
     // public virtual ICollection<WebsiteRewrite> WebsiteRewrite { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsiteSaleExtraField) is commented out
     // public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraField { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsiteSnippetFilter) is commented out
     // public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilter { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'Website'
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [One2many] [ForeignKey("WebsiteId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("Website")] // One2many // Peer relationship (WebsiteVisitor) is commented out
     // public virtual ICollection<WebsiteVisitor> WebsiteVisitor { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("WebsiteId")]
-    // [InverseProperty("Website")]
+    // [ForeignKey("WebsiteId")] //Many2many // Hidden
+    // [InverseProperty("Website")] //Many2many // Hidden
     public virtual ICollection<BaseLanguageInstall> BaseLanguageInstall { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WebsiteId")] //Many2many
-    // [InverseProperty("WebsiteNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("WebsiteId")] // Many2many // Normal
+    // [InverseProperty("WebsiteNavigation")] // Many2many // Normal
     public virtual ICollection<ResLang> Lang { get; set; }
 }

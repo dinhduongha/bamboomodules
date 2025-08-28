@@ -23,7 +23,6 @@ public partial class AccountDebitNote: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
@@ -51,22 +50,19 @@ public partial class AccountDebitNote: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountDebitNoteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountDebitNote")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountDebitNoteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DebitId")] //Many2many
-    // [InverseProperty("Debit")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("DebitId")] // Many2many // Normal
+    // [InverseProperty("Debit")] // Many2many // Normal
     public virtual ICollection<AccountMove> Move { get; set; }
 }

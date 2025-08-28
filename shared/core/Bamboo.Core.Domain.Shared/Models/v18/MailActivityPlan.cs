@@ -53,42 +53,39 @@ public partial class MailActivityPlan: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MailActivityPlan")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailActivityPlanCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("MailActivityPlan")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [One2many]
-    [ForeignKey("PlanId")]
-    [InverseProperty("Plan")]
+    // [One2many] [ForeignKey("PlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Plan")] // One2many
     public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("PlanId")]
-    [InverseProperty("Plan")]
+    // [One2many] [ForeignKey("PlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Plan")] // One2many
     public virtual ICollection<MailActivitySchedule> MailActivityScheduleNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("MailActivityPlan")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailActivityPlanWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("MailActivityPlanId")] //Many2many
-    // [InverseProperty("MailActivityPlan")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("MailActivityPlanId")] //Many2many // Hidden
+    // [InverseProperty("MailActivityPlan")] //Many2many // Hidden
     public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
 }

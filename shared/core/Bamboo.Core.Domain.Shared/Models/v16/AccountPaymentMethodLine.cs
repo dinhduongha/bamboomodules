@@ -23,7 +23,6 @@ public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -56,58 +55,57 @@ public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, I
     public Guid? PaymentProviderId { get; set; }
 
     // [One2many]
-    [ForeignKey("PreferredPaymentMethodLineId")]
-    [InverseProperty("PreferredPaymentMethodLine")]
+    // [One2many] [ForeignKey("PreferredPaymentMethodLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PreferredPaymentMethodLine")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodLineId")]
-    [InverseProperty("PaymentMethodLine")]
+    // [One2many] [ForeignKey("PaymentMethodLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethodLine")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodLineId")]
-    [InverseProperty("PaymentMethodLine")]
+    // [One2many] [ForeignKey("PaymentMethodLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethodLine")] // One2many
     public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPaymentMethodLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodLineId")]
-    [InverseProperty("PaymentMethodLine")]
+    // [One2many] [ForeignKey("PaymentMethodLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethodLine")] // One2many
     public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentAccountId")]
-    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual AccountAccount? PaymentAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentMethodId")]
-    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual AccountPaymentMethod? PaymentMethod { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentProviderId")]
-    // [InverseProperty("AccountPaymentMethodLine")] //Many2one
     public virtual PaymentProvider? PaymentProvider { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPaymentMethodLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountPaymentMethodLineId")]
-    // [InverseProperty("AccountPaymentMethodLine")]
+    // [Many2many] // Hidden
+
+    [NotMapped] //Many2many // Hidden // Peer relationship (ResCompany) is commented out
+    // [ForeignKey("AccountPaymentMethodLineId")] //Many2many // Hidden
+    // [InverseProperty("AccountPaymentMethodLine")] //Many2many // Hidden
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 }

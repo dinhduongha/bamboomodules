@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -65,32 +66,29 @@ public partial class IrEmbeddedActions: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrEmbeddedActionsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("EmbeddedActionId")]
-    [InverseProperty("EmbeddedAction")]
+    // [One2many] [ForeignKey("EmbeddedActionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EmbeddedAction")] // One2many
     public virtual ICollection<IrFilters> IrFilters { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentActionId")]
-    // [InverseProperty("IrEmbeddedActions")] //Many2one
     public virtual IrActWindow? ParentAction { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("IrEmbeddedActionsUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrEmbeddedActionsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("IrEmbeddedActionsId")] //Many2many
-    // [InverseProperty("IrEmbeddedActions")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("IrEmbeddedActionsId")] // Many2many // Normal
+    // [InverseProperty("IrEmbeddedActions")] // Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

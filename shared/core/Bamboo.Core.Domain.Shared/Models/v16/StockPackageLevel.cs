@@ -24,7 +24,6 @@ public partial class StockPackageLevel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("package_id")]
     public Guid? PackageId { get; set; }
@@ -49,41 +48,37 @@ public partial class StockPackageLevel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockPackageLevel")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPackageLevelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationDestId")]
-    // [InverseProperty("StockPackageLevel")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageId")]
-    // [InverseProperty("StockPackageLevel")] //Many2one
     public virtual StockQuantPackage? Package { get; set; }
 
     // [Many2one]
     [ForeignKey("PickingId")]
-    // [InverseProperty("StockPackageLevel")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageLevelId")]
-    [InverseProperty("PackageLevel")]
+    // [One2many] [ForeignKey("PackageLevelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PackageLevel")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageLevelId")]
-    [InverseProperty("PackageLevel")]
+    // [One2many] [ForeignKey("PackageLevelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PackageLevel")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPackageLevelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

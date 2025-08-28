@@ -23,7 +23,6 @@ public partial class ProjectProjectStage: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -58,37 +57,33 @@ public partial class ProjectProjectStage: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProjectProjectStage")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectProjectStageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("ProjectProjectStage")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("StageId")]
-    [InverseProperty("Stage")]
+    // [One2many] [ForeignKey("StageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Stage")] // One2many
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    // [InverseProperty("ProjectProjectStage")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectProjectStageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProjectProjectStageId")]
-    // [InverseProperty("ProjectProjectStage")]
+    // [ForeignKey("ProjectProjectStageId")] //Many2many // Hidden
+    // [InverseProperty("ProjectProjectStage")] //Many2many // Hidden
     public virtual ICollection<ProjectProjectStageDeleteWizard> ProjectProjectStageDeleteWizard { get; set; }
 }

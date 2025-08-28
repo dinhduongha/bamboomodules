@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -44,26 +45,23 @@ public partial class ResCity: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("ResCity")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResCityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CityId")]
-    [InverseProperty("CityNavigation")]
+    // [One2many] [ForeignKey("CityId")]
+    [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
+    // [InverseProperty("CityNavigation")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("StateId")]
-    // [InverseProperty("ResCity")] //Many2one
     public virtual ResCountryState? State { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResCityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

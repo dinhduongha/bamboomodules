@@ -23,7 +23,6 @@ public partial class CrmRecurringPlan: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("number_of_months")]
     public long? NumberOfMonths { get; set; }
@@ -52,16 +51,15 @@ public partial class CrmRecurringPlan: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmRecurringPlanCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RecurringPlan")]
-    [InverseProperty("RecurringPlanNavigation")]
+    // [One2many] [ForeignKey("RecurringPlan")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RecurringPlanNavigation")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmRecurringPlanWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

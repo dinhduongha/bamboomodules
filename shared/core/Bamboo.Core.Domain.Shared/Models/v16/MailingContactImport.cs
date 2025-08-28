@@ -23,7 +23,6 @@ public partial class MailingContactImport: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -42,17 +41,15 @@ public partial class MailingContactImport: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingContactImportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingContactImportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailingContactImportId")] //Many2many
-    // [InverseProperty("MailingContactImport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailingContactImportId")] // Many2many // Normal
+    // [InverseProperty("MailingContactImport")] // Many2many // Normal
     public virtual ICollection<MailingList> MailingList { get; set; }
 }

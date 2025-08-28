@@ -26,10 +26,6 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -147,82 +143,79 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CertificationBadgeId")]
-    // [InverseProperty("SurveySurvey")] //Many2one
     public virtual GamificationBadge? CertificationBadge { get; set; }
 
     // [Many2one]
     [ForeignKey("CertificationMailTemplateId")]
-    // [InverseProperty("SurveySurvey")] //Many2one
     public virtual MailTemplate? CertificationMailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SurveySurveyCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<GamificationBadge> GamificationBadge { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("SurveySurvey")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("SessionQuestionId")]
-    // [InverseProperty("SurveySurvey")] //Many2one
     public virtual SurveyQuestion? SessionQuestion { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SlideSlide> SlideSlide { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [One2many]
-    [ForeignKey("SurveyId")]
-    [InverseProperty("Survey")]
+    // [One2many] [ForeignKey("SurveyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLine { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("SurveySurveyUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SurveySurveyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SurveySurveyId")] //Many2many
-    // [InverseProperty("SurveySurvey")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("SurveySurveyId")] // Many2many // Normal
+    // [InverseProperty("SurveySurvey")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

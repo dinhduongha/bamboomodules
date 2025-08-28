@@ -23,7 +23,6 @@ public partial class LoyaltyRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("program_id")]
     public Guid? ProgramId { get; set; }
@@ -84,48 +83,41 @@ public partial class LoyaltyRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LoyaltyRule")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductCategoryId")]
-    // [InverseProperty("LoyaltyRule")] //Many2one
     public virtual ProductCategory? ProductCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTagId")]
-    // [InverseProperty("LoyaltyRule")] //Many2one
     public virtual ProductTag? ProductTag { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("LoyaltyRule")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("LoyaltyRule")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LoyaltyRuleId")] //Many2many
-    // [InverseProperty("LoyaltyRule")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
+    // [ForeignKey("LoyaltyRuleId")] // Many2many // Normal
+    // [InverseProperty("LoyaltyRule")] // Many2many // Normal
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("LoyaltyRuleId")]
-    // [InverseProperty("LoyaltyRule")]
+    // [ForeignKey("LoyaltyRuleId")] //Many2many // Hidden
+    // [InverseProperty("LoyaltyRule")] //Many2many // Hidden
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

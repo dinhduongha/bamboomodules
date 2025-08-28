@@ -24,13 +24,9 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
-
-    [Column("report_template")]
-    public Guid? ReportTemplate { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -93,10 +89,6 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("body_html", TypeName = "jsonb")]
     public string? BodyHtml { get; set; }
 
-    [JsonField]
-    [Column("report_name", TypeName = "jsonb")]
-    public string? ReportName { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -113,226 +105,242 @@ public partial class MailTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
-    public virtual ICollection<AccountInvoiceSend> AccountInvoiceSend { get; set; }
-
-    // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<EventTrackStage> EventTrackStage { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [One2many]
-    [ForeignKey("EmailTemplateId")]
-    [InverseProperty("EmailTemplate")]
+    // [One2many] [ForeignKey("EmailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EmailTemplate")] // One2many
     public virtual ICollection<FollowupLine> FollowupLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ReportTemplateId")]
-    [InverseProperty("ReportTemplate")]
+    // [One2many] [ForeignKey("ReportTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReportTemplate")] // One2many
     public virtual ICollection<GamificationChallenge> GamificationChallenge { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<HrApplicantRefuseReason> HrApplicantRefuseReason { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<HrRecruitmentStage> HrRecruitmentStage { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<LoyaltyMail> LoyaltyMail { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("MailServerId")]
-    // [InverseProperty("MailTemplate")] //Many2one
     public virtual IrMailServer? MailServer { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<MailTemplatePreview> MailTemplatePreview { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("MailTemplate")] //Many2one
     public virtual IrModel? ModelNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("EmailTemplateId")]
-    [InverseProperty("EmailTemplate")]
+    // [One2many] [ForeignKey("EmailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EmailTemplate")] // One2many
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<ProjectProjectStage> ProjectProjectStage { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<ProjectTaskType> ProjectTaskTypeMailTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("RatingTemplateId")]
-    [InverseProperty("RatingTemplate")]
+    // [One2many] [ForeignKey("RatingTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RatingTemplate")] // One2many
     public virtual ICollection<ProjectTaskType> ProjectTaskTypeRatingTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("RefIrActWindow")]
-    // [InverseProperty("MailTemplate")] //Many2one
     public virtual IrActWindow? RefIrActWindowNavigation { get; set; }
 
-    // [Many2one]
-    [ForeignKey("ReportTemplate")]
-    // [InverseProperty("MailTemplate")] //Many2one
-    public virtual IrActReportXml? ReportTemplateNavigation { get; set; }
-
     // [One2many]
-    [ForeignKey("StockMailConfirmationTemplateId")]
-    [InverseProperty("StockMailConfirmationTemplate")]
+    // [One2many] [ForeignKey("StockMailConfirmationTemplateId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("StockMailConfirmationTemplate")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
-    [ForeignKey("InvoiceMailTemplateId")]
-    [InverseProperty("InvoiceMailTemplate")]
+    // [One2many] [ForeignKey("InvoiceMailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("InvoiceMailTemplate")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [One2many]
-    [ForeignKey("PendingEmailTemplateId")]
-    [InverseProperty("PendingEmailTemplate")]
+    // [One2many] [ForeignKey("PendingEmailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PendingEmailTemplate")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<SaleOrderCancel> SaleOrderCancel { get; set; }
 
     // [One2many]
-    [ForeignKey("MailTemplateId")]
-    [InverseProperty("MailTemplate")]
+    // [One2many] [ForeignKey("MailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailTemplate")] // One2many
     public virtual ICollection<SaleOrderTemplate> SaleOrderTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("CompletedTemplateId")]
-    [InverseProperty("CompletedTemplate")]
+    // [One2many] [ForeignKey("CompletedTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CompletedTemplate")] // One2many
     public virtual ICollection<SlideChannel> SlideChannelCompletedTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
     // [One2many]
-    [ForeignKey("PublishTemplateId")]
-    [InverseProperty("PublishTemplate")]
+    // [One2many] [ForeignKey("PublishTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PublishTemplate")] // One2many
     public virtual ICollection<SlideChannel> SlideChannelPublishTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("ShareChannelTemplateId")]
-    [InverseProperty("ShareChannelTemplate")]
+    // [One2many] [ForeignKey("ShareChannelTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ShareChannelTemplate")] // One2many
     public virtual ICollection<SlideChannel> SlideChannelShareChannelTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("ShareSlideTemplateId")]
-    [InverseProperty("ShareSlideTemplate")]
+    // [One2many] [ForeignKey("ShareSlideTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ShareSlideTemplate")] // One2many
     public virtual ICollection<SlideChannel> SlideChannelShareSlideTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [One2many]
-    [ForeignKey("CertificationMailTemplateId")]
-    [InverseProperty("CertificationMailTemplate")]
+    // [One2many] [ForeignKey("CertificationMailTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CertificationMailTemplate")] // One2many
     public virtual ICollection<SurveySurvey> SurveySurvey { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("MailTemplateUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [One2many]
-    [ForeignKey("CartRecoveryMailTemplateId")]
-    [InverseProperty("CartRecoveryMailTemplate")]
+    // [One2many] [ForeignKey("CartRecoveryMailTemplateId")]
+    [NotMapped] // One2many // Peer relationship (Website) is commented out
+    // [InverseProperty("CartRecoveryMailTemplate")] // One2many
     public virtual ICollection<Website> Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EmailTemplateId")] //Many2many
-    // [InverseProperty("EmailTemplate")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("EmailTemplateId")] // Many2many // Normal
+    // [InverseProperty("EmailTemplate")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailTemplateId")] //Many2many
-    // [InverseProperty("MailTemplate")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailTemplateId")] // Many2many // Normal
+    // [InverseProperty("MailTemplate")] // Many2many // Normal
     public virtual ICollection<IrActReportXml> IrActionsReport { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailTemplateId")]
-    // [InverseProperty("MailTemplate")]
+    // [ForeignKey("MailTemplateId")] //Many2many // Hidden
+    // [InverseProperty("MailTemplate")] //Many2many // Hidden
     public virtual ICollection<MailActivityType> MailActivityType { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailTemplateId")]
-    // [InverseProperty("MailTemplate")]
+    // [ForeignKey("MailTemplateId")] //Many2many // Hidden
+    // [InverseProperty("MailTemplate")] //Many2many // Hidden
     public virtual ICollection<MailTemplateReset> MailTemplateReset { get; set; }
 }

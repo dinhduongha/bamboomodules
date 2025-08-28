@@ -27,7 +27,6 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
@@ -68,9 +67,6 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("product_category_name")]
-    public string? ProductCategoryName { get; set; }
-
     [Column("lot_name")]
     public string? LotName { get; set; }
 
@@ -91,14 +87,6 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("picked")]
     public bool? Picked { get; set; }
-    [Column("reserved_qty")]
-    public decimal? ReservedQty { get; set; }
-
-    [Column("reserved_uom_qty")]
-    public decimal? ReservedUomQty { get; set; }
-
-    [Column("qty_done")]
-    public decimal? QtyDone { get; set; }
 
     [Column("date", TypeName = "timestamp without time zone")]
     public DateTime? Date { get; set; }
@@ -118,10 +106,6 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     [Column("carrier_id")]
     public Guid? CarrierId { get; set; }
 
-    [JsonField]
-    [Column("carrier_name", TypeName = "jsonb")]
-    public string? CarrierName { get; set; }
-
     [Column("batch_id")]
     public Guid? BatchId { get; set; }
 
@@ -130,121 +114,97 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("BatchId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual StockPickingBatch? Batch { get; set; }
 
     // [Many2one]
     [ForeignKey("CarrierId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual DeliveryCarrier? Carrier { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockMoveLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("StockMoveLineLocation")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationDestId")]
-    // [InverseProperty("StockMoveLineLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("LotId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual StockMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("OwnerId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual ResPartner? Owner { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageId")]
-    // [InverseProperty("StockMoveLinePackage")] //Many2one
     public virtual StockQuantPackage? Package { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageLevelId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual StockPackageLevel? PackageLevel { get; set; }
 
     // [Many2one]
     [ForeignKey("PickingId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductionId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual MrpProduction? Production { get; set; }
 
     // [Many2one]
     [ForeignKey("ResultPackageId")]
-    // [InverseProperty("StockMoveLineResultPackage")] //Many2one
     public virtual StockQuantPackage? ResultPackage { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkorderId")]
-    // [InverseProperty("StockMoveLine")] //Many2one
     public virtual MrpWorkorder? Workorder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockMoveLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProduceLineId")] //Many2many
-    // [InverseProperty("ProduceLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProduceLineId")] // Many2many // Normal
+    // [InverseProperty("ProduceLine")] // Many2many // Normal
     public virtual ICollection<StockMoveLine> ConsumeLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockMoveLineId")]
-    // [InverseProperty("StockMoveLine")]
+    // [ForeignKey("StockMoveLineId")] //Many2many // Hidden
+    // [InverseProperty("StockMoveLine")] //Many2many // Hidden
     public virtual ICollection<LotLabelLayout> LotLabelLayout { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ConsumeLineId")] //Many2many
-    // [InverseProperty("ConsumeLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ConsumeLineId")] // Many2many // Normal
+    // [InverseProperty("ConsumeLine")] // Many2many // Normal
     public virtual ICollection<StockMoveLine> ProduceLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockMoveLineId")]
-    // [InverseProperty("StockMoveLine")]
-    public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockMoveLineId")]
-    // [InverseProperty("StockMoveLine")]
+    // [ForeignKey("StockMoveLineId")] //Many2many // Hidden
+    // [InverseProperty("StockMoveLine")] //Many2many // Hidden
     public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
 }

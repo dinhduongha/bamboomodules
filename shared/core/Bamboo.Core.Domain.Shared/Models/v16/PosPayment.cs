@@ -26,7 +26,6 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("pos_order_id")]
     public Guid? PosOrderId { get; set; }
@@ -108,46 +107,37 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("AccountMoveId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual AccountMove? AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosPaymentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("OnlineAccountPaymentId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual AccountPayment? OnlineAccountPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentMethodId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual PosPaymentMethod? PaymentMethod { get; set; }
 
     // [Many2one]
     [ForeignKey("PosOrderId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual PosOrder? PosOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("SessionId")]
-    // [InverseProperty("PosPayment")] //Many2one
     public virtual PosSession? Session { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosPaymentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

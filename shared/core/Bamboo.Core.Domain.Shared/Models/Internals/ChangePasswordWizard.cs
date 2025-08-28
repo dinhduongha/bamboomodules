@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class ChangePasswordWizard: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -37,17 +37,16 @@ public partial class ChangePasswordWizard: FullAuditedAggregateRoot<Guid>, IEnti
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<ChangePasswordUser> ChangePasswordUser { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChangePasswordWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChangePasswordWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

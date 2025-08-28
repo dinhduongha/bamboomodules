@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -23,7 +24,6 @@ public partial class IapService: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -56,16 +56,15 @@ public partial class IapService: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IapServiceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ServiceId")]
-    [InverseProperty("Service")]
+    // [One2many] [ForeignKey("ServiceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Service")] // One2many
     public virtual ICollection<IapAccount> IapAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IapServiceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

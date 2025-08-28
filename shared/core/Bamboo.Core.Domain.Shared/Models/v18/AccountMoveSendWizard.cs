@@ -23,7 +23,6 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
@@ -66,33 +65,27 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountMoveSendWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("AccountMoveSendWizard")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("AccountMoveSendWizard")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("PdfReportId")]
-    // [InverseProperty("AccountMoveSendWizard")] //Many2one
     public virtual IrActReportXml? PdfReport { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountMoveSendWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    [NotMapped] // [Many2many] // Normal
-    // [ForeignKey("AccountMoveSendWizardId")] //Many2many
-    // [InverseProperty("AccountMoveSendWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("AccountMoveSendWizardId")] // Many2many // Normal
+    // [InverseProperty("AccountMoveSendWizard")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class PosMakePayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("config_id")]
     public Guid? ConfigId { get; set; }
@@ -54,21 +53,17 @@ public partial class PosMakePayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("ConfigId")]
-    // [InverseProperty("PosMakePayment")] //Many2one
     public virtual PosConfig? Config { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosMakePaymentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentMethodId")]
-    // [InverseProperty("PosMakePayment")] //Many2one
     public virtual PosPaymentMethod? PaymentMethod { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosMakePaymentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

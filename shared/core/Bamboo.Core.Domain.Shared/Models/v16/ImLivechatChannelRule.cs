@@ -23,7 +23,6 @@ public partial class ImLivechatChannelRule: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("auto_popup_timer")]
     public long? AutoPopupTimer { get; set; }
@@ -60,27 +59,23 @@ public partial class ImLivechatChannelRule: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("ImLivechatChannelRule")] //Many2one
     public virtual ImLivechatChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("ChatbotScriptId")]
-    // [InverseProperty("ImLivechatChannelRule")] //Many2one
     public virtual ChatbotScript? ChatbotScript { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ImLivechatChannelRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ImLivechatChannelRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ChannelId")] //Many2many
-    // [InverseProperty("Channel")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("ChannelId")] // Many2many // Normal
+    // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 }

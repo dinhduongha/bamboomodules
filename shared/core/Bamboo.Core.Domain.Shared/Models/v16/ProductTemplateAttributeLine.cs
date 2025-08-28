@@ -25,7 +25,6 @@ public partial class ProductTemplateAttributeLine: FullAuditedAggregateRoot<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_tmpl_id")]
     public Guid? ProductTmplId { get; set; }
@@ -56,32 +55,29 @@ public partial class ProductTemplateAttributeLine: FullAuditedAggregateRoot<Guid
 
     // [Many2one]
     [ForeignKey("AttributeId")]
-    // [InverseProperty("ProductTemplateAttributeLine")] //Many2one
     public virtual ProductAttribute? Attribute { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductTemplateAttributeLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AttributeLineId")]
-    [InverseProperty("AttributeLine")]
+    // [One2many] [ForeignKey("AttributeLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AttributeLine")] // One2many
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductTemplateAttributeLine")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductTemplateAttributeLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeLineId")]
-    // [InverseProperty("ProductTemplateAttributeLine")]
+    // [ForeignKey("ProductTemplateAttributeLineId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeLine")] //Many2many // Hidden
     public virtual ICollection<ProductAttributeValue> ProductAttributeValue { get; set; }
 }

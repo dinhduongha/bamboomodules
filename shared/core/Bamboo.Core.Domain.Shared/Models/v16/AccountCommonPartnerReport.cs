@@ -50,28 +50,25 @@ public partial class AccountCommonPartnerReport: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountCommonPartnerReport")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountCommonPartnerReportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountCommonPartnerReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountCommonPartnerReportId")] //Many2many
-    // [InverseProperty("AccountCommonPartnerReport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountCommonPartnerReportId")] // Many2many // Normal
+    // [InverseProperty("AccountCommonPartnerReport")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountCommonPartnerReportId")] //Many2many
-    // [InverseProperty("AccountCommonPartnerReport")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("AccountCommonPartnerReportId")] // Many2many // Normal
+    // [InverseProperty("AccountCommonPartnerReport")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

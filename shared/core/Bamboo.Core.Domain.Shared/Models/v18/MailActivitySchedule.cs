@@ -23,7 +23,6 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
@@ -72,42 +71,35 @@ public partial class MailActivitySchedule: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    // [InverseProperty("MailActivitySchedule")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("ActivityUserId")]
-    // [InverseProperty("MailActivityScheduleActivityUser")] //Many2one
     public virtual ResUsers? ActivityUser { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailActivityScheduleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PlanId")]
-    // [InverseProperty("MailActivityScheduleNavigation")] //Many2one
     public virtual MailActivityPlan? Plan { get; set; }
 
     // [Many2one]
     [ForeignKey("PlanOnDemandUserId")]
-    // [InverseProperty("MailActivitySchedulePlanOnDemandUser")] //Many2one
     public virtual ResUsers? PlanOnDemandUser { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("MailActivitySchedule")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailActivityScheduleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("MailActivityScheduleId")] //Many2many
-    [InverseProperty("MailActivitySchedule")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailActivityScheduleId")] // Many2many // Normal
+    // [InverseProperty("MailActivitySchedule")] // Many2many // Normal
     public virtual ICollection<MailActivityPlan> MailActivityPlan { get; set; }
 }

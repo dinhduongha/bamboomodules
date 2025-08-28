@@ -26,13 +26,9 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -81,9 +77,6 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("completed_template_id")]
     public Guid? CompletedTemplateId { get; set; }
-
-    [Column("karma_gen_slide_vote")]
-    public long? KarmaGenSlideVote { get; set; }
 
     [Column("karma_gen_channel_rank")]
     public long? KarmaGenChannelRank { get; set; }
@@ -198,121 +191,111 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CompletedTemplateId")]
-    // [InverseProperty("SlideChannelCompletedTemplate")] //Many2one
     public virtual MailTemplate? CompletedTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideChannelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ForumId")]
-    // [InverseProperty("SlideChannelNavigation")] //Many2one
     public virtual ForumForum? Forum { get; set; }
 
     // [One2many]
-    [ForeignKey("SlideChannelId")]
-    [InverseProperty("SlideChannel")]
+    // [One2many] [ForeignKey("SlideChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SlideChannel")] // One2many
     public virtual ICollection<ForumForum> ForumForum { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("SlideChannel")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("SlideChannel")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("PromotedSlideId")]
-    // [InverseProperty("SlideChannel")] //Many2one
     public virtual SlideSlide? PromotedSlide { get; set; }
 
     // [Many2one]
     [ForeignKey("PublishTemplateId")]
-    // [InverseProperty("SlideChannelPublishTemplate")] //Many2one
     public virtual MailTemplate? PublishTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("ShareChannelTemplateId")]
-    // [InverseProperty("SlideChannelShareChannelTemplate")] //Many2one
     public virtual MailTemplate? ShareChannelTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("ShareSlideTemplateId")]
-    // [InverseProperty("SlideChannelShareSlideTemplate")] //Many2one
     public virtual MailTemplate? ShareSlideTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideChannelPartner> SlideChannelPartner { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideSlide> SlideSlide { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("SlideChannelUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("SlideChannel")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideChannelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PrerequisiteChannelId")] //Many2many
-    // [InverseProperty("PrerequisiteChannel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PrerequisiteChannelId")] // Many2many // Normal
+    // [InverseProperty("PrerequisiteChannel")] // Many2many // Normal
     public virtual ICollection<SlideChannel> Channel { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ChannelId")] //Many2many
-    // [InverseProperty("Channel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ChannelId")] // Many2many // Normal
+    // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<ResGroups> Group { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ChannelId")] //Many2many
-    // [InverseProperty("Channel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ChannelId")] // Many2many // Normal
+    // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<SlideChannel> PrerequisiteChannel { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SlideChannelId")] //Many2many
-    // [InverseProperty("SlideChannel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SlideChannelId")] // Many2many // Normal
+    // [InverseProperty("SlideChannel")] // Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ChannelId")] //Many2many
-    // [InverseProperty("Channel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ChannelId")] // Many2many // Normal
+    // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<SlideChannelTag> Tag { get; set; }
 }

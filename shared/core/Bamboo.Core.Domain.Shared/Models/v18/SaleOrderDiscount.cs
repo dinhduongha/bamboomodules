@@ -23,7 +23,6 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
@@ -51,22 +50,19 @@ public partial class SaleOrderDiscount: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleOrderDiscountCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderId")]
-    // [InverseProperty("SaleOrderDiscount")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleOrderDiscountWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("SaleOrderDiscountId")] //Many2many
-    [InverseProperty("SaleOrderDiscount")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SaleOrderDiscountId")] // Many2many // Normal
+    // [InverseProperty("SaleOrderDiscount")] // Many2many // Normal
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

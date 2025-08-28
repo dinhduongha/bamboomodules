@@ -23,19 +23,12 @@ public partial class AccountTaxRepartitionLine: FullAuditedAggregateRoot<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
 
-    [Column("invoice_tax_id")]
-    public Guid? InvoiceTaxId { get; set; }
-
     [Column("tax_id")]
     public Guid? TaxId { get; set; }
-
-    [Column("refund_tax_id")]
-    public Guid? RefundTaxId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -66,47 +59,33 @@ public partial class AccountTaxRepartitionLine: FullAuditedAggregateRoot<Guid>, 
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("AccountTaxRepartitionLine")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [One2many]
-    [ForeignKey("TaxRepartitionLineId")]
-    [InverseProperty("TaxRepartitionLine")]
+    // [One2many] [ForeignKey("TaxRepartitionLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TaxRepartitionLine")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountTaxRepartitionLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountTaxRepartitionLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("InvoiceTaxId")]
-    // [InverseProperty("AccountTaxRepartitionLineInvoiceTax")] //Many2one
-    public virtual AccountTax? InvoiceTax { get; set; }
-
-    // [Many2one]
     [ForeignKey("TaxId")]
-    // [InverseProperty("AccountTaxRepartitionLine")] //Many2one
     public virtual AccountTax? Tax { get; set; }
 
     // [Many2one]
-    [ForeignKey("RefundTaxId")]
-    // [InverseProperty("AccountTaxRepartitionLineRefundTax")] //Many2one
-    public virtual AccountTax? RefundTax { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountTaxRepartitionLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountTaxRepartitionLineId")] //Many2many
-    // [InverseProperty("AccountTaxRepartitionLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountTaxRepartitionLineId")] // Many2many // Normal
+    // [InverseProperty("AccountTaxRepartitionLine")] // Many2many // Normal
     public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 }

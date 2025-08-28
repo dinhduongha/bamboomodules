@@ -42,9 +42,6 @@ public partial class ChangeLockDate: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("hard_lock_date")]
     public DateTime? HardLockDate { get; set; }
 
-    [Column("period_lock_date")]
-    public DateTime? PeriodLockDate { get; set; }
-
     [Column("fiscalyear_lock_date")]
     public DateTime? FiscalyearLockDate { get; set; }
 
@@ -56,16 +53,13 @@ public partial class ChangeLockDate: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ChangeLockDate")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChangeLockDateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChangeLockDateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

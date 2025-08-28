@@ -24,7 +24,6 @@ public partial class MailGroupModeration: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_group_id")]
     public Guid? MailGroupId { get; set; }
@@ -49,16 +48,13 @@ public partial class MailGroupModeration: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailGroupModerationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailGroupId")]
-    // [InverseProperty("MailGroupModeration")] //Many2one
     public virtual MailGroup? MailGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailGroupModerationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

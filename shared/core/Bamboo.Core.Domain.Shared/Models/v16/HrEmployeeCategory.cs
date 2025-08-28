@@ -24,7 +24,6 @@ public partial class HrEmployeeCategory: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -46,44 +45,27 @@ public partial class HrEmployeeCategory: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrEmployeeCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
-    public virtual ICollection<HrLeave> HrLeave { get; set; }
-
-    // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
-
-    // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrEmployeeCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CategoryId")]
-    // [InverseProperty("Category")]
-    public virtual ICollection<HrEmployee> Emp { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CategoryId")]
-    // [InverseProperty("Category")]
+    // [ForeignKey("CategoryId")] //Many2many // Hidden
+    // [InverseProperty("Category")] //Many2many // Hidden
     public virtual ICollection<HrEmployee> Employee { get; set; }
-
 }

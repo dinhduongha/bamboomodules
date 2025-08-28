@@ -41,16 +41,13 @@ public partial class PeppolRegistration: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PeppolRegistration")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PeppolRegistrationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PeppolRegistrationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class EventQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("question_id")]
     public Guid? QuestionId { get; set; }
@@ -49,21 +48,19 @@ public partial class EventQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventQuestionAnswerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ValueAnswerId")]
-    [InverseProperty("ValueAnswer")]
+    // [One2many] [ForeignKey("ValueAnswerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ValueAnswer")] // One2many
     public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("QuestionId")]
-    // [InverseProperty("EventQuestionAnswer")] //Many2one
     public virtual EventQuestion? Question { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventQuestionAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

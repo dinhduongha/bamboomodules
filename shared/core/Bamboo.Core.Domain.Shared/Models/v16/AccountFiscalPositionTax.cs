@@ -24,7 +24,6 @@ public partial class AccountFiscalPositionTax: FullAuditedEntity<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("position_id")]
     public Guid? PositionId { get; set; }
@@ -49,31 +48,25 @@ public partial class AccountFiscalPositionTax: FullAuditedEntity<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountFiscalPositionTax")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountFiscalPositionTaxCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PositionId")]
-    // [InverseProperty("AccountFiscalPositionTax")] //Many2one
     public virtual AccountFiscalPosition? Position { get; set; }
 
     // [Many2one]
     [ForeignKey("TaxDestId")]
-    // [InverseProperty("AccountFiscalPositionTaxTaxDest")] //Many2one
     public virtual AccountTax? TaxDest { get; set; }
 
     // [Many2one]
     [ForeignKey("TaxSrcId")]
-    // [InverseProperty("AccountFiscalPositionTaxTaxSrc")] //Many2one
     public virtual AccountTax? TaxSrc { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountFiscalPositionTaxWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

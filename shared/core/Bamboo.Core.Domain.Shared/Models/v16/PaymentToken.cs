@@ -24,7 +24,6 @@ public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }
@@ -47,9 +46,6 @@ public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("provider_ref")]
     public string? ProviderRef { get; set; }
 
-    [Column("verified")]
-    public bool? Verified { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -63,47 +59,44 @@ public partial class PaymentToken: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public string? AuthorizeProfile { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentTokenId")]
-    [InverseProperty("PaymentToken")]
+    // [One2many] [ForeignKey("PaymentTokenId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentToken")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentTokenId")]
-    [InverseProperty("PaymentToken")]
+    // [One2many] [ForeignKey("PaymentTokenId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentToken")] // One2many
     public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PaymentToken")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PaymentTokenCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("PaymentToken")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentMethodId")]
-    // [InverseProperty("PaymentToken")] //Many2one
     public virtual PaymentMethod? PaymentMethod { get; set; }
 
     // [One2many]
-    [ForeignKey("TokenId")]
-    [InverseProperty("Token")]
+    // [One2many] [ForeignKey("TokenId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Token")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [Many2one]
     [ForeignKey("ProviderId")]
-    // [InverseProperty("PaymentToken")] //Many2one
     public virtual PaymentProvider? Provider { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PaymentTokenWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

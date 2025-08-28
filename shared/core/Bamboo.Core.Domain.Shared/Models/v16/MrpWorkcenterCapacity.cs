@@ -24,7 +24,6 @@ public partial class MrpWorkcenterCapacity: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -55,21 +54,17 @@ public partial class MrpWorkcenterCapacity: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpWorkcenterCapacityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MrpWorkcenterCapacity")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkcenterId")]
-    // [InverseProperty("MrpWorkcenterCapacity")] //Many2one
     public virtual MrpWorkcenter? Workcenter { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpWorkcenterCapacityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

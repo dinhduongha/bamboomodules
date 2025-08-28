@@ -23,7 +23,6 @@ public partial class HrExpenseSplitWizard: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("expense_id")]
     public Guid? ExpenseId { get; set; }
@@ -42,21 +41,19 @@ public partial class HrExpenseSplitWizard: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrExpenseSplitWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ExpenseId")]
-    // [InverseProperty("HrExpenseSplitWizard")] //Many2one
     public virtual HrExpense? Expense { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<HrExpenseSplit> HrExpenseSplit { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrExpenseSplitWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

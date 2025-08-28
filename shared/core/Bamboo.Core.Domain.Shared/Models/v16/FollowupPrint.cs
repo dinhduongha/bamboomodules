@@ -23,7 +23,6 @@ public partial class FollowupPrint: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("followup_id")]
     public Guid? FollowupId { get; set; }
@@ -63,21 +62,19 @@ public partial class FollowupPrint: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FollowupPrintCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FollowupId")]
-    // [InverseProperty("FollowupPrint")] //Many2one
     public virtual FollowupFollowup? Followup { get; set; }
 
     // [One2many]
-    [ForeignKey("OsvMemoryId")]
-    [InverseProperty("OsvMemory")]
+    // [One2many] [ForeignKey("OsvMemoryId")]
+    [NotMapped] // One2many // Normal
+    // [InverseProperty("OsvMemory")] // One2many
     public virtual ICollection<PartnerStatRel> PartnerStatRel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FollowupPrintWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class SmsResend: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
@@ -42,21 +41,19 @@ public partial class SmsResend: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsResendCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("SmsResend")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsResendId")]
-    [InverseProperty("SmsResend")]
+    // [One2many] [ForeignKey("SmsResendId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsResend")] // One2many
     public virtual ICollection<SmsResendRecipient> SmsResendRecipient { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsResendWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

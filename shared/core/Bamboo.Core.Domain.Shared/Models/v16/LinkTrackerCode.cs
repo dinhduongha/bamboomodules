@@ -24,7 +24,6 @@ public partial class LinkTrackerCode: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("link_id")]
     public Guid? LinkId { get; set; }
@@ -46,16 +45,13 @@ public partial class LinkTrackerCode: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LinkTrackerCodeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LinkId")]
-    // [InverseProperty("LinkTrackerCode")] //Many2one
     public virtual LinkTracker? Link { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LinkTrackerCodeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

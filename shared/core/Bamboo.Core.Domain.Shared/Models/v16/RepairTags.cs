@@ -24,7 +24,6 @@ public partial class RepairTags: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -46,17 +45,15 @@ public partial class RepairTags: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RepairTagsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RepairTagsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("RepairTagsId")]
-    // [InverseProperty("RepairTags")]
+    // [ForeignKey("RepairTagsId")] //Many2many // Hidden
+    // [InverseProperty("RepairTags")] //Many2many // Hidden
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 }

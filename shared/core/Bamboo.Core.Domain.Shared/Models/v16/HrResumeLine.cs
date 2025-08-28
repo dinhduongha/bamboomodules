@@ -24,7 +24,6 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -51,17 +50,9 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
-
-    // v16-Compat
-    //[Column("description")]
-    //public string? Description { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -83,36 +74,29 @@ public partial class HrResumeLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("HrResumeLine")] //Many2one
     public virtual SlideChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrResumeLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrResumeLine")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrResumeLine")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("LineTypeId")]
-    // [InverseProperty("HrResumeLine")] //Many2one
     public virtual HrResumeLineType? LineType { get; set; }
 
     // [Many2one]
     [ForeignKey("SurveyId")]
-    // [InverseProperty("HrResumeLine")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrResumeLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

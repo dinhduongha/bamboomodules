@@ -23,7 +23,6 @@ public partial class CrmLeadForwardToPartner: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -48,21 +47,19 @@ public partial class CrmLeadForwardToPartner: FullAuditedAggregateRoot<Guid>, IE
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLeadForwardToPartnerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ForwardId")]
-    [InverseProperty("Forward")]
+    // [One2many] [ForeignKey("ForwardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Forward")] // One2many
     public virtual ICollection<CrmLeadAssignation> CrmLeadAssignation { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("CrmLeadForwardToPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLeadForwardToPartnerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

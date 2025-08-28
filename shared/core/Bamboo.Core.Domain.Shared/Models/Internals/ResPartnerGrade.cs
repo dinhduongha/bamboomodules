@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -48,16 +49,15 @@ public partial class ResPartnerGrade: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerGradeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("GradeId")]
-    [InverseProperty("Grade")]
+    // [One2many] [ForeignKey("GradeId")]
+    [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
+    // [InverseProperty("Grade")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerGradeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

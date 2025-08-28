@@ -23,7 +23,6 @@ public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -46,17 +45,15 @@ public partial class AccountAccountType: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAccountTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAccountTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountTypeId")]
-    // [InverseProperty("AccountType")]
+    // [ForeignKey("AccountTypeId")] //Many2many // Hidden
+    // [InverseProperty("AccountType")] //Many2many // Hidden
     public virtual ICollection<AccountFinancialReport> Report { get; set; }
 }

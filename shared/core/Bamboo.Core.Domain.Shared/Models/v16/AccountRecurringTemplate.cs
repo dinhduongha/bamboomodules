@@ -23,7 +23,6 @@ public partial class AccountRecurringTemplate: FullAuditedAggregateRoot<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
@@ -60,26 +59,23 @@ public partial class AccountRecurringTemplate: FullAuditedAggregateRoot<Guid>, I
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountRecurringTemplate")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountRecurringTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountRecurringTemplate")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<RecurringPayment> RecurringPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountRecurringTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

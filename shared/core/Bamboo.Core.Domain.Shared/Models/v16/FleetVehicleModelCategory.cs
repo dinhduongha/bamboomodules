@@ -24,7 +24,6 @@ public partial class FleetVehicleModelCategory: FullAuditedAggregateRoot<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -52,26 +51,27 @@ public partial class FleetVehicleModelCategory: FullAuditedAggregateRoot<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleModelCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<FleetVehicleModel> FleetVehicleModel { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleCategoryId")]
-    [InverseProperty("VehicleCategory")]
+    // [One2many] [ForeignKey("VehicleCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("VehicleCategory")] // One2many
     public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleModelCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

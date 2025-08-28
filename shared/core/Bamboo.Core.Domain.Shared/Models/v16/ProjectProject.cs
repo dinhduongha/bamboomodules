@@ -26,13 +26,9 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }
@@ -42,9 +38,6 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
-
-    [Column("analytic_account_id")]
-    public Guid? AnalyticAccountId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }
@@ -66,12 +59,6 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("access_token")]
     public string? AccessToken { get; set; }
-
-    [Column("partner_email")]
-    public string? PartnerEmail { get; set; }
-
-    [Column("partner_phone")]
-    public string? PartnerPhone { get; set; }
 
     [Column("privacy_visibility")]
     public string? PrivacyVisibility { get; set; }
@@ -108,12 +95,6 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("active")]
     public bool? Active { get; set; }
-
-    [Column("allow_subtasks")]
-    public bool? AllowSubtasks { get; set; }
-
-    [Column("allow_recurring_tasks")]
-    public bool? AllowRecurringTasks { get; set; }
 
     [Column("allow_task_dependencies")]
     public bool? AllowTaskDependencies { get; set; }
@@ -162,201 +143,171 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("ProjectProjectAccount")] //Many2one
     public virtual AccountAnalyticAccount? Account { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
-    [ForeignKey("AnalyticAccountId")]
-    // [InverseProperty("ProjectProject")] //Many2one
-    public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
-
-    // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectProjectCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("TimesheetProjectId")]
-    [InverseProperty("TimesheetProject")]
+    // [One2many] [ForeignKey("TimesheetProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TimesheetProject")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastUpdateId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual ProjectUpdate? LastUpdate { get; set; }
 
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ProjectProject")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectCollaborator> ProjectCollaborator { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectCreateInvoice> ProjectCreateInvoice { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
-    public virtual ICollection<ProjectCreateSaleOrder> ProjectCreateSaleOrder { get; set; }
-
-    // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectMilestone> ProjectMilestone { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
 
     // [One2many]
-    [ForeignKey("DisplayProjectId")]
-    [InverseProperty("DisplayProject")]
-    public virtual ICollection<ProjectTask> ProjectTaskDisplayProject { get; set; }
-
-    // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
-    public virtual ICollection<ProjectTask> ProjectTaskProject { get; set; }
-
-    // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectUpdate> ProjectUpdate { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("ReinvoicedSaleOrderId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual SaleOrder? ReinvoicedSaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("InternalProjectId")]
-    [InverseProperty("InternalProject")]
+    // [One2many] [ForeignKey("InternalProjectId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("InternalProject")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleLineId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual ProjectProjectStage? Stage { get; set; }
 
     // [One2many]
-    [ForeignKey("ProjectId")]
-    [InverseProperty("Project")]
+    // [One2many] [ForeignKey("ProjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Project")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
     [ForeignKey("TimesheetProductId")]
-    // [InverseProperty("ProjectProject")] //Many2one
     public virtual ProductProduct? TimesheetProduct { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ProjectProjectUserNavigation")] //Many2one
     public virtual ResUsers? UserNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectProjectWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2one]
     [ForeignKey("XPlan2Id")]
-    // [InverseProperty("ProjectProjectXPlan2")] //Many2one
     public virtual AccountAnalyticAccount? XPlan2 { get; set; }
 
     // [Many2one]
     [ForeignKey("XPlan3Id")]
-    // [InverseProperty("ProjectProjectXPlan3")] //Many2one
     public virtual AccountAnalyticAccount? XPlan3 { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProjectProjectId")] //Many2many
-    // [InverseProperty("ProjectProject")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProjectProjectId")] // Many2many // Normal
+    // [InverseProperty("ProjectProject")] // Many2many // Normal
     public virtual ICollection<ProjectTags> ProjectTags { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProjectProjectId")]
-    // [InverseProperty("ProjectProject")]
+    // [ForeignKey("ProjectProjectId")] //Many2many // Hidden
+    // [InverseProperty("ProjectProject")] //Many2many // Hidden
     public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProjectId")] //Many2many
-    // [InverseProperty("Project")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProjectId")] // Many2many // Normal
+    // [InverseProperty("Project")] // Many2many // Normal
     public virtual ICollection<ProjectTaskType> Type { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProjectId")]
-    // [InverseProperty("Project")]
-    //public virtual ICollection<ProjectTaskType> Type { get; set; }
-
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProjectId")] //Many2many
-    // [InverseProperty("Project")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("ProjectId")] // Many2many // Normal
+    // [InverseProperty("Project")] // Many2many // Normal
     public virtual ICollection<ResUsers> User { get; set; }
 }

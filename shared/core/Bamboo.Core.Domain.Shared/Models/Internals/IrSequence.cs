@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class IrSequence: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("number_next")]
     public long? NumberNext { get; set; }
@@ -66,48 +66,45 @@ public partial class IrSequence: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // [One2many]
-    [ForeignKey("SecureSequenceId")]
-    [InverseProperty("SecureSequence")]
-    public virtual ICollection<AccountJournal> AccountJournal { get; set; }
-
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("IrSequence")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrSequenceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SequenceId")]
-    [InverseProperty("Sequence")]
+    // [One2many] [ForeignKey("SequenceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Sequence")] // One2many
     public virtual ICollection<IrSequenceDateRange> IrSequenceDateRange { get; set; }
 
     // [One2many]
-    [ForeignKey("SequenceId")]
-    [InverseProperty("Sequence")]
+    // [One2many] [ForeignKey("SequenceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Sequence")] // One2many
     public virtual ICollection<PosConfig> PosConfigSequence { get; set; }
 
     // [One2many]
-    [ForeignKey("SequenceLineId")]
-    [InverseProperty("SequenceLine")]
+    // [One2many] [ForeignKey("SequenceLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SequenceLine")] // One2many
     public virtual ICollection<PosConfig> PosConfigSequenceLine { get; set; }
 
     // [One2many]
-    [ForeignKey("BatchPaymentSequenceId")]
-    [InverseProperty("BatchPaymentSequence")]
+    // [One2many] [ForeignKey("BatchPaymentSequenceId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("BatchPaymentSequence")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
-    [ForeignKey("SequenceId")]
-    [InverseProperty("SequenceNavigation")]
+    // [One2many] [ForeignKey("SequenceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SequenceNavigation")] // One2many
     public virtual ICollection<StockPickingType> StockPickingType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrSequenceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

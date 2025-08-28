@@ -24,7 +24,6 @@ public partial class AccountPaymentMethod: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -49,22 +48,22 @@ public partial class AccountPaymentMethod: FullAuditedAggregateRoot<Guid>, IEnti
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodId")]
-    [InverseProperty("PaymentMethod")]
+    // [One2many] [ForeignKey("PaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethod")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodId")]
-    [InverseProperty("PaymentMethod")]
+    // [One2many] [ForeignKey("PaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethod")] // One2many
     public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPaymentMethodCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPaymentMethodWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

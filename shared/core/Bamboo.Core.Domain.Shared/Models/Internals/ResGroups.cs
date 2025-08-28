@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -53,164 +54,157 @@ public partial class ResGroups: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("ResGroups")] //Many2one
     public virtual IrModuleCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResGroupsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<DigestTip> DigestTip { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupPublicId")]
-    [InverseProperty("GroupPublic")]
+    // [One2many] [ForeignKey("GroupPublicId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GroupPublic")] // One2many
     public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [One2many]
-    [ForeignKey("AuthorizedGroupId")]
-    [InverseProperty("AuthorizedGroup")]
+    // [One2many] [ForeignKey("AuthorizedGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AuthorizedGroup")] // One2many
     public virtual ICollection<ForumForum> ForumForum { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<IrModelAccess> IrModelAccess { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupPublicId")]
-    [InverseProperty("GroupPublic")]
-    public virtual ICollection<MailChannel> MailChannel { get; set; }
-
-    // [One2many]
-    [ForeignKey("AccessGroupId")]
-    [InverseProperty("AccessGroup")]
+    // [One2many] [ForeignKey("AccessGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccessGroup")] // One2many
     public virtual ICollection<MailGroup> MailGroup { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupPosManagerId")]
-    [InverseProperty("GroupPosManager")]
+    // [One2many] [ForeignKey("GroupPosManagerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GroupPosManager")] // One2many
     public virtual ICollection<PosConfig> PosConfigGroupPosManager { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupPosUserId")]
-    [InverseProperty("GroupPosUser")]
+    // [One2many] [ForeignKey("GroupPosUserId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GroupPosUser")] // One2many
     public virtual ICollection<PosConfig> PosConfigGroupPosUser { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResGroupsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    [ForeignKey("Gid")]
-    [InverseProperty("Gid")]
+    // [ForeignKey("Gid")] //Many2many // Hidden
+    // [InverseProperty("Gid")] //Many2many // Hidden
     public virtual ICollection<IrActServer> Act { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("Gid")]
-    // [InverseProperty("Gid")]
-    // public virtual ICollection<IrActWindow> ActNavigation { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("Gid")] //Many2many // Hidden
+    // [InverseProperty("Gid")] //Many2many // Hidden
+    public virtual ICollection<IrActWindow> ActNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("GroupId")]
-    // [InverseProperty("Group")]
-    // public virtual ICollection<SlideChannel> Channel { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("GroupId")] //Many2many // Hidden
+    // [InverseProperty("Group")] //Many2many // Hidden
+    public virtual ICollection<SlideChannel> Channel { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<DiscussChannel> DiscussChannelNavigation { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResGroupsId")] //Many2many // Hidden
+    // [InverseProperty("ResGroups")] //Many2many // Hidden
+    public virtual ICollection<DiscussChannel> DiscussChannelNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("GroupId")]
-    // [InverseProperty("Group")]
-    // public virtual ICollection<IrModelFields> Field { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("GroupId")] //Many2many // Hidden
+    // [InverseProperty("Group")] //Many2many // Hidden
+    public virtual ICollection<IrModelFields> Field { get; set; }
 
     // [Many2many] // Normal
-    [NotMapped] //Many2many // Normal
-    [ForeignKey("Hid")] //Many2many
-    [InverseProperty("Hid")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("Hid")] // Many2many // Normal
+    // [InverseProperty("Hid")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 
     // [Many2many] // Normal
-    [NotMapped] //Many2many // Normal
-    [ForeignKey("Gid")] //Many2many
-    [InverseProperty("Gid")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("Gid")] // Many2many // Normal
+    // [InverseProperty("Gid")] // Many2many // Normal
     public virtual ICollection<ResGroups> Hid { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<IrEmbeddedActions> IrEmbeddedActions { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResGroupsId")] //Many2many // Hidden
+    // [InverseProperty("ResGroups")] //Many2many // Hidden
+    public virtual ICollection<IrEmbeddedActions> IrEmbeddedActions { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<MailCannedResponse> MailCannedResponse { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResGroupsId")] //Many2many // Hidden
+    // [InverseProperty("ResGroups")] //Many2many // Hidden
+    public virtual ICollection<MailCannedResponse> MailCannedResponse { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<MailChannel> MailChannelNavigation { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    [ForeignKey("Gid")]
-    [InverseProperty("Gid")]
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("Gid")] //Many2many // Hidden
+    // [InverseProperty("Gid")] //Many2many // Hidden
     public virtual ICollection<IrUiMenu> Menu { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("GroupId")]
-    // [InverseProperty("Group")]
-     public virtual ICollection<IrRule> RuleGroup { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<SlideChannel> SlideChannel { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResGroupsId")]
-    // [InverseProperty("ResGroups")]
-    // public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("Gid")]
-    // [InverseProperty("Gid")]
+    // [ForeignKey("GroupId")] //Many2many // Hidden
+    // [InverseProperty("Group")] //Many2many // Hidden
+    public virtual ICollection<IrRule> RuleGroup { get; set; }
+
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResGroupsId")] //Many2many // Hidden
+    // [InverseProperty("ResGroups")] //Many2many // Hidden
+    public virtual ICollection<SlideChannel> SlideChannel { get; set; }
+
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResGroupsId")] //Many2many // Hidden
+    // [InverseProperty("ResGroups")] //Many2many // Hidden
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
+
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("Gid")] //Many2many // Hidden
+    // [InverseProperty("Gid")] //Many2many // Hidden
     public virtual ICollection<IrActReportXml> Uid { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("Gid")] //Many2many
-    // [InverseProperty("Gid")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("Gid")] // Many2many // Normal
+    // [InverseProperty("Gid")] // Many2many // Normal
     public virtual ICollection<ResUsers> UidNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("GroupId")] //Many2many // Hidden
+    // [InverseProperty("Group")] //Many2many // Hidden
     public virtual ICollection<IrUiView> View { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    [ForeignKey("ResGroupsId")]
-    [InverseProperty("ResGroups")]
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResGroupsId")] //Many2many // Hidden
+    // [InverseProperty("ResGroups")] //Many2many // Hidden
     public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 }

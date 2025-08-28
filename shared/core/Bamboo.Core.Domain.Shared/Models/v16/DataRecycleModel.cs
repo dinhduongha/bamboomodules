@@ -23,7 +23,6 @@ public partial class DataRecycleModel: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
@@ -81,32 +80,29 @@ public partial class DataRecycleModel: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DataRecycleModelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RecycleModelId")]
-    [InverseProperty("RecycleModel")]
+    // [One2many] [ForeignKey("RecycleModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RecycleModel")] // One2many
     public virtual ICollection<DataRecycleRecord> DataRecycleRecord { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("DataRecycleModel")] //Many2one
     public virtual IrModel? ResModel { get; set; }
 
     // [Many2one]
     [ForeignKey("TimeFieldId")]
-    // [InverseProperty("DataRecycleModel")] //Many2one
     public virtual IrModelFields? TimeField { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DataRecycleModelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DataRecycleModelId")] //Many2many
-    // [InverseProperty("DataRecycleModel")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("DataRecycleModelId")] // Many2many // Normal
+    // [InverseProperty("DataRecycleModel")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

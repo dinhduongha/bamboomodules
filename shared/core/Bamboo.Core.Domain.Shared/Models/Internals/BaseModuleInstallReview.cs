@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BaseModuleInstallReview: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("module_id")]
     public Guid? ModuleId { get; set; }
@@ -41,16 +41,13 @@ public partial class BaseModuleInstallReview: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BaseModuleInstallReviewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ModuleId")]
-    // [InverseProperty("BaseModuleInstallReview")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BaseModuleInstallReviewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

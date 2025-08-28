@@ -23,7 +23,6 @@ public partial class StockOrderpointSnooze: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,17 +44,15 @@ public partial class StockOrderpointSnooze: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockOrderpointSnoozeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockOrderpointSnoozeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockOrderpointSnoozeId")] //Many2many
-    // [InverseProperty("StockOrderpointSnooze")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockOrderpointSnoozeId")] // Many2many // Normal
+    // [InverseProperty("StockOrderpointSnooze")] // Many2many // Normal
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 }

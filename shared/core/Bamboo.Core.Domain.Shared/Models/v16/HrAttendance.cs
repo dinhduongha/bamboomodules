@@ -24,7 +24,6 @@ public partial class HrAttendance: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -106,21 +105,19 @@ public partial class HrAttendance: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrAttendanceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrAttendance")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [One2many]
-    [ForeignKey("LastAttendanceId")]
-    [InverseProperty("LastAttendance")]
+    // [One2many] [ForeignKey("LastAttendanceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LastAttendance")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrAttendanceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

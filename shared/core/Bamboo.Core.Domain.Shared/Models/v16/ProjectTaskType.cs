@@ -24,7 +24,6 @@ public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -48,22 +47,6 @@ public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    [JsonField]
-    [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
-
-    [JsonField]
-    [Column("legend_blocked", TypeName = "jsonb")]
-    public string? LegendBlocked { get; set; }
-
-    [JsonField]
-    [Column("legend_done", TypeName = "jsonb")]
-    public string? LegendDone { get; set; }
-
-    [JsonField]
-    [Column("legend_normal", TypeName = "jsonb")]
-    public string? LegendNormal { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -72,9 +55,6 @@ public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("auto_validation_state")]
     public bool? AutoValidationState { get; set; }
-
-    [Column("auto_validation_kanban_state")]
-    public bool? AutoValidationKanbanState { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -87,60 +67,49 @@ public partial class ProjectTaskType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectTaskTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("ProjectTaskTypeMailTemplate")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("StageId")]
-    [InverseProperty("Stage")]
+    // [One2many] [ForeignKey("StageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Stage")] // One2many
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many]
-    [ForeignKey("StageId")]
-    [InverseProperty("Stage")]
+    // [One2many] [ForeignKey("StageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Stage")] // One2many
     public virtual ICollection<ProjectTaskUserRel> ProjectTaskUserRel { get; set; }
 
     // [Many2one]
     [ForeignKey("RatingTemplateId")]
-    // [InverseProperty("ProjectTaskTypeRatingTemplate")] //Many2one
     public virtual MailTemplate? RatingTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("SmsTemplateId")]
-    // [InverseProperty("ProjectTaskType")] //Many2one
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ProjectTaskTypeUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectTaskTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("TypeId")]
-    // [InverseProperty("Type")]
+    // [ForeignKey("TypeId")] //Many2many // Hidden
+    // [InverseProperty("Type")] //Many2many // Hidden
     public virtual ICollection<ProjectProject> Project { get; set; }
 
-    // v16-Compat
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("TypeId")] //Many2many
-    // [InverseProperty("Type")] //Many2many
-    //public virtual ICollection<ProjectProject> Project { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProjectTaskTypeId")]
-    // [InverseProperty("ProjectTaskType")]
+    // [ForeignKey("ProjectTaskTypeId")] //Many2many // Hidden
+    // [InverseProperty("ProjectTaskType")] //Many2many // Hidden
     public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
 }

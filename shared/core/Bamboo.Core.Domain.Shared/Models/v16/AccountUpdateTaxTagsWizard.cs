@@ -41,16 +41,13 @@ public partial class AccountUpdateTaxTagsWizard: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountUpdateTaxTagsWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountUpdateTaxTagsWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountUpdateTaxTagsWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

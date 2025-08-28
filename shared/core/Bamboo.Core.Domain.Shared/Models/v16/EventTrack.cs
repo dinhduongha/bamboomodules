@@ -25,10 +25,6 @@ public partial class EventTrack: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -161,62 +157,51 @@ public partial class EventTrack: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTrackCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventTrack")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("EventTrackId")]
-    [InverseProperty("EventTrack")]
+    // [One2many] [ForeignKey("EventTrackId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventTrack")] // One2many
     public virtual ICollection<EventQuiz> EventQuiz { get; set; }
 
     // [One2many]
-    [ForeignKey("TrackId")]
-    [InverseProperty("Track")]
+    // [One2many] [ForeignKey("TrackId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Track")] // One2many
     public virtual ICollection<EventTrackVisitor> EventTrackVisitor { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("EventTrack")] //Many2one
     public virtual EventTrackLocation? Location { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("EventTrack")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("EventTrack")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("QuizId")]
-    // [InverseProperty("EventTrackNavigation")] //Many2one
     public virtual EventQuiz? Quiz { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("EventTrack")] //Many2one
     public virtual EventTrackStage? Stage { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("EventTrackUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTrackWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EventTrackId")] //Many2many
-    // [InverseProperty("EventTrack")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventTrackId")] // Many2many // Normal
+    // [InverseProperty("EventTrack")] // Many2many // Normal
     public virtual ICollection<EventTrackTag> EventTrackTag { get; set; }
 }

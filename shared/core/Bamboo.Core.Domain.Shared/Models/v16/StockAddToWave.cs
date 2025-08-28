@@ -23,7 +23,6 @@ public partial class StockAddToWave: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("wave_id")]
     public Guid? WaveId { get; set; }
@@ -48,33 +47,29 @@ public partial class StockAddToWave: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockAddToWaveCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("StockAddToWaveUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WaveId")]
-    // [InverseProperty("StockAddToWave")] //Many2one
     public virtual StockPickingBatch? Wave { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockAddToWaveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockAddToWaveId")] //Many2many
-    // [InverseProperty("StockAddToWave")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockAddToWaveId")] // Many2many // Normal
+    // [InverseProperty("StockAddToWave")] // Many2many // Normal
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockAddToWaveId")] //Many2many
-    // [InverseProperty("StockAddToWave")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockAddToWaveId")] // Many2many // Normal
+    // [InverseProperty("StockAddToWave")] // Many2many // Normal
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

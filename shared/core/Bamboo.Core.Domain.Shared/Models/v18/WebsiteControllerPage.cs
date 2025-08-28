@@ -26,7 +26,6 @@ public partial class WebsiteControllerPage: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -66,31 +65,27 @@ public partial class WebsiteControllerPage: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteControllerPageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RecordViewId")]
-    // [InverseProperty("WebsiteControllerPageRecordView")] //Many2one
     public virtual IrUiView? RecordView { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("WebsiteControllerPageView")] //Many2one
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsiteControllerPage")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [One2many]
-    [ForeignKey("ControllerPageId")]
-    [InverseProperty("ControllerPage")]
+    // [One2many] [ForeignKey("ControllerPageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ControllerPage")] // One2many
     public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteControllerPageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

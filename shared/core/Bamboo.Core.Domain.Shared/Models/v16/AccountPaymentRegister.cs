@@ -23,7 +23,6 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -108,67 +107,55 @@ public partial class AccountPaymentRegister: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPaymentRegisterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("AccountPaymentRegisterCurrency")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("CustomUserCurrencyId")]
-    // [InverseProperty("AccountPaymentRegisterCustomUserCurrency")] //Many2one
     public virtual ResCurrency? CustomUserCurrency { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerBankId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual ResPartnerBank? PartnerBank { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentMethodLineId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual AccountPaymentMethodLine? PaymentMethodLine { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentTokenId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual PaymentToken? PaymentToken { get; set; }
 
     // [Many2one]
     [ForeignKey("SourceCurrencyId")]
-    // [InverseProperty("AccountPaymentRegisterSourceCurrency")] //Many2one
     public virtual ResCurrency? SourceCurrency { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPaymentRegisterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2one]
     [ForeignKey("WriteoffAccountId")]
-    // [InverseProperty("AccountPaymentRegister")] //Many2one
     public virtual AccountAccount? WriteoffAccount { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WizardId")] //Many2many
-    // [InverseProperty("Wizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("WizardId")] // Many2many // Normal
+    // [InverseProperty("Wizard")] // Many2many // Normal
     public virtual ICollection<AccountMoveLine> Line { get; set; }
 }

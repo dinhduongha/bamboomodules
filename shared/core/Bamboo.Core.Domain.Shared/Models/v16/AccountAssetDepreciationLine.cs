@@ -25,7 +25,6 @@ public partial class AccountAssetDepreciationLine: FullAuditedEntity<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -71,21 +70,17 @@ public partial class AccountAssetDepreciationLine: FullAuditedEntity<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("AssetId")]
-    // [InverseProperty("AccountAssetDepreciationLine")] //Many2one
     public virtual AccountAssetAsset? Asset { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAssetDepreciationLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("AccountAssetDepreciationLine")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAssetDepreciationLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

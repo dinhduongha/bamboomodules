@@ -12,9 +12,8 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("account_bank_statement_line")]
-//[Index("InternalIndex", Name = "account_bank_statement_line_internal_index_index")]
-//[Index("UniqueImportId", Name = "account_bank_statement_line_unique_import_id", IsUnique = true)]
 //[Index("MoveId", Name = "account_bank_statement_line__move_id_index")]
+//[Index("JournalId", "CompanyId", "InternalIndex", Name = "account_bank_statement_line_main_idx")]
 public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -26,7 +25,6 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }
@@ -98,77 +96,65 @@ public partial class AccountBankStatementLine: FullAuditedAggregateRoot<Guid>, I
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
 
-    [Column("unique_import_id")]
-    public string? UniqueImportId { get; set; }
-
     // [One2many]
-    [ForeignKey("StatementLineId")]
-    [InverseProperty("StatementLine")]
+    // [One2many] [ForeignKey("StatementLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StatementLine")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
-    [ForeignKey("StatementLineId")]
-    [InverseProperty("StatementLine")]
+    // [One2many] [ForeignKey("StatementLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StatementLine")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountBankStatementLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("AccountBankStatementLineCurrency")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("ForeignCurrencyId")]
-    // [InverseProperty("AccountBankStatementLineForeignCurrency")] //Many2one
     public virtual ResCurrency? ForeignCurrency { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PosSessionId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual PosSession? PosSession { get; set; }
 
     // [Many2one]
     [ForeignKey("StatementId")]
-    // [InverseProperty("AccountBankStatementLine")] //Many2one
     public virtual AccountBankStatement? Statement { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountBankStatementLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountBankStatementLineId")] //Many2many
-    // [InverseProperty("AccountBankStatementLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountBankStatementLineId")] // Many2many // Normal
+    // [InverseProperty("AccountBankStatementLine")] // Many2many // Normal
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 }

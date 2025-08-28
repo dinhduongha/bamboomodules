@@ -23,7 +23,6 @@ public partial class ProductRemoval: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -35,17 +34,9 @@ public partial class ProductRemoval: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [JsonField]
     [Column("method", TypeName = "jsonb")]
     public string? Method { get; set; }
-
-    // v16-Compat
-    //[Column("method")]
-    //public string? Method { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -55,21 +46,21 @@ public partial class ProductRemoval: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductRemovalCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RemovalStrategyId")]
-    [InverseProperty("RemovalStrategy")]
+    // [One2many] [ForeignKey("RemovalStrategyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RemovalStrategy")] // One2many
     public virtual ICollection<ProductCategory> ProductCategory { get; set; }
 
     // [One2many]
-    [ForeignKey("RemovalStrategyId")]
-    [InverseProperty("RemovalStrategy")]
+    // [One2many] [ForeignKey("RemovalStrategyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RemovalStrategy")] // One2many
     public virtual ICollection<StockLocation> StockLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductRemovalWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("sms_sms")]
 //[Index("MailMessageId", Name = "sms_sms__mail_message_id_index")]
 //[Index("Uuid", Name = "sms_sms_uuid_unique", IsUnique = true)]
-public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsSms: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,7 +25,6 @@ public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -68,36 +67,21 @@ public partial class SmsSms: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsSmsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("SmsSms")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
-
-    // [One2many]
-    [ForeignKey("SmsId")]
-    [InverseProperty("Sms")]
-    public virtual ICollection<MailNotification> MailNotification { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingId")]
-    // [InverseProperty("SmsSms")] //Many2one
     public virtual MailingMailing? Mailing { get; set; }
-
-    // [One2many]
-    [ForeignKey("SmsSmsId")]
-    [InverseProperty("SmsSms")]
-    public virtual ICollection<MailingTrace> MailingTrace { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("SmsSms")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsSmsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,16 +23,12 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("root_report_id")]
     public Guid? RootReportId { get; set; }
-
-    [Column("chart_template_id")]
-    public Guid? ChartTemplateId { get; set; }
 
     [Column("country_id")]
     public Guid? CountryId { get; set; }
@@ -49,9 +45,8 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
     [Column("chart_template")]
-    public string? ChartTemplateString { get; set; }
+    public string? ChartTemplate { get; set; }
 
     [Column("availability_condition")]
     public string? AvailabilityCondition { get; set; }
@@ -117,10 +112,6 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("filter_analytic")]
     public bool? FilterAnalytic { get; set; }
 
-    // v16-Compat
-    //[Column("filter_account_type")]
-    //public bool? FilterAccountType { get; set; }
-
     [Column("filter_partner")]
     public bool? FilterPartner { get; set; }
 
@@ -140,54 +131,48 @@ public partial class AccountReport: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("ReportId")]
-    [InverseProperty("Report")]
+    // [One2many] [ForeignKey("ReportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Report")] // One2many
     public virtual ICollection<AccountReportColumn> AccountReportColumn { get; set; }
 
     // [One2many]
-    [ForeignKey("ReportId")]
-    [InverseProperty("Report")]
+    // [One2many] [ForeignKey("ReportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Report")] // One2many
     public virtual ICollection<AccountReportLine> AccountReportLine { get; set; }
 
     // [Many2one]
-    [ForeignKey("ChartTemplateId")]
-    // [InverseProperty("AccountReport")] //Many2one
-    public virtual AccountChartTemplate? ChartTemplate { get; set; }
-
-    // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("AccountReport")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RootReportId")]
-    [InverseProperty("RootReport")]
+    // [One2many] [ForeignKey("RootReportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RootReport")] // One2many
     public virtual ICollection<AccountReport> InverseRootReport { get; set; }
 
     // [Many2one]
     [ForeignKey("RootReportId")]
-    // [InverseProperty("InverseRootReport")] //Many2one
     public virtual AccountReport? RootReport { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SubReportId")] //Many2many
-    // [InverseProperty("SubReport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SubReportId")] // Many2many // Normal
+    // [InverseProperty("SubReport")] // Many2many // Normal
     public virtual ICollection<AccountReport> MainReport { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MainReportId")] //Many2many
-    // [InverseProperty("MainReport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MainReportId")] // Many2many // Normal
+    // [InverseProperty("MainReport")] // Many2many // Normal
     public virtual ICollection<AccountReport> SubReport { get; set; }
 }

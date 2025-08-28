@@ -23,7 +23,6 @@ public partial class CertificateCertificate: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("private_key_id")]
     public Guid? PrivateKeyId { get; set; }
@@ -75,26 +74,21 @@ public partial class CertificateCertificate: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("CertificateCertificate")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CertificateCertificateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PrivateKeyId")]
-    // [InverseProperty("CertificateCertificatePrivateKey")] //Many2one
     public virtual CertificateKey? PrivateKey { get; set; }
 
     // [Many2one]
     [ForeignKey("PublicKeyId")]
-    // [InverseProperty("CertificateCertificatePublicKey")] //Many2one
     public virtual CertificateKey? PublicKey { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CertificateCertificateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

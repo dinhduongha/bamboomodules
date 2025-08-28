@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BaseGeoProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -44,16 +44,15 @@ public partial class BaseGeoProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BaseGeoProviderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("GeolocProviderId")]
-    [InverseProperty("GeolocProvider")]
+    // [One2many] [ForeignKey("GeolocProviderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GeolocProvider")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BaseGeoProviderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

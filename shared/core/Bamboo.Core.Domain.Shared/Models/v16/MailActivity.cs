@@ -28,7 +28,6 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }
@@ -93,62 +92,45 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     [Column("calendar_event_id")]
     public Guid? CalendarEventId { get; set; }
 
-    [Column("note_id")]
-    public Guid? NoteId { get; set; }
-
     // [Many2one]
     [ForeignKey("ActivityTypeId")]
-    // [InverseProperty("MailActivityActivityType")] //Many2one
     public virtual MailActivityType? ActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("CalendarEventId")]
-    // [InverseProperty("MailActivity")] //Many2one
     public virtual CalendarEvent? CalendarEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailActivityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("NoteId")]
-    // [InverseProperty("MailActivity")] //Many2one
-    public virtual NoteNote? NoteNavigation { get; set; }
-
-    // [Many2one]
     [ForeignKey("PreviousActivityTypeId")]
-    // [InverseProperty("MailActivityPreviousActivityType")] //Many2one
     public virtual MailActivityType? PreviousActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("RecommendedActivityTypeId")]
-    // [InverseProperty("MailActivityRecommendedActivityType")] //Many2one
     public virtual MailActivityType? RecommendedActivityType { get; set; }
 
     // [Many2one]
     [ForeignKey("RequestPartnerId")]
-    // [InverseProperty("MailActivity")] //Many2one
     public virtual ResPartner? RequestPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("MailActivity")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("MailActivityUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailActivityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ActivityId")] //Many2many
-    // [InverseProperty("Activity")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("ActivityId")] // Many2many // Normal
+    // [InverseProperty("Activity")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 }

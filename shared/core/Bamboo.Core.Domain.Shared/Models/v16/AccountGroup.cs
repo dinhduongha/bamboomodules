@@ -13,7 +13,6 @@ namespace Bamboo.Core.Models;
 
 [Table("account_group")]
 //[Index("ParentId", Name = "account_group__parent_id_index")]
-//[Index("ParentPath", Name = "account_group_parent_path_index")]
 public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -25,7 +24,6 @@ public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -35,9 +33,6 @@ public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("parent_path")]
-    public string? ParentPath { get; set; }
 
     [Column("code_prefix_start")]
     public string? CodePrefixStart { get; set; }
@@ -55,34 +50,25 @@ public partial class AccountGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // [One2many]
-    [NotMapped] //One2many
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
-    public virtual ICollection<AccountAccount> AccountAccount { get; set; }
-
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountGroup")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountGroup> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual AccountGroup? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

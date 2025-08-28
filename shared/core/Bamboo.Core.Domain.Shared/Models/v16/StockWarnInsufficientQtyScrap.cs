@@ -23,7 +23,6 @@ public partial class StockWarnInsufficientQtyScrap: FullAuditedEntity<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -54,26 +53,21 @@ public partial class StockWarnInsufficientQtyScrap: FullAuditedEntity<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockWarnInsufficientQtyScrapCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("StockWarnInsufficientQtyScrap")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockWarnInsufficientQtyScrap")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ScrapId")]
-    // [InverseProperty("StockWarnInsufficientQtyScrap")] //Many2one
     public virtual StockScrap? Scrap { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockWarnInsufficientQtyScrapWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

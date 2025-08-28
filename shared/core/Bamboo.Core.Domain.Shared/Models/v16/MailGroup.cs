@@ -23,7 +23,6 @@ public partial class MailGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }
@@ -73,42 +72,41 @@ public partial class MailGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("AccessGroupId")]
-    // [InverseProperty("MailGroup")] //Many2one
     public virtual ResGroups? AccessGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasId")]
-    // [InverseProperty("MailGroup")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MailGroupId")]
-    [InverseProperty("MailGroup")]
+    // [One2many] [ForeignKey("MailGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailGroup")] // One2many
     public virtual ICollection<MailGroupMember> MailGroupMember { get; set; }
 
     // [One2many]
-    [ForeignKey("MailGroupId")]
-    [InverseProperty("MailGroup")]
+    // [One2many] [ForeignKey("MailGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailGroup")] // One2many
     public virtual ICollection<MailGroupMessage> MailGroupMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("MailGroupId")]
-    [InverseProperty("MailGroup")]
+    // [One2many] [ForeignKey("MailGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailGroup")] // One2many
     public virtual ICollection<MailGroupModeration> MailGroupModeration { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailGroupId")] //Many2many
-    // [InverseProperty("MailGroup")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("MailGroupId")] // Many2many // Normal
+    // [InverseProperty("MailGroup")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

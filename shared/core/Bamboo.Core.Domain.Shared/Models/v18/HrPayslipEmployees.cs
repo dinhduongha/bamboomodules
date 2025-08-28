@@ -23,7 +23,6 @@ public partial class HrPayslipEmployees: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class HrPayslipEmployees: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayslipEmployeesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayslipEmployeesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("PayslipId")] //Many2many
-    [InverseProperty("Payslip")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PayslipId")] // Many2many // Normal
+    // [InverseProperty("Payslip")] // Many2many // Normal
     public virtual ICollection<HrEmployee> Employee { get; set; }
 }

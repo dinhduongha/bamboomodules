@@ -28,7 +28,6 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("resource_id")]
     public Guid? ResourceId { get; set; }
@@ -65,9 +64,6 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("coach_id")]
     public Guid? CoachId { get; set; }
-
-    [Column("address_home_id")]
-    public Guid? AddressHomeId { get; set; }
 
     [Column("private_state_id")]
     public Guid? PrivateStateId { get; set; }
@@ -116,9 +112,6 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("work_email")]
     public string? WorkEmail { get; set; }
-
-    [Column("employee_type")]
-    public string? EmployeeType { get; set; }
 
     [Column("private_street")]
     public string? PrivateStreet { get; set; }
@@ -189,8 +182,8 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("distance_home_work_unit")]
     public string? DistanceHomeWorkUnit { get; set; }
 
-    // [Column("employee_type")]
-    // public string? EmployeeType { get; set; }
+    [Column("employee_type")]
+    public string? EmployeeType { get; set; }
 
     [Column("barcode")]
     public string? Barcode { get; set; }
@@ -325,486 +318,461 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("manually_set_presence")]
     public bool? ManuallySetPresence { get; set; }
 
-    // [Column("hourly_cost")]
-    // public decimal? HourlyCost { get; set; }
-
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("ManagerId")]
-    [InverseProperty("Manager")]
+    // [One2many] [ForeignKey("ManagerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Manager")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineManager { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
     // [Many2one]
     [ForeignKey("AddressId")]
-    // [InverseProperty("HrEmployeeAddress")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
     // [Many2one]
-    [ForeignKey("AddressHomeId")]
-    // [InverseProperty("HrEmployeeAddressHome")] //Many2one
-    public virtual ResPartner? AddressHome { get; set; }
-
-    // [Many2one]
     [ForeignKey("AttendanceManagerId")]
-    // [InverseProperty("HrEmployeeAttendanceManager")] //Many2one
     public virtual ResUsers? AttendanceManager { get; set; }
 
     // [Many2one]
     [ForeignKey("BankAccountId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResPartnerBank? BankAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("CoachId")]
-    // [InverseProperty("InverseCoach")] //Many2one
     public virtual HrEmployee? Coach { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ContractId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("HrEmployeeCountry")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryOfBirth")]
-    // [InverseProperty("HrEmployeeCountryOfBirthNavigation")] //Many2one
     public virtual ResCountry? CountryOfBirthNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrEmployeeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartureReasonId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrDepartureReason? DepartureReason { get; set; }
 
     // [Many2one]
     [ForeignKey("ExpenseManagerId")]
-    // [InverseProperty("HrEmployeeExpenseManager")] //Many2one
     public virtual ResUsers? ExpenseManager { get; set; }
 
     // [One2many]
-    [ForeignKey("DriverEmployeeId")]
-    [InverseProperty("DriverEmployee")]
+    // [One2many] [ForeignKey("DriverEmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DriverEmployee")] // One2many
     public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
 
     // [One2many]
-    [ForeignKey("DriverEmployeeId")]
-    [InverseProperty("DriverEmployee")]
+    // [One2many] [ForeignKey("DriverEmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DriverEmployee")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicleDriverEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("FutureDriverEmployeeId")]
-    [InverseProperty("FutureDriverEmployee")]
+    // [One2many] [ForeignKey("FutureDriverEmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FutureDriverEmployee")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicleFutureDriverEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("PurchaserEmployeeId")]
-    [InverseProperty("PurchaserEmployee")]
+    // [One2many] [ForeignKey("PurchaserEmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PurchaserEmployee")] // One2many
     public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
     // [Many2one]
     [ForeignKey("FridayLocationId")]
-    // [InverseProperty("HrEmployeeFridayLocation")] //Many2one
     public virtual HrWorkLocation? FridayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<GamificationBadgeUser> GamificationBadgeUser { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HomeworkLocationWizard> HomeworkLocationWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("EmpId")]
-    [InverseProperty("Emp")]
-    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
-
-    // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrAttendance> HrAttendance { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertime { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
-    [ForeignKey("ManagerId")]
-    [InverseProperty("Manager")]
+    // [One2many] [ForeignKey("ManagerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrDepartureWizard> HrDepartureWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrEmployeeLocation> HrEmployeeLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLog { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrExpense> HrExpense { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrExpenseSplit> HrExpenseSplit { get; set; }
 
     // [One2many]
-    [ForeignKey("ManagerId")]
-    [InverseProperty("Manager")]
+    // [One2many] [ForeignKey("ManagerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
-    [ForeignKey("ApproverId")]
-    [InverseProperty("Approver")]
+    // [One2many] [ForeignKey("ApproverId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Approver")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationApprover { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("ManagerId")]
-    [InverseProperty("Manager")]
+    // [One2many] [ForeignKey("ManagerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationManager { get; set; }
 
     // [One2many]
-    [ForeignKey("SecondApproverId")]
-    [InverseProperty("SecondApprover")]
+    // [One2many] [ForeignKey("SecondApproverId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SecondApprover")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationSecondApprover { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrLeave> HrLeaveEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("FirstApproverId")]
-    [InverseProperty("FirstApprover")]
+    // [One2many] [ForeignKey("FirstApproverId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FirstApprover")] // One2many
     public virtual ICollection<HrLeave> HrLeaveFirstApprover { get; set; }
 
     // [One2many]
-    [ForeignKey("ManagerId")]
-    [InverseProperty("Manager")]
+    // [One2many] [ForeignKey("ManagerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrLeave> HrLeaveManager { get; set; }
 
     // [One2many]
-    [ForeignKey("SecondApproverId")]
-    [InverseProperty("SecondApprover")]
+    // [One2many] [ForeignKey("SecondApproverId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SecondApprover")] // One2many
     public virtual ICollection<HrLeave> HrLeaveSecondApprover { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrPayslip> HrPayslip { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrUserWorkEntryEmployee> HrUserWorkEntryEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
 
     // [One2many]
-    [ForeignKey("CoachId")]
-    [InverseProperty("Coach")]
+    // [One2many] [ForeignKey("CoachId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Coach")] // One2many
     public virtual ICollection<HrEmployee> InverseCoach { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<HrEmployee> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("JobId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrJob? Job { get; set; }
 
     // [Many2one]
     [ForeignKey("LastAttendanceId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual HrAttendance? LastAttendance { get; set; }
 
     // [Many2one]
     [ForeignKey("LeaveManagerId")]
-    // [InverseProperty("HrEmployeeLeaveManager")] //Many2one
     public virtual ResUsers? LeaveManager { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
     [ForeignKey("MondayLocationId")]
-    // [InverseProperty("HrEmployeeMondayLocation")] //Many2one
     public virtual HrWorkLocation? MondayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual HrEmployee? Parent { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<PosSession> PosSession { get; set; }
 
     // [Many2one]
     [ForeignKey("PrivateCountryId")]
-    // [InverseProperty("HrEmployeePrivateCountry")] //Many2one
     public virtual ResCountry? PrivateCountry { get; set; }
 
     // [Many2one]
     [ForeignKey("PrivateStateId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResCountryState? PrivateState { get; set; }
 
     // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
-    public virtual ICollection<ProjectCreateSaleOrderLine> ProjectCreateSaleOrderLine { get; set; }
-
-    // [One2many]
-    [ForeignKey("EmployeeId")]
-    [InverseProperty("Employee")]
+    // [One2many] [ForeignKey("EmployeeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Employee")] // One2many
     public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResourceResource? Resource { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceCalendarId")]
-    // [InverseProperty("HrEmployee")] //Many2one
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
     [ForeignKey("SaturdayLocationId")]
-    // [InverseProperty("HrEmployeeSaturdayLocation")] //Many2one
     public virtual HrWorkLocation? SaturdayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("SundayLocationId")]
-    // [InverseProperty("HrEmployeeSundayLocation")] //Many2one
     public virtual HrWorkLocation? SundayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("ThursdayLocationId")]
-    // [InverseProperty("HrEmployeeThursdayLocation")] //Many2one
     public virtual HrWorkLocation? ThursdayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("TuesdayLocationId")]
-    // [InverseProperty("HrEmployeeTuesdayLocation")] //Many2one
     public virtual HrWorkLocation? TuesdayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("HrEmployeeUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WednesdayLocationId")]
-    // [InverseProperty("HrEmployeeWednesdayLocation")] //Many2one
     public virtual HrWorkLocation? WednesdayLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkContactId")]
-    // [InverseProperty("HrEmployeeWorkContact")] //Many2one
     public virtual ResPartner? WorkContact { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkLocationId")]
-    // [InverseProperty("HrEmployee")] //Many2one
-    // [InverseProperty("HrEmployeeWorkLocation")] //Many2one
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrEmployeeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EmpId")] //Many2many
-    // [InverseProperty("Emp")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EmployeeId")] // Many2many // Normal
+    // [InverseProperty("Employee")] // Many2many // Normal
     public virtual ICollection<HrEmployeeCategory> Category { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PlanWizardId")]
-    // [InverseProperty("PlanWizard")]
-    public virtual ICollection<HrPlanWizard> Employee { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrEmployeeCvWizard> HrEmployeeCvWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrEmployeeDeleteWizard> HrEmployeeDeleteWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
-    public virtual ICollection<HrLeave> HrLeave { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
-    public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
-
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrEmployeeId")] //Many2many
-    // [InverseProperty("HrEmployee")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrEmployeeId")] // Many2many // Normal
+    // [InverseProperty("HrEmployee")] // Many2many // Normal
     public virtual ICollection<HrSkill> HrSkill { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrWorkEntryRegenerationWizard> HrWorkEntryRegenerationWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("EmployeeId")]
-    // [InverseProperty("Employee")]
+    // [ForeignKey("EmployeeId")] //Many2many // Hidden
+    // [InverseProperty("Employee")] //Many2many // Hidden
     public virtual ICollection<HrPayslipEmployees> Payslip { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployee")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrEmployeeId")]
-    // [InverseProperty("HrEmployeeNavigation")]
+    // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
+    // [InverseProperty("HrEmployeeNavigation")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("EmpId")]
-    // [InverseProperty("Emp")]
+    // [ForeignKey("EmpId")] //Many2many // Hidden
+    // [InverseProperty("Emp")] //Many2many // Hidden
     public virtual ICollection<HrHolidaysSummaryEmployee> Sum { get; set; }
 }

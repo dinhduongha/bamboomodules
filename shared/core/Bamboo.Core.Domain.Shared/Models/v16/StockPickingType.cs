@@ -24,7 +24,6 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -112,9 +111,6 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("show_operations")]
     public bool? ShowOperations { get; set; }
 
-    [Column("show_reserved")]
-    public bool? ShowReserved { get; set; }
-
     [Column("auto_show_reception_report")]
     public bool? AutoShowReceptionReport { get; set; }
 
@@ -200,9 +196,6 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("auto_print_generated_mrp_lot")]
     public bool? AutoPrintGeneratedMrpLot { get; set; }
 
-    [Column("use_auto_consume_components_lots")]
-    public bool? UseAutoConsumeComponentsLots { get; set; }
-
     [Column("batch_max_lines")]
     public long? BatchMaxLines { get; set; }
 
@@ -248,219 +241,229 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockPickingType")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPickingTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultLocationDestId")]
-    // [InverseProperty("StockPickingTypeDefaultLocationDest")] //Many2one
     public virtual StockLocation? DefaultLocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultLocationSrcId")]
-    // [InverseProperty("StockPickingTypeDefaultLocationSrc")] //Many2one
     public virtual StockLocation? DefaultLocationSrc { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultProductLocationDestId")]
-    // [InverseProperty("StockPickingTypeDefaultProductLocationDest")] //Many2one
     public virtual StockLocation? DefaultProductLocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultProductLocationSrcId")]
-    // [InverseProperty("StockPickingTypeDefaultProductLocationSrc")] //Many2one
     public virtual StockLocation? DefaultProductLocationSrc { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultRecycleLocationDestId")]
-    // [InverseProperty("StockPickingTypeDefaultRecycleLocationDest")] //Many2one
     public virtual StockLocation? DefaultRecycleLocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultRemoveLocationDestId")]
-    // [InverseProperty("StockPickingTypeDefaultRemoveLocationDest")] //Many2one
     public virtual StockLocation? DefaultRemoveLocationDest { get; set; }
 
     // [One2many]
-    [ForeignKey("ReturnPickingTypeId")]
-    [InverseProperty("ReturnPickingType")]
+    // [One2many] [ForeignKey("ReturnPickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReturnPickingType")] // One2many
     public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("DropshipSubcontractorPickTypeId")]
-    [InverseProperty("DropshipSubcontractorPickType")]
+    // [One2many] [ForeignKey("DropshipSubcontractorPickTypeId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("DropshipSubcontractorPickType")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("ReturnPickingTypeId")]
-    // [InverseProperty("InverseReturnPickingType")] //Many2one
     public virtual StockPickingType? ReturnPickingType { get; set; }
 
     // [Many2one]
     [ForeignKey("SequenceId")]
-    // [InverseProperty("StockPickingType")] //Many2one
     public virtual IrSequence? SequenceNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [One2many]
-    [ForeignKey("PickingTypeId")]
-    [InverseProperty("PickingType")]
+    // [One2many] [ForeignKey("PickingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockRule> StockRule { get; set; }
 
     // [One2many]
-    [ForeignKey("InTypeId")]
-    [InverseProperty("InType")]
+    // [One2many] [ForeignKey("InTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("InType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseInType { get; set; }
 
     // [One2many]
-    [ForeignKey("IntTypeId")]
-    [InverseProperty("IntType")]
+    // [One2many] [ForeignKey("IntTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("IntType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseIntType { get; set; }
 
     // [One2many]
-    [ForeignKey("ManuTypeId")]
-    [InverseProperty("ManuType")]
+    // [One2many] [ForeignKey("ManuTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ManuType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseManuType { get; set; }
 
     // [One2many]
-    [ForeignKey("OutTypeId")]
-    [InverseProperty("OutType")]
+    // [One2many] [ForeignKey("OutTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("OutType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseOutType { get; set; }
 
     // [One2many]
-    [ForeignKey("PackTypeId")]
-    [InverseProperty("PackType")]
+    // [One2many] [ForeignKey("PackTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PackType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePackType { get; set; }
 
     // [One2many]
-    [ForeignKey("PbmTypeId")]
-    [InverseProperty("PbmType")]
+    // [One2many] [ForeignKey("PbmTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PbmType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePbmType { get; set; }
 
     // [One2many]
-    [ForeignKey("PickTypeId")]
-    [InverseProperty("PickType")]
+    // [One2many] [ForeignKey("PickTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PickType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePickType { get; set; }
 
     // [One2many]
-    [ForeignKey("PosTypeId")]
-    [InverseProperty("PosType")]
+    // [One2many] [ForeignKey("PosTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePosType { get; set; }
 
     // [One2many]
-    [ForeignKey("QcTypeId")]
-    [InverseProperty("QcType")]
+    // [One2many] [ForeignKey("QcTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("QcType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseQcType { get; set; }
 
     // [One2many]
-    [ForeignKey("RepairTypeId")]
-    [InverseProperty("RepairType")]
+    // [One2many] [ForeignKey("RepairTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RepairType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseRepairType { get; set; }
 
     // [One2many]
-    [ForeignKey("ReturnTypeId")]
-    [InverseProperty("ReturnType")]
-    public virtual ICollection<StockWarehouse> StockWarehouseReturnType { get; set; }
-
-    // [One2many]
-    [ForeignKey("SamTypeId")]
-    [InverseProperty("SamType")]
+    // [One2many] [ForeignKey("SamTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SamType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSamType { get; set; }
 
     // [One2many]
-    [ForeignKey("StoreTypeId")]
-    [InverseProperty("StoreType")]
+    // [One2many] [ForeignKey("StoreTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StoreType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseStoreType { get; set; }
 
     // [One2many]
-    [ForeignKey("SubcontractingResupplyTypeId")]
-    [InverseProperty("SubcontractingResupplyType")]
+    // [One2many] [ForeignKey("SubcontractingResupplyTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SubcontractingResupplyType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingResupplyType { get; set; }
 
     // [One2many]
-    [ForeignKey("SubcontractingTypeId")]
-    [InverseProperty("SubcontractingType")]
+    // [One2many] [ForeignKey("SubcontractingTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SubcontractingType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingType { get; set; }
 
     // [One2many]
-    [ForeignKey("XdockTypeId")]
-    [InverseProperty("XdockType")]
+    // [One2many] [ForeignKey("XdockTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("XdockType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseXdockType { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("StockPickingType")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPickingTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockPickingTypeId")] //Many2many
-    // [InverseProperty("StockPickingType")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockPickingTypeId")] // Many2many // Normal
+    // [InverseProperty("StockPickingType")] // Many2many // Normal
     public virtual ICollection<ProductCategory> ProductCategory { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockPickingTypeId")] //Many2many
-    // [InverseProperty("StockPickingType")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockPickingTypeId")] // Many2many // Normal
+    // [InverseProperty("StockPickingType")] // Many2many // Normal
     public virtual ICollection<StockLocation> StockLocation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PickingTypeId")] //Many2many
-    // [InverseProperty("PickingType")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("PickingTypeId")] // Many2many // Normal
+    // [InverseProperty("PickingType")] // Many2many // Normal
     public virtual ICollection<ResUsers> User { get; set; }
 }

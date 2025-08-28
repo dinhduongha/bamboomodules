@@ -23,7 +23,6 @@ public partial class HrLeaveGenerateMultiWizard: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("holiday_status_id")]
     public Guid? HolidayStatusId { get; set; }
@@ -60,37 +59,31 @@ public partial class HrLeaveGenerateMultiWizard: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual HrEmployeeCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrLeaveGenerateMultiWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("HolidayStatusId")]
-    // [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2one
     public virtual HrLeaveType? HolidayStatus { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrLeaveGenerateMultiWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("HrLeaveGenerateMultiWizardId")] //Many2many
-    [InverseProperty("HrLeaveGenerateMultiWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrLeaveGenerateMultiWizardId")] // Many2many // Normal
+    // [InverseProperty("HrLeaveGenerateMultiWizard")] // Many2many // Normal
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

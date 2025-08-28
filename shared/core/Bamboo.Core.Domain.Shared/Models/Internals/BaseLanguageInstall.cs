@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -41,23 +41,21 @@ public partial class BaseLanguageInstall: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BaseLanguageInstallCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BaseLanguageInstallWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LanguageWizardId")] //Many2many
-    // [InverseProperty("LanguageWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("LanguageWizardId")] // Many2many // Normal
+    // [InverseProperty("LanguageWizard")] // Many2many // Normal
     public virtual ICollection<ResLang> Lang { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BaseLanguageInstallId")] //Many2many
-    // [InverseProperty("BaseLanguageInstall")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (Website) is commented out
+    // [ForeignKey("BaseLanguageInstallId")] // Many2many // Normal
+    // [InverseProperty("BaseLanguageInstall")] // Many2many // Normal
     public virtual ICollection<Website> Website { get; set; }
 }

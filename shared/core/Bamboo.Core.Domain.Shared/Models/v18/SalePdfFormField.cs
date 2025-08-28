@@ -24,7 +24,6 @@ public partial class SalePdfFormField: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -49,23 +48,21 @@ public partial class SalePdfFormField: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SalePdfFormFieldCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SalePdfFormFieldWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("SalePdfFormFieldId")] //Many2many
-    // [InverseProperty("SalePdfFormField")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("SalePdfFormFieldId")] //Many2many // Hidden
+    // [InverseProperty("SalePdfFormField")] //Many2many // Hidden
     public virtual ICollection<ProductDocument> ProductDocument { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("SalePdfFormFieldId")] //Many2many
-    // [InverseProperty("SalePdfFormField")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("SalePdfFormFieldId")] //Many2many // Hidden
+    // [InverseProperty("SalePdfFormField")] //Many2many // Hidden
     public virtual ICollection<QuotationDocument> QuotationDocument { get; set; }
 }

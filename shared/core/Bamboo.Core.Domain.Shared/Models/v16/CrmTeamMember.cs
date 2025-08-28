@@ -25,10 +25,6 @@ public partial class CrmTeamMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("crm_team_id")]
     public Guid? CrmTeamId { get; set; }
@@ -62,26 +58,17 @@ public partial class CrmTeamMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmTeamMemberCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CrmTeamId")]
-    // [InverseProperty("CrmTeamMember")] //Many2one
     public virtual CrmTeam? CrmTeam { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("CrmTeamMember")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrmTeamMemberUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmTeamMemberWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

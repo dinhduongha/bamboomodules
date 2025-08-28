@@ -23,7 +23,6 @@ public partial class MailingSubscriptionOptout: FullAuditedAggregateRoot<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -49,21 +48,21 @@ public partial class MailingSubscriptionOptout: FullAuditedAggregateRoot<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingSubscriptionOptoutCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("OptOutReasonId")]
-    [InverseProperty("OptOutReason")]
+    // [One2many] [ForeignKey("OptOutReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("OptOutReason")] // One2many
     public virtual ICollection<MailBlacklist> MailBlacklist { get; set; }
 
     // [One2many]
-    [ForeignKey("OptOutReasonId")]
-    [InverseProperty("OptOutReason")]
+    // [One2many] [ForeignKey("OptOutReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("OptOutReason")] // One2many
     public virtual ICollection<MailingSubscription> MailingSubscription { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingSubscriptionOptoutWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

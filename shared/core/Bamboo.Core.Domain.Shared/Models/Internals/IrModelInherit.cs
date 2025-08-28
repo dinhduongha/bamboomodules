@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -29,16 +30,13 @@ public partial class IrModelInherit: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("IrModelInheritModel")] //Many2one
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("IrModelInheritParent")] //Many2one
     public virtual IrModel? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentFieldId")]
-    // [InverseProperty("IrModelInherit")] //Many2one
     public virtual IrModelFields? ParentField { get; set; }
 }

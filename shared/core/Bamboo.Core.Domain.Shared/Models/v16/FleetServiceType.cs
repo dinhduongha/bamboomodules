@@ -23,7 +23,6 @@ public partial class FleetServiceType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -46,27 +45,27 @@ public partial class FleetServiceType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetServiceTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CostSubtypeId")]
-    [InverseProperty("CostSubtype")]
+    // [One2many] [ForeignKey("CostSubtypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CostSubtype")] // One2many
     public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContractNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("ServiceTypeId")]
-    [InverseProperty("ServiceType")]
+    // [One2many] [ForeignKey("ServiceTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ServiceType")] // One2many
     public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetServiceTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("FleetServiceTypeId")]
-    // [InverseProperty("FleetServiceType")]
+    // [ForeignKey("FleetServiceTypeId")] //Many2many // Hidden
+    // [InverseProperty("FleetServiceType")] //Many2many // Hidden
     public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContract { get; set; }
 }

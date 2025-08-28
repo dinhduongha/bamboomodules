@@ -48,32 +48,31 @@ public partial class MaintenanceTeam: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MaintenanceTeam")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MaintenanceTeamCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MaintenanceTeamId")]
-    [InverseProperty("MaintenanceTeam")]
+    // [One2many] [ForeignKey("MaintenanceTeamId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MaintenanceTeam")] // One2many
     public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
 
     // [One2many]
-    [ForeignKey("MaintenanceTeamId")]
-    [InverseProperty("MaintenanceTeam")]
+    // [One2many] [ForeignKey("MaintenanceTeamId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MaintenanceTeam")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MaintenanceTeamWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MaintenanceTeamId")] //Many2many
-    // [InverseProperty("MaintenanceTeam")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("MaintenanceTeamId")] // Many2many // Normal
+    // [InverseProperty("MaintenanceTeam")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

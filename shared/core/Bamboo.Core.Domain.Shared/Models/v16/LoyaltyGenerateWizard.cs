@@ -23,7 +23,6 @@ public partial class LoyaltyGenerateWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("program_id")]
     public Guid? ProgramId { get; set; }
@@ -57,28 +56,25 @@ public partial class LoyaltyGenerateWizard: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyGenerateWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProgramId")]
-    // [InverseProperty("LoyaltyGenerateWizard")] //Many2one
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyGenerateWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LoyaltyGenerateWizardId")] //Many2many
-    // [InverseProperty("LoyaltyGenerateWizard")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("LoyaltyGenerateWizardId")] // Many2many // Normal
+    // [InverseProperty("LoyaltyGenerateWizard")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LoyaltyGenerateWizardId")] //Many2many
-    // [InverseProperty("LoyaltyGenerateWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("LoyaltyGenerateWizardId")] // Many2many // Normal
+    // [InverseProperty("LoyaltyGenerateWizard")] // Many2many // Normal
     public virtual ICollection<ResPartnerCategory> ResPartnerCategory { get; set; }
 }

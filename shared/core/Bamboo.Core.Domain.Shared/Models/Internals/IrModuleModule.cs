@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -114,84 +115,92 @@ public partial class IrModuleModule: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public bool? Imported { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequest { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReview { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<BaseModuleUninstall> BaseModuleUninstall { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("IrModuleModule")] //Many2one
     public virtual IrModuleCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrModuleModuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<IrDemoFailure> IrDemoFailure { get; set; }
 
     // [One2many]
-    [ForeignKey("Module")]
-    [InverseProperty("ModuleNavigation")]
+    // [One2many] [ForeignKey("Module")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModuleNavigation")] // One2many
     public virtual ICollection<IrModelConstraint> IrModelConstraint { get; set; }
 
     // [One2many]
-    [ForeignKey("Module")]
-    [InverseProperty("ModuleNavigation")]
+    // [One2many] [ForeignKey("Module")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModuleNavigation")] // One2many
     public virtual ICollection<IrModelRelation> IrModelRelation { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependency { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusion { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 
     // [One2many]
-    [ForeignKey("ModuleId")]
-    [InverseProperty("Module")]
+    // [One2many] [ForeignKey("ModuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Module")] // One2many
     public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeature { get; set; }
 
     // [One2many]
-    [ForeignKey("ThemeId")]
-    [InverseProperty("Theme")]
+    // [One2many] [ForeignKey("ThemeId")]
+    [NotMapped] // One2many // Peer relationship (Website) is commented out
+    // [InverseProperty("Theme")] // One2many
     public virtual ICollection<Website> WebsiteNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrModuleModuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ModuleId")] //Many2many
-    // [InverseProperty("Module")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("ModuleId")] // Many2many // Normal
+    // [InverseProperty("Module")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ModuleId")]
-    // [InverseProperty("Module")]
-    // public virtual ICollection<BaseLanguageExport> Wiz { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ModuleId")] //Many2many // Hidden
+    // [InverseProperty("Module")] //Many2many // Hidden
+    public virtual ICollection<BaseLanguageExport> Wiz { get; set; }
 }

@@ -27,10 +27,6 @@ public partial class HrContract: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("structure_type_id")]
     public Guid? StructureTypeId { get; set; }
@@ -139,107 +135,93 @@ public partial class HrContract: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("AnalyticAccountId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ContractTypeId")]
-    // [InverseProperty("HrContract")] //Many2one
-    // [InverseProperty("HrContractContractType")] //Many2one
     public virtual HrContractType? ContractType { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrContractCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractId")]
-    [InverseProperty("Contract")]
+    // [One2many] [ForeignKey("ContractId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contract")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractId")]
-    [InverseProperty("Contract")]
+    // [One2many] [ForeignKey("ContractId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contract")] // One2many
     public virtual ICollection<HrPayslip> HrPayslip { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractId")]
-    [InverseProperty("Contract")]
+    // [One2many] [ForeignKey("ContractId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contract")] // One2many
     public virtual ICollection<HrPayslipInput> HrPayslipInput { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractId")]
-    [InverseProperty("Contract")]
+    // [One2many] [ForeignKey("ContractId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contract")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractId")]
-    [InverseProperty("Contract")]
+    // [One2many] [ForeignKey("ContractId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contract")] // One2many
     public virtual ICollection<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
 
     // [Many2one]
     [ForeignKey("HrResponsibleId")]
-    // [InverseProperty("HrContractHrResponsible")] //Many2one
     public virtual ResUsers? HrResponsible { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractId")]
-    [InverseProperty("Contract")]
+    // [One2many] [ForeignKey("ContractId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Contract")] // One2many
     public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
 
     // [Many2one]
     [ForeignKey("JobId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual HrJob? Job { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("HrContract")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ResourceCalendarId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
     [ForeignKey("StructId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual HrPayrollStructure? Struct { get; set; }
 
     // [Many2one]
     [ForeignKey("StructureTypeId")]
-    // [InverseProperty("HrContract")] //Many2one
     public virtual HrPayrollStructureType? StructureType { get; set; }
 
     // [Many2one]
     [ForeignKey("TypeId")]
-    // [InverseProperty("HrContractTypeNavigation")] //Many2one
     public virtual HrContractType? Type { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrContractWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

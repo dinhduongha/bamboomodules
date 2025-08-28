@@ -59,46 +59,45 @@ public partial class ResourceResource: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CalendarId")]
-    // [InverseProperty("ResourceResource")] //Many2one
     public virtual ResourceCalendar? Calendar { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ResourceResource")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResourceResourceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceId")]
-    [InverseProperty("Resource")]
+    // [One2many] [ForeignKey("ResourceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Resource")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceId")]
-    [InverseProperty("Resource")]
+    // [One2many] [ForeignKey("ResourceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Resource")] // One2many
     public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceId")]
-    [InverseProperty("Resource")]
+    // [One2many] [ForeignKey("ResourceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Resource")] // One2many
     public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendance { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceId")]
-    [InverseProperty("Resource")]
+    // [One2many] [ForeignKey("ResourceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Resource")] // One2many
     public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ResourceResourceUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResourceResourceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

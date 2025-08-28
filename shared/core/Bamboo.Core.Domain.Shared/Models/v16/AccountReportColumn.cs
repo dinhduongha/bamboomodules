@@ -23,7 +23,6 @@ public partial class AccountReportColumn: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -64,21 +63,17 @@ public partial class AccountReportColumn: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReportColumnCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CustomAuditActionId")]
-    // [InverseProperty("AccountReportColumn")] //Many2one
     public virtual IrActWindow? CustomAuditAction { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportId")]
-    // [InverseProperty("AccountReportColumn")] //Many2one
     public virtual AccountReport? Report { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReportColumnWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class MailPush: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_push_device_id")]
     public Guid? MailPushDeviceId { get; set; }
@@ -45,16 +44,13 @@ public partial class MailPush: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailPushCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailPushDeviceId")]
-    // [InverseProperty("MailPush")] //Many2one
     public virtual MailPushDevice? MailPushDevice { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailPushWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

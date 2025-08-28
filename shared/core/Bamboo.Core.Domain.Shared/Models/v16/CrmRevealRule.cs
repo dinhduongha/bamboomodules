@@ -23,7 +23,6 @@ public partial class CrmRevealRule: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -93,76 +92,71 @@ public partial class CrmRevealRule: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmRevealRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RevealRuleId")]
-    [InverseProperty("RevealRule")]
+    // [One2many] [ForeignKey("RevealRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RevealRule")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
-    [ForeignKey("RevealRuleId")]
-    [InverseProperty("RevealRule")]
+    // [One2many] [ForeignKey("RevealRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RevealRule")] // One2many
     public virtual ICollection<CrmRevealView> CrmRevealView { get; set; }
 
     // [Many2one]
     [ForeignKey("PreferredRoleId")]
-    // [InverseProperty("CrmRevealRuleNavigation")] //Many2one
     public virtual CrmIapLeadRole? PreferredRole { get; set; }
 
     // [Many2one]
     [ForeignKey("SeniorityId")]
-    // [InverseProperty("CrmRevealRule")] //Many2one
     public virtual CrmIapLeadSeniority? Seniority { get; set; }
 
     // [Many2one]
     [ForeignKey("TeamId")]
-    // [InverseProperty("CrmRevealRule")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrmRevealRuleUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("CrmRevealRule")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmRevealRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmRevealRuleId")] //Many2many
-    // [InverseProperty("CrmRevealRule")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
+    // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustry { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmRevealRuleId")] //Many2many
-    // [InverseProperty("CrmRevealRule")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
+    // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadRole> CrmIapLeadRole { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmRevealRuleId")] //Many2many
-    // [InverseProperty("CrmRevealRule")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
+    // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<CrmTag> CrmTag { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmRevealRuleId")] //Many2many
-    // [InverseProperty("CrmRevealRule")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
+    // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<ResCountry> ResCountry { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmRevealRuleId")] //Many2many
-    // [InverseProperty("CrmRevealRule")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
+    // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
+    // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<ResCountryState> ResCountryState { get; set; }
 }

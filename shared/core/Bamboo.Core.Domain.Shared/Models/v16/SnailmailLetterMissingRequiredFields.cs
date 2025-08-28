@@ -23,7 +23,6 @@ public partial class SnailmailLetterMissingRequiredFields: FullAuditedEntity<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -63,31 +62,25 @@ public partial class SnailmailLetterMissingRequiredFields: FullAuditedEntity<Gui
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("SnailmailLetterMissingRequiredFields")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SnailmailLetterMissingRequiredFieldsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LetterId")]
-    // [InverseProperty("SnailmailLetterMissingRequiredFields")] //Many2one
     public virtual SnailmailLetter? Letter { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("SnailmailLetterMissingRequiredFields")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("StateId")]
-    // [InverseProperty("SnailmailLetterMissingRequiredFields")] //Many2one
     public virtual ResCountryState? State { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SnailmailLetterMissingRequiredFieldsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

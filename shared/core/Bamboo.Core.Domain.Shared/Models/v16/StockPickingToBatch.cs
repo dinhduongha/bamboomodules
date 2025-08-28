@@ -23,7 +23,6 @@ public partial class StockPickingToBatch: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("batch_id")]
     public Guid? BatchId { get; set; }
@@ -54,21 +53,17 @@ public partial class StockPickingToBatch: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("BatchId")]
-    // [InverseProperty("StockPickingToBatch")] //Many2one
     public virtual StockPickingBatch? Batch { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPickingToBatchCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("StockPickingToBatchUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPickingToBatchWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

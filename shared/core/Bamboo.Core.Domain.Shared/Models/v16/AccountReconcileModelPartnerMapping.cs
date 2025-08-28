@@ -23,7 +23,6 @@ public partial class AccountReconcileModelPartnerMapping: FullAuditedEntity<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -51,21 +50,17 @@ public partial class AccountReconcileModelPartnerMapping: FullAuditedEntity<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReconcileModelPartnerMappingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("AccountReconcileModelPartnerMapping")] //Many2one
     public virtual AccountReconcileModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountReconcileModelPartnerMapping")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReconcileModelPartnerMappingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

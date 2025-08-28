@@ -26,7 +26,6 @@ public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("visitor_id")]
     public Guid? VisitorId { get; set; }
@@ -45,16 +44,13 @@ public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // [Many2one]
     [ForeignKey("PageId")]
-    // [InverseProperty("WebsiteTrack")] //Many2one
     public virtual WebsitePage? Page { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("WebsiteTrack")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("VisitorId")]
-    // [InverseProperty("WebsiteTrack")] //Many2one
     public virtual WebsiteVisitor? Visitor { get; set; }
 }

@@ -53,76 +53,77 @@ public partial class HrWorkLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("AddressId")]
-    // [InverseProperty("HrWorkLocation")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrWorkLocation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrWorkLocationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkLocationId")]
-    [InverseProperty("WorkLocation")]
+    // [One2many] [ForeignKey("WorkLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkLocation")] // One2many
     public virtual ICollection<HomeworkLocationWizard> HomeworkLocationWizard { get; set; }
 
     // [One2many]
-    [ForeignKey("FridayLocationId")]
-    [InverseProperty("FridayLocation")]
+    // [One2many] [ForeignKey("FridayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FridayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeFridayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkLocationId")]
-    [InverseProperty("WorkLocation")]
+    // [One2many] [ForeignKey("WorkLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkLocation")] // One2many
     public virtual ICollection<HrEmployeeLocation> HrEmployeeLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("MondayLocationId")]
-    [InverseProperty("MondayLocation")]
+    // [One2many] [ForeignKey("MondayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MondayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeMondayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("SaturdayLocationId")]
-    [InverseProperty("SaturdayLocation")]
+    // [One2many] [ForeignKey("SaturdayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SaturdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeSaturdayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("SundayLocationId")]
-    [InverseProperty("SundayLocation")]
+    // [One2many] [ForeignKey("SundayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SundayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeSundayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("ThursdayLocationId")]
-    [InverseProperty("ThursdayLocation")]
+    // [One2many] [ForeignKey("ThursdayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ThursdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeThursdayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("TuesdayLocationId")]
-    [InverseProperty("TuesdayLocation")]
+    // [One2many] [ForeignKey("TuesdayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TuesdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeTuesdayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("WednesdayLocationId")]
-    [InverseProperty("WednesdayLocation")]
+    // [One2many] [ForeignKey("WednesdayLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WednesdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeWednesdayLocation { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkLocationId")]
-    [InverseProperty("WorkLocation")]
+    // [One2many] [ForeignKey("WorkLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeWorkLocation { get; set; }
-
-    // [One2many]
-    [ForeignKey("WorkLocationId")]
-    [InverseProperty("WorkLocation")]
-    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrWorkLocationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -64,46 +64,41 @@ public partial class ResourceCalendarLeaves: FullAuditedAggregateRoot<Guid>, IEn
 
     // [One2many]
     // [One2many] [ForeignKey("GlobalLeaveId")]
-    [InverseProperty("GlobalLeave")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("GlobalLeave")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CalendarId")]
-    // [InverseProperty("ResourceCalendarLeaves")] //Many2one
     public virtual ResourceCalendar? Calendar { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ResourceCalendarLeaves")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResourceCalendarLeavesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("HolidayId")]
-    // [InverseProperty("ResourceCalendarLeaves")] //Many2one
     public virtual HrLeave? Holiday { get; set; }
 
     // [One2many]
-    [ForeignKey("LeaveId")]
-    [InverseProperty("Leave")]
+    // [One2many] [ForeignKey("LeaveId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Leave")] // One2many
     public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceId")]
-    // [InverseProperty("ResourceCalendarLeaves")] //Many2one
     public virtual ResourceResource? Resource { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkEntryTypeId")]
-    // [InverseProperty("ResourceCalendarLeaves")] //Many2one
     public virtual HrWorkEntryType? WorkEntryType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResourceCalendarLeavesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

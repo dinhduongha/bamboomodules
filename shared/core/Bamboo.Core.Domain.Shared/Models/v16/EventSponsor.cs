@@ -24,13 +24,9 @@ public partial class EventSponsor: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("chat_room_id")]
     public Guid? ChatRoomId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -95,41 +91,31 @@ public partial class EventSponsor: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("ChatRoomId")]
-    // [InverseProperty("EventSponsor")] //Many2one
     public virtual ChatRoom? ChatRoom { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventSponsorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventSponsor")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("SponsorId")]
-    [InverseProperty("Sponsor")]
+    // [One2many] [ForeignKey("SponsorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Sponsor")] // One2many
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("EventSponsor")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("EventSponsor")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("SponsorTypeId")]
-    // [InverseProperty("EventSponsor")] //Many2one
     public virtual EventSponsorType? SponsorType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventSponsorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

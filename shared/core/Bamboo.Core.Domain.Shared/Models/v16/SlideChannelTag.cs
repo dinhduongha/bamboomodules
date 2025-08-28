@@ -26,7 +26,6 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -58,22 +57,19 @@ public partial class SlideChannelTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideChannelTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("GroupId")]
-    // [InverseProperty("SlideChannelTag")] //Many2one
     public virtual SlideChannelTagGroup? Group { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideChannelTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("TagId")]
-    // [InverseProperty("Tag")]
+    // [ForeignKey("TagId")] //Many2many // Hidden
+    // [InverseProperty("Tag")] //Many2many // Hidden
     public virtual ICollection<SlideChannel> Channel { get; set; }
 }

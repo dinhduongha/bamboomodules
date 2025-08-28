@@ -23,7 +23,6 @@ public partial class EventRegistrationAnswer: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("question_id")]
     public Guid? QuestionId { get; set; }
@@ -51,26 +50,21 @@ public partial class EventRegistrationAnswer: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventRegistrationAnswerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("QuestionId")]
-    // [InverseProperty("EventRegistrationAnswer")] //Many2one
     public virtual EventQuestion? Question { get; set; }
 
     // [Many2one]
     [ForeignKey("RegistrationId")]
-    // [InverseProperty("EventRegistrationAnswer")] //Many2one
     public virtual EventRegistration? Registration { get; set; }
 
     // [Many2one]
     [ForeignKey("ValueAnswerId")]
-    // [InverseProperty("EventRegistrationAnswer")] //Many2one
     public virtual EventQuestionAnswer? ValueAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventRegistrationAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

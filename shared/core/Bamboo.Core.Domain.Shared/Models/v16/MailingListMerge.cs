@@ -23,7 +23,6 @@ public partial class MailingListMerge: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("dest_list_id")]
     public Guid? DestListId { get; set; }
@@ -51,22 +50,19 @@ public partial class MailingListMerge: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingListMergeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DestListId")]
-    // [InverseProperty("MailingListMergeNavigation")] //Many2one
     public virtual MailingList? DestList { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingListMergeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailingListMergeId")] //Many2many
-    // [InverseProperty("MailingListMerge")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailingListMergeId")] // Many2many // Normal
+    // [InverseProperty("MailingListMerge")] // Many2many // Normal
     public virtual ICollection<MailingList> MailingList { get; set; }
 }

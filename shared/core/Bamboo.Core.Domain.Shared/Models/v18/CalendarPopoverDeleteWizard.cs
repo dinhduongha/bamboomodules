@@ -23,7 +23,6 @@ public partial class CalendarPopoverDeleteWizard: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("record")]
     public Guid? Record { get; set; }
@@ -45,16 +44,13 @@ public partial class CalendarPopoverDeleteWizard: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarPopoverDeleteWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("Record")]
-    // [InverseProperty("CalendarPopoverDeleteWizard")] //Many2one
     public virtual CalendarEvent? RecordNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarPopoverDeleteWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

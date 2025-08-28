@@ -24,10 +24,6 @@ public partial class SlideSlide: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -170,77 +166,73 @@ public partial class SlideSlide: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("InverseCategory")] //Many2one
     public virtual SlideSlide? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("SlideSlide")] //Many2one
     public virtual SlideChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideSlideCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<SlideSlide> InverseCategory { get; set; }
 
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("SlideSlide")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
     // [One2many]
-    [ForeignKey("PromotedSlideId")]
-    [InverseProperty("PromotedSlide")]
+    // [One2many] [ForeignKey("PromotedSlideId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PromotedSlide")] // One2many
     public virtual ICollection<SlideChannel> SlideChannel { get; set; }
 
     // [One2many]
-    [ForeignKey("SlideId")]
-    [InverseProperty("Slide")]
+    // [One2many] [ForeignKey("SlideId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideEmbed> SlideEmbed { get; set; }
 
     // [One2many]
-    [ForeignKey("SlideId")]
-    [InverseProperty("Slide")]
+    // [One2many] [ForeignKey("SlideId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideQuestion> SlideQuestion { get; set; }
 
     // [One2many]
-    [ForeignKey("SlideId")]
-    [InverseProperty("Slide")]
+    // [One2many] [ForeignKey("SlideId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
 
     // [One2many]
-    [ForeignKey("SlideId")]
-    [InverseProperty("Slide")]
+    // [One2many] [ForeignKey("SlideId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideSlideResource> SlideSlideResource { get; set; }
 
     // [Many2one]
     [ForeignKey("SurveyId")]
-    // [InverseProperty("SlideSlide")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
     // [One2many]
-    [ForeignKey("SlideId")]
-    [InverseProperty("Slide")]
+    // [One2many] [ForeignKey("SlideId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("SlideSlideUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideSlideWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SlideId")] //Many2many
-    // [InverseProperty("Slide")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SlideId")] // Many2many // Normal
+    // [InverseProperty("Slide")] // Many2many // Normal
     public virtual ICollection<SlideTag> Tag { get; set; }
 }

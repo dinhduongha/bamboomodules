@@ -25,7 +25,6 @@ public partial class ResourceCalendarAttendance: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("calendar_id")]
     public Guid? CalendarId { get; set; }
@@ -83,26 +82,21 @@ public partial class ResourceCalendarAttendance: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CalendarId")]
-    // [InverseProperty("ResourceCalendarAttendance")] //Many2one
     public virtual ResourceCalendar? Calendar { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResourceCalendarAttendanceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ResourceId")]
-    // [InverseProperty("ResourceCalendarAttendance")] //Many2one
     public virtual ResourceResource? Resource { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkEntryTypeId")]
-    // [InverseProperty("ResourceCalendarAttendance")] //Many2one
     public virtual HrWorkEntryType? WorkEntryType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResourceCalendarAttendanceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

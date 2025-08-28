@@ -18,6 +18,7 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.Users;
 
 using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Application.Services.Commons
 {

@@ -28,9 +28,6 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("maintenance_team_id")]
     public Guid? MaintenanceTeamId { get; set; }
 
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
-
     [Column("technician_user_id")]
     public Guid? TechnicianUserId { get; set; }
 
@@ -54,18 +51,6 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("color")]
     public long? Color { get; set; }
-
-    // [Column("maintenance_count")]
-    // public long? MaintenanceCount { get; set; }
-
-    // [Column("maintenance_open_count")]
-    // public long? MaintenanceOpenCount { get; set; }
-
-    [Column("period")]
-    public long? Period { get; set; }
-
-    // [Column("maintenance_team_id")]
-    // public Guid? MaintenanceTeamId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -97,9 +82,6 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("scrap_date")]
     public DateTime? ScrapDate { get; set; }
 
-    [Column("next_action_date")]
-    public DateTime? NextActionDate { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
@@ -123,9 +105,6 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("cost")]
     public double? Cost { get; set; }
 
-    [Column("maintenance_duration")]
-    public double? MaintenanceDuration { get; set; }
-
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
 
@@ -137,61 +116,47 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual MaintenanceEquipmentCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MaintenanceEquipmentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [One2many]
-    [ForeignKey("EquipmentId")]
-    [InverseProperty("Equipment")]
+    // [One2many] [ForeignKey("EquipmentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Equipment")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
     [ForeignKey("MaintenanceTeamId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual MaintenanceTeam? MaintenanceTeam { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("OwnerUserId")]
-    // [InverseProperty("MaintenanceEquipmentOwnerUser")] //Many2one
     public virtual ResUsers? OwnerUser { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("MaintenanceEquipment")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("TechnicianUserId")]
-    // [InverseProperty("MaintenanceEquipmentTechnicianUser")] //Many2one
     public virtual ResUsers? TechnicianUser { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MaintenanceEquipmentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

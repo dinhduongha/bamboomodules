@@ -23,7 +23,6 @@ public partial class GoogleCalendarAccountReset: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -48,16 +47,13 @@ public partial class GoogleCalendarAccountReset: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GoogleCalendarAccountResetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("GoogleCalendarAccountResetUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GoogleCalendarAccountResetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

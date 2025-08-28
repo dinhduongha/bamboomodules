@@ -25,7 +25,6 @@ public partial class MailAliasDomain: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -56,31 +55,33 @@ public partial class MailAliasDomain: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailAliasDomainCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasDomainId")]
-    [InverseProperty("AliasDomain")]
+    // [One2many] [ForeignKey("AliasDomainId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AliasDomain")] // One2many
     public virtual ICollection<MailAlias> MailAlias { get; set; }
 
     // [One2many]
-    [ForeignKey("RecordAliasDomainId")]
-    [InverseProperty("RecordAliasDomain")]
+    // [One2many] [ForeignKey("RecordAliasDomainId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RecordAliasDomain")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("RecordAliasDomainId")]
-    [InverseProperty("RecordAliasDomain")]
+    // [One2many] [ForeignKey("RecordAliasDomainId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RecordAliasDomain")] // One2many
     public virtual ICollection<MailMessage> MailMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasDomainId")]
-    [InverseProperty("AliasDomain")]
+    // [One2many] [ForeignKey("AliasDomainId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("AliasDomain")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailAliasDomainWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

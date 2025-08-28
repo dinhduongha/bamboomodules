@@ -53,28 +53,25 @@ public partial class AccountAgedTrialBalance: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAgedTrialBalance")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAgedTrialBalanceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAgedTrialBalanceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountAgedTrialBalanceId")] //Many2many
-    // [InverseProperty("AccountAgedTrialBalance")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountAgedTrialBalanceId")] // Many2many // Normal
+    // [InverseProperty("AccountAgedTrialBalance")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountAgedTrialBalanceId")] //Many2many
-    // [InverseProperty("AccountAgedTrialBalance")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("AccountAgedTrialBalanceId")] // Many2many // Normal
+    // [InverseProperty("AccountAgedTrialBalance")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

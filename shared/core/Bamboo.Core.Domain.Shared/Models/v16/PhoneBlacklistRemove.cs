@@ -23,7 +23,6 @@ public partial class PhoneBlacklistRemove: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,11 +44,9 @@ public partial class PhoneBlacklistRemove: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PhoneBlacklistRemoveCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PhoneBlacklistRemoveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

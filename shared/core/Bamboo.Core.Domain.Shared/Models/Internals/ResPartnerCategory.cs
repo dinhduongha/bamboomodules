@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -49,56 +50,49 @@ public partial class ResPartnerCategory: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [One2many]
     // [One2many] [ForeignKey("PartnerCategoryId")]
-    [InverseProperty("PartnerCategory")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PartnerCategory")] // One2many
     public virtual ICollection<AccountAnalyticDistributionModel> AccountAnalyticDistributionModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<ResPartnerCategory> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual ResPartnerCategory? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerCategoryId")]
-    // [InverseProperty("ResPartnerCategory")]
-    // public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")] //Many2many // Hidden
+    // [InverseProperty("ResPartnerCategory")] //Many2many // Hidden
+    public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerCategoryId")]
-    // [InverseProperty("ResPartnerCategory")]
-    // public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplate { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")] //Many2many // Hidden
+    // [InverseProperty("ResPartnerCategory")] //Many2many // Hidden
+    public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerCategoryId")]
-    // [InverseProperty("ResPartnerCategory")]
-    // public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResPartnerCategoryId")]
-    // [InverseProperty("ResPartnerCategory")]
-    // public virtual ICollection<MailingContact> MailingContact { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResPartnerCategoryId")] //Many2many // Hidden
+    // [InverseProperty("ResPartnerCategory")] //Many2many // Hidden
+    public virtual ICollection<MailingContact> MailingContact { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CategoryId")] //Many2many
-    // [InverseProperty("Category")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("CategoryId")] // Many2many // Normal
+    // [InverseProperty("Category")] // Many2many // Normal
     public virtual ICollection<ResPartner> Partner { get; set; }
 }

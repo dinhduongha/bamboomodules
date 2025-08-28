@@ -23,7 +23,6 @@ public partial class MailResendMessage: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
@@ -42,27 +41,25 @@ public partial class MailResendMessage: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailResendMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("MailResendMessage")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("ResendWizardId")]
-    [InverseProperty("ResendWizard")]
+    // [One2many] [ForeignKey("ResendWizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResendWizard")] // One2many
     public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailResendMessageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailResendMessageId")] //Many2many
-    // [InverseProperty("MailResendMessage")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailResendMessageId")] // Many2many // Normal
+    // [InverseProperty("MailResendMessage")] // Many2many // Normal
     public virtual ICollection<MailNotification> MailNotification { get; set; }
 }

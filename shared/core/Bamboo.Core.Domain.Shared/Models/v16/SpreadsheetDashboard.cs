@@ -23,7 +23,6 @@ public partial class SpreadsheetDashboard: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("dashboard_group_id")]
     public Guid? DashboardGroupId { get; set; }
@@ -44,10 +43,6 @@ public partial class SpreadsheetDashboard: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
@@ -59,38 +54,35 @@ public partial class SpreadsheetDashboard: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("SpreadsheetDashboard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SpreadsheetDashboardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DashboardGroupId")]
-    // [InverseProperty("SpreadsheetDashboard")] //Many2one
     public virtual SpreadsheetDashboardGroup? DashboardGroup { get; set; }
 
     // [One2many]
-    [ForeignKey("DashboardId")]
-    [InverseProperty("Dashboard")]
+    // [One2many] [ForeignKey("DashboardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Dashboard")] // One2many
     public virtual ICollection<SpreadsheetDashboardShare> SpreadsheetDashboardShare { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SpreadsheetDashboardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SpreadsheetDashboardId")] //Many2many
-    // [InverseProperty("SpreadsheetDashboard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SpreadsheetDashboardId")] // Many2many // Normal
+    // [InverseProperty("SpreadsheetDashboard")] // Many2many // Normal
     public virtual ICollection<IrModel> IrModel { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SpreadsheetDashboardId")] //Many2many
-    // [InverseProperty("SpreadsheetDashboard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SpreadsheetDashboardId")] // Many2many // Normal
+    // [InverseProperty("SpreadsheetDashboard")] // Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class StockTrackLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -45,21 +44,17 @@ public partial class StockTrackLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockTrackLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockTrackLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("StockTrackLine")] //Many2one
     public virtual StockTrackConfirmation? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockTrackLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

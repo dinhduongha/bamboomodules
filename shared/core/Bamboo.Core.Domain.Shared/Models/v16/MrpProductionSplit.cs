@@ -23,7 +23,6 @@ public partial class MrpProductionSplit: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("production_split_multi_id")]
     public Guid? ProductionSplitMultiId { get; set; }
@@ -48,26 +47,23 @@ public partial class MrpProductionSplit: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpProductionSplitCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MrpProductionSplitId")]
-    [InverseProperty("MrpProductionSplit")]
+    // [One2many] [ForeignKey("MrpProductionSplitId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MrpProductionSplit")] // One2many
     public virtual ICollection<MrpProductionSplitLine> MrpProductionSplitLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductionId")]
-    // [InverseProperty("MrpProductionSplit")] //Many2one
     public virtual MrpProduction? Production { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductionSplitMultiId")]
-    // [InverseProperty("MrpProductionSplit")] //Many2one
     public virtual MrpProductionSplitMulti? ProductionSplitMulti { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpProductionSplitWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class HrRecruitmentDegree: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -47,21 +46,15 @@ public partial class HrRecruitmentDegree: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrRecruitmentDegreeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("TypeId")]
-    [InverseProperty("Type")]
-    public virtual ICollection<HrApplicant> HrApplicant { get; set; }
-
-    // [One2many]
-    [ForeignKey("TypeId")]
-    [InverseProperty("Type")]
+    // [One2many] [ForeignKey("TypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Type")] // One2many
     public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrRecruitmentDegreeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -68,27 +68,23 @@ public partial class AccountingReport: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("AccountReportId")]
-    // [InverseProperty("AccountingReport")] //Many2one
     public virtual AccountFinancialReport? AccountReport { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountingReport")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountingReportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountingReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountingReportId")] //Many2many
-    // [InverseProperty("AccountingReport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountingReportId")] // Many2many // Normal
+    // [InverseProperty("AccountingReport")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class StockPackageDestination: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }
@@ -45,21 +44,17 @@ public partial class StockPackageDestination: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPackageDestinationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationDestId")]
-    // [InverseProperty("StockPackageDestination")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("PickingId")]
-    // [InverseProperty("StockPackageDestination")] //Many2one
     public virtual StockPicking? Picking { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPackageDestinationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

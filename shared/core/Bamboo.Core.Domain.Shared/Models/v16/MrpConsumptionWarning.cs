@@ -23,7 +23,6 @@ public partial class MrpConsumptionWarning: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,22 +38,21 @@ public partial class MrpConsumptionWarning: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpConsumptionWarningCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MrpConsumptionWarningId")]
-    [InverseProperty("MrpConsumptionWarning")]
+    // [One2many] [ForeignKey("MrpConsumptionWarningId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MrpConsumptionWarning")] // One2many
     public virtual ICollection<MrpConsumptionWarningLine> MrpConsumptionWarningLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpConsumptionWarningWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpConsumptionWarningId")] //Many2many
-    // [InverseProperty("MrpConsumptionWarning")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpConsumptionWarningId")] // Many2many // Normal
+    // [InverseProperty("MrpConsumptionWarning")] // Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 }

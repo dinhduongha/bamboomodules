@@ -25,7 +25,6 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -63,33 +62,29 @@ public partial class EventTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("EventTag")] //Many2one
     public virtual EventTagCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("EventTag")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("EventTagId")]
-    // [InverseProperty("EventTag")]
+    // [ForeignKey("EventTagId")] //Many2many // Hidden
+    // [InverseProperty("EventTag")] //Many2many // Hidden
     public virtual ICollection<EventEvent> EventEvent { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("EventTagId")]
-    // [InverseProperty("EventTag")]
+    // [ForeignKey("EventTagId")] //Many2many // Hidden
+    // [InverseProperty("EventTag")] //Many2many // Hidden
     public virtual ICollection<EventType> EventType { get; set; }
 }

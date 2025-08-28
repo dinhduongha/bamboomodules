@@ -24,7 +24,6 @@ public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
@@ -49,16 +48,13 @@ public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideEmbedCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SlideId")]
-    // [InverseProperty("SlideEmbed")] //Many2one
     public virtual SlideSlide? Slide { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideEmbedWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class FleetVehicleSendMail: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -54,34 +53,29 @@ public partial class FleetVehicleSendMail: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("FleetVehicleSendMail")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleSendMailCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("FleetVehicleSendMail")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleSendMailWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    [NotMapped] // [Many2many] // Normal
-    // [ForeignKey("WizardId")] //Many2many
-    // [InverseProperty("Wizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("WizardId")] // Many2many // Normal
+    // [InverseProperty("Wizard")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("FleetVehicleSendMailId")] //Many2many
-    [InverseProperty("FleetVehicleSendMail")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("FleetVehicleSendMailId")] // Many2many // Normal
+    // [InverseProperty("FleetVehicleSendMail")] // Many2many // Normal
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 }

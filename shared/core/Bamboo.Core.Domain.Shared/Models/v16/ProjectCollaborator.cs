@@ -24,7 +24,6 @@ public partial class ProjectCollaborator: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
@@ -49,21 +48,17 @@ public partial class ProjectCollaborator: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectCollaboratorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ProjectCollaborator")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("ProjectCollaborator")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectCollaboratorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

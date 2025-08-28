@@ -24,7 +24,6 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -41,10 +40,6 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [Column("parent_path")]
     public string? ParentPath { get; set; }
 
@@ -54,10 +49,6 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
-
-    // v16-Compat
-    //[Column("default_applicability")]
-    //public string? DefaultApplicability { get; set; }
 
     [JsonField]
     [Column("default_applicability", TypeName = "jsonb")]
@@ -73,47 +64,38 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("PlanId")]
-    [InverseProperty("Plan")]
+    // [One2many] [ForeignKey("PlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Plan")] // One2many
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountPlan { get; set; }
 
     // [One2many]
-    [ForeignKey("RootPlanId")]
-    [InverseProperty("RootPlan")]
+    // [One2many] [ForeignKey("RootPlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RootPlan")] // One2many
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountRootPlan { get; set; }
 
     // [One2many]
     // [One2many] [ForeignKey("AnalyticPlanId")]
-    [InverseProperty("AnalyticPlan")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AnalyticPlan")] // One2many
     public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicability { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("PlanId")]
-    [InverseProperty("Plan")]
-    public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
-
-    // [Many2one]
-    [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAnalyticPlan")] //Many2one
-    public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAnalyticPlanCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountAnalyticPlan> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual AccountAnalyticPlan? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAnalyticPlanWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

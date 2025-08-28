@@ -23,7 +23,6 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("route_id")]
     public Guid? RouteId { get; set; }
@@ -69,57 +68,41 @@ public partial class ProductReplenish: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("BomId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductReplenishCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
     [ForeignKey("RouteId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual StockRoute? Route { get; set; }
 
     // [Many2one]
     [ForeignKey("SupplierId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual ProductSupplierinfo? Supplier { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("ProductReplenish")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductReplenishWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductReplenishId")] //Many2many
-    // [InverseProperty("ProductReplenish")] //Many2many
-    public virtual ICollection<StockRoute> StockRoute { get; set; }
 }

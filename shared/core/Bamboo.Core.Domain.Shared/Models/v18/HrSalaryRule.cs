@@ -26,7 +26,6 @@ public partial class HrSalaryRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -115,77 +114,71 @@ public partial class HrSalaryRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("AccountCredit")]
-    // [InverseProperty("HrSalaryRuleAccountCreditNavigation")] //Many2one
     public virtual AccountAccount? AccountCreditNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountDebit")]
-    // [InverseProperty("HrSalaryRuleAccountDebitNavigation")] //Many2one
     public virtual AccountAccount? AccountDebitNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountTaxId")]
-    // [InverseProperty("HrSalaryRule")] //Many2one
     public virtual AccountTax? AccountTax { get; set; }
 
     // [Many2one]
     [ForeignKey("AnalyticAccountId")]
-    // [InverseProperty("HrSalaryRule")] //Many2one
     public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("HrSalaryRule")] //Many2one
     public virtual HrSalaryRuleCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrSalaryRule")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrSalaryRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentRuleId")]
-    [InverseProperty("ParentRule")]
+    // [One2many] [ForeignKey("ParentRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ParentRule")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLineParentRule { get; set; }
 
     // [One2many]
-    [ForeignKey("SalaryRuleId")]
-    [InverseProperty("SalaryRule")]
+    // [One2many] [ForeignKey("SalaryRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SalaryRule")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLineSalaryRule { get; set; }
 
     // [One2many]
-    [ForeignKey("InputId")]
-    [InverseProperty("Input")]
+    // [One2many] [ForeignKey("InputId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Input")] // One2many
     public virtual ICollection<HrRuleInput> HrRuleInput { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentRuleId")]
-    [InverseProperty("ParentRule")]
+    // [One2many] [ForeignKey("ParentRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ParentRule")] // One2many
     public virtual ICollection<HrSalaryRule> InverseParentRule { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentRuleId")]
-    // [InverseProperty("InverseParentRule")] //Many2one
     public virtual HrSalaryRule? ParentRule { get; set; }
 
     // [Many2one]
     [ForeignKey("RegisterId")]
-    // [InverseProperty("HrSalaryRule")] //Many2one
     public virtual HrContributionRegister? Register { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrSalaryRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("RuleId")] //Many2many
-    // [InverseProperty("Rule")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("RuleId")] //Many2many // Hidden
+    // [InverseProperty("Rule")] //Many2many // Hidden
     public virtual ICollection<HrPayrollStructure> Struct { get; set; }
 }

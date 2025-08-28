@@ -53,22 +53,19 @@ public partial class AccountPrintJournal: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountPrintJournal")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPrintJournalCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPrintJournalWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountPrintJournalId")] //Many2many
-    // [InverseProperty("AccountPrintJournal")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountPrintJournalId")] // Many2many // Normal
+    // [InverseProperty("AccountPrintJournal")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

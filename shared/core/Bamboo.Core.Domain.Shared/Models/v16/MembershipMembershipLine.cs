@@ -24,7 +24,6 @@ public partial class MembershipMembershipLine: FullAuditedEntity<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner")]
     public Guid? Partner { get; set; }
@@ -67,31 +66,25 @@ public partial class MembershipMembershipLine: FullAuditedEntity<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("AccountInvoiceLine")]
-    // [InverseProperty("MembershipMembershipLine")] //Many2one
     public virtual AccountMoveLine? AccountInvoiceLineNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MembershipMembershipLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MembershipMembershipLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MembershipId")]
-    // [InverseProperty("MembershipMembershipLine")] //Many2one
     public virtual ProductProduct? Membership { get; set; }
 
     // [Many2one]
     [ForeignKey("Partner")]
-    // [InverseProperty("MembershipMembershipLine")] //Many2one
     public virtual ResPartner? PartnerNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MembershipMembershipLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

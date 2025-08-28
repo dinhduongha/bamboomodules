@@ -24,7 +24,6 @@ public partial class ProjectSaleLineEmployeeMap: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
@@ -61,31 +60,25 @@ public partial class ProjectSaleLineEmployeeMap: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectSaleLineEmployeeMapCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("ProjectSaleLineEmployeeMap")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("ProjectSaleLineEmployeeMap")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("ProjectSaleLineEmployeeMap")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleLineId")]
-    // [InverseProperty("ProjectSaleLineEmployeeMap")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectSaleLineEmployeeMapWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

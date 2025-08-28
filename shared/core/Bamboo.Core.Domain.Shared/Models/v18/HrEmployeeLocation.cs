@@ -24,7 +24,6 @@ public partial class HrEmployeeLocation: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("work_location_id")]
     public Guid? WorkLocationId { get; set; }
@@ -49,21 +48,17 @@ public partial class HrEmployeeLocation: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrEmployeeLocationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrEmployeeLocation")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkLocationId")]
-    // [InverseProperty("HrEmployeeLocation")] //Many2one
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrEmployeeLocationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

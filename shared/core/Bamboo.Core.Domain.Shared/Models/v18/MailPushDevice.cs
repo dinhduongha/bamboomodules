@@ -25,7 +25,6 @@ public partial class MailPushDevice: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -53,21 +52,19 @@ public partial class MailPushDevice: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailPushDeviceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MailPushDeviceId")]
-    [InverseProperty("MailPushDevice")]
+    // [One2many] [ForeignKey("MailPushDeviceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailPushDevice")] // One2many
     public virtual ICollection<MailPush> MailPush { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("MailPushDevice")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailPushDeviceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

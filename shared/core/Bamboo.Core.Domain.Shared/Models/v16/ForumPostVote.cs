@@ -25,7 +25,6 @@ public partial class ForumPostVote: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("post_id")]
     public Guid? PostId { get; set; }
@@ -56,31 +55,25 @@ public partial class ForumPostVote: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ForumPostVoteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ForumId")]
-    // [InverseProperty("ForumPostVote")] //Many2one
     public virtual ForumForum? Forum { get; set; }
 
     // [Many2one]
     [ForeignKey("PostId")]
-    // [InverseProperty("ForumPostVote")] //Many2one
     public virtual ForumPost? Post { get; set; }
 
     // [Many2one]
     [ForeignKey("RecipientId")]
-    // [InverseProperty("ForumPostVoteRecipient")] //Many2one
     public virtual ResUsers? Recipient { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ForumPostVoteUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ForumPostVoteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

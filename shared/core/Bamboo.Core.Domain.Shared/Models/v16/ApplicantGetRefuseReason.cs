@@ -23,7 +23,6 @@ public partial class ApplicantGetRefuseReason: FullAuditedEntity<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("refuse_reason_id")]
     public Guid? RefuseReasonId { get; set; }
@@ -51,27 +50,23 @@ public partial class ApplicantGetRefuseReason: FullAuditedEntity<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ApplicantGetRefuseReasonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RefuseReasonId")]
-    // [InverseProperty("ApplicantGetRefuseReason")] //Many2one
     public virtual HrApplicantRefuseReason? RefuseReason { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("ApplicantGetRefuseReason")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ApplicantGetRefuseReasonWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ApplicantGetRefuseReasonId")] //Many2many
-    // [InverseProperty("ApplicantGetRefuseReason")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ApplicantGetRefuseReasonId")] // Many2many // Normal
+    // [InverseProperty("ApplicantGetRefuseReason")] // Many2many // Normal
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 }

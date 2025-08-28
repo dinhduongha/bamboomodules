@@ -23,7 +23,6 @@ public partial class SlideQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -49,21 +48,19 @@ public partial class SlideQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideQuestionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SlideId")]
-    // [InverseProperty("SlideQuestion")] //Many2one
     public virtual SlideSlide? Slide { get; set; }
 
     // [One2many]
-    [ForeignKey("QuestionId")]
-    [InverseProperty("Question")]
+    // [One2many] [ForeignKey("QuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Question")] // One2many
     public virtual ICollection<SlideAnswer> SlideAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideQuestionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

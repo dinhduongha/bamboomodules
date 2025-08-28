@@ -23,7 +23,6 @@ public partial class WebsitePageProperties: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("target_model_id")]
     public Guid? TargetModelId { get; set; }
@@ -48,21 +47,17 @@ public partial class WebsitePageProperties: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsitePagePropertiesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TargetModelId")]
-    // [InverseProperty("WebsitePageProperties")] //Many2one
     public virtual WebsitePage? TargetModel { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsitePageProperties")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsitePagePropertiesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

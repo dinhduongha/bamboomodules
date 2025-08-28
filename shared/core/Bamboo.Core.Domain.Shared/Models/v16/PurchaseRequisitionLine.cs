@@ -23,7 +23,6 @@ public partial class PurchaseRequisitionLine: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -42,9 +41,6 @@ public partial class PurchaseRequisitionLine: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("product_description_variants")]
     public string? ProductDescriptionVariants { get; set; }
-
-    [Column("schedule_date")]
-    public DateTime? ScheduleDate { get; set; }
 
     [JsonField]
     [Column("analytic_distribution", TypeName = "jsonb")]
@@ -67,41 +63,35 @@ public partial class PurchaseRequisitionLine: FullAuditedAggregateRoot<Guid>, IE
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PurchaseRequisitionLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PurchaseRequisitionLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveDestId")]
-    // [InverseProperty("PurchaseRequisitionLine")] //Many2one
     public virtual StockMove? MoveDest { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("PurchaseRequisitionLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("PurchaseRequisitionLineId")]
-    [InverseProperty("PurchaseRequisitionLine")]
+    // [One2many] [ForeignKey("PurchaseRequisitionLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PurchaseRequisitionLine")] // One2many
     public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("PurchaseRequisitionLine")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
     [ForeignKey("RequisitionId")]
-    // [InverseProperty("PurchaseRequisitionLine")] //Many2one
     public virtual PurchaseRequisition? Requisition { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PurchaseRequisitionLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

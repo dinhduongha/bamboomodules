@@ -23,7 +23,6 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("survey_id")]
     public Guid? SurveyId { get; set; }
@@ -51,12 +50,6 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("validation_length_max")]
     public long? ValidationLengthMax { get; set; }
-
-    [Column("triggering_question_id")]
-    public Guid? TriggeringQuestionId { get; set; }
-
-    [Column("triggering_answer_id")]
-    public Guid? TriggeringAnswerId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -148,9 +141,6 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("constr_mandatory")]
     public bool? ConstrMandatory { get; set; }
 
-    [Column("is_conditional")]
-    public bool? IsConditional { get; set; }
-
     [Column("answer_datetime", TypeName = "timestamp without time zone")]
     public DateTime? AnswerDatetime { get; set; }
 
@@ -180,78 +170,65 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SurveyQuestionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PageId")]
-    [InverseProperty("Page")]
+    // [One2many] [ForeignKey("PageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Page")] // One2many
     public virtual ICollection<SurveyQuestion> InversePage { get; set; }
-
-    // [One2many]
-    [ForeignKey("TriggeringQuestionId")]
-    [InverseProperty("TriggeringQuestion")]
-    public virtual ICollection<SurveyQuestion> InverseTriggeringQuestion { get; set; }
 
     // [Many2one]
     [ForeignKey("PageId")]
-    // [InverseProperty("InversePage")] //Many2one
     public virtual SurveyQuestion? Page { get; set; }
 
     // [Many2one]
     [ForeignKey("SurveyId")]
-    // [InverseProperty("SurveyQuestion")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
     // [One2many]
-    [ForeignKey("MatrixQuestionId")]
-    [InverseProperty("MatrixQuestion")]
+    // [One2many] [ForeignKey("MatrixQuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MatrixQuestion")] // One2many
     public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerMatrixQuestion { get; set; }
 
     // [One2many]
-    [ForeignKey("QuestionId")]
-    [InverseProperty("Question")]
+    // [One2many] [ForeignKey("QuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Question")] // One2many
     public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerQuestion { get; set; }
 
     // [One2many]
-    [ForeignKey("SessionQuestionId")]
-    [InverseProperty("SessionQuestion")]
+    // [One2many] [ForeignKey("SessionQuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SessionQuestion")] // One2many
     public virtual ICollection<SurveySurvey> SurveySurvey { get; set; }
 
     // [One2many]
-    [ForeignKey("QuestionId")]
-    [InverseProperty("Question")]
+    // [One2many] [ForeignKey("QuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Question")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLine { get; set; }
 
     // [One2many]
-    [ForeignKey("LastDisplayedPageId")]
-    [InverseProperty("LastDisplayedPage")]
+    // [One2many] [ForeignKey("LastDisplayedPageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LastDisplayedPage")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInputNavigation { get; set; }
 
     // [Many2one]
-    [ForeignKey("TriggeringAnswerId")]
-    // [InverseProperty("SurveyQuestion")] //Many2one
-    public virtual SurveyQuestionAnswer? TriggeringAnswer { get; set; }
-
-    // [Many2one]
-    [ForeignKey("TriggeringQuestionId")]
-    // [InverseProperty("InverseTriggeringQuestion")] //Many2one
-    public virtual SurveyQuestion? TriggeringQuestion { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SurveyQuestionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SurveyQuestionId")] //Many2many
-    // [InverseProperty("SurveyQuestion")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SurveyQuestionId")] // Many2many // Normal
+    // [InverseProperty("SurveyQuestion")] // Many2many // Normal
     public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswer { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("SurveyQuestionId")]
-    // [InverseProperty("SurveyQuestion")]
+    // [ForeignKey("SurveyQuestionId")] //Many2many // Hidden
+    // [InverseProperty("SurveyQuestion")] //Many2many // Hidden
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 }

@@ -27,7 +27,6 @@ public partial class CrmRevealView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("reveal_rule_id")]
     public Guid? RevealRuleId { get; set; }
@@ -52,16 +51,13 @@ public partial class CrmRevealView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmRevealViewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("RevealRuleId")]
-    // [InverseProperty("CrmRevealView")] //Many2one
     public virtual CrmRevealRule? RevealRule { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmRevealViewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

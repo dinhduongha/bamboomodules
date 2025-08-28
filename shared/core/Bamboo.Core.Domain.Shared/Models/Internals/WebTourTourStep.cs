@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("web_tour_tour_step")]
-public partial class WebTourTourStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebTourTourStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("tour_id")]
     public Guid? TourId { get; set; }
@@ -53,16 +47,13 @@ public partial class WebTourTourStep: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebTourTourStepCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TourId")]
-    // [InverseProperty("WebTourTourStep")] //Many2one
     public virtual WebTourTour? Tour { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebTourTourStepWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

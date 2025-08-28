@@ -23,7 +23,6 @@ public partial class SpreadsheetDashboardGroup: FullAuditedAggregateRoot<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -38,10 +37,6 @@ public partial class SpreadsheetDashboardGroup: FullAuditedAggregateRoot<Guid>, 
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -50,16 +45,15 @@ public partial class SpreadsheetDashboardGroup: FullAuditedAggregateRoot<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SpreadsheetDashboardGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("DashboardGroupId")]
-    [InverseProperty("DashboardGroup")]
+    // [One2many] [ForeignKey("DashboardGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DashboardGroup")] // One2many
     public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SpreadsheetDashboardGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

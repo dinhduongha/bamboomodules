@@ -8,17 +8,18 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Caching.Memory;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.ObjectMapping;
 using Volo.Abp.ObjectExtending;
 
 using Bamboo.Core.Models;
-using Volo.Abp.Data;
-using Volo.Abp.MultiTenancy;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Application
 {

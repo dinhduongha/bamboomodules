@@ -27,7 +27,6 @@ public partial class MailFollowers: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -40,12 +39,11 @@ public partial class MailFollowers: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("MailFollowers")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailFollowersId")] //Many2many
-    // [InverseProperty("MailFollowers")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MailFollowersId")] // Many2many // Normal
+    // [InverseProperty("MailFollowers")] // Many2many // Normal
     public virtual ICollection<MailMessageSubtype> MailMessageSubtype { get; set; }
 }

@@ -25,7 +25,6 @@ public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -70,43 +69,44 @@ public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDt
     public string? PackageCarrierType { get; set; }
 
     // [One2many]
-    [ForeignKey("DeliveryPackageTypeId")]
-    [InverseProperty("DeliveryPackageType")]
+    // [One2many] [ForeignKey("DeliveryPackageTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DeliveryPackageType")] // One2many
     public virtual ICollection<ChooseDeliveryPackage> ChooseDeliveryPackage { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockPackageType")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockPackageTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageTypeId")]
-    [InverseProperty("PackageType")]
+    // [One2many] [ForeignKey("PackageTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PackageType")] // One2many
     public virtual ICollection<ProductPackaging> ProductPackaging { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageTypeId")]
-    [InverseProperty("PackageType")]
+    // [One2many] [ForeignKey("PackageTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PackageType")] // One2many
     public virtual ICollection<StockQuantPackage> StockQuantPackage { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageTypeId")]
-    [InverseProperty("PackageType")]
+    // [One2many] [ForeignKey("PackageTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PackageType")] // One2many
     public virtual ICollection<StockStorageCategoryCapacity> StockStorageCategoryCapacity { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockPackageTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StockPackageTypeId")]
-    // [InverseProperty("StockPackageType")]
+    // [ForeignKey("StockPackageTypeId")] //Many2many // Hidden
+    // [InverseProperty("StockPackageType")] //Many2many // Hidden
     public virtual ICollection<StockPutawayRule> StockPutawayRule { get; set; }
 }

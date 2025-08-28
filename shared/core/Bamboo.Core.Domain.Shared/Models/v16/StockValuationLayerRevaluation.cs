@@ -59,42 +59,35 @@ public partial class StockValuationLayerRevaluation: FullAuditedEntity<Guid>, IE
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountJournalId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual AccountJournal? AccountJournal { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockValuationLayerRevaluationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LotId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual StockLot? Lot { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockValuationLayerRevaluation")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockValuationLayerRevaluationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("StockValuationLayerRevaluationId")] //Many2many
-    // [InverseProperty("StockValuationLayerRevaluation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("StockValuationLayerRevaluationId")] // Many2many // Normal
+    // [InverseProperty("StockValuationLayerRevaluation")] // Many2many // Normal
     public virtual ICollection<StockValuationLayer> StockValuationLayer { get; set; }
 }

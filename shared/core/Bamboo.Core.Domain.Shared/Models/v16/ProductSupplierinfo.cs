@@ -25,7 +25,6 @@ public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -83,57 +82,51 @@ public partial class ProductSupplierinfo: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductSupplierinfoCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("SupplierId")]
-    [InverseProperty("Supplier")]
+    // [One2many] [ForeignKey("SupplierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Supplier")] // One2many
     public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("PurchaseRequisitionLineId")]
-    // [InverseProperty("ProductSupplierinfo")] //Many2one
     public virtual PurchaseRequisitionLine? PurchaseRequisitionLine { get; set; }
 
     // [One2many]
-    [ForeignKey("SupplierId")]
-    [InverseProperty("Supplier")]
+    // [One2many] [ForeignKey("SupplierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Supplier")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductSupplierinfoWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductSupplierinfoId")]
-    // [InverseProperty("ProductSupplierinfo")]
+    // [ForeignKey("ProductSupplierinfoId")] //Many2many // Hidden
+    // [InverseProperty("ProductSupplierinfo")] //Many2many // Hidden
     public virtual ICollection<StockReplenishmentInfo> StockReplenishmentInfo { get; set; }
 }

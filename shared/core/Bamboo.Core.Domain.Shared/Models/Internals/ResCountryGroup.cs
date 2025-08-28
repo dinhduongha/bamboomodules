@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -34,34 +35,29 @@ public partial class ResCountryGroup: FullAuditedAggregateRoot<Guid>, IEntityDto
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("CountryGroupId")]
-    [InverseProperty("CountryGroup")]
+    // [One2many] [ForeignKey("CountryGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CountryGroup")] // One2many
     public virtual ICollection<AccountFiscalPosition> AccountFiscalPosition { get; set; }
-
-    // [One2many]
-    [ForeignKey("CountryGroupId")]
-    [InverseProperty("CountryGroup")]
-    public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResCountryGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResCountryGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResCountryGroupId")]
-    // [InverseProperty("ResCountryGroup")]
-    // public virtual ICollection<ProductPricelist> Pricelist { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResCountryGroupId")] //Many2many // Hidden
+    // [InverseProperty("ResCountryGroup")] //Many2many // Hidden
+    public virtual ICollection<ProductPricelist> Pricelist { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResCountryGroupId")]
-    // [InverseProperty("ResCountryGroup")]
-    // public virtual ICollection<ResCountry> ResCountry { get; set; }
+    // [Many2many] // Hidden
+
+    [NotMapped] //Many2many // Hidden // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("ResCountryGroupId")] //Many2many // Hidden
+    // [InverseProperty("ResCountryGroup")] //Many2many // Hidden
+    public virtual ICollection<ResCountry> ResCountry { get; set; }
 }

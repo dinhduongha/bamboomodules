@@ -56,27 +56,23 @@ public partial class AccountAutomaticEntryWizard: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAutomaticEntryWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAutomaticEntryWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DestinationAccountId")]
-    // [InverseProperty("AccountAutomaticEntryWizard")] //Many2one
     public virtual AccountAccount? DestinationAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAutomaticEntryWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountAutomaticEntryWizardId")] //Many2many
-    // [InverseProperty("AccountAutomaticEntryWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountAutomaticEntryWizardId")] // Many2many // Normal
+    // [InverseProperty("AccountAutomaticEntryWizard")] // Many2many // Normal
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class AccountAnalyticApplicability: FullAuditedEntity<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("analytic_plan_id")]
     public Guid? AnalyticPlanId { get; set; }
@@ -54,26 +53,21 @@ public partial class AccountAnalyticApplicability: FullAuditedEntity<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("AnalyticPlanId")]
-    // [InverseProperty("AccountAnalyticApplicability")] //Many2one
     public virtual AccountAnalyticPlan? AnalyticPlan { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAnalyticApplicability")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAnalyticApplicabilityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductCategId")]
-    // [InverseProperty("AccountAnalyticApplicability")] //Many2one
     public virtual ProductCategory? ProductCateg { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAnalyticApplicabilityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,10 +23,6 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("onboarding_id")]
-    public Guid? OnboardingId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -77,27 +73,21 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("OnboardingOnboardingStepCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
-    // [Many2one]
-    [ForeignKey("OnboardingId")]
-    // [InverseProperty("OnboardingOnboardingStep")] //Many2one
-    public virtual OnboardingOnboarding? Onboarding { get; set; }
-
     // [One2many]
-    [ForeignKey("StepId")]
-    [InverseProperty("Step")]
+    // [One2many] [ForeignKey("StepId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Step")] // One2many
     public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("OnboardingOnboardingStepWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("OnboardingOnboardingStepId")]
-    // [InverseProperty("OnboardingOnboardingStep")]
+    // [ForeignKey("OnboardingOnboardingStepId")] //Many2many // Hidden
+    // [InverseProperty("OnboardingOnboardingStep")] //Many2many // Hidden
     public virtual ICollection<OnboardingOnboarding> OnboardingOnboarding { get; set; }
 }

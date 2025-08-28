@@ -23,7 +23,6 @@ public partial class RecurringPaymentLine: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("recurring_payment_id")]
     public Guid? RecurringPaymentId { get; set; }
@@ -60,36 +59,29 @@ public partial class RecurringPaymentLine: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("RecurringPaymentLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RecurringPaymentLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("RecurringPaymentLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("RecurringPaymentLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentId")]
-    // [InverseProperty("RecurringPaymentLine")] //Many2one
     public virtual AccountPayment? Payment { get; set; }
 
     // [Many2one]
     [ForeignKey("RecurringPaymentId")]
-    // [InverseProperty("RecurringPaymentLine")] //Many2one
     public virtual RecurringPayment? RecurringPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RecurringPaymentLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -43,9 +42,6 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("notify")]
     public bool? Notify { get; set; }
 
-    [Column("send_mail")]
-    public bool? SendMail { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -54,17 +50,15 @@ public partial class MailWizardInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailWizardInviteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailWizardInviteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailWizardInviteId")] //Many2many
-    // [InverseProperty("MailWizardInvite")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("MailWizardInviteId")] // Many2many // Normal
+    // [InverseProperty("MailWizardInvite")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

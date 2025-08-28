@@ -26,10 +26,6 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -42,9 +38,6 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
 
     [Column("no_of_recruitment")]
     public long? NoOfRecruitment { get; set; }
-
-    [Column("no_of_hired_employee")]
-    public long? NoOfHiredEmployee { get; set; }
 
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
@@ -65,10 +58,6 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     [JsonField]
     [Column("description", TypeName = "jsonb")]
     public string? Description { get; set; }
-
-    // v16-Compat
-    //[Column("description")]
-    //public string? Description { get; set; }
 
     [Column("requirements")]
     public string? Requirements { get; set; }
@@ -94,17 +83,14 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
-    [Column("hr_responsible_id")]
-    public Guid? HrResponsibleId { get; set; }
-
     [Column("color")]
     public long? Color { get; set; }
 
     [Column("industry_id")]
     public Guid? IndustryId { get; set; }
 
-    // [Column("no_of_hired_employee")]
-    // public long? NoOfHiredEmployee { get; set; }
+    [Column("no_of_hired_employee")]
+    public long? NoOfHiredEmployee { get; set; }
 
     [Column("date_from")]
     public DateTime? DateFrom { get; set; }
@@ -161,121 +147,103 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
 
     // [Many2one]
     [ForeignKey("AddressId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual ResPartner? Address { get; set; }
 
     // [Many2one]
     [ForeignKey("AliasId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ContractTypeId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual HrContractType? ContractType { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrJobCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [One2many]
-    [ForeignKey("JobId")]
-    [InverseProperty("Job")]
+    // [One2many] [ForeignKey("JobId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Job")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [One2many]
-    [ForeignKey("JobId")]
-    [InverseProperty("Job")]
+    // [One2many] [ForeignKey("JobId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Job")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
-    [ForeignKey("JobId")]
-    [InverseProperty("Job")]
+    // [One2many] [ForeignKey("JobId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Job")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("JobId")]
-    [InverseProperty("Job")]
+    // [One2many] [ForeignKey("JobId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Job")] // One2many
     public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
 
     // [Many2one]
-    [ForeignKey("HrResponsibleId")]
-    // [InverseProperty("HrJobHrResponsible")] //Many2one
-    public virtual ResUsers? HrResponsible { get; set; }
-
-    // [Many2one]
     [ForeignKey("IndustryId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual ResPartnerIndustry? Industry { get; set; }
 
     // [Many2one]
     [ForeignKey("ManagerId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual HrEmployee? Manager { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("HrJob")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("SurveyId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual SurveySurvey? Survey { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("HrJobUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("HrJob")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrJobWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrJobId")]
-    // [InverseProperty("HrJob")]
+    // [ForeignKey("HrJobId")] //Many2many // Hidden
+    // [InverseProperty("HrJob")] //Many2many // Hidden
     public virtual ICollection<HrRecruitmentStage> HrRecruitmentStage { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrJobId")] //Many2many
-    // [InverseProperty("HrJob")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrJobId")] // Many2many // Normal
+    // [InverseProperty("HrJob")] // Many2many // Normal
     public virtual ICollection<HrSkill> HrSkill { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrJobId")] //Many2many
-    // [InverseProperty("HrJob")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("HrJobId")] // Many2many // Normal
+    // [InverseProperty("HrJob")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrJobId")] //Many2many
-    // [InverseProperty("HrJobNavigation")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("HrJobId")] // Many2many // Normal
+    // [InverseProperty("HrJobNavigation")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsersNavigation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("JobId")] //Many2many
-    // [InverseProperty("Job")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("JobId")] // Many2many // Normal
+    // [InverseProperty("Job")] // Many2many // Normal
     public virtual ICollection<ResUsers> UserNavigation { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -62,68 +61,72 @@ public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsTemplateId")]
-    [InverseProperty("SmsTemplate")]
+    // [One2many] [ForeignKey("SmsTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsTemplateId")]
-    [InverseProperty("SmsTemplate")]
+    // [One2many] [ForeignKey("SmsTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsTemplateId")]
-    [InverseProperty("SmsTemplate")]
+    // [One2many] [ForeignKey("SmsTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("SmsTemplate")] //Many2one
     public virtual IrModel? ModelNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsTemplateId")]
-    [InverseProperty("SmsTemplate")]
+    // [One2many] [ForeignKey("SmsTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<ProjectProjectStage> ProjectProjectStage { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsTemplateId")]
-    [InverseProperty("SmsTemplate")]
+    // [One2many] [ForeignKey("SmsTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<ProjectTaskType> ProjectTaskType { get; set; }
 
     // [One2many]
-    [ForeignKey("StockSmsConfirmationTemplateId")]
-    [InverseProperty("StockSmsConfirmationTemplate")]
+    // [One2many] [ForeignKey("StockSmsConfirmationTemplateId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("StockSmsConfirmationTemplate")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("SidebarActionId")]
-    // [InverseProperty("SmsTemplate")] //Many2one
     public virtual IrActWindow? SidebarAction { get; set; }
 
     // [One2many]
-    [ForeignKey("TemplateId")]
-    [InverseProperty("Template")]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
     public virtual ICollection<SmsComposer> SmsComposer { get; set; }
 
     // [One2many]
-    [ForeignKey("SmsTemplateId")]
-    [InverseProperty("SmsTemplate")]
+    // [One2many] [ForeignKey("SmsTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<SmsTemplatePreview> SmsTemplatePreview { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("SmsTemplateId")]
-    // [InverseProperty("SmsTemplate")]
+    // [ForeignKey("SmsTemplateId")] //Many2many // Hidden
+    // [InverseProperty("SmsTemplate")] //Many2many // Hidden
     public virtual ICollection<SmsTemplateReset> SmsTemplateReset { get; set; }
 }

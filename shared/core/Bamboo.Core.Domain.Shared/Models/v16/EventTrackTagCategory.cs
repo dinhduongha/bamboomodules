@@ -23,7 +23,6 @@ public partial class EventTrackTagCategory: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -46,16 +45,15 @@ public partial class EventTrackTagCategory: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTrackTagCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Category")]
+    // [One2many] [ForeignKey("CategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Category")] // One2many
     public virtual ICollection<EventTrackTag> EventTrackTag { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTrackTagCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

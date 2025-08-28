@@ -23,7 +23,6 @@ public partial class GamificationGoalWizard: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("goal_id")]
     public Guid? GoalId { get; set; }
@@ -45,16 +44,13 @@ public partial class GamificationGoalWizard: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationGoalWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("GoalId")]
-    // [InverseProperty("GamificationGoalWizard")] //Many2one
     public virtual GamificationGoal? Goal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationGoalWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

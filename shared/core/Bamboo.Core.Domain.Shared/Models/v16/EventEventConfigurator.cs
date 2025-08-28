@@ -23,7 +23,6 @@ public partial class EventEventConfigurator: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -48,26 +47,21 @@ public partial class EventEventConfigurator: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventEventConfiguratorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventEventConfigurator")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTicketId")]
-    // [InverseProperty("EventEventConfigurator")] //Many2one
     public virtual EventEventTicket? EventTicket { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("EventEventConfigurator")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventEventConfiguratorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

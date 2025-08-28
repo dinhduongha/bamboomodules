@@ -24,7 +24,6 @@ public partial class CardCard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -55,16 +54,13 @@ public partial class CardCard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("CardCard")] //Many2one
     public virtual CardCampaign? Campaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CardCardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CardCardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

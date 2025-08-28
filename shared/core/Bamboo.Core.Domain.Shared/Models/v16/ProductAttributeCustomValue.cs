@@ -24,7 +24,6 @@ public partial class ProductAttributeCustomValue: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("custom_product_template_attribute_value_id")]
     public Guid? CustomProductTemplateAttributeValueId { get; set; }
@@ -52,26 +51,21 @@ public partial class ProductAttributeCustomValue: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductAttributeCustomValueCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CustomProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductAttributeCustomValue")] //Many2one
     public virtual ProductTemplateAttributeValue? CustomProductTemplateAttributeValue { get; set; }
 
     // [Many2one]
     [ForeignKey("PosOrderLineId")]
-    // [InverseProperty("ProductAttributeCustomValue")] //Many2one
     public virtual PosOrderLine? PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    // [InverseProperty("ProductAttributeCustomValue")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductAttributeCustomValueWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

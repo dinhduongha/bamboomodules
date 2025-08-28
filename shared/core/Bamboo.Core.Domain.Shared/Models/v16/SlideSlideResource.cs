@@ -23,7 +23,6 @@ public partial class SlideSlideResource: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("slide_id")]
     public Guid? SlideId { get; set; }
@@ -57,16 +56,13 @@ public partial class SlideSlideResource: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideSlideResourceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SlideId")]
-    // [InverseProperty("SlideSlideResource")] //Many2one
     public virtual SlideSlide? Slide { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideSlideResourceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

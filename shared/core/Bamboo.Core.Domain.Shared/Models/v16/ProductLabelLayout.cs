@@ -23,7 +23,6 @@ public partial class ProductLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("custom_quantity")]
     public long? CustomQuantity { get; set; }
@@ -52,45 +51,33 @@ public partial class ProductLabelLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
     [Column("move_quantity")]
     public string? MoveQuantity { get; set; }
 
-    [Column("picking_quantity")]
-    public string? PickingQuantity { get; set; }
-
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductLabelLayoutCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PricelistId")]
-    // [InverseProperty("ProductLabelLayout")] //Many2one
     public virtual ProductPricelist? Pricelist { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductLabelLayoutWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductLabelLayoutId")] //Many2many
-    // [InverseProperty("ProductLabelLayout")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
+    // [ForeignKey("ProductLabelLayoutId")] // Many2many // Normal
+    // [InverseProperty("ProductLabelLayout")] // Many2many // Normal
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductLabelLayoutId")] //Many2many
-    // [InverseProperty("ProductLabelLayout")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductLabelLayoutId")] // Many2many // Normal
+    // [InverseProperty("ProductLabelLayout")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductLabelLayoutId")] //Many2many
-    // [InverseProperty("ProductLabelLayout")] //Many2many
-    public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductLabelLayoutId")] //Many2many
-    // [InverseProperty("ProductLabelLayout")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductLabelLayoutId")] // Many2many // Normal
+    // [InverseProperty("ProductLabelLayout")] // Many2many // Normal
     public virtual ICollection<StockMove> StockMove { get; set; }
 }

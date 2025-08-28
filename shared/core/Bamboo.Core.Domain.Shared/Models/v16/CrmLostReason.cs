@@ -23,7 +23,6 @@ public partial class CrmLostReason: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -46,21 +45,21 @@ public partial class CrmLostReason: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLostReasonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LostReasonId")]
-    [InverseProperty("LostReason")]
+    // [One2many] [ForeignKey("LostReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LostReason")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
-    [ForeignKey("LostReasonId")]
-    [InverseProperty("LostReason")]
+    // [One2many] [ForeignKey("LostReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LostReason")] // One2many
     public virtual ICollection<CrmLeadLost> CrmLeadLost { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLostReasonWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

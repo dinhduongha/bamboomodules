@@ -23,10 +23,6 @@ public partial class ProjectUpdate: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("progress")]
     public long? Progress { get; set; }
@@ -81,36 +77,27 @@ public partial class ProjectUpdate: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectUpdateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ProjectUpdate")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("ProjectUpdate")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]
-    [ForeignKey("LastUpdateId")]
-    [InverseProperty("LastUpdate")]
+    // [One2many] [ForeignKey("LastUpdateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LastUpdate")] // One2many
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [Many2one]
     [ForeignKey("UomId")]
-    // [InverseProperty("ProjectUpdate")] //Many2one
     public virtual UomUom? Uom { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ProjectUpdateUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectUpdateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

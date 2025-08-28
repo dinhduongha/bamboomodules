@@ -25,7 +25,6 @@ public partial class HrPayslipInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("payslip_id")]
     public Guid? PayslipId { get; set; }
@@ -59,21 +58,17 @@ public partial class HrPayslipInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("ContractId")]
-    // [InverseProperty("HrPayslipInput")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayslipInputCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PayslipId")]
-    // [InverseProperty("HrPayslipInput")] //Many2one
     public virtual HrPayslip? Payslip { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayslipInputWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

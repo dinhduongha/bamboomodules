@@ -28,7 +28,6 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }
@@ -108,111 +107,111 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockRule")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("GroupId")]
-    // [InverseProperty("StockRule")] //Many2one
     public virtual ProcurementGroup? Group { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationDestId")]
-    // [InverseProperty("StockRuleLocationDest")] //Many2one
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationSrcId")]
-    // [InverseProperty("StockRuleLocationSrc")] //Many2one
     public virtual StockLocation? LocationSrc { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerAddressId")]
-    // [InverseProperty("StockRule")] //Many2one
     public virtual ResPartner? PartnerAddress { get; set; }
 
     // [Many2one]
     [ForeignKey("PickingTypeId")]
-    // [InverseProperty("StockRule")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
     [ForeignKey("PropagateWarehouseId")]
-    // [InverseProperty("StockRulePropagateWarehouse")] //Many2one
     public virtual StockWarehouse? PropagateWarehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("RouteId")]
-    // [InverseProperty("StockRule")] //Many2one
     public virtual StockRoute? Route { get; set; }
 
     // [One2many]
-    [ForeignKey("RuleId")]
-    [InverseProperty("Rule")]
+    // [One2many] [ForeignKey("RuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Rule")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
-    [ForeignKey("BuyPullId")]
-    [InverseProperty("BuyPull")]
+    // [One2many] [ForeignKey("BuyPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BuyPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseBuyPull { get; set; }
 
     // [One2many]
-    [ForeignKey("ManufactureMtoPullId")]
-    [InverseProperty("ManufactureMtoPull")]
+    // [One2many] [ForeignKey("ManufactureMtoPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ManufactureMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseManufactureMtoPull { get; set; }
 
     // [One2many]
-    [ForeignKey("ManufacturePullId")]
-    [InverseProperty("ManufacturePull")]
+    // [One2many] [ForeignKey("ManufacturePullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ManufacturePull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseManufacturePull { get; set; }
 
     // [One2many]
-    [ForeignKey("MtoPullId")]
-    [InverseProperty("MtoPull")]
+    // [One2many] [ForeignKey("MtoPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseMtoPull { get; set; }
 
     // [One2many]
-    [ForeignKey("PbmMtoPullId")]
-    [InverseProperty("PbmMtoPull")]
+    // [One2many] [ForeignKey("PbmMtoPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PbmMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPull { get; set; }
 
     // [One2many]
-    [ForeignKey("RepairMtoPullId")]
-    [InverseProperty("RepairMtoPull")]
+    // [One2many] [ForeignKey("RepairMtoPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RepairMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseRepairMtoPull { get; set; }
 
     // [One2many]
-    [ForeignKey("SamRuleId")]
-    [InverseProperty("SamRule")]
+    // [One2many] [ForeignKey("SamRuleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SamRule")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSamRule { get; set; }
 
     // [One2many]
-    [ForeignKey("SubcontractingDropshippingPullId")]
-    [InverseProperty("SubcontractingDropshippingPull")]
+    // [One2many] [ForeignKey("SubcontractingDropshippingPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SubcontractingDropshippingPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingDropshippingPull { get; set; }
 
     // [One2many]
-    [ForeignKey("SubcontractingMtoPullId")]
-    [InverseProperty("SubcontractingMtoPull")]
+    // [One2many] [ForeignKey("SubcontractingMtoPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SubcontractingMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingMtoPull { get; set; }
 
     // [One2many]
-    [ForeignKey("SubcontractingPullId")]
-    [InverseProperty("SubcontractingPull")]
+    // [One2many] [ForeignKey("SubcontractingPullId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SubcontractingPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingPull { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("StockRuleWarehouse")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

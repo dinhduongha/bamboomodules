@@ -23,7 +23,6 @@ public partial class MailGroupMessageReject: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_group_message_id")]
     public Guid? MailGroupMessageId { get; set; }
@@ -51,16 +50,13 @@ public partial class MailGroupMessageReject: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailGroupMessageRejectCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailGroupMessageId")]
-    // [InverseProperty("MailGroupMessageReject")] //Many2one
     public virtual MailGroupMessage? MailGroupMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailGroupMessageRejectWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

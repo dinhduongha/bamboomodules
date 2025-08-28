@@ -25,7 +25,6 @@ public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("port")]
     public long? Port { get; set; }
@@ -101,21 +100,19 @@ public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FetchmailServerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("FetchmailServerId")]
-    [InverseProperty("FetchmailServer")]
+    // [One2many] [ForeignKey("FetchmailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FetchmailServer")] // One2many
     public virtual ICollection<MailMail> MailMail { get; set; }
 
     // [Many2one]
     [ForeignKey("ObjectId")]
-    // [InverseProperty("FetchmailServer")] //Many2one
     public virtual IrModel? Object { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FetchmailServerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

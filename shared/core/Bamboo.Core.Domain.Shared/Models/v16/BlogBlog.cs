@@ -24,13 +24,9 @@ public partial class BlogBlog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -82,27 +78,20 @@ public partial class BlogBlog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("BlogId")]
-    [InverseProperty("Blog")]
+    // [One2many] [ForeignKey("BlogId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Blog")] // One2many
     public virtual ICollection<BlogPost> BlogPost { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BlogBlogCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("BlogBlog")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("BlogBlog")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BlogBlogWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

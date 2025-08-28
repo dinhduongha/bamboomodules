@@ -24,7 +24,6 @@ public partial class CrossoveredBudgetLines: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("crossovered_budget_id")]
     public Guid? CrossoveredBudgetId { get; set; }
@@ -64,31 +63,25 @@ public partial class CrossoveredBudgetLines: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("AnalyticAccountId")]
-    // [InverseProperty("CrossoveredBudgetLines")] //Many2one
     public virtual AccountAnalyticAccount? AnalyticAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("CrossoveredBudgetLines")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrossoveredBudgetLinesCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CrossoveredBudgetId")]
-    // [InverseProperty("CrossoveredBudgetLines")] //Many2one
     public virtual CrossoveredBudget? CrossoveredBudget { get; set; }
 
     // [Many2one]
     [ForeignKey("GeneralBudgetId")]
-    // [InverseProperty("CrossoveredBudgetLines")] //Many2one
     public virtual AccountBudgetPost? GeneralBudget { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrossoveredBudgetLinesWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

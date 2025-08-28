@@ -15,7 +15,6 @@ namespace Bamboo.Core.Models;
 //[Index("Date", Name = "account_bank_statement__date_index")]
 //[Index("JournalId", "FirstLineIndex", Name = "account_bank_statement_first_line_index_idx")]
 //[Index("JournalId", "Date", "Id", Name = "account_bank_statement_journal_id_date_desc_id_desc_idx", IsDescending = new[] { false, true, true })]
-//[Index("FirstLineIndex", Name = "account_bank_statement_first_line_index_index")]
 public partial class AccountBankStatement: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -68,38 +67,36 @@ public partial class AccountBankStatement: FullAuditedAggregateRoot<Guid>, IEnti
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("StatementId")]
-    [InverseProperty("Statement")]
+    // [One2many] [ForeignKey("StatementId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Statement")] // One2many
     public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
     // [One2many]
-    [ForeignKey("StatementId")]
-    [InverseProperty("Statement")]
+    // [One2many] [ForeignKey("StatementId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Statement")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountBankStatement")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountBankStatementCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountBankStatement")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountBankStatementWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountBankStatementId")] //Many2many
-    // [InverseProperty("AccountBankStatement")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("AccountBankStatementId")] // Many2many // Normal
+    // [InverseProperty("AccountBankStatement")] // Many2many // Normal
     public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 }

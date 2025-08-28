@@ -23,7 +23,6 @@ public partial class HrSkillType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -38,10 +37,6 @@ public partial class HrSkillType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 
@@ -53,41 +48,39 @@ public partial class HrSkillType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrSkillTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillTypeId")]
-    [InverseProperty("SkillType")]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkill { get; set; }
-
-    // [One2many]
-    [ForeignKey("SkillTypeId")]
-    [InverseProperty("SkillType")]
+    // [One2many] [ForeignKey("SkillTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillType")] // One2many
     public virtual ICollection<HrCandidateSkill> HrCandidateSkill { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillTypeId")]
-    [InverseProperty("SkillType")]
+    // [One2many] [ForeignKey("SkillTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillType")] // One2many
     public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillTypeId")]
-    [InverseProperty("SkillType")]
+    // [One2many] [ForeignKey("SkillTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillType")] // One2many
     public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLog { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillTypeId")]
-    [InverseProperty("SkillType")]
+    // [One2many] [ForeignKey("SkillTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillType")] // One2many
     public virtual ICollection<HrSkill> HrSkill { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillTypeId")]
-    [InverseProperty("SkillType")]
+    // [One2many] [ForeignKey("SkillTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillType")] // One2many
     public virtual ICollection<HrSkillLevel> HrSkillLevel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrSkillTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

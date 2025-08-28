@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -42,9 +42,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("user_default_rights")]
     public bool? UserDefaultRights { get; set; }
 
-    [Column("external_email_server_default")]
-    public bool? ExternalEmailServerDefault { get; set; }
-
     [Column("module_base_import")]
     public bool? ModuleBaseImport { get; set; }
 
@@ -62,9 +59,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("module_auth_ldap")]
     public bool? ModuleAuthLdap { get; set; }
-
-    [Column("module_base_gengo")]
-    public bool? ModuleBaseGengo { get; set; }
 
     [Column("module_account_inter_company_rules")]
     public bool? ModuleAccountInterCompanyRules { get; set; }
@@ -111,9 +105,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("tenor_gif_limit")]
     public long? TenorGifLimit { get; set; }
 
-    [Column("alias_domain")]
-    public string? AliasDomain { get; set; }
-
     [Column("twilio_account_sid")]
     public string? TwilioAccountSid { get; set; }
 
@@ -135,8 +126,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("google_translate_api_key")]
     public string? GoogleTranslateApiKey { get; set; }
 
-    // [Column("external_email_server_default")]
-    // public bool? ExternalEmailServerDefault { get; set; }
+    [Column("external_email_server_default")]
+    public bool? ExternalEmailServerDefault { get; set; }
 
     [Column("module_google_gmail")]
     public bool? ModuleGoogleGmail { get; set; }
@@ -168,26 +159,17 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("google_gmail_client_secret")]
     public string? GoogleGmailClientSecret { get; set; }
 
-    [Column("product_pricelist_setting")]
-    public string? ProductPricelistSetting { get; set; }
-
     [Column("product_weight_in_lbs")]
     public string? ProductWeightInLbs { get; set; }
 
     [Column("product_volume_volume_in_cubic_feet")]
     public string? ProductVolumeVolumeInCubicFeet { get; set; }
 
-    [Column("group_discount_per_so_line")]
-    public bool? GroupDiscountPerSoLine { get; set; }
-
     [Column("group_uom")]
     public bool? GroupUom { get; set; }
 
     [Column("group_product_variant")]
     public bool? GroupProductVariant { get; set; }
-
-    [Column("module_sale_product_matrix")]
-    public bool? ModuleSaleProductMatrix { get; set; }
 
     [Column("module_loyalty")]
     public bool? ModuleLoyalty { get; set; }
@@ -198,15 +180,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("group_product_pricelist")]
     public bool? GroupProductPricelist { get; set; }
 
-    [Column("group_sale_pricelist")]
-    public bool? GroupSalePricelist { get; set; }
-
-    // [Column("unsplash_access_key")]
-    // public string? UnsplashAccessKey { get; set; }
-
-    // [Column("unsplash_app_id")]
-    // public string? UnsplashAppId { get; set; }
-
     [Column("digest_id")]
     public Guid? DigestId { get; set; }
 
@@ -214,13 +187,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     public bool? DigestEmails { get; set; }
 
     [Column("chart_template")]
-    public string? ChartTemplateString { get; set; }
-
-    [Column("chart_template_id")]
-    public Guid? ChartTemplateId { get; set; }
-
-    [Column("show_line_subtotals_tax_selection")]
-    public string? ShowLineSubtotalsTaxSelection { get; set; }
+    public string? ChartTemplate { get; set; }
 
     [Column("module_account_accountant")]
     public bool? ModuleAccountAccountant { get; set; }
@@ -230,12 +197,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("group_cash_rounding")]
     public bool? GroupCashRounding { get; set; }
-
-    [Column("group_show_line_subtotals_tax_excluded")]
-    public bool? GroupShowLineSubtotalsTaxExcluded { get; set; }
-
-    [Column("group_show_line_subtotals_tax_included")]
-    public bool? GroupShowLineSubtotalsTaxIncluded { get; set; }
 
     [Column("group_show_sale_receipts")]
     public bool? GroupShowSaleReceipts { get; set; }
@@ -260,9 +221,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("module_account_iso20022")]
     public bool? ModuleAccountIso20022 { get; set; }
-
-    [Column("module_account_sepa")]
-    public bool? ModuleAccountSepa { get; set; }
 
     [Column("module_account_sepa_direct_debit")]
     public bool? ModuleAccountSepaDirectDebit { get; set; }
@@ -294,9 +252,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_account_extract")]
     public bool? ModuleAccountExtract { get; set; }
 
-    [Column("module_account_taxcloud")]
-    public bool? ModuleAccountTaxcloud { get; set; }
-
     [Column("module_account_invoice_extract")]
     public bool? ModuleAccountInvoiceExtract { get; set; }
 
@@ -318,9 +273,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("pay_invoices_online")]
     public bool? PayInvoicesOnline { get; set; }
 
-    [Column("deposit_default_product_id")]
-    public Guid? DepositDefaultProductId { get; set; }
-
     [Column("invoice_mail_template_id")]
     public Guid? InvoiceMailTemplateId { get; set; }
 
@@ -330,8 +282,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("group_auto_done_setting")]
     public bool? GroupAutoDoneSetting { get; set; }
 
-    // [Column("group_discount_per_so_line")]
-    // public bool? GroupDiscountPerSoLine { get; set; }
+    [Column("group_discount_per_so_line")]
+    public bool? GroupDiscountPerSoLine { get; set; }
 
     [Column("group_proforma_sales")]
     public bool? GroupProformaSales { get; set; }
@@ -341,9 +293,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("automatic_invoice")]
     public bool? AutomaticInvoice { get; set; }
-
-    [Column("use_quotation_validity_days")]
-    public bool? UseQuotationValidityDays { get; set; }
 
     [Column("module_delivery")]
     public bool? ModuleDelivery { get; set; }
@@ -387,8 +336,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_sale_margin")]
     public bool? ModuleSaleMargin { get; set; }
 
-    // [Column("module_sale_product_matrix")]
-    // public bool? ModuleSaleProductMatrix { get; set; }
+    [Column("module_sale_product_matrix")]
+    public bool? ModuleSaleProductMatrix { get; set; }
 
     [Column("module_sale_pdf_quote_builder")]
     public bool? ModuleSalePdfQuoteBuilder { get; set; }
@@ -401,9 +350,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("barcode_separator")]
     public string? BarcodeSeparator { get; set; }
-
-    [Column("module_sale_quotation_builder")]
-    public bool? ModuleSaleQuotationBuilder { get; set; }
 
     [Column("module_product_expiry")]
     public bool? ModuleProductExpiry { get; set; }
@@ -435,9 +381,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_stock_picking_batch")]
     public bool? ModuleStockPickingBatch { get; set; }
 
-    [Column("group_stock_picking_wave")]
-    public bool? GroupStockPickingWave { get; set; }
-
     [Column("module_stock_barcode")]
     public bool? ModuleStockBarcode { get; set; }
 
@@ -455,9 +398,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("group_stock_multi_locations")]
     public bool? GroupStockMultiLocations { get; set; }
-
-    [Column("group_stock_storage_categories")]
-    public bool? GroupStockStorageCategories { get; set; }
 
     [Column("group_stock_reception_report")]
     public bool? GroupStockReceptionReport { get; set; }
@@ -483,26 +423,17 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("pos_default_fiscal_position_id")]
     public Guid? PosDefaultFiscalPositionId { get; set; }
 
-    [Column("pos_iface_start_categ_id")]
-    public Guid? PosIfaceStartCategId { get; set; }
-
     [Column("pos_pricelist_id")]
     public Guid? PosPricelistId { get; set; }
 
     [Column("pos_tip_product_id")]
     public Guid? PosTipProductId { get; set; }
 
-    [Column("pos_proxy_ip")]
-    public string? PosProxyIp { get; set; }
-
     [Column("pos_receipt_footer")]
     public string? PosReceiptFooter { get; set; }
 
     [Column("pos_receipt_header")]
     public string? PosReceiptHeader { get; set; }
-
-    [Column("module_pos_mercury")]
-    public bool? ModulePosMercury { get; set; }
 
     [Column("module_pos_adyen")]
     public bool? ModulePosAdyen { get; set; }
@@ -540,9 +471,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("pos_iface_cashdrawer")]
     public bool? PosIfaceCashdrawer { get; set; }
 
-    [Column("pos_iface_customer_facing_display_via_proxy")]
-    public bool? PosIfaceCustomerFacingDisplayViaProxy { get; set; }
-
     [Column("pos_iface_electronic_scale")]
     public bool? PosIfaceElectronicScale { get; set; }
 
@@ -557,9 +485,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("default_picking_policy")]
     public string? DefaultPickingPolicy { get; set; }
-
-    [Column("group_display_incoterm")]
-    public bool? GroupDisplayIncoterm { get; set; }
 
     [Column("use_security_lead")]
     public bool? UseSecurityLead { get; set; }
@@ -645,44 +570,11 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("group_send_reminder")]
     public bool? GroupSendReminder { get; set; }
 
-    // [Column("module_stock_dropshipping")]
-    // public bool? ModuleStockDropshipping { get; set; }
-
     [Column("is_installed_sale")]
     public bool? IsInstalledSale { get; set; }
 
     [Column("group_fiscal_year")]
     public bool? GroupFiscalYear { get; set; }
-
-    [Column("use_manufacturing_lead")]
-    public bool? UseManufacturingLead { get; set; }
-
-    [Column("group_mrp_byproducts")]
-    public bool? GroupMrpByproducts { get; set; }
-
-    [Column("module_mrp_mps")]
-    public bool? ModuleMrpMps { get; set; }
-
-    [Column("module_mrp_plm")]
-    public bool? ModuleMrpPlm { get; set; }
-
-    [Column("module_mrp_workorder")]
-    public bool? ModuleMrpWorkorder { get; set; }
-
-    [Column("module_mrp_subcontracting")]
-    public bool? ModuleMrpSubcontracting { get; set; }
-
-    [Column("group_mrp_routings")]
-    public bool? GroupMrpRoutings { get; set; }
-
-    [Column("group_unlocked_by_default")]
-    public bool? GroupUnlockedByDefault { get; set; }
-
-    [Column("group_mrp_reception_report")]
-    public bool? GroupMrpReceptionReport { get; set; }
-
-    [Column("group_mrp_workorder_dependencies")]
-    public bool? GroupMrpWorkorderDependencies { get; set; }
 
     [Column("module_hr_presence")]
     public bool? ModuleHrPresence { get; set; }
@@ -693,32 +585,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_hr_homeworking")]
     public bool? ModuleHrHomeworking { get; set; }
 
-    [Column("hr_presence_control_login")]
-    public bool? HrPresenceControlLogin { get; set; }
-
-    [Column("hr_presence_control_email")]
-    public bool? HrPresenceControlEmail { get; set; }
-
-    [Column("hr_presence_control_ip")]
-    public bool? HrPresenceControlIp { get; set; }
-
-    [Column("module_hr_attendance")]
-    public bool? ModuleHrAttendance { get; set; }
-
     [Column("hr_employee_self_edit")]
     public bool? HrEmployeeSelfEdit { get; set; }
-
-    [Column("expense_alias_prefix")]
-    public string? ExpenseAliasPrefix { get; set; }
-
-    [Column("use_mailgateway")]
-    public bool? UseMailgateway { get; set; }
-
-    [Column("module_hr_payroll_expense")]
-    public bool? ModuleHrPayrollExpense { get; set; }
-
-    [Column("module_hr_expense_extract")]
-    public bool? ModuleHrExpenseExtract { get; set; }
 
     [Column("module_website_hr_recruitment")]
     public bool? ModuleWebsiteHrRecruitment { get; set; }
@@ -744,20 +612,11 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("hr_expense_use_mailgateway")]
     public bool? HrExpenseUseMailgateway { get; set; }
 
-    // [Column("module_hr_payroll_expense")]
-    // public bool? ModuleHrPayrollExpense { get; set; }
+    [Column("module_hr_payroll_expense")]
+    public bool? ModuleHrPayrollExpense { get; set; }
 
-    // [Column("module_hr_expense_extract")]
-    // public bool? ModuleHrExpenseExtract { get; set; }
-
-    [Column("overtime_start_date")]
-    public DateTime? OvertimeStartDate { get; set; }
-
-    [Column("group_attendance_use_pin")]
-    public bool? GroupAttendanceUsePin { get; set; }
-
-    [Column("hr_attendance_overtime")]
-    public bool? HrAttendanceOvertime { get; set; }
+    [Column("module_hr_expense_extract")]
+    public bool? ModuleHrExpenseExtract { get; set; }
 
     [Column("delay_alert_contract")]
     public long? DelayAlertContract { get; set; }
@@ -765,14 +624,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_om_hr_payroll_account")]
     public bool? ModuleOmHrPayrollAccount { get; set; }
 
-    [Column("module_project_forecast")]
-    public bool? ModuleProjectForecast { get; set; }
-
     [Column("module_hr_timesheet")]
     public bool? ModuleHrTimesheet { get; set; }
-
-    [Column("group_subtask_project")]
-    public bool? GroupSubtaskProject { get; set; }
 
     [Column("group_project_rating")]
     public bool? GroupProjectRating { get; set; }
@@ -789,32 +642,32 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("group_project_milestone")]
     public bool? GroupProjectMilestone { get; set; }
 
-    // [Column("use_manufacturing_lead")]
-    // public bool? UseManufacturingLead { get; set; }
+    [Column("use_manufacturing_lead")]
+    public bool? UseManufacturingLead { get; set; }
 
-    // [Column("group_mrp_byproducts")]
-    // public bool? GroupMrpByproducts { get; set; }
+    [Column("group_mrp_byproducts")]
+    public bool? GroupMrpByproducts { get; set; }
 
-    // [Column("module_mrp_mps")]
-    // public bool? ModuleMrpMps { get; set; }
+    [Column("module_mrp_mps")]
+    public bool? ModuleMrpMps { get; set; }
 
-    // [Column("module_mrp_plm")]
-    // public bool? ModuleMrpPlm { get; set; }
+    [Column("module_mrp_plm")]
+    public bool? ModuleMrpPlm { get; set; }
 
-    // [Column("module_mrp_subcontracting")]
-    // public bool? ModuleMrpSubcontracting { get; set; }
+    [Column("module_mrp_subcontracting")]
+    public bool? ModuleMrpSubcontracting { get; set; }
 
-    // [Column("group_mrp_routings")]
-    // public bool? GroupMrpRoutings { get; set; }
+    [Column("group_mrp_routings")]
+    public bool? GroupMrpRoutings { get; set; }
 
-    // [Column("group_unlocked_by_default")]
-    // public bool? GroupUnlockedByDefault { get; set; }
+    [Column("group_unlocked_by_default")]
+    public bool? GroupUnlockedByDefault { get; set; }
 
-    // [Column("group_mrp_reception_report")]
-    // public bool? GroupMrpReceptionReport { get; set; }
+    [Column("group_mrp_reception_report")]
+    public bool? GroupMrpReceptionReport { get; set; }
 
-    // [Column("group_mrp_workorder_dependencies")]
-    // public bool? GroupMrpWorkorderDependencies { get; set; }
+    [Column("group_mrp_workorder_dependencies")]
+    public bool? GroupMrpWorkorderDependencies { get; set; }
 
     [Column("module_maintenance_worksheet")]
     public bool? ModuleMaintenanceWorksheet { get; set; }
@@ -840,15 +693,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_marketing_automation")]
     public bool? ModuleMarketingAutomation { get; set; }
 
-    [Column("module_payment_paypal")]
-    public bool? ModulePaymentPaypal { get; set; }
-
-    [Column("sale_delivery_settings")]
-    public string? SaleDeliverySettings { get; set; }
-
-    [Column("module_website_sale_delivery")]
-    public bool? ModuleWebsiteSaleDelivery { get; set; }
-
     [Column("group_delivery_invoice_address")]
     public bool? GroupDeliveryInvoiceAddress { get; set; }
 
@@ -873,26 +717,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_website_sale_collect")]
     public bool? ModuleWebsiteSaleCollect { get; set; }
 
-    [Column("module_website_sale_digital")]
-    public bool? ModuleWebsiteSaleDigital { get; set; }
-
     [Column("module_website_sale_wishlist")]
     public bool? ModuleWebsiteSaleWishlist { get; set; }
-
-    // [Column("module_website_sale_comparison")]
-    // public bool? ModuleWebsiteSaleComparison { get; set; }
-
-    // [Column("module_website_sale_autocomplete")]
-    // public bool? ModuleWebsiteSaleAutocomplete { get; set; }
-
-    // [Column("module_account")]
-    // public bool? ModuleAccount { get; set; }
-
-    [Column("module_website_sale_picking")]
-    public bool? ModuleWebsiteSalePicking { get; set; }
-
-    // [Column("module_delivery_mondialrelay")]
-    // public bool? ModuleDeliveryMondialrelay { get; set; }
 
     [Column("enabled_extra_checkout_step")]
     public bool? EnabledExtraCheckoutStep { get; set; }
@@ -972,12 +798,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("use_event_barcode")]
     public bool? UseEventBarcode { get; set; }
 
-    [Column("module_website_event_questions")]
-    public bool? ModuleWebsiteEventQuestions { get; set; }
-
-    [Column("module_event_barcode")]
-    public bool? ModuleEventBarcode { get; set; }
-
     [Column("module_website_event_sale")]
     public bool? ModuleWebsiteEventSale { get; set; }
 
@@ -999,24 +819,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("auth_totp_enforce")]
     public bool? AuthTotpEnforce { get; set; }
 
-    [Column("pos_iface_orderline_notes")]
-    public bool? PosIfaceOrderlineNotes { get; set; }
-
-    // [Column("pos_iface_printbill")]
-    // public bool? PosIfacePrintbill { get; set; }
-
-    // [Column("pos_iface_splitbill")]
-    // public bool? PosIfaceSplitbill { get; set; }
-
-    // [Column("pos_is_order_printer")]
-    // public bool? PosIsOrderPrinter { get; set; }
-
-    [Column("pos_is_table_management")]
-    public bool? PosIsTableManagement { get; set; }
-
-    // [Column("pos_set_tip_after_payment")]
-    // public bool? PosSetTipAfterPayment { get; set; }
-
     [Column("pos_discount_product_id")]
     public Guid? PosDiscountProductId { get; set; }
 
@@ -1028,11 +830,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("auth_oauth_google_enabled")]
     public bool? AuthOauthGoogleEnabled { get; set; }
-    [Column("group_expiry_date_on_delivery_slip")]
-    public bool? GroupExpiryDateOnDeliverySlip { get; set; }
-
-    [Column("module_project_timesheet_synchro")]
-    public bool? ModuleProjectTimesheetSynchro { get; set; }
 
     [Column("module_project_timesheet_holidays")]
     public bool? ModuleProjectTimesheetHolidays { get; set; }
@@ -1043,9 +840,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("reminder_allow")]
     public bool? ReminderAllow { get; set; }
 
-    [Column("reminder_manager_allow")]
-    public bool? ReminderManagerAllow { get; set; }
-
     [Column("invoice_policy")]
     public bool? InvoicePolicy { get; set; }
 
@@ -1055,11 +849,8 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("geoloc_provider_googlemap_key")]
     public string? GeolocProviderGooglemapKey { get; set; }
 
-    // [Column("group_expiry_date_on_delivery_slip")]
-    // public bool? GroupExpiryDateOnDeliverySlip { get; set; }
-
-    // [Column("jitsi_server_domain")]
-    // public string? JitsiServerDomain { get; set; }
+    [Column("group_expiry_date_on_delivery_slip")]
+    public bool? GroupExpiryDateOnDeliverySlip { get; set; }
 
     [Column("cal_client_id")]
     public string? CalClientId { get; set; }
@@ -1079,15 +870,6 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("cal_microsoft_sync_paused")]
     public bool? CalMicrosoftSyncPaused { get; set; }
 
-    // [Column("auth_oauth_google_client_id")]
-    // public string? AuthOauthGoogleClientId { get; set; }
-
-    // [Column("server_uri_google")]
-    // public string? ServerUriGoogle { get; set; }
-
-    // [Column("auth_oauth_google_enabled")]
-    // public bool? AuthOauthGoogleEnabled { get; set; }
-
     [Column("google_custom_search_key")]
     public string? GoogleCustomSearchKey { get; set; }
 
@@ -1102,104 +884,75 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("AuthSignupTemplateUserId")]
-    // [InverseProperty("ResConfigSettingsAuthSignupTemplateUser")] //Many2one
     public virtual ResUsers? AuthSignupTemplateUser { get; set; }
 
     // [Many2one]
-    [ForeignKey("ChartTemplateId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
-    public virtual AccountChartTemplate? ChartTemplate { get; set; }
-
-    // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResConfigSettingsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("DepositDefaultProductId")]
-    // [InverseProperty("ResConfigSettingsDepositDefaultProduct")] //Many2one
-    public virtual ProductProduct? DepositDefaultProduct { get; set; }
-
-    // [Many2one]
     [ForeignKey("DigestId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual DigestDigest? Digest { get; set; }
 
     // [Many2one]
     [ForeignKey("GeolocProviderId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual BaseGeoProvider? GeolocProvider { get; set; }
 
     // [Many2one]
     [ForeignKey("InvoiceMailTemplateId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual MailTemplate? InvoiceMailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("MassMailingMailServerId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual IrMailServer? MassMailingMailServer { get; set; }
 
     // [Many2one]
     [ForeignKey("PosConfigId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual PosConfig? PosConfig { get; set; }
 
     // [Many2one]
     [ForeignKey("PosDefaultFiscalPositionId")]
-    // [InverseProperty("ResConfigSettingsNavigation")] //Many2one
     public virtual AccountFiscalPosition? PosDefaultFiscalPosition { get; set; }
 
     // [Many2one]
     [ForeignKey("PosDiscountProductId")]
-    // [InverseProperty("ResConfigSettingsPosDiscountProduct")] //Many2one
     public virtual ProductProduct? PosDiscountProduct { get; set; }
 
     // [Many2one]
-    [ForeignKey("PosIfaceStartCategId")]
-    // [InverseProperty("ResConfigSettingsNavigation")] //Many2one
-    public virtual PosCategory? PosIfaceStartCateg { get; set; }
-
-    // [Many2one]
     [ForeignKey("PosPricelistId")]
-    // [InverseProperty("ResConfigSettingsNavigation")] //Many2one
     public virtual ProductPricelist? PosPricelist { get; set; }
 
     // [Many2one]
     [ForeignKey("PosTipProductId")]
-    // [InverseProperty("ResConfigSettingsPosTipProduct")] //Many2one
     public virtual ProductProduct? PosTipProduct { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("ResConfigSettings")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResConfigSettingsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ResConfigSettingsId")] //Many2many
-    // [InverseProperty("ResConfigSettings")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ResConfigSettingsId")] // Many2many // Normal
+    // [InverseProperty("ResConfigSettings")] // Many2many // Normal
     public virtual ICollection<AccountFiscalPosition> AccountFiscalPosition { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ResConfigSettingsId")] //Many2many
-    // [InverseProperty("ResConfigSettings")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ResConfigSettingsId")] // Many2many // Normal
+    // [InverseProperty("ResConfigSettings")] // Many2many // Normal
     public virtual ICollection<PosCategory> PosCategory { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ResConfigSettingsId")] //Many2many
-    // [InverseProperty("ResConfigSettings")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ResConfigSettingsId")] // Many2many // Normal
+    // [InverseProperty("ResConfigSettings")] // Many2many // Normal
     public virtual ICollection<ProductPricelist> ProductPricelist { get; set; }
 }

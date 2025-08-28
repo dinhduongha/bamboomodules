@@ -25,7 +25,6 @@ public partial class MailMessageTranslation: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("message_id")]
     public Guid? MessageId { get; set; }
@@ -53,16 +52,13 @@ public partial class MailMessageTranslation: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailMessageTranslationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageId")]
-    // [InverseProperty("MailMessageTranslation")] //Many2one
     public virtual MailMessage? Message { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailMessageTranslationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

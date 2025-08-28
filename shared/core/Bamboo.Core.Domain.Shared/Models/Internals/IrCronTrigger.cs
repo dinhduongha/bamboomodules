@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,6 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("ir_cron_trigger")]
+//[Index("CallAt", Name = "ir_cron_trigger__call_at_index")]
 //[Index("CronId", Name = "ir_cron_trigger__cron_id_index")]
 public partial class IrCronTrigger: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
@@ -37,22 +39,20 @@ public partial class IrCronTrigger: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("TriggerId")]
-    [InverseProperty("Trigger")]
+    // [One2many] [ForeignKey("TriggerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Trigger")] // One2many
     public virtual ICollection<CalendarRecurrence> CalendarRecurrence { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrCronTriggerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CronId")]
-    // [InverseProperty("IrCronTrigger")] //Many2one
     public virtual IrCron? Cron { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrCronTriggerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

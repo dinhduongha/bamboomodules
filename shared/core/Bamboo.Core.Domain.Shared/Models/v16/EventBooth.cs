@@ -23,10 +23,6 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
@@ -51,9 +47,6 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("contact_email")]
     public string? ContactEmail { get; set; }
-
-    [Column("contact_mobile")]
-    public string? ContactMobile { get; set; }
 
     [Column("contact_phone")]
     public string? ContactPhone { get; set; }
@@ -81,69 +74,56 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public bool? IsPaid { get; set; }
 
     [Column("price")]
-    public decimal? Price { get; set; }
+    public double? Price { get; set; }
 
     [Column("sponsor_id")]
     public Guid? SponsorId { get; set; }
 
     // [Many2one]
     [ForeignKey("BoothCategoryId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual EventBoothCategory? BoothCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventBoothCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("EventBoothId")]
-    [InverseProperty("EventBooth")]
+    // [One2many] [ForeignKey("EventBoothId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventBooth")] // One2many
     public virtual ICollection<EventBoothRegistration> EventBoothRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("EventBooth")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SponsorId")]
-    // [InverseProperty("EventBooth")] //Many2one
     public virtual EventSponsor? Sponsor { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventBoothWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("EventBoothId")]
-    // [InverseProperty("EventBooth")]
+    // [ForeignKey("EventBoothId")] //Many2many // Hidden
+    // [InverseProperty("EventBooth")] //Many2many // Hidden
     public virtual ICollection<EventBoothConfigurator> EventBoothConfigurator { get; set; }
 }

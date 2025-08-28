@@ -23,7 +23,6 @@ public partial class PosDailySalesReportsWizard: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("pos_session_id")]
     public Guid? PosSessionId { get; set; }
@@ -45,16 +44,13 @@ public partial class PosDailySalesReportsWizard: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosDailySalesReportsWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PosSessionId")]
-    // [InverseProperty("PosDailySalesReportsWizard")] //Many2one
     public virtual PosSession? PosSession { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosDailySalesReportsWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

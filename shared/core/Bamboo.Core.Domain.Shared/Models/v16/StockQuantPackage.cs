@@ -26,7 +26,6 @@ public partial class StockQuantPackage: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("package_type_id")]
     public Guid? PackageTypeId { get; set; }
@@ -60,56 +59,57 @@ public partial class StockQuantPackage: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("StockQuantPackage")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockQuantPackageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("StockQuantPackage")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageTypeId")]
-    // [InverseProperty("StockQuantPackage")] //Many2one
     public virtual StockPackageType? PackageType { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageId")]
-    [InverseProperty("Package")]
+    // [One2many] [ForeignKey("PackageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLinePackage { get; set; }
 
     // [One2many]
-    [ForeignKey("ResultPackageId")]
-    [InverseProperty("ResultPackage")]
+    // [One2many] [ForeignKey("ResultPackageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResultPackage")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLineResultPackage { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageId")]
-    [InverseProperty("Package")]
+    // [One2many] [ForeignKey("PackageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockPackageLevel> StockPackageLevel { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageId")]
-    [InverseProperty("Package")]
+    // [One2many] [ForeignKey("PackageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 
     // [One2many]
-    [ForeignKey("DestPackageId")]
-    [InverseProperty("DestPackage")]
+    // [One2many] [ForeignKey("DestPackageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DestPackage")] // One2many
     public virtual ICollection<StockQuantRelocate> StockQuantRelocate { get; set; }
 
     // [One2many]
-    [ForeignKey("PackageId")]
-    [InverseProperty("Package")]
+    // [One2many] [ForeignKey("PackageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockQuantPackageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class StockReplenishmentOption: FullAuditedEntity<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("route_id")]
     public Guid? RouteId { get; set; }
@@ -48,26 +47,21 @@ public partial class StockReplenishmentOption: FullAuditedEntity<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockReplenishmentOptionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockReplenishmentOption")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ReplenishmentInfoId")]
-    // [InverseProperty("StockReplenishmentOption")] //Many2one
     public virtual StockReplenishmentInfo? ReplenishmentInfo { get; set; }
 
     // [Many2one]
     [ForeignKey("RouteId")]
-    // [InverseProperty("StockReplenishmentOption")] //Many2one
     public virtual StockRoute? Route { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockReplenishmentOptionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

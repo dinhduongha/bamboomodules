@@ -23,7 +23,6 @@ public partial class CrmQuotationPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("lead_id")]
     public Guid? LeadId { get; set; }
@@ -48,21 +47,17 @@ public partial class CrmQuotationPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmQuotationPartnerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LeadId")]
-    // [InverseProperty("CrmQuotationPartner")] //Many2one
     public virtual CrmLead? Lead { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("CrmQuotationPartner")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmQuotationPartnerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

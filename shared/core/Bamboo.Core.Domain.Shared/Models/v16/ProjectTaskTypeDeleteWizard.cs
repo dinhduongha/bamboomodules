@@ -23,7 +23,6 @@ public partial class ProjectTaskTypeDeleteWizard: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,23 +38,21 @@ public partial class ProjectTaskTypeDeleteWizard: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectTaskTypeDeleteWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectTaskTypeDeleteWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProjectTaskTypeDeleteWizardId")] //Many2many
-    // [InverseProperty("ProjectTaskTypeDeleteWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProjectTaskTypeDeleteWizardId")] // Many2many // Normal
+    // [InverseProperty("ProjectTaskTypeDeleteWizard")] // Many2many // Normal
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProjectTaskTypeDeleteWizardId")] //Many2many
-    // [InverseProperty("ProjectTaskTypeDeleteWizard")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProjectTaskTypeDeleteWizardId")] // Many2many // Normal
+    // [InverseProperty("ProjectTaskTypeDeleteWizard")] // Many2many // Normal
     public virtual ICollection<ProjectTaskType> ProjectTaskType { get; set; }
 }

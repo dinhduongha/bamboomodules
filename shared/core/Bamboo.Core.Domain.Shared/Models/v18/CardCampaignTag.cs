@@ -24,7 +24,6 @@ public partial class CardCampaignTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -46,17 +45,15 @@ public partial class CardCampaignTag: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CardCampaignTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CardCampaignTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("CardCampaignTagId")] //Many2many
-    // [InverseProperty("CardCampaignTag")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("CardCampaignTagId")] //Many2many // Hidden
+    // [InverseProperty("CardCampaignTag")] //Many2many // Hidden
     public virtual ICollection<CardCampaign> CardCampaign { get; set; }
 }

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Bamboo.Core.Models;
-// Cần thêm using đến namespace chứa entity của bạn ở đây
-// Ví dụ: using YourProject.Entities;
 
 namespace Bamboo.Core.EntityFrameworkCore
 {
@@ -15,57 +14,61 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
             entity.HasKey(e => e.Id).HasName("calendar_attendee_pkey");
 
-            entity.ToTable("calendar_attendee");
+                        entity.ToTable("calendar_attendee");
 
-            entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.TenantId);
 
-            entity.HasIndex(e => e.OrganizationUnitId);
+                        entity.HasIndex(e => e.OrganizationUnitId);
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("next_uuid()")
-                .HasColumnName("id");
+                        entity.Property(e => e.Id)
+                            .HasDefaultValueSql("next_uuid()")
+                            .HasColumnName("id");
 
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+                        entity.Property(e => e.TenantId).HasColumnName("company_id");
 
-            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-            entity.Property(e => e.AccessToken).HasColumnName("access_token");
-            entity.Property(e => e.Availability).HasColumnName("availability");
-            entity.Property(e => e.CommonName).HasColumnName("common_name");
-            entity.Property(e => e.CreationTime)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("create_date");
-            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-            entity.Property(e => e.EventId).HasColumnName("event_id");
-            entity.Property(e => e.PartnerId).HasColumnName("partner_id");
-            entity.Property(e => e.State).HasColumnName("state");
-            entity.Property(e => e.LastModificationTime)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("write_date");
-            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+                        entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.AccessToken).HasColumnName("access_token");
+                        entity.Property(e => e.Availability).HasColumnName("availability");
+                        entity.Property(e => e.CommonName).HasColumnName("common_name");
+                        entity.Property(e => e.CreationTime)
+                            .HasDefaultValueSql("now()")
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("create_date");
+                        entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.EventId).HasColumnName("event_id");
+                        entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+                        entity.Property(e => e.State).HasColumnName("state");
+                        entity.Property(e => e.LastModificationTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("write_date");
+                        entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            // entity.HasOne(d => d.CreateU).WithMany(p => p.CalendarAttendeeCreateU)
-            entity.HasOne(d => d.CreateU).WithMany()
-                .HasForeignKey(d => d.CreatorId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("calendar_attendee_create_uid_fkey");
+                        // entity.HasOne(d => d.CreateU).WithMany(p => p.CalendarAttendeeCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("calendar_attendee_create_uid_fkey");
+                        entity.HasOne(d => d.CreateU).WithMany()
+                            .HasForeignKey(d => d.CreatorId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("calendar_attendee_create_uid_fkey");
 
-            entity.HasOne(d => d.Event).WithMany(p => p.CalendarAttendee)
-                .HasForeignKey(d => d.EventId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("calendar_attendee_event_id_fkey");
+                        entity.HasOne(d => d.Event).WithMany(p => p.CalendarAttendee)
+                            .HasForeignKey(d => d.EventId)
+                            .OnDelete(DeleteBehavior.Cascade)
+                            .HasConstraintName("calendar_attendee_event_id_fkey");
 
-            // entity.HasOne(d => d.Partner).WithMany(p => p.CalendarAttendee)
-            entity.HasOne(d => d.Partner).WithMany()
-                .HasForeignKey(d => d.PartnerId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("calendar_attendee_partner_id_fkey");
+                        // entity.HasOne(d => d.Partner).WithMany(p => p.CalendarAttendee) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("calendar_attendee_partner_id_fkey");
+                        entity.HasOne(d => d.Partner).WithMany()
+                            .HasForeignKey(d => d.PartnerId)
+                            .OnDelete(DeleteBehavior.Cascade)
+                            .HasConstraintName("calendar_attendee_partner_id_fkey");
 
-            // entity.HasOne(d => d.WriteU).WithMany(p => p.CalendarAttendeeWriteU)
-            entity.HasOne(d => d.WriteU).WithMany()
-                .HasForeignKey(d => d.LastModifierId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("calendar_attendee_write_uid_fkey");
+                        // entity.HasOne(d => d.WriteU).WithMany(p => p.CalendarAttendeeWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("calendar_attendee_write_uid_fkey");
+                        entity.HasOne(d => d.WriteU).WithMany()
+                            .HasForeignKey(d => d.LastModifierId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("calendar_attendee_write_uid_fkey");
+
+                entity.TryConfigureExtraProperties();
+                entity.TryConfigureObjectExtensions();
+                entity.TryConfigureConcurrencyStamp();
             });
         }
     }

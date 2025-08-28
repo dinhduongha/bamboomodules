@@ -23,7 +23,6 @@ public partial class HrContractType: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -52,36 +51,31 @@ public partial class HrContractType: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("HrContractType")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrContractTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractTypeId")]
-    [InverseProperty("ContractType")]
-    public virtual ICollection<HrContract> HrContract { get; set; }
-
-    // [One2many]
-    [ForeignKey("ContractTypeId")]
-    [InverseProperty("ContractType")]
+    // [One2many] [ForeignKey("ContractTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ContractType")] // One2many
     public virtual ICollection<HrContract> HrContractContractType { get; set; }
 
     // [One2many]
-    [ForeignKey("TypeId")]
-    [InverseProperty("Type")]
+    // [One2many] [ForeignKey("TypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Type")] // One2many
     public virtual ICollection<HrContract> HrContractTypeNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("ContractTypeId")]
-    [InverseProperty("ContractType")]
+    // [One2many] [ForeignKey("ContractTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ContractType")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrContractTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

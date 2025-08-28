@@ -23,7 +23,6 @@ public partial class EventTypeTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -65,21 +64,17 @@ public partial class EventTypeTicket: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTypeTicketCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventTypeTicket")] //Many2one
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("EventTypeTicket")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTypeTicketWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

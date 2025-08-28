@@ -23,16 +23,15 @@ public partial class ProductFetchImageWizard: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("nb_products_selected")]
-    public long? NbProductsSelected { get; set; }
+    public Guid? NbProductsSelected { get; set; }
 
     [Column("nb_products_to_process")]
-    public long? NbProductsToProcess { get; set; }
+    public Guid? NbProductsToProcess { get; set; }
 
     [Column("nb_products_unable_to_process")]
-    public long? NbProductsUnableToProcess { get; set; }
+    public Guid? NbProductsUnableToProcess { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -48,17 +47,15 @@ public partial class ProductFetchImageWizard: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductFetchImageWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductFetchImageWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductFetchImageWizardId")] //Many2many
-    // [InverseProperty("ProductFetchImageWizard")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
+    // [ForeignKey("ProductFetchImageWizardId")] // Many2many // Normal
+    // [InverseProperty("ProductFetchImageWizard")] // Many2many // Normal
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 }

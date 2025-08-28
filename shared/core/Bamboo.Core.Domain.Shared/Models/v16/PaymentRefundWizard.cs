@@ -23,7 +23,6 @@ public partial class PaymentRefundWizard: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("payment_id")]
     public Guid? PaymentId { get; set; }
@@ -45,16 +44,13 @@ public partial class PaymentRefundWizard: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PaymentRefundWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PaymentId")]
-    // [InverseProperty("PaymentRefundWizard")] //Many2one
     public virtual AccountPayment? Payment { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PaymentRefundWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

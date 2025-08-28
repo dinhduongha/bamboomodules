@@ -50,22 +50,19 @@ public partial class AccountCommonJournalReport: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountCommonJournalReport")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountCommonJournalReportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountCommonJournalReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountCommonJournalReportId")] //Many2many
-    // [InverseProperty("AccountCommonJournalReport")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountCommonJournalReportId")] // Many2many // Normal
+    // [InverseProperty("AccountCommonJournalReport")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

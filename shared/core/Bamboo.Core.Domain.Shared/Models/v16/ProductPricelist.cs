@@ -23,7 +23,6 @@ public partial class ProductPricelist: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -36,9 +35,6 @@ public partial class ProductPricelist: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("discount_policy")]
-    public string? DiscountPolicy { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
@@ -64,95 +60,93 @@ public partial class ProductPricelist: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductPricelist")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductPricelistCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("ProductPricelist")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
+    // [One2many] [ForeignKey("PricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Pricelist")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
+    // [One2many] [ForeignKey("PricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Pricelist")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
+    // [One2many] [ForeignKey("PricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Pricelist")] // One2many
     public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
 
     // [One2many]
-    [ForeignKey("BasePricelistId")]
-    [InverseProperty("BasePricelist")]
+    // [One2many] [ForeignKey("BasePricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BasePricelist")] // One2many
     public virtual ICollection<ProductPricelistItem> ProductPricelistItemBasePricelist { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
+    // [One2many] [ForeignKey("PricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Pricelist")] // One2many
     public virtual ICollection<ProductPricelistItem> ProductPricelistItemPricelist { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
+    // [One2many] [ForeignKey("PricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Pricelist")] // One2many
     public virtual ICollection<ProductWishlist> ProductWishlist { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
-    public virtual ICollection<RepairOrder> RepairOrder { get; set; }
-
-    // [One2many]
-    [ForeignKey("PosPricelistId")]
-    [InverseProperty("PosPricelist")]
+    // [One2many] [ForeignKey("PosPricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosPricelist")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettingsNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("PricelistId")]
-    [InverseProperty("Pricelist")]
+    // [One2many] [ForeignKey("PricelistId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Pricelist")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("ProductPricelist")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductPricelistWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductPricelistId")]
-    // [InverseProperty("ProductPricelist")]
+    // [ForeignKey("ProductPricelistId")] //Many2many // Hidden
+    // [InverseProperty("ProductPricelist")] //Many2many // Hidden
     public virtual ICollection<LoyaltyProgram> LoyaltyProgram { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductPricelistId")]
-    // [InverseProperty("ProductPricelist")]
+    // [ForeignKey("ProductPricelistId")] //Many2many // Hidden
+    // [InverseProperty("ProductPricelist")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductPricelistId")]
-    // [InverseProperty("ProductPricelist")]
+    // [ForeignKey("ProductPricelistId")] //Many2many // Hidden
+    // [InverseProperty("ProductPricelist")] //Many2many // Hidden
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PricelistId")] //Many2many
-    // [InverseProperty("Pricelist")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PricelistId")] // Many2many // Normal
+    // [InverseProperty("Pricelist")] // Many2many // Normal
     public virtual ICollection<ResCountryGroup> ResCountryGroup { get; set; }
 }

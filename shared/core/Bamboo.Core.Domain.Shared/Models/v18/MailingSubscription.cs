@@ -24,7 +24,6 @@ public partial class MailingSubscription: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("contact_id")]
     public Guid? ContactId { get; set; }
@@ -55,26 +54,21 @@ public partial class MailingSubscription: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("ContactId")]
-    // [InverseProperty("MailingSubscription")] //Many2one
     public virtual MailingContact? Contact { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingSubscriptionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ListId")]
-    // [InverseProperty("MailingSubscription")] //Many2one
     public virtual MailingList? List { get; set; }
 
     // [Many2one]
     [ForeignKey("OptOutReasonId")]
-    // [InverseProperty("MailingSubscription")] //Many2one
     public virtual MailingSubscriptionOptout? OptOutReason { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingSubscriptionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

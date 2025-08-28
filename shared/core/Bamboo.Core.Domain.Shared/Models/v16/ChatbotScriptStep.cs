@@ -23,7 +23,6 @@ public partial class ChatbotScriptStep: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -54,48 +53,42 @@ public partial class ChatbotScriptStep: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? CrmTeamId { get; set; }
 
     // [One2many]
-    [ForeignKey("ScriptStepId")]
-    [InverseProperty("ScriptStep")]
+    // [One2many] [ForeignKey("ScriptStepId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ScriptStep")] // One2many
     public virtual ICollection<ChatbotMessage> ChatbotMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("ChatbotScriptId")]
-    // [InverseProperty("ChatbotScriptStep")] //Many2one
     public virtual ChatbotScript? ChatbotScript { get; set; }
 
     // [One2many]
-    [ForeignKey("ScriptStepId")]
-    [InverseProperty("ScriptStep")]
+    // [One2many] [ForeignKey("ScriptStepId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ScriptStep")] // One2many
     public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChatbotScriptStepCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CrmTeamId")]
-    // [InverseProperty("ChatbotScriptStep")] //Many2one
     public virtual CrmTeam? CrmTeam { get; set; }
 
     // [One2many]
-    [ForeignKey("ChatbotCurrentStepId")]
-    [InverseProperty("ChatbotCurrentStep")]
+    // [One2many] [ForeignKey("ChatbotCurrentStepId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ChatbotCurrentStep")] // One2many
     public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
-
-    // [One2many]
-    [ForeignKey("ChatbotCurrentStepId")]
-    [InverseProperty("ChatbotCurrentStep")]
-    public virtual ICollection<MailChannel> MailChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChatbotScriptStepWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ChatbotScriptStepId")] //Many2many
-    // [InverseProperty("ChatbotScriptStep")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ChatbotScriptStepId")] // Many2many // Normal
+    // [InverseProperty("ChatbotScriptStep")] // Many2many // Normal
     public virtual ICollection<ChatbotScriptAnswer> ChatbotScriptAnswerNavigation { get; set; }
 }

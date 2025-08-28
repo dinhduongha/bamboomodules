@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Bamboo.Core.Models;
-// Cần thêm using đến namespace chứa entity của bạn ở đây
-// Ví dụ: using YourProject.Entities;
 
 namespace Bamboo.Core.EntityFrameworkCore
 {
@@ -15,76 +14,80 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
             entity.HasKey(e => e.Id).HasName("chatbot_script_step_pkey");
 
-            entity.ToTable("chatbot_script_step");
+                        entity.ToTable("chatbot_script_step");
 
-            entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.TenantId);
 
-            entity.HasIndex(e => e.OrganizationUnitId);
+                        entity.HasIndex(e => e.OrganizationUnitId);
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("next_uuid()")
-                .HasColumnName("id");
+                        entity.Property(e => e.Id)
+                            .HasDefaultValueSql("next_uuid()")
+                            .HasColumnName("id");
 
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+                        entity.Property(e => e.TenantId).HasColumnName("company_id");
 
-            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-            entity.Property(e => e.ChatbotScriptId).HasColumnName("chatbot_script_id");
-            entity.Property(e => e.CreationTime)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("create_date");
-            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-            entity.Property(e => e.CrmTeamId).HasColumnName("crm_team_id");
-            entity.Property(e => e.Message)
-                .HasColumnType("jsonb")
-                .HasColumnName("message");
-            entity.Property(e => e.Sequence).HasColumnName("sequence");
-            entity.Property(e => e.StepType).HasColumnName("step_type");
-            entity.Property(e => e.LastModificationTime)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("write_date");
-            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+                        entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.ChatbotScriptId).HasColumnName("chatbot_script_id");
+                        entity.Property(e => e.CreationTime)
+                            .HasDefaultValueSql("now()")
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("create_date");
+                        entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.CrmTeamId).HasColumnName("crm_team_id");
+                        entity.Property(e => e.Message)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("message");
+                        entity.Property(e => e.Sequence).HasColumnName("sequence");
+                        entity.Property(e => e.StepType).HasColumnName("step_type");
+                        entity.Property(e => e.LastModificationTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("write_date");
+                        entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            entity.HasOne(d => d.ChatbotScript).WithMany(p => p.ChatbotScriptStep)
-                .HasForeignKey(d => d.ChatbotScriptId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("chatbot_script_step_chatbot_script_id_fkey");
+                        entity.HasOne(d => d.ChatbotScript).WithMany(p => p.ChatbotScriptStep)
+                            .HasForeignKey(d => d.ChatbotScriptId)
+                            .OnDelete(DeleteBehavior.Cascade)
+                            .HasConstraintName("chatbot_script_step_chatbot_script_id_fkey");
 
-            // entity.HasOne(d => d.CreateU).WithMany(p => p.ChatbotScriptStepCreateU)
-            entity.HasOne(d => d.CreateU).WithMany()
-                .HasForeignKey(d => d.CreatorId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("chatbot_script_step_create_uid_fkey");
+                        // entity.HasOne(d => d.CreateU).WithMany(p => p.ChatbotScriptStepCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("chatbot_script_step_create_uid_fkey");
+                        entity.HasOne(d => d.CreateU).WithMany()
+                            .HasForeignKey(d => d.CreatorId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("chatbot_script_step_create_uid_fkey");
 
-            entity.HasOne(d => d.CrmTeam).WithMany(p => p.ChatbotScriptStep)
-                .HasForeignKey(d => d.CrmTeamId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("chatbot_script_step_crm_team_id_fkey");
+                        entity.HasOne(d => d.CrmTeam).WithMany(p => p.ChatbotScriptStep)
+                            .HasForeignKey(d => d.CrmTeamId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("chatbot_script_step_crm_team_id_fkey");
 
-            // entity.HasOne(d => d.WriteU).WithMany(p => p.ChatbotScriptStepWriteU)
-            entity.HasOne(d => d.WriteU).WithMany()
-                .HasForeignKey(d => d.LastModifierId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("chatbot_script_step_write_uid_fkey");
+                        // entity.HasOne(d => d.WriteU).WithMany(p => p.ChatbotScriptStepWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("chatbot_script_step_write_uid_fkey");
+                        entity.HasOne(d => d.WriteU).WithMany()
+                            .HasForeignKey(d => d.LastModifierId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("chatbot_script_step_write_uid_fkey");
 
-            // entity.HasMany(d => d.ChatbotScriptAnswerNavigation).WithMany(p => p.ChatbotScriptStep)
-            entity.HasMany(d => d.ChatbotScriptAnswerNavigation).WithMany(p => p.ChatbotScriptStep)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ChatbotScriptAnswerChatbotScriptStepRel",
-                    r => r.HasOne<ChatbotScriptAnswer>().WithMany()
-                        .HasForeignKey("ChatbotScriptAnswerId")
-                        .HasConstraintName("chatbot_script_answer_chatbot_scr_chatbot_script_answer_id_fkey"),
-                    l => l.HasOne<ChatbotScriptStep>().WithMany()
-                        .HasForeignKey("ChatbotScriptStepId")
-                        .HasConstraintName("chatbot_script_answer_chatbot_scrip_chatbot_script_step_id_fkey"),
-                    j =>
-                    {
-                        j.HasKey("ChatbotScriptStepId", "ChatbotScriptAnswerId").HasName("chatbot_script_answer_chatbot_script_step_rel_pkey");
-                        j.ToTable("chatbot_script_answer_chatbot_script_step_rel");
-                        j.HasIndex(new[] { "ChatbotScriptAnswerId", "ChatbotScriptStepId" }, "chatbot_script_answer_chatbot_chatbot_script_answer_id_chat_idx");
-                        j.IndexerProperty<Guid>("ChatbotScriptStepId").HasColumnName("chatbot_script_step_id");
-                        j.IndexerProperty<Guid>("ChatbotScriptAnswerId").HasColumnName("chatbot_script_answer_id");
-                    });
+                        // entity.HasMany(d => d.ChatbotScriptAnswerNavigation).WithMany(p => p.ChatbotScriptStep)
+                        entity.HasMany(d => d.ChatbotScriptAnswerNavigation).WithMany(p => p.ChatbotScriptStep)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ChatbotScriptAnswerChatbotScriptStepRel",
+                                r => r.HasOne<ChatbotScriptAnswer>().WithMany()
+                                    .HasForeignKey("ChatbotScriptAnswerId")
+                                    .HasConstraintName("chatbot_script_answer_chatbot_scr_chatbot_script_answer_id_fkey"),
+                                l => l.HasOne<ChatbotScriptStep>().WithMany()
+                                    .HasForeignKey("ChatbotScriptStepId")
+                                    .HasConstraintName("chatbot_script_answer_chatbot_scrip_chatbot_script_step_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ChatbotScriptStepId", "ChatbotScriptAnswerId").HasName("chatbot_script_answer_chatbot_script_step_rel_pkey");
+                                    j.ToTable("chatbot_script_answer_chatbot_script_step_rel");
+                                    j.HasIndex(new[] { "ChatbotScriptAnswerId", "ChatbotScriptStepId" }, "chatbot_script_answer_chatbot_chatbot_script_answer_id_chat_idx");
+                                    j.IndexerProperty<Guid>("ChatbotScriptStepId").HasColumnName("chatbot_script_step_id");
+                                    j.IndexerProperty<Guid>("ChatbotScriptAnswerId").HasColumnName("chatbot_script_answer_id");
+                                });
+
+                entity.TryConfigureExtraProperties();
+                entity.TryConfigureObjectExtensions();
+                entity.TryConfigureConcurrencyStamp();
             });
         }
     }

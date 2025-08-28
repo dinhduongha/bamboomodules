@@ -23,7 +23,6 @@ public partial class MrpProductionBackorder: FullAuditedAggregateRoot<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,22 +38,21 @@ public partial class MrpProductionBackorder: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpProductionBackorderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MrpProductionBackorderId")]
-    [InverseProperty("MrpProductionBackorder")]
+    // [One2many] [ForeignKey("MrpProductionBackorderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MrpProductionBackorder")] // One2many
     public virtual ICollection<MrpProductionBackorderLine> MrpProductionBackorderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpProductionBackorderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpProductionBackorderId")] //Many2many
-    // [InverseProperty("MrpProductionBackorder")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpProductionBackorderId")] // Many2many // Normal
+    // [InverseProperty("MrpProductionBackorder")] // Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 }

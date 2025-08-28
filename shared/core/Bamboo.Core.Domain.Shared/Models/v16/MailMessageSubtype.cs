@@ -23,7 +23,6 @@ public partial class MailMessageSubtype: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -71,47 +70,49 @@ public partial class MailMessageSubtype: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailMessageSubtypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AllocationNotifSubtypeId")]
-    [InverseProperty("AllocationNotifSubtype")]
+    // [One2many] [ForeignKey("AllocationNotifSubtypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AllocationNotifSubtype")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtype { get; set; }
 
     // [One2many]
-    [ForeignKey("LeaveNotifSubtypeId")]
-    [InverseProperty("LeaveNotifSubtype")]
+    // [One2many] [ForeignKey("LeaveNotifSubtypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LeaveNotifSubtype")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtype { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<MailMessageSubtype> InverseParent { get; set; }
 
     // [One2many]
-    [ForeignKey("SubtypeId")]
-    [InverseProperty("Subtype")]
+    // [One2many] [ForeignKey("SubtypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Subtype")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("SubtypeId")]
-    [InverseProperty("Subtype")]
+    // [One2many] [ForeignKey("SubtypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Subtype")] // One2many
     public virtual ICollection<MailMessage> MailMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual MailMessageSubtype? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailMessageSubtypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailMessageSubtypeId")]
-    // [InverseProperty("MailMessageSubtype")]
+    // [ForeignKey("MailMessageSubtypeId")] //Many2many // Hidden
+    // [InverseProperty("MailMessageSubtype")] //Many2many // Hidden
     public virtual ICollection<MailFollowers> MailFollowers { get; set; }
 }

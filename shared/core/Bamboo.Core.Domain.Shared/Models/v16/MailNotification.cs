@@ -30,7 +30,6 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("author_id")]
     public Guid? AuthorId { get; set; }
@@ -65,9 +64,6 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("sms_id_int")]
     public Guid? SmsIdInt { get; set; }
 
-    [Column("sms_id")]
-    public Guid? SmsId { get; set; }
-
     [Column("sms_number")]
     public string? SmsNumber { get; set; }
 
@@ -76,52 +72,45 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("MailNotificationAuthor")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("LetterId")]
-    // [InverseProperty("MailNotification")] //Many2one
     public virtual SnailmailLetter? Letter { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMailId")]
-    // [InverseProperty("MailNotification")] //Many2one
     public virtual MailMail? MailMail { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("MailNotification")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("NotificationId")]
-    [InverseProperty("Notification")]
+    // [One2many] [ForeignKey("NotificationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Notification")] // One2many
     public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("ResPartnerId")]
-    // [InverseProperty("MailNotificationResPartner")] //Many2one
     public virtual ResPartner? ResPartner { get; set; }
 
-    // [Many2one]
-    [ForeignKey("SmsId")]
-    // [InverseProperty("MailNotification")] //Many2one
-    public virtual SmsSms? Sms { get; set; }
-
     // [One2many]
-    [ForeignKey("NotificationId")]
-    [InverseProperty("Notification")]
+    // [One2many] [ForeignKey("NotificationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Notification")] // One2many
     public virtual ICollection<SmsResendRecipient> SmsResendRecipient { get; set; }
 
     // [One2many]
-    [ForeignKey("MailNotificationId")]
-    [InverseProperty("MailNotification")]
+    // [One2many] [ForeignKey("MailNotificationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailNotification")] // One2many
     public virtual ICollection<SmsTracker> SmsTracker { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("MailNotificationId")]
-    // [InverseProperty("MailNotification")]
+    // [ForeignKey("MailNotificationId")] //Many2many // Hidden
+    // [InverseProperty("MailNotification")] //Many2many // Hidden
     public virtual ICollection<MailResendMessage> MailResendMessage { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -40,16 +41,15 @@ public partial class ResPartnerActivation: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerActivationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("Activation")]
-    [InverseProperty("ActivationNavigation")]
+    // [One2many] [ForeignKey("Activation")]
+    [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
+    // [InverseProperty("ActivationNavigation")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerActivationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

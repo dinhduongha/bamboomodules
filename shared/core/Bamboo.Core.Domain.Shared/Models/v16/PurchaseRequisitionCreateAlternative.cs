@@ -23,7 +23,6 @@ public partial class PurchaseRequisitionCreateAlternative: FullAuditedEntity<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("origin_po_id")]
     public Guid? OriginPoId { get; set; }
@@ -48,21 +47,17 @@ public partial class PurchaseRequisitionCreateAlternative: FullAuditedEntity<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PurchaseRequisitionCreateAlternativeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OriginPoId")]
-    // [InverseProperty("PurchaseRequisitionCreateAlternative")] //Many2one
     public virtual PurchaseOrder? OriginPo { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("PurchaseRequisitionCreateAlternative")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PurchaseRequisitionCreateAlternativeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class MrpRoutingWorkcenter: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -73,59 +72,59 @@ public partial class MrpRoutingWorkcenter: FullAuditedAggregateRoot<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("BomId")]
-    // [InverseProperty("MrpRoutingWorkcenter")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpRoutingWorkcenterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("OperationId")]
-    [InverseProperty("Operation")]
+    // [One2many] [ForeignKey("OperationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Operation")] // One2many
     public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
     // [One2many]
-    [ForeignKey("OperationId")]
-    [InverseProperty("Operation")]
+    // [One2many] [ForeignKey("OperationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Operation")] // One2many
     public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
     // [One2many]
-    [ForeignKey("OperationId")]
-    [InverseProperty("Operation")]
+    // [One2many] [ForeignKey("OperationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Operation")] // One2many
     public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
 
     // [One2many]
-    [ForeignKey("OperationId")]
-    [InverseProperty("Operation")]
+    // [One2many] [ForeignKey("OperationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Operation")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkcenterId")]
-    // [InverseProperty("MrpRoutingWorkcenter")] //Many2one
     public virtual MrpWorkcenter? Workcenter { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpRoutingWorkcenterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("OperationId")] //Many2many
-    // [InverseProperty("Operation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("OperationId")] // Many2many // Normal
+    // [InverseProperty("Operation")] // Many2many // Normal
     public virtual ICollection<MrpRoutingWorkcenter> BlockedBy { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BlockedById")] //Many2many
-    // [InverseProperty("BlockedBy")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("BlockedById")] // Many2many // Normal
+    // [InverseProperty("BlockedBy")] // Many2many // Normal
     public virtual ICollection<MrpRoutingWorkcenter> Operation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpRoutingWorkcenterId")] //Many2many
-    // [InverseProperty("MrpRoutingWorkcenter")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpRoutingWorkcenterId")] // Many2many // Normal
+    // [InverseProperty("MrpRoutingWorkcenter")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

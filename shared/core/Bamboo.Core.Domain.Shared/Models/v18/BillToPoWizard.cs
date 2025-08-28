@@ -23,7 +23,6 @@ public partial class BillToPoWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("purchase_order_id")]
     public Guid? PurchaseOrderId { get; set; }
@@ -45,21 +44,17 @@ public partial class BillToPoWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BillToPoWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("BillToPoWizard")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PurchaseOrderId")]
-    // [InverseProperty("BillToPoWizard")] //Many2one
     public virtual PurchaseOrder? PurchaseOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BillToPoWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

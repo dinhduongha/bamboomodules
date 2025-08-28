@@ -23,7 +23,6 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("ir_attachment_id")]
     public Guid? IrAttachmentId { get; set; }
@@ -57,28 +56,25 @@ public partial class ProductDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductDocumentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("IrAttachmentId")]
-    // [InverseProperty("ProductDocument")] //Many2one
     public virtual IrAttachment? IrAttachment { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductDocumentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [ForeignKey("ProductDocumentId")] //Many2many
-    // [InverseProperty("ProductDocument")] //Many2many
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ProductDocumentId")] //Many2many // Hidden
+    // [InverseProperty("ProductDocument")] //Many2many // Hidden
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("ProductDocumentId")] //Many2many
-    [InverseProperty("ProductDocument")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductDocumentId")] // Many2many // Normal
+    // [InverseProperty("ProductDocument")] // Many2many // Normal
     public virtual ICollection<SalePdfFormField> SalePdfFormField { get; set; }
 }

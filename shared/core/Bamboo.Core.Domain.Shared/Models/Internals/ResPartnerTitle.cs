@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -39,26 +40,27 @@ public partial class ResPartnerTitle: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerTitleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("Title")]
-    [InverseProperty("TitleNavigation")]
+    // [One2many] [ForeignKey("Title")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TitleNavigation")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
-    [ForeignKey("TitleId")]
-    [InverseProperty("Title")]
+    // [One2many] [ForeignKey("TitleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Title")] // One2many
     public virtual ICollection<MailingContact> MailingContact { get; set; }
 
     // [One2many]
-    [ForeignKey("Title")]
-    [InverseProperty("TitleNavigation")]
+    // [One2many] [ForeignKey("Title")]
+    [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
+    // [InverseProperty("TitleNavigation")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerTitleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

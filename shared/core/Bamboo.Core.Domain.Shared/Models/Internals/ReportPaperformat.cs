@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -11,18 +12,11 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("report_paperformat")]
-public partial class ReportPaperformat: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ReportPaperformat: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
-
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("page_height")]
     public long? PageHeight { get; set; }
@@ -83,21 +77,21 @@ public partial class ReportPaperformat: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ReportPaperformatCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PaperformatId")]
-    [InverseProperty("Paperformat")]
+    // [One2many] [ForeignKey("PaperformatId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Paperformat")] // One2many
     public virtual ICollection<IrActReportXml> IrActReportXml { get; set; }
 
     // [One2many]
-    [ForeignKey("PaperformatId")]
-    [InverseProperty("Paperformat")]
+    // [One2many] [ForeignKey("PaperformatId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("Paperformat")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ReportPaperformatWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

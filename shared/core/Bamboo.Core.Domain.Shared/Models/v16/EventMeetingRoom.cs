@@ -24,7 +24,6 @@ public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("chat_room_id")]
     public Guid? ChatRoomId { get; set; }
@@ -67,21 +66,17 @@ public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("ChatRoomId")]
-    // [InverseProperty("EventMeetingRoom")] //Many2one
     public virtual ChatRoom? ChatRoom { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventMeetingRoomCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventMeetingRoom")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventMeetingRoomWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

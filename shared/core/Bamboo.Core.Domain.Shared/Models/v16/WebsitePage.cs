@@ -25,7 +25,6 @@ public partial class WebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -80,41 +79,39 @@ public partial class WebsitePage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsitePageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ThemeTemplateId")]
-    // [InverseProperty("WebsitePage")] //Many2one
     public virtual ThemeWebsitePage? ThemeTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("WebsitePage")] //Many2one
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsitePage")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [One2many]
-    [ForeignKey("PageId")]
-    [InverseProperty("Page")]
+    // [One2many] [ForeignKey("PageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Page")] // One2many
     public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 
     // [One2many]
-    [ForeignKey("TargetModelId")]
-    [InverseProperty("TargetModel")]
+    // [One2many] [ForeignKey("TargetModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TargetModel")] // One2many
     public virtual ICollection<WebsitePageProperties> WebsitePageProperties { get; set; }
 
     // [One2many]
-    [ForeignKey("PageId")]
-    [InverseProperty("Page")]
+    // [One2many] [ForeignKey("PageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Page")] // One2many
     public virtual ICollection<WebsiteTrack> WebsiteTrack { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsitePageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

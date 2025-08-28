@@ -28,7 +28,6 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }
@@ -45,9 +44,6 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("candidate_id")]
     public Guid? CandidateId { get; set; }
 
-    [Column("partner_id")]
-    public Guid? PartnerId { get; set; }
-
     [Column("stage_id")]
     public Guid? StageId { get; set; }
 
@@ -60,17 +56,8 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("job_id")]
     public Guid? JobId { get; set; }
 
-    [Column("type_id")]
-    public Guid? TypeId { get; set; }
-
     [Column("department_id")]
     public Guid? DepartmentId { get; set; }
-
-    [Column("color")]
-    public long? Color { get; set; }
-
-    [Column("emp_id")]
-    public Guid? EmpId { get; set; }
 
     [Column("refuse_reason_id")]
     public Guid? RefuseReasonId { get; set; }
@@ -84,12 +71,6 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("email_cc")]
     public string? EmailCc { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
-
-    [Column("email_from")]
-    public string? EmailFrom { get; set; }
-
     [Column("priority")]
     public string? Priority { get; set; }
 
@@ -98,15 +79,6 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("salary_expected_extra")]
     public string? SalaryExpectedExtra { get; set; }
-
-    [Column("partner_name")]
-    public string? PartnerName { get; set; }
-
-    [Column("partner_phone")]
-    public string? PartnerPhone { get; set; }
-
-    [Column("partner_mobile")]
-    public string? PartnerMobile { get; set; }
 
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
@@ -117,16 +89,6 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("applicant_notes")]
     public string? ApplicantNotes { get; set; }
-
-
-    [Column("linkedin_profile")]
-    public string? LinkedinProfile { get; set; }
-
-    [Column("availability")]
-    public DateTime? Availability { get; set; }
-
-    [Column("description")]
-    public string? Description { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -161,146 +123,101 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("delay_close")]
     public double? DelayClose { get; set; }
 
-    [Column("response_id")]
-    public Guid? ResponseId { get; set; }
-
     // [One2many]
-    [ForeignKey("ApplicantId")]
-    [InverseProperty("Applicant")]
+    // [One2many] [ForeignKey("ApplicantId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Applicant")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CandidateId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrApplicantCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
-    [ForeignKey("EmpId")]
-    // [InverseProperty("HrApplicant")] //Many2one
-    public virtual HrEmployee? Emp { get; set; }
-
-    // [One2many]
-    [ForeignKey("ApplicantId")]
-    [InverseProperty("Applicant")]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkill { get; set; }
-
-    // [Many2one]
     [ForeignKey("JobId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual HrJob? Job { get; set; }
 
     // [Many2one]
     [ForeignKey("LastStageId")]
-    // [InverseProperty("HrApplicantLastStage")] //Many2one
     public virtual HrRecruitmentStage? LastStage { get; set; }
 
     // [Many2one]
     [ForeignKey("MediumId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual UtmMedium? Medium { get; set; }
 
     // [Many2one]
     [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
-    [ForeignKey("PartnerId")]
-    // [InverseProperty("HrApplicant")] //Many2one
-    public virtual ResPartner? Partner { get; set; }
-
-    // [Many2one]
     [ForeignKey("RefuseReasonId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual HrApplicantRefuseReason? RefuseReason { get; set; }
 
     // [Many2one]
-    [ForeignKey("ResponseId")]
-    // [InverseProperty("HrApplicant")] //Many2one
-    public virtual SurveyUserInput? Response { get; set; }
-
-    // [Many2one]
     [ForeignKey("SourceId")]
-    // [InverseProperty("HrApplicant")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("HrApplicantStage")] //Many2one
     public virtual HrRecruitmentStage? Stage { get; set; }
 
     // [One2many]
-    [ForeignKey("ApplicantId")]
-    [InverseProperty("Applicant")]
+    // [One2many] [ForeignKey("ApplicantId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Applicant")] // One2many
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [One2many]
-    [ForeignKey("ApplicantId")]
-    [InverseProperty("Applicant")]
+    // [One2many] [ForeignKey("ApplicantId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Applicant")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
-    [ForeignKey("TypeId")]
-    // [InverseProperty("HrApplicant")] //Many2one
-    public virtual HrRecruitmentDegree? Type { get; set; }
-
-    // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("HrApplicantUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrApplicantWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrApplicantId")]
-    // [InverseProperty("HrApplicant")]
+    // [ForeignKey("HrApplicantId")] //Many2many // Hidden
+    // [InverseProperty("HrApplicant")] //Many2many // Hidden
     public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("HrApplicantId")]
-    // [InverseProperty("HrApplicant")]
+    // [ForeignKey("HrApplicantId")] //Many2many // Hidden
+    // [InverseProperty("HrApplicant")] //Many2many // Hidden
     public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrApplicantId")] //Many2many
-    // [InverseProperty("HrApplicant")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrApplicantId")] // Many2many // Normal
+    // [InverseProperty("HrApplicant")] // Many2many // Normal
     public virtual ICollection<HrApplicantCategory> HrApplicantCategory { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrApplicantId")] //Many2many
-    // [InverseProperty("HrApplicant")] //Many2many
-    public virtual ICollection<HrSkill> HrSkill { get; set; }
-
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrApplicantId")] //Many2many
-    // [InverseProperty("HrApplicant")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("HrApplicantId")] // Many2many // Normal
+    // [InverseProperty("HrApplicant")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

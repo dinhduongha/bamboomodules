@@ -23,7 +23,6 @@ public partial class AccountFiscalPosition: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -73,100 +72,100 @@ public partial class AccountFiscalPosition: FullAuditedAggregateRoot<Guid>, IEnt
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("PositionId")]
-    [InverseProperty("Position")]
+    // [One2many] [ForeignKey("PositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Position")] // One2many
     public virtual ICollection<AccountFiscalPositionAccount> AccountFiscalPositionAccount { get; set; }
 
     // [One2many]
-    [ForeignKey("PositionId")]
-    [InverseProperty("Position")]
+    // [One2many] [ForeignKey("PositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Position")] // One2many
     public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTax { get; set; }
 
     // [One2many]
-    [ForeignKey("FiscalPositionId")]
-    [InverseProperty("FiscalPosition")]
+    // [One2many] [ForeignKey("FiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FiscalPosition")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
-    [ForeignKey("ForeignVatFiscalPositionId")]
-    [InverseProperty("ForeignVatFiscalPosition")]
+    // [One2many] [ForeignKey("ForeignVatFiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ForeignVatFiscalPosition")] // One2many
     public virtual ICollection<AccountReportExternalValue> AccountReportExternalValue { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountFiscalPosition")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("AccountFiscalPosition")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryGroupId")]
-    // [InverseProperty("AccountFiscalPosition")] //Many2one
     public virtual ResCountryGroup? CountryGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountFiscalPositionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("DefaultFiscalPositionId")]
-    [InverseProperty("DefaultFiscalPosition")]
+    // [One2many] [ForeignKey("DefaultFiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DefaultFiscalPosition")] // One2many
     public virtual ICollection<PosConfig> PosConfigDefaultFiscalPosition { get; set; }
 
     // [One2many]
-    [ForeignKey("TakeawayFpId")]
-    [InverseProperty("TakeawayFp")]
+    // [One2many] [ForeignKey("TakeawayFpId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TakeawayFp")] // One2many
     public virtual ICollection<PosConfig> PosConfigTakeawayFp { get; set; }
 
     // [One2many]
-    [ForeignKey("DefaultFiscalPositionId")]
-    [InverseProperty("DefaultFiscalPosition")]
-    public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
-
-    // [One2many]
-    [ForeignKey("FiscalPositionId")]
-    [InverseProperty("FiscalPosition")]
+    // [One2many] [ForeignKey("FiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FiscalPosition")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("FiscalPositionId")]
-    [InverseProperty("FiscalPosition")]
+    // [One2many] [ForeignKey("FiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FiscalPosition")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("PosDefaultFiscalPositionId")]
-    [InverseProperty("PosDefaultFiscalPosition")]
+    // [One2many] [ForeignKey("PosDefaultFiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosDefaultFiscalPosition")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettingsNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("FiscalPositionId")]
-    [InverseProperty("FiscalPosition")]
+    // [One2many] [ForeignKey("FiscalPositionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FiscalPosition")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountFiscalPositionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountFiscalPositionId")]
-    // [InverseProperty("AccountFiscalPosition")]
+    // [ForeignKey("AccountFiscalPositionId")] //Many2many // Hidden
+    // [InverseProperty("AccountFiscalPosition")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountFiscalPositionId")]
-    // [InverseProperty("AccountFiscalPosition")]
+    // [ForeignKey("AccountFiscalPositionId")] //Many2many // Hidden
+    // [InverseProperty("AccountFiscalPosition")] //Many2many // Hidden
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountFiscalPositionId")] //Many2many
-    // [InverseProperty("AccountFiscalPosition")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
+    // [ForeignKey("AccountFiscalPositionId")] // Many2many // Normal
+    // [InverseProperty("AccountFiscalPosition")] // Many2many // Normal
     public virtual ICollection<ResCountryState> ResCountryState { get; set; }
 }

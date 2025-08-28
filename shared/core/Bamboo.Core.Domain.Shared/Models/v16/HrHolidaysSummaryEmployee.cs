@@ -23,7 +23,6 @@ public partial class HrHolidaysSummaryEmployee: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,17 +44,15 @@ public partial class HrHolidaysSummaryEmployee: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrHolidaysSummaryEmployeeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrHolidaysSummaryEmployeeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SumId")] //Many2many
-    // [InverseProperty("Sum")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SumId")] // Many2many // Normal
+    // [InverseProperty("Sum")] // Many2many // Normal
     public virtual ICollection<HrEmployee> Emp { get; set; }
 }

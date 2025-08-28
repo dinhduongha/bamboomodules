@@ -66,23 +66,26 @@ COMMENT_OUT_M2M_RELATIONSHIPS = [
 # Có nhiều bảng tham chiếu đến nó, vậy thì để các bảng đó quyết định quan hệ.
 # Thêm tên các lớp (class) vào đây.
 COMMENT_OUT_O2M_RELATIONSHIPS = [
-    "IrAttachment", # 13
-    #"IrModel",
-    #"IrModelFields",
-    #"IrModuleModule",
-    #"IrUiView",
+    #"IrActWindow", # 6
+    "IrAttachment", # 16
+    #"IrMailServer", # 6
+    #"IrModel", # 35
+    #"IrModelFields", # 17
+    #"IrModuleModule", # 11
+    #"IrUiView", # 19
     #"ResBank",
-    "ResCompany",
-    "ResCountry",
-    "ResCountryState",
-    "ResCurrency", 
-    #"ResGroups",
-    #"ResLang",
-    "ResPartner",
-    #"ResPartnerBank",
+    "ResCompany", # 188
+    "ResCountry", # 27
+    "ResCountryState", # 8
+    "ResCurrency", # 40
+    #"ResGroups", # 7
+    #"ResLang", # 5
+    "ResPartner", # 126
+    #"ResPartnerBank", # 6
     #"ResPartnerCategory",
-    "ResUsers",
-    "AccountAccount",
+    "ResUsers", # 1569
+    "AccountAccount", # 56
+    #"AccountAccountTemplate", # 28
     #"AccountAnalyticAccount", # 12
     #"AccountFiscalPosition",  # 10
     #"AccountJournal", # 35
@@ -90,25 +93,35 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
     #"AccountMoveLine", # 8
     #"AccountPayment", # 8
     #"AccountTax", # 9
+    #"CalendarEvent", # 5
     #"CrmLead", # 6
     #"CrmTeam", # 18
+    #"DeliveryCarrier", # 5
     #"EventEvent", # 16
+    #"EventTicket", # 5    
     #"EventType", # 7
-    #"FleetVehicle", # 7
-    #"GamificationBadge", #6
+    #"FleetVehicle", # 6
+    #"GamificationBadge", # 6
     #"HrContract", # 6
     #"HrDepartment", # 17
-    #"HrEmployee", # 44   
+    #"HrEmployee", # 44
+    #"HrLeaveType", # 5
+    #"HrSkillType", # 5
     #"HrWorkLocation", 10
-    #"MailActivityType", #9
-    #"MailAlias", #7
-    #"MailingMailing", #11
+    #"LoyaltyCard", # 6
+    #"LoyaltyProgram", # 6    
+    #"MailActivityType", # 9
+    #"MailAlias", # 7
+    #"MailingMailing", # 11
     #"MailMessage", # 18
-    #"MailTemplate", #32
+    #"MailMessageSubtype", # 5
+    #"MailTemplate", # 32
     #"MrpBom", # 8
     #"MrpProduction", # 12
+    #"MrpWorkorder", # 5
     #"PosOrder", # 8
-    #"PosSession", # 8
+    #"PosOrderLine", # 5
+    #"PosSession", # 6
     #"ProcurementGroup", # 10
     #"ProductCategory", # 10
     #"ProductPricelist", # 8    
@@ -121,7 +134,7 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
     #"SaleOrderLine", # 18
     #"SlideChannel", # 6
     #"SlideSlide", # 7
-    #"SmsTemplate", # 7    
+    #"SmsTemplate", # 8
     #"StockLocation", # 54
     #"StockLot", # 9
     #"StockMove", # 8    
@@ -136,7 +149,8 @@ COMMENT_OUT_O2M_RELATIONSHIPS = [
     "UomUom", # 27
     #"UtmCampaign", # 11
     #"UtmMedium", # 8
-    #"UtmSource", # 9        
+    #"UtmSource", # 9
+    #"DiscussChannel", # 6    
     "Website"   # 38
 ]
 
@@ -429,7 +443,16 @@ def analyze_and_transform_fluent_block(entity_name, body_content, schema_map):
     #     pattern = re.compile(r'(\s*entity\.HasOne\(\s*d\s*=>\s*d\.' + prop_name + r'\s*\)\s*\.WithMany\()([^\)]*)(\))')
     #     current_content = pattern.sub(r'\1\3', current_content)
     
-    return ("PROCESS", current_content)
+    current_content = re.sub(r'(\s*\((?:d|e)\s*=>\s*(?:d|e)\.)CompanyId\)', r'\1TenantId)', current_content)
+
+    # Thêm lời gọi ConfigureByConvention() vào cuối khối
+    # Thụt lề 12 spaces (3x4) để khớp với các dòng bên trong entity => { ... }
+    indentation = ' ' * 4 
+    #convention_call = f"\n{indentation}entity.ConfigureByConvention();"
+    convention_call = f"\n\n{indentation}entity.TryConfigureExtraProperties();\n{indentation}entity.TryConfigureObjectExtensions();\n{indentation}entity.TryConfigureConcurrencyStamp();"
+    final_content = current_content.strip() + convention_call
+
+    return ("PROCESS", final_content)
 
 def split_and_refactor_fluent(fluent_content, schema_map, args):
     """Hàm điều khiển việc tái cấu trúc và tách file Fluent API."""
@@ -485,6 +508,7 @@ def create_individual_config_file(entity_name, config_body, namespace, partial_c
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Bamboo.Core.Models;
 
 namespace {namespace}
@@ -727,19 +751,40 @@ def refactor_entity_file(content, schema_map):
                 result.append(f"\n\n{indent}// [One2many] - RELATIONSHIP COMMENTED OUT FOR '{class_name}'")
                 if not has_fk_attr and 'foreign_key' in rel_info:
                     result.append(f"{indent}// [One2many] [ForeignKey(\"{rel_info['foreign_key']}\")]")
-                if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
-                    result.append(f"\n{indent}// [NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                # if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                #     result.append(f"\n{indent}// [NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                # else:
+                #     result.append(f"\n{indent}// [NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                result.append( f"{indent}// [NotMapped] // One2many ")
                 for line in full_original_block.splitlines():
-                    if line.strip(): result.append(f"{indent}// {line.strip()}")
+                    if line.strip(): 
+                        line_indent = ' ' * (len(line) - len(line.lstrip(' '))) 
+                        if line.strip().startswith(("[InverseProperty")):
+                            if peer_enable:
+                                result.append(f"{line_indent}// {line.strip()} // One2many // Peer relationship ({peer_entity}) is commented out")
+                            else:
+                                result.append(f"{line_indent}// {line.strip()} // One2many")
+                        else:
+                            result.append(f"{indent}// {line.strip()}")
             else: # Xử lý bình thường
                 result.append(f"\n\n{indent}// [One2many]")
                 if not has_fk_attr and 'foreign_key' in rel_info:
                     result.append(f"{indent}// [One2many] [ForeignKey(\"{rel_info['foreign_key']}\")]")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
-                    result.append( f"{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                    result.append( f"{indent}[NotMapped] // One2many // Peer relationship ({peer_entity}) is commented out")
+                else:
+                    result.append(f"{indent}// [NotMapped] // One2many // Normal")
                 #result.append(full_original_block.strip())
                 for line in full_original_block.splitlines():
-                    if line.strip(): result.append(line)
+                    if line.strip():
+                        line_indent = ' ' * (len(line) - len(line.lstrip(' '))) 
+                        if line.strip().startswith(("[InverseProperty")):
+                            if peer_enable:
+                                result.append(f"{line_indent}// {line.strip()} // One2many")
+                            else:
+                                result.append(f"{line_indent}// {line.strip()} // One2many")
+                        else:
+                            result.append(line)
 
             # if not has_fk_attr and 'foreign_key' in rel_info:
             #     result.append(f"{indent}[ForeignKey(\"{rel_info['foreign_key']}\")]")
@@ -750,28 +795,28 @@ def refactor_entity_file(content, schema_map):
             is_fluent_m2m = rel_info.get('is_fluent_m2m', False)            
             if is_fluent_m2m: # M2M tường minh -> giữ lại
                 result.append(f"\n\n{indent}// [Many2many] // Normal")
-                # result.append(f"{indent}// [NotMapped] //Many2many // Normal")
+                # result.append(f"{indent}[NotMapped] //Many2many // Normal")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
-                    result.append(f"{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                    result.append(f"{indent}[NotMapped] // Many2many // Peer relationship ({peer_entity}) is commented out")
                 else:
-                    result.append(f"{indent}// [NotMapped] //Many2many // Normal")
+                    result.append(f"{indent}// [NotMapped] // Many2many // Normal")
                 for line in full_original_block.splitlines():
                     if line.strip():
                         line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
                         if line.strip().startswith(("[ForeignKey")):
-                            result.append(f"{line_indent}// {line.strip()} //Many2many // Normal")
+                            result.append(f"{line_indent}// {line.strip()} // Many2many // Normal")
                         elif line.strip().startswith(("[InverseProperty")):
                             if peer_enable:
-                                result.append(f"{line_indent}{line.strip()} //Many2many // Normal")
+                                result.append(f"{line_indent}// {line.strip()} // Many2many // Normal")
                             else:
-                                result.append(f"{line_indent}// {line.strip()} //Many2many // Normal")
+                                result.append(f"{line_indent}// {line.strip()} // Many2many // Normal")
                         else:
                             result.append(line)
                         #result.append(f"{line_indent} {line.strip()}")
             else: # M2M ẩn -> comment out
                 result.append(f"\n\n{indent}// [Many2many] // ManyToMany Hidden M2M")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
-                    result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
+                    result.append(f"\n{indent}// [NotMapped] // Many2many // Peer relationship ({peer_entity}) is commented out")
                 result.append(f"{indent}// [NotMapped] //Many2many // Hidden M2M")
                 for line in full_original_block.splitlines():
                     if line.strip():
@@ -780,11 +825,11 @@ def refactor_entity_file(content, schema_map):
         
         elif rel_type == 'ManyToManyHidden':
             result.append(f"\n\n{indent}// [Many2many] // Hidden")
-            result.append(f"{indent}[NotMapped] //Many2many // Hidden")
-            # if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
-            #     result.append(f"\n{indent}[NotMapped] // Peer relationship ({peer_entity}) is commented out")
-            # else:
-            #     result.append(f"{indent}[NotMapped] //Many2many // Hidden")
+            #result.append(f"{indent}[NotMapped] //Many2many // Hidden")
+            if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
+                result.append(f"\n{indent}[NotMapped] //Many2many // Hidden // Peer relationship ({peer_entity}) is commented out")
+            else:
+                result.append(f"{indent}[NotMapped] //Many2many // Hidden")
 
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
@@ -798,7 +843,11 @@ def refactor_entity_file(content, schema_map):
                         result.append(line)
 
         elif rel_type == 'ManyToOne':
+            clean_type = re.sub(r"\?$", "", prop_type)
             result.append(f"\n\n{indent}// [Many2one]")
+            #if clean_type in COMMENT_OUT_O2M_RELATIONSHIPS:
+            #    result.append(f"{indent}[NotMapped] //Many2one")                
+            #result.append(f"{indent}[NotMapped] //Many2one")
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     if line.strip().startswith(("[InverseProperty")):
@@ -845,7 +894,8 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
-using Volo.Abp.MultiTenancy;"""
+using Volo.Abp.MultiTenancy;
+using Bamboo.Core.Domain.Shared.Attributes;"""
     #if should_add_multitenancy:
     #    abp_usings += "\nusing Volo.Abp.MultiTenancy;"
 
@@ -894,6 +944,9 @@ using Volo.Abp.MultiTenancy;"""
 
     # Xóa phần khởi tạo ICollection
     content = re.sub(r'(public\s+virtual\s+ICollection<[^>]*>\s*.*?{\s*get;\s*set;\s*})(\s*=\s*new.*;)', r'\1', content)
+    
+    # Nếu muốn dùng nullable: public virtual ICollection<ResCompany>? ResCompany { get; set; }
+    #content = re.sub(r'(public\s+virtual\s+ICollection<[^>]*>)(\s+\w+\s*{\s*get;\s*set;\s*})(\s*=\s*new.*;)', r'\1?\2', content)
 
     lines = content.split('\n')
     new_lines = []

@@ -66,37 +66,38 @@ public partial class AccountPaymentTerm: FullAuditedAggregateRoot<Guid>, IEntity
     public double? DiscountPercentage { get; set; }
 
     // [One2many]
-    [ForeignKey("InvoicePaymentTermId")]
-    [InverseProperty("InvoicePaymentTerm")]
+    // [One2many] [ForeignKey("InvoicePaymentTermId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("InvoicePaymentTerm")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentId")]
-    [InverseProperty("Payment")]
+    // [One2many] [ForeignKey("PaymentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Payment")] // One2many
     public virtual ICollection<AccountPaymentTermLine> AccountPaymentTermLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountPaymentTerm")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountPaymentTermCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentTermId")]
-    [InverseProperty("PaymentTerm")]
+    // [One2many] [ForeignKey("PaymentTermId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentTerm")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentTermId")]
-    [InverseProperty("PaymentTerm")]
+    // [One2many] [ForeignKey("PaymentTermId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentTerm")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountPaymentTermWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

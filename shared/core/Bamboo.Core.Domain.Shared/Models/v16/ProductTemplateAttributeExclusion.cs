@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("product_template_attribute_exclusion")]
-//[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion__product_template_attribute")]
+//[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion__product_template_5b2f8938")]
 //[Index("ProductTmplId", Name = "product_template_attribute_exclusion__product_tmpl_id_index")]
 public partial class ProductTemplateAttributeExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
@@ -25,7 +25,6 @@ public partial class ProductTemplateAttributeExclusion: FullAuditedEntity<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_template_attribute_value_id")]
     public Guid? ProductTemplateAttributeValueId { get; set; }
@@ -47,27 +46,23 @@ public partial class ProductTemplateAttributeExclusion: FullAuditedEntity<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductTemplateAttributeExclusionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeExclusionNavigation")] //Many2one
     public virtual ProductTemplateAttributeValue? ProductTemplateAttributeValueNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductTemplateAttributeExclusion")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductTemplateAttributeExclusionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductTemplateAttributeExclusionId")] //Many2many
-    // [InverseProperty("ProductTemplateAttributeExclusion")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductTemplateAttributeExclusionId")] // Many2many // Normal
+    // [InverseProperty("ProductTemplateAttributeExclusion")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

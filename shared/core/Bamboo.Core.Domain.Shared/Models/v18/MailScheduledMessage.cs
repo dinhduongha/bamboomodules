@@ -23,7 +23,6 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -63,28 +62,25 @@ public partial class MailScheduledMessage: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("MailScheduledMessage")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailScheduledMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailScheduledMessageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("ScheduledMessageId")] //Many2many
-    // [InverseProperty("ScheduledMessage")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("ScheduledMessageId")] // Many2many // Normal
+    // [InverseProperty("ScheduledMessage")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("MailScheduledMessageId")] //Many2many
-    // [InverseProperty("MailScheduledMessageNavigation")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("MailScheduledMessageId")] // Many2many // Normal
+    // [InverseProperty("MailScheduledMessageNavigation")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

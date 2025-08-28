@@ -24,10 +24,6 @@ public partial class CrossoveredBudget: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -58,31 +54,23 @@ public partial class CrossoveredBudget: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("CrossoveredBudget")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrossoveredBudgetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CrossoveredBudgetId")]
-    [InverseProperty("CrossoveredBudget")]
+    // [One2many] [ForeignKey("CrossoveredBudgetId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CrossoveredBudget")] // One2many
     public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("CrossoveredBudget")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrossoveredBudgetUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrossoveredBudgetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

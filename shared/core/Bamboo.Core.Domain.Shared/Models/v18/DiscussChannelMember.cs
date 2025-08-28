@@ -28,7 +28,6 @@ public partial class DiscussChannelMember: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -86,45 +85,36 @@ public partial class DiscussChannelMember: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("DiscussChannelMember")] //Many2one
     public virtual DiscussChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DiscussChannelMemberCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    // [InverseProperty("ChannelMember")] //Many2one
     public virtual DiscussChannelRtcSession? DiscussChannelRtcSession { get; set; }
 
     // [Many2one]
     [ForeignKey("FetchedMessageId")]
-    // [InverseProperty("DiscussChannelMemberFetchedMessage")] //Many2one
     public virtual MailMessage? FetchedMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("GuestId")]
-    // [InverseProperty("DiscussChannelMember")] //Many2one
     public virtual MailGuest? Guest { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("DiscussChannelMember")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("RtcInvitingSessionId")]
-    // [InverseProperty("DiscussChannelMember")] //Many2one
     public virtual DiscussChannelRtcSession? RtcInvitingSession { get; set; }
 
     // [Many2one]
     [ForeignKey("SeenMessageId")]
-    // [InverseProperty("DiscussChannelMemberSeenMessage")] //Many2one
     public virtual MailMessage? SeenMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DiscussChannelMemberWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

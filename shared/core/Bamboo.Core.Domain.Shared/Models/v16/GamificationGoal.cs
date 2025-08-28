@@ -24,7 +24,6 @@ public partial class GamificationGoal: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("definition_id")]
     public Guid? DefinitionId { get; set; }
@@ -79,36 +78,31 @@ public partial class GamificationGoal: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("ChallengeId")]
-    // [InverseProperty("GamificationGoal")] //Many2one
     public virtual GamificationChallenge? Challenge { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationGoalCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DefinitionId")]
-    // [InverseProperty("GamificationGoal")] //Many2one
     public virtual GamificationGoalDefinition? Definition { get; set; }
 
     // [One2many]
-    [ForeignKey("GoalId")]
-    [InverseProperty("Goal")]
+    // [One2many] [ForeignKey("GoalId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Goal")] // One2many
     public virtual ICollection<GamificationGoalWizard> GamificationGoalWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LineId")]
-    // [InverseProperty("GamificationGoal")] //Many2one
     public virtual GamificationChallengeLine? Line { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("GamificationGoalUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationGoalWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

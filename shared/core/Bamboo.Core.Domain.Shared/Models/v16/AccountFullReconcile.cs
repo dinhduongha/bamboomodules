@@ -23,7 +23,6 @@ public partial class AccountFullReconcile: FullAuditedAggregateRoot<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("exchange_move_id")]
     public Guid? ExchangeMoveId { get; set; }
@@ -34,9 +33,6 @@ public partial class AccountFullReconcile: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [Column("name")]
-    public string? Name { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -44,27 +40,26 @@ public partial class AccountFullReconcile: FullAuditedAggregateRoot<Guid>, IEnti
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("FullReconcileId")]
-    [InverseProperty("FullReconcile")]
+    // [One2many] [ForeignKey("FullReconcileId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FullReconcile")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("FullReconcileId")]
-    [InverseProperty("FullReconcile")]
+    // [One2many] [ForeignKey("FullReconcileId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FullReconcile")] // One2many
     public virtual ICollection<AccountPartialReconcile> AccountPartialReconcile { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountFullReconcileCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ExchangeMoveId")]
-    // [InverseProperty("AccountFullReconcile")] //Many2one
     public virtual AccountMove? ExchangeMove { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountFullReconcileWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

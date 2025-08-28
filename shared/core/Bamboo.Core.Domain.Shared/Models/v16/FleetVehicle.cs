@@ -23,10 +23,6 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("manager_id")]
     public Guid? ManagerId { get; set; }
@@ -177,109 +173,98 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public string? MobilityCard { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleId")]
-    [InverseProperty("Vehicle")]
+    // [One2many] [ForeignKey("VehicleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("BrandId")]
-    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleModelBrand? Brand { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleModelCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DriverId")]
-    // [InverseProperty("FleetVehicleDriver")] //Many2one
     public virtual ResPartner? Driver { get; set; }
 
     // [Many2one]
     [ForeignKey("DriverEmployeeId")]
-    // [InverseProperty("FleetVehicleDriverEmployee")] //Many2one
     public virtual HrEmployee? DriverEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleId")]
-    [InverseProperty("Vehicle")]
+    // [One2many] [ForeignKey("VehicleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleId")]
-    [InverseProperty("Vehicle")]
+    // [One2many] [ForeignKey("VehicleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContract { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleId")]
-    [InverseProperty("Vehicle")]
+    // [One2many] [ForeignKey("VehicleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleId")]
-    [InverseProperty("Vehicle")]
+    // [One2many] [ForeignKey("VehicleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometer { get; set; }
 
     // [Many2one]
     [ForeignKey("FutureDriverId")]
-    // [InverseProperty("FleetVehicleFutureDriver")] //Many2one
     public virtual ResPartner? FutureDriver { get; set; }
 
     // [Many2one]
     [ForeignKey("FutureDriverEmployeeId")]
-    // [InverseProperty("FleetVehicleFutureDriverEmployee")] //Many2one
     public virtual HrEmployee? FutureDriverEmployee { get; set; }
 
     // [Many2one]
     [ForeignKey("ManagerId")]
-    // [InverseProperty("FleetVehicleManager")] //Many2one
     public virtual ResUsers? Manager { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("FleetVehicle")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("StateId")]
-    // [InverseProperty("FleetVehicle")] //Many2one
     public virtual FleetVehicleState? State { get; set; }
 
     // [One2many]
-    [ForeignKey("VehicleId")]
-    [InverseProperty("Vehicle")]
+    // [One2many] [ForeignKey("VehicleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("FleetVehicleId")]
-    // [InverseProperty("FleetVehicle")]
+    // [ForeignKey("FleetVehicleId")] //Many2many // Hidden
+    // [InverseProperty("FleetVehicle")] //Many2many // Hidden
     public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("VehicleTagId")] //Many2many
-    // [InverseProperty("VehicleTag")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("VehicleTagId")] // Many2many // Normal
+    // [InverseProperty("VehicleTag")] // Many2many // Normal
     public virtual ICollection<FleetVehicleTag> Tag { get; set; }
 }

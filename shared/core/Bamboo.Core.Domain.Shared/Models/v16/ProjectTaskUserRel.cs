@@ -26,7 +26,6 @@ public partial class ProjectTaskUserRel: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("task_id")]
     public Guid? TaskId { get; set; }
@@ -51,26 +50,21 @@ public partial class ProjectTaskUserRel: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectTaskUserRelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("ProjectTaskUserRel")] //Many2one
     public virtual ProjectTaskType? Stage { get; set; }
 
     // [Many2one]
     [ForeignKey("TaskId")]
-    // [InverseProperty("ProjectTaskUserRel")] //Many2one
     public virtual ProjectTask? Task { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ProjectTaskUserRelUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectTaskUserRelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

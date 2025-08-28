@@ -26,7 +26,6 @@ public partial class EventTrackVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -63,26 +62,21 @@ public partial class EventTrackVisitor: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTrackVisitorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("EventTrackVisitor")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("TrackId")]
-    // [InverseProperty("EventTrackVisitor")] //Many2one
     public virtual EventTrack? Track { get; set; }
 
     // [Many2one]
     [ForeignKey("VisitorId")]
-    // [InverseProperty("EventTrackVisitor")] //Many2one
     public virtual WebsiteVisitor? Visitor { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTrackVisitorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

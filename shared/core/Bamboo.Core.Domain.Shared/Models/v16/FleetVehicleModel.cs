@@ -23,7 +23,6 @@ public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("brand_id")]
     public Guid? BrandId { get; set; }
@@ -103,32 +102,29 @@ public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("BrandId")]
-    // [InverseProperty("FleetVehicleModel")] //Many2one
     public virtual FleetVehicleModelBrand? Brand { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("FleetVehicleModel")] //Many2one
     public virtual FleetVehicleModelCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleModelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleModelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ModelId")] //Many2many
-    // [InverseProperty("Model")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("ModelId")] // Many2many // Normal
+    // [InverseProperty("Model")] // Many2many // Normal
     public virtual ICollection<ResPartner> Partner { get; set; }
 }

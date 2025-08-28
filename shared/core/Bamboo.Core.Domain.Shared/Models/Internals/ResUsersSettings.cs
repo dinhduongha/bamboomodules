@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -13,23 +14,14 @@ namespace Bamboo.Core.Models;
 [Table("res_users_settings")]
 //[Index("MuteUntilDt", Name = "res_users_settings__mute_until_dt_index")]
 //[Index("UserId", Name = "res_users_settings_unique_user_id", IsUnique = true)]
-public partial class ResUsersSettings: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsersSettings: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
     [Column("user_id")]
     public Guid? UserId { get; set; }
-
-    [Column("voice_active_duration")]
-    public long? VoiceActiveDuration { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -43,8 +35,8 @@ public partial class ResUsersSettings: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // [Column("voice_active_duration")]
-    // public long? VoiceActiveDuration { get; set; }
+    [Column("voice_active_duration")]
+    public long? VoiceActiveDuration { get; set; }
 
     [Column("push_to_talk_key")]
     public string? PushToTalkKey { get; set; }
@@ -97,38 +89,27 @@ public partial class ResUsersSettings: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("microsoft_last_sync_date", TypeName = "timestamp without time zone")]
     public DateTime? MicrosoftLastSyncDate { get; set; }
 
-    // [Column("create_date", TypeName = "timestamp without time zone")]
-    // public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
-
-    // [Column("write_date", TypeName = "timestamp without time zone")]
-    // public override DateTime? LastModificationTime { get; set; }
-
-    [Column("is_discuss_sidebar_category_livechat_open")]
-    public bool? IsDiscussSidebarCategoryLivechatOpen { get; set; }
-
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResUsersSettingsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("UserSettingId")]
-    [InverseProperty("UserSetting")]
+    // [One2many] [ForeignKey("UserSettingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UserSetting")] // One2many
     public virtual ICollection<ResUsersSettingsVolumes> ResUsersSettingsVolumes { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("ResUsersSettingsUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResUsersSettingsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ResUsersSettingsId")] //Many2many
-    // [InverseProperty("ResUsersSettings")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ResUsersSettingsId")] // Many2many // Normal
+    // [InverseProperty("ResUsersSettings")] // Many2many // Normal
     public virtual ICollection<ResLang> ResLang { get; set; }
 }

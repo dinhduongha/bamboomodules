@@ -23,7 +23,6 @@ public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -53,22 +52,19 @@ public partial class DigestTip: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DigestTipCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("GroupId")]
-    // [InverseProperty("DigestTip")] //Many2one
     public virtual ResGroups? Group { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DigestTipWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DigestTipId")] //Many2many
-    // [InverseProperty("DigestTip")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("DigestTipId")] // Many2many // Normal
+    // [InverseProperty("DigestTip")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 }

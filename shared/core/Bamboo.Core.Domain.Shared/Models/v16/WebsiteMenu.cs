@@ -25,7 +25,6 @@ public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("page_id")]
     public Guid? PageId { get; set; }
@@ -79,62 +78,53 @@ public partial class WebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("ControllerPageId")]
-    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual WebsiteControllerPage? ControllerPage { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteMenuCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MenuId")]
-    [InverseProperty("Menu")]
+    // [One2many] [ForeignKey("MenuId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Menu")] // One2many
     public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [One2many]
-    [ForeignKey("MenuId")]
-    [InverseProperty("Menu")]
-    public virtual ICollection<ForumForum> ForumForum { get; set; }
-
-    // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<WebsiteMenu> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("PageId")]
-    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual WebsitePage? Page { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual WebsiteMenu? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("ThemeTemplateId")]
-    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual ThemeWebsiteMenu? ThemeTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsiteMenu")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [One2many]
-    [ForeignKey("MenuId")]
-    [InverseProperty("Menu")]
+    // [One2many] [ForeignKey("MenuId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Menu")] // One2many
     public virtual ICollection<WebsiteEventMenu> WebsiteEventMenu { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteMenuWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("WebsiteMenuId")] //Many2many
-    // [InverseProperty("WebsiteMenu")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("WebsiteMenuId")] // Many2many // Normal
+    // [InverseProperty("WebsiteMenu")] // Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

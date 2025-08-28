@@ -23,7 +23,6 @@ public partial class ProcurementGroup: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -54,76 +53,81 @@ public partial class ProcurementGroup: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProcurementGroupCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ProcurementGroupId")]
-    [InverseProperty("ProcurementGroup")]
+    // [One2many] [ForeignKey("ProcurementGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProcurementGroup")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("ProcurementGroup")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
-    [ForeignKey("ProcurementGroupId")]
-    [InverseProperty("ProcurementGroup")]
+    // [One2many] [ForeignKey("ProcurementGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProcurementGroup")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("PosOrderId")]
-    // [InverseProperty("ProcurementGroupNavigation")] //Many2one
     public virtual PosOrder? PosOrderNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ProcurementGroupId")]
-    [InverseProperty("ProcurementGroup")]
+    // [One2many] [ForeignKey("ProcurementGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProcurementGroup")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleId")]
-    // [InverseProperty("ProcurementGroup")] //Many2one
     public virtual SaleOrder? Sale { get; set; }
 
     // [One2many]
-    [ForeignKey("ProcurementGroupId")]
-    [InverseProperty("ProcurementGroupNavigation")]
+    // [One2many] [ForeignKey("ProcurementGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProcurementGroupNavigation")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockRule> StockRule { get; set; }
 
     // [One2many]
-    [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    // [One2many] [ForeignKey("GroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProcurementGroupWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

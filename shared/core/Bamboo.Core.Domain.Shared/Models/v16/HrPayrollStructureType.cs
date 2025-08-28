@@ -23,7 +23,6 @@ public partial class HrPayrollStructureType: FullAuditedAggregateRoot<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("default_resource_calendar_id")]
     public Guid? DefaultResourceCalendarId { get; set; }
@@ -48,26 +47,23 @@ public partial class HrPayrollStructureType: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("HrPayrollStructureType")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayrollStructureTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DefaultResourceCalendarId")]
-    // [InverseProperty("HrPayrollStructureType")] //Many2one
     public virtual ResourceCalendar? DefaultResourceCalendar { get; set; }
 
     // [One2many]
-    [ForeignKey("StructureTypeId")]
-    [InverseProperty("StructureType")]
+    // [One2many] [ForeignKey("StructureTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("StructureType")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayrollStructureTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

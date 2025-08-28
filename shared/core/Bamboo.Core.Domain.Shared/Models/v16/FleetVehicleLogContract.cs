@@ -24,10 +24,6 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("vehicle_id")]
     public Guid? VehicleId { get; set; }
@@ -88,47 +84,35 @@ public partial class FleetVehicleLogContract: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CostSubtypeId")]
-    // [InverseProperty("FleetVehicleLogContractNavigation")] //Many2one
     public virtual FleetServiceType? CostSubtype { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleLogContractCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("InsurerId")]
-    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual ResPartner? Insurer { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("FleetVehicleLogContract")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("FleetVehicleLogContractUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("VehicleId")]
-    // [InverseProperty("FleetVehicleLogContract")] //Many2one
     public virtual FleetVehicle? Vehicle { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleLogContractWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("FleetVehicleLogContractId")] //Many2many
-    // [InverseProperty("FleetVehicleLogContract")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("FleetVehicleLogContractId")] // Many2many // Normal
+    // [InverseProperty("FleetVehicleLogContract")] // Many2many // Normal
     public virtual ICollection<FleetServiceType> FleetServiceType { get; set; }
 }

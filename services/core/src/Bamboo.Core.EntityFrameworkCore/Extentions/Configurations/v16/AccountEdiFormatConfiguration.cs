@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Bamboo.Core.Models;
-// Cần thêm using đến namespace chứa entity của bạn ở đây
-// Ví dụ: using YourProject.Entities;
 
 namespace Bamboo.Core.EntityFrameworkCore
 {
@@ -15,44 +14,48 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
             entity.HasKey(e => e.Id).HasName("account_edi_format_pkey");
 
-            entity.ToTable("account_edi_format");
+                        entity.ToTable("account_edi_format");
 
-            entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.TenantId);
 
-            entity.HasIndex(e => e.OrganizationUnitId);
+                        entity.HasIndex(e => e.OrganizationUnitId);
 
-            entity.HasIndex(e => e.Code, "account_edi_format_unique_code").IsUnique();
+                        entity.HasIndex(e => e.Code, "account_edi_format_unique_code").IsUnique();
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("next_uuid()")
-                .HasColumnName("id");
+                        entity.Property(e => e.Id)
+                            .HasDefaultValueSql("next_uuid()")
+                            .HasColumnName("id");
 
-            entity.Property(e => e.TenantId).HasColumnName("company_id");
+                        entity.Property(e => e.TenantId).HasColumnName("company_id");
 
-            entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-            entity.Property(e => e.Code).HasColumnName("code");
-            entity.Property(e => e.CreationTime)
-                .HasDefaultValueSql("now()")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("create_date");
-            entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-            entity.Property(e => e.Name).HasColumnName("name");
-            entity.Property(e => e.LastModificationTime)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("write_date");
-            entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+                        entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.Code).HasColumnName("code");
+                        entity.Property(e => e.CreationTime)
+                            .HasDefaultValueSql("now()")
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("create_date");
+                        entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.LastModificationTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("write_date");
+                        entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-            // entity.HasOne(d => d.CreateU).WithMany(p => p.AccountEdiFormatCreateU)
-            entity.HasOne(d => d.CreateU).WithMany()
-                .HasForeignKey(d => d.CreatorId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("account_edi_format_create_uid_fkey");
+                        // entity.HasOne(d => d.CreateU).WithMany(p => p.AccountEdiFormatCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_edi_format_create_uid_fkey");
+                        entity.HasOne(d => d.CreateU).WithMany()
+                            .HasForeignKey(d => d.CreatorId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_edi_format_create_uid_fkey");
 
-            // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountEdiFormatWriteU)
-            entity.HasOne(d => d.WriteU).WithMany()
-                .HasForeignKey(d => d.LastModifierId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("account_edi_format_write_uid_fkey");
+                        // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountEdiFormatWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_edi_format_write_uid_fkey");
+                        entity.HasOne(d => d.WriteU).WithMany()
+                            .HasForeignKey(d => d.LastModifierId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_edi_format_write_uid_fkey");
+
+                entity.TryConfigureExtraProperties();
+                entity.TryConfigureObjectExtensions();
+                entity.TryConfigureConcurrencyStamp();
             });
         }
     }

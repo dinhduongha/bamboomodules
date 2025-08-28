@@ -23,7 +23,6 @@ public partial class CardCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("card_template_id")]
     public Guid? CardTemplateId { get; set; }
@@ -143,43 +142,40 @@ public partial class CardCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public byte[]? ImagePreview { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<CardCard> CardCard { get; set; }
 
     // [Many2one]
     [ForeignKey("CardTemplateId")]
-    // [InverseProperty("CardCampaign")] //Many2one
     public virtual CardTemplate? CardTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CardCampaignCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LinkTrackerId")]
-    // [InverseProperty("CardCampaign")] //Many2one
     public virtual LinkTracker? LinkTracker { get; set; }
 
     // [One2many]
-    [ForeignKey("CardCampaignId")]
-    [InverseProperty("CardCampaign")]
+    // [One2many] [ForeignKey("CardCampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CardCampaign")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CardCampaignUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CardCampaignWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("CardCampaignId")] //Many2many
-    [InverseProperty("CardCampaign")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CardCampaignId")] // Many2many // Normal
+    // [InverseProperty("CardCampaign")] // Many2many // Normal
     public virtual ICollection<CardCampaignTag> CardCampaignTag { get; set; }
 }

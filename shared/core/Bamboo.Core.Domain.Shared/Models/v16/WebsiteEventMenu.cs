@@ -23,7 +23,6 @@ public partial class WebsiteEventMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("menu_id")]
     public Guid? MenuId { get; set; }
@@ -51,26 +50,21 @@ public partial class WebsiteEventMenu: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteEventMenuCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("WebsiteEventMenu")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("MenuId")]
-    // [InverseProperty("WebsiteEventMenu")] //Many2one
     public virtual WebsiteMenu? Menu { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("WebsiteEventMenu")] //Many2one
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteEventMenuWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class PosPaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -75,70 +74,62 @@ public partial class PosPaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDt
     public bool? IsOnlinePayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PosPaymentMethodId")]
-    [InverseProperty("PosPaymentMethod")]
+    // [One2many] [ForeignKey("PosPaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosPaymentMethod")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PosPaymentMethod")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosPaymentMethodCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("PosPaymentMethod")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("OutstandingAccountId")]
-    // [InverseProperty("PosPaymentMethodOutstandingAccount")] //Many2one
     public virtual AccountAccount? OutstandingAccount { get; set; }
 
     // [One2many]
-    [ForeignKey("SelfOrderOnlinePaymentMethodId")]
-    [InverseProperty("SelfOrderOnlinePaymentMethod")]
+    // [One2many] [ForeignKey("SelfOrderOnlinePaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SelfOrderOnlinePaymentMethod")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodId")]
-    [InverseProperty("PaymentMethod")]
+    // [One2many] [ForeignKey("PaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethod")] // One2many
     public virtual ICollection<PosMakePayment> PosMakePayment { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodId")]
-    [InverseProperty("PaymentMethod")]
+    // [One2many] [ForeignKey("PaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethod")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("ReceivableAccountId")]
-    // [InverseProperty("PosPaymentMethodReceivableAccount")] //Many2one
     public virtual AccountAccount? ReceivableAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosPaymentMethodWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PosPaymentMethodId")] //Many2many
-    // [InverseProperty("PosPaymentMethod")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PosPaymentMethodId")] // Many2many // Normal
+    // [InverseProperty("PosPaymentMethod")] // Many2many // Normal
     public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosPaymentMethodId")]
-    // [InverseProperty("PosPaymentMethod")]
-    //public virtual ICollection<PosConfig> PosConfig { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosPaymentMethodId")]
-    // [InverseProperty("PosPaymentMethod")]
+    // [ForeignKey("PosPaymentMethodId")] //Many2many // Hidden
+    // [InverseProperty("PosPaymentMethod")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 }

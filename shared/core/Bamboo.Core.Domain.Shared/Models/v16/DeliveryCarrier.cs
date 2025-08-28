@@ -25,7 +25,6 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -110,103 +109,95 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
-    [Column("warehouse_id")]
-    public Guid? WarehouseId { get; set; }
-
     // [One2many]
-    [ForeignKey("CarrierId")]
-    [InverseProperty("Carrier")]
+    // [One2many] [ForeignKey("CarrierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<ChooseDeliveryCarrier> ChooseDeliveryCarrier { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DeliveryCarrierCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CarrierId")]
-    [InverseProperty("Carrier")]
+    // [One2many] [ForeignKey("CarrierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<DeliveryPriceRule> DeliveryPriceRule { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("CarrierId")]
-    [InverseProperty("Carrier")]
+    // [One2many] [ForeignKey("CarrierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("CarrierId")]
-    [InverseProperty("Carrier")]
+    // [One2many] [ForeignKey("CarrierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("CarrierId")]
-    [InverseProperty("Carrier")]
+    // [One2many] [ForeignKey("CarrierId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
-    [ForeignKey("WarehouseId")]
-    // [InverseProperty("DeliveryCarrier")] //Many2one
-    public virtual StockWarehouse? Warehouse { get; set; }
-
-    // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("DeliveryCarrier")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DeliveryCarrierWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CarrierId")] //Many2many
-    // [InverseProperty("Carrier")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("CarrierId")] // Many2many // Normal
+    // [InverseProperty("Carrier")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DeliveryCarrierId")] //Many2many
-    // [InverseProperty("DeliveryCarrier")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("DeliveryCarrierId")] // Many2many // Normal
+    // [InverseProperty("DeliveryCarrier")] // Many2many // Normal
     public virtual ICollection<ProductTag> ProductTag { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DeliveryCarrierId")] //Many2many
-    // [InverseProperty("DeliveryCarrierNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("DeliveryCarrierId")] // Many2many // Normal
+    // [InverseProperty("DeliveryCarrierNavigation")] // Many2many // Normal
     public virtual ICollection<ProductTag> ProductTagNavigation { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ShippingId")] //Many2many
-    // [InverseProperty("Shipping")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ShippingId")] // Many2many // Normal
+    // [InverseProperty("Shipping")] // Many2many // Normal
     public virtual ICollection<StockRoute> Route { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CarrierId")] //Many2many
-    // [InverseProperty("Carrier")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
+    // [ForeignKey("CarrierId")] // Many2many // Normal
+    // [InverseProperty("Carrier")] // Many2many // Normal
     public virtual ICollection<ResCountryState> State { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("DeliveryCarrierId")] //Many2many
-    // [InverseProperty("DeliveryCarrier")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("DeliveryCarrierId")] // Many2many // Normal
+    // [InverseProperty("DeliveryCarrier")] // Many2many // Normal
     public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CarrierId")] //Many2many
-    // [InverseProperty("Carrier")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CarrierId")] // Many2many // Normal
+    // [InverseProperty("Carrier")] // Many2many // Normal
     public virtual ICollection<DeliveryZipPrefix> ZipPrefix { get; set; }
 }

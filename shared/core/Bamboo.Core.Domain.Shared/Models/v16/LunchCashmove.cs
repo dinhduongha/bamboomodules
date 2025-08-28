@@ -23,7 +23,6 @@ public partial class LunchCashmove: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -54,21 +53,17 @@ public partial class LunchCashmove: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchCashmoveCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("LunchCashmove")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("LunchCashmoveUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchCashmoveWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

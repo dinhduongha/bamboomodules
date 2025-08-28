@@ -23,7 +23,6 @@ public partial class MrpWorkcenterProductivityLoss: FullAuditedAggregateRoot<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -44,10 +43,6 @@ public partial class MrpWorkcenterProductivityLoss: FullAuditedAggregateRoot<Gui
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [Column("manual")]
     public bool? Manual { get; set; }
 
@@ -59,21 +54,19 @@ public partial class MrpWorkcenterProductivityLoss: FullAuditedAggregateRoot<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpWorkcenterProductivityLossCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LossId")]
-    // [InverseProperty("MrpWorkcenterProductivityLoss")] //Many2one
     public virtual MrpWorkcenterProductivityLossType? Loss { get; set; }
 
     // [One2many]
-    [ForeignKey("LossId")]
-    [InverseProperty("Loss")]
+    // [One2many] [ForeignKey("LossId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Loss")] // One2many
     public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivity { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpWorkcenterProductivityLossWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

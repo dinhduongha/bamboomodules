@@ -24,7 +24,6 @@ public partial class SlideTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -44,17 +43,15 @@ public partial class SlideTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("TagId")]
-    // [InverseProperty("Tag")]
+    // [ForeignKey("TagId")] //Many2many // Hidden
+    // [InverseProperty("Tag")] //Many2many // Hidden
     public virtual ICollection<SlideSlide> Slide { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class HrApplicantRefuseReason: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -51,27 +50,26 @@ public partial class HrApplicantRefuseReason: FullAuditedAggregateRoot<Guid>, IE
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("RefuseReasonId")]
-    [InverseProperty("RefuseReason")]
+    // [One2many] [ForeignKey("RefuseReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RefuseReason")] // One2many
     public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrApplicantRefuseReasonCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("RefuseReasonId")]
-    [InverseProperty("RefuseReason")]
+    // [One2many] [ForeignKey("RefuseReasonId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RefuseReason")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("HrApplicantRefuseReason")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrApplicantRefuseReasonWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

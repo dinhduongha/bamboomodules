@@ -23,7 +23,6 @@ public partial class HomeworkLocationWizard: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("work_location_id")]
     public Guid? WorkLocationId { get; set; }
@@ -51,21 +50,17 @@ public partial class HomeworkLocationWizard: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HomeworkLocationWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HomeworkLocationWizard")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkLocationId")]
-    // [InverseProperty("HomeworkLocationWizard")] //Many2one
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HomeworkLocationWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

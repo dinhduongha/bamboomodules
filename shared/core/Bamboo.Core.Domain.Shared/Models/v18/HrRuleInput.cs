@@ -23,7 +23,6 @@ public partial class HrRuleInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("input_id")]
     public Guid? InputId { get; set; }
@@ -48,16 +47,13 @@ public partial class HrRuleInput: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrRuleInputCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("InputId")]
-    // [InverseProperty("HrRuleInput")] //Many2one
     public virtual HrSalaryRule? Input { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrRuleInputWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

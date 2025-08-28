@@ -23,7 +23,6 @@ public partial class HrEmployeeCvWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -54,17 +53,15 @@ public partial class HrEmployeeCvWizard: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrEmployeeCvWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrEmployeeCvWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("HrEmployeeCvWizardId")] //Many2many
-    [InverseProperty("HrEmployeeCvWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrEmployeeCvWizardId")] // Many2many // Normal
+    // [InverseProperty("HrEmployeeCvWizard")] // Many2many // Normal
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

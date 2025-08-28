@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BasePartnerMergeAutomaticWizard: FullAuditedAggregateRoot<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("number_group")]
     public long? NumberGroup { get; set; }
@@ -73,33 +73,30 @@ public partial class BasePartnerMergeAutomaticWizard: FullAuditedAggregateRoot<G
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("WizardId")]
-    [InverseProperty("Wizard")]
+    // [One2many] [ForeignKey("WizardId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Wizard")] // One2many
     public virtual ICollection<BasePartnerMergeLine> BasePartnerMergeLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BasePartnerMergeAutomaticWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrentLineId")]
-    // [InverseProperty("BasePartnerMergeAutomaticWizard")] //Many2one
     public virtual BasePartnerMergeLine? CurrentLine { get; set; }
 
     // [Many2one]
     [ForeignKey("DstPartnerId")]
-    // [InverseProperty("BasePartnerMergeAutomaticWizard")] //Many2one
     public virtual ResPartner? DstPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BasePartnerMergeAutomaticWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BasePartnerMergeAutomaticWizardId")] //Many2many
-    // [InverseProperty("BasePartnerMergeAutomaticWizardNavigation")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("BasePartnerMergeAutomaticWizardId")] // Many2many // Normal
+    // [InverseProperty("BasePartnerMergeAutomaticWizardNavigation")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

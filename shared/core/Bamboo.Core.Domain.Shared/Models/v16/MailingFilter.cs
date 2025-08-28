@@ -24,7 +24,6 @@ public partial class MailingFilter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -49,21 +48,19 @@ public partial class MailingFilter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingFilterCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MailingFilterId")]
-    [InverseProperty("MailingFilter")]
+    // [One2many] [ForeignKey("MailingFilterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailingFilter")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingModelId")]
-    // [InverseProperty("MailingFilter")] //Many2one
     public virtual IrModel? MailingModel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingFilterWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

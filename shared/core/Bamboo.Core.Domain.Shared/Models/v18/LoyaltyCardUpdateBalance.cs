@@ -23,7 +23,6 @@ public partial class LoyaltyCardUpdateBalance: FullAuditedEntity<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("card_id")]
     public Guid? CardId { get; set; }
@@ -48,16 +47,13 @@ public partial class LoyaltyCardUpdateBalance: FullAuditedEntity<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CardId")]
-    // [InverseProperty("LoyaltyCardUpdateBalance")] //Many2one
     public virtual LoyaltyCard? Card { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyCardUpdateBalanceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyCardUpdateBalanceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class CalendarProviderConfig: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -60,11 +59,9 @@ public partial class CalendarProviderConfig: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarProviderConfigCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarProviderConfigWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

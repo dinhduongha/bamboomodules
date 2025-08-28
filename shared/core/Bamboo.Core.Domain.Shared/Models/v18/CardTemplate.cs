@@ -23,7 +23,6 @@ public partial class CardTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -56,17 +55,16 @@ public partial class CardTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("CardTemplateId")]
-    [InverseProperty("CardTemplate")]
+    // [One2many] [ForeignKey("CardTemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CardTemplate")] // One2many
     public virtual ICollection<CardCampaign> CardCampaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CardTemplateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CardTemplateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

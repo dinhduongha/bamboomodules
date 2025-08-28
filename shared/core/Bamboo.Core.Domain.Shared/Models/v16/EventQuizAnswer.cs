@@ -23,7 +23,6 @@ public partial class EventQuizAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -59,16 +58,13 @@ public partial class EventQuizAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventQuizAnswerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("QuestionId")]
-    // [InverseProperty("EventQuizAnswer")] //Many2one
     public virtual EventQuizQuestion? Question { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventQuizAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -61,36 +60,29 @@ public partial class AccountAnalyticDistributionModel: FullAuditedEntity<Guid>, 
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAnalyticDistributionModelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerCategoryId")]
-    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ResPartnerCategory? PartnerCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductCategId")]
-    // [InverseProperty("AccountAnalyticDistributionModel")] //Many2one
     public virtual ProductCategory? ProductCateg { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAnalyticDistributionModelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

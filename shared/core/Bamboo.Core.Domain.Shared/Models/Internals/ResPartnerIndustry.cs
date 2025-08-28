@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -42,21 +43,21 @@ public partial class ResPartnerIndustry: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResPartnerIndustryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("IndustryId")]
-    [InverseProperty("Industry")]
+    // [One2many] [ForeignKey("IndustryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Industry")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
-    [ForeignKey("IndustryId")]
-    [InverseProperty("Industry")]
+    // [One2many] [ForeignKey("IndustryId")]
+    [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
+    // [InverseProperty("Industry")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResPartnerIndustryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

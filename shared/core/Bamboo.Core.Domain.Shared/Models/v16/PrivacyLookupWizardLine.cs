@@ -23,7 +23,6 @@ public partial class PrivacyLookupWizardLine: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
@@ -66,21 +65,17 @@ public partial class PrivacyLookupWizardLine: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PrivacyLookupWizardLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ResModelId")]
-    // [InverseProperty("PrivacyLookupWizardLine")] //Many2one
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("PrivacyLookupWizardLine")] //Many2one
     public virtual PrivacyLookupWizard? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PrivacyLookupWizardLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

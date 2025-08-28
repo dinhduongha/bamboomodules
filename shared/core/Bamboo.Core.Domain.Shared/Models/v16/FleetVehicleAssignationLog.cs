@@ -23,7 +23,6 @@ public partial class FleetVehicleAssignationLog: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("vehicle_id")]
     public Guid? VehicleId { get; set; }
@@ -54,26 +53,21 @@ public partial class FleetVehicleAssignationLog: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("FleetVehicleAssignationLogCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DriverId")]
-    // [InverseProperty("FleetVehicleAssignationLog")] //Many2one
     public virtual ResPartner? Driver { get; set; }
 
     // [Many2one]
     [ForeignKey("DriverEmployeeId")]
-    // [InverseProperty("FleetVehicleAssignationLog")] //Many2one
     public virtual HrEmployee? DriverEmployee { get; set; }
 
     // [Many2one]
     [ForeignKey("VehicleId")]
-    // [InverseProperty("FleetVehicleAssignationLog")] //Many2one
     public virtual FleetVehicle? Vehicle { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("FleetVehicleAssignationLogWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

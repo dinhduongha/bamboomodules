@@ -23,7 +23,6 @@ public partial class MailingMailingScheduleDate: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mass_mailing_id")]
     public Guid? MassMailingId { get; set; }
@@ -45,16 +44,13 @@ public partial class MailingMailingScheduleDate: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingMailingScheduleDateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MassMailingId")]
-    // [InverseProperty("MailingMailingScheduleDate")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingMailingScheduleDateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

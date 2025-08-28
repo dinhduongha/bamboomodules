@@ -23,7 +23,6 @@ public partial class MrpAccountWipAccountingLine: FullAuditedEntity<Guid>, IEnti
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -57,26 +56,21 @@ public partial class MrpAccountWipAccountingLine: FullAuditedEntity<Guid>, IEnti
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("MrpAccountWipAccountingLine")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpAccountWipAccountingLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("MrpAccountWipAccountingLine")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("WipAccountingId")]
-    // [InverseProperty("MrpAccountWipAccountingLine")] //Many2one
     public virtual MrpAccountWipAccounting? WipAccounting { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpAccountWipAccountingLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

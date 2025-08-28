@@ -23,7 +23,6 @@ public partial class EventTypeMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
@@ -36,9 +35,6 @@ public partial class EventTypeMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("notification_type")]
-    public string? NotificationType { get; set; }
 
     [Column("interval_unit")]
     public string? IntervalUnit { get; set; }
@@ -57,16 +53,13 @@ public partial class EventTypeMail: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventTypeMailCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventTypeMail")] //Many2one
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventTypeMailWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

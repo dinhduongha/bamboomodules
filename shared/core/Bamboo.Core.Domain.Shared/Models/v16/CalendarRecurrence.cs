@@ -25,7 +25,6 @@ public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("base_event_id")]
     public Guid? BaseEventId { get; set; }
@@ -122,26 +121,23 @@ public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("BaseEventId")]
-    // [InverseProperty("CalendarRecurrence")] //Many2one
     public virtual CalendarEvent? BaseEvent { get; set; }
 
     // [One2many]
-    [ForeignKey("RecurrenceId")]
-    [InverseProperty("Recurrence")]
+    // [One2many] [ForeignKey("RecurrenceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Recurrence")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CalendarRecurrenceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TriggerId")]
-    // [InverseProperty("CalendarRecurrence")] //Many2one
     public virtual IrCronTrigger? Trigger { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CalendarRecurrenceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

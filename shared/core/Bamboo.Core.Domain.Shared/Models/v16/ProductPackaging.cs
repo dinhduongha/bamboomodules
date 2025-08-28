@@ -25,7 +25,6 @@ public partial class ProductPackaging: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -65,47 +64,45 @@ public partial class ProductPackaging: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductPackaging")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductPackagingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PackageTypeId")]
-    // [InverseProperty("ProductPackaging")] //Many2one
     public virtual StockPackageType? PackageType { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("ProductPackaging")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductPackagingId")]
-    [InverseProperty("ProductPackaging")]
+    // [One2many] [ForeignKey("ProductPackagingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductPackaging")] // One2many
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductPackagingId")]
-    [InverseProperty("ProductPackaging")]
+    // [One2many] [ForeignKey("ProductPackagingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductPackaging")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductPackagingId")]
-    [InverseProperty("ProductPackaging")]
+    // [One2many] [ForeignKey("ProductPackagingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductPackaging")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductPackagingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PackagingId")]
-    // [InverseProperty("Packaging")]
+    // [ForeignKey("PackagingId")] //Many2many // Hidden
+    // [InverseProperty("Packaging")] //Many2many // Hidden
     public virtual ICollection<StockRoute> Route { get; set; }
 }

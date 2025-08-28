@@ -23,7 +23,6 @@ public partial class AccountMoveSendBatchWizard: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class AccountMoveSendBatchWizard: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountMoveSendBatchWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountMoveSendBatchWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("AccountMoveSendBatchWizardId")] //Many2many
-    [InverseProperty("AccountMoveSendBatchWizard")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountMoveSendBatchWizardId")] // Many2many // Normal
+    // [InverseProperty("AccountMoveSendBatchWizard")] // Many2many // Normal
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 }

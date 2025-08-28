@@ -13,7 +13,7 @@ namespace Bamboo.Core.Models;
 
 [Table("onboarding_onboarding")]
 //[Index("RouteName", Name = "onboarding_onboarding_route_name_uniq", IsUnique = true)]
-public partial class OnboardingOnboarding : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,8 +23,7 @@ public partial class OnboardingOnboarding : FullAuditedAggregateRoot<Guid>, IEnt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId { get; set; }
-
+    public Guid? OrganizationUnitId  { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -41,18 +40,12 @@ public partial class OnboardingOnboarding : FullAuditedAggregateRoot<Guid>, IEnt
     [Column("text_completed")]
     public string? TextCompleted { get; set; }
 
-    [Column("panel_background_color")]
-    public string? PanelBackgroundColor { get; set; }
-
     [Column("panel_close_action_name")]
     public string? PanelCloseActionName { get; set; }
 
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
-
-    [Column("is_per_company")]
-    public bool? IsPerCompany { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -62,28 +55,21 @@ public partial class OnboardingOnboarding : FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("OnboardingOnboardingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("OnboardingId")]
-    [InverseProperty("Onboarding")]
-    public virtual ICollection<OnboardingOnboardingStep> OnboardingOnboardingStep { get; set; }
-
-    // [One2many]
-    [ForeignKey("OnboardingId")]
-    [InverseProperty("Onboarding")]
+    // [One2many] [ForeignKey("OnboardingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Onboarding")] // One2many
     public virtual ICollection<OnboardingProgress> OnboardingProgress { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("OnboardingOnboardingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // INVESIGATE:
     // [Many2many] // Normal
-    //[NotMapped] //Many2many // Normal
-    // [ForeignKey("OnboardingOnboardingId")] //Many2many
-    // [InverseProperty("OnboardingOnboarding")] //Many2many
-    //public virtual ICollection<OnboardingOnboardingStep> OnboardingOnboardingStep { get; set; }
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("OnboardingOnboardingId")] // Many2many // Normal
+    // [InverseProperty("OnboardingOnboarding")] // Many2many // Normal
+    public virtual ICollection<OnboardingOnboardingStep> OnboardingOnboardingStep { get; set; }
 }

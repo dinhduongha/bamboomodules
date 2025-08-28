@@ -24,7 +24,6 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -63,9 +62,6 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("ab_testing_winner_mailing_id")]
     public Guid? AbTestingWinnerMailingId { get; set; }
 
-    [Column("ab_testing_total_pc")]
-    public long? AbTestingTotalPc { get; set; }
-
     [Column("ab_testing_winner_selection")]
     public string? AbTestingWinnerSelection { get; set; }
 
@@ -80,92 +76,97 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("AbTestingWinnerMailingId")]
-    // [InverseProperty("UtmCampaign")] //Many2one
     public virtual MailingMailing? AbTestingWinnerMailing { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("UtmCampaign")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("UtmCampaignCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
-    [ForeignKey("UtmCampaignId")]
-    [InverseProperty("UtmCampaign")]
+    // [One2many] [ForeignKey("UtmCampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UtmCampaign")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<LinkTracker> LinkTracker { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<MailingTrace> MailingTrace { get; set; }
 
     // [One2many]
-    [ForeignKey("CampaignId")]
-    [InverseProperty("Campaign")]
+    // [One2many] [ForeignKey("CampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("UtmCampaignId")]
-    [InverseProperty("UtmCampaign")]
+    // [One2many] [ForeignKey("UtmCampaignId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UtmCampaign")] // One2many
     public virtual ICollection<SmsComposer> SmsComposer { get; set; }
 
     // [Many2one]
     [ForeignKey("StageId")]
-    // [InverseProperty("UtmCampaign")] //Many2one
     public virtual UtmStage? Stage { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("UtmCampaignUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("UtmCampaignWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("TagId")] //Many2many
-    // [InverseProperty("Tag")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("TagId")] // Many2many // Normal
+    // [InverseProperty("Tag")] // Many2many // Normal
     public virtual ICollection<UtmTag> Campaign { get; set; }
 }

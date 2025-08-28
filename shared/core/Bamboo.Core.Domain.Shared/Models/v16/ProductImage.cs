@@ -25,7 +25,6 @@ public partial class ProductImage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -59,21 +58,17 @@ public partial class ProductImage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductImageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductImage")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductVariantId")]
-    // [InverseProperty("ProductImage")] //Many2one
     public virtual ProductProduct? ProductVariant { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductImageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

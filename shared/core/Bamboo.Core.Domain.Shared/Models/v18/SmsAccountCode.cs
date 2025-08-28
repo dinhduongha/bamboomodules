@@ -23,7 +23,6 @@ public partial class SmsAccountCode: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -45,16 +44,13 @@ public partial class SmsAccountCode: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("SmsAccountCode")] //Many2one
     public virtual IapAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsAccountCodeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsAccountCodeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

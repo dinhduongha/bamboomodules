@@ -12,7 +12,6 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_work_entry_type")]
-//[Index("Code", Name = "hr_work_entry_type_unique_work_entry_code", IsUnique = true)]
 public partial class HrWorkEntryType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -24,7 +23,6 @@ public partial class HrWorkEntryType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -65,36 +63,37 @@ public partial class HrWorkEntryType: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("HrWorkEntryType")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrWorkEntryTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkEntryTypeId")]
-    [InverseProperty("WorkEntryType")]
+    // [One2many] [ForeignKey("WorkEntryTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkEntryType")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveType { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkEntryTypeId")]
-    [InverseProperty("WorkEntryType")]
+    // [One2many] [ForeignKey("WorkEntryTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkEntryType")] // One2many
     public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkEntryTypeId")]
-    [InverseProperty("WorkEntryType")]
+    // [One2many] [ForeignKey("WorkEntryTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkEntryType")] // One2many
     public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendance { get; set; }
 
     // [One2many]
-    [ForeignKey("WorkEntryTypeId")]
-    [InverseProperty("WorkEntryType")]
+    // [One2many] [ForeignKey("WorkEntryTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WorkEntryType")] // One2many
     public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrWorkEntryTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

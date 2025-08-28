@@ -23,7 +23,6 @@ public partial class SaleMassCancelOrders: FullAuditedEntity<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class SaleMassCancelOrders: FullAuditedEntity<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleMassCancelOrdersCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleMassCancelOrdersWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("SaleMassCancelOrdersId")] //Many2many
-    [InverseProperty("SaleMassCancelOrders")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SaleMassCancelOrdersId")] // Many2many // Normal
+    // [InverseProperty("SaleMassCancelOrders")] // Many2many // Normal
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 }

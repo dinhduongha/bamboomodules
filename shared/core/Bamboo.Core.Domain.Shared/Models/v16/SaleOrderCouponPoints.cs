@@ -24,7 +24,6 @@ public partial class SaleOrderCouponPoints: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("order_id")]
     public Guid? OrderId { get; set; }
@@ -49,21 +48,17 @@ public partial class SaleOrderCouponPoints: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CouponId")]
-    // [InverseProperty("SaleOrderCouponPoints")] //Many2one
     public virtual LoyaltyCard? Coupon { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SaleOrderCouponPointsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("SaleOrderCouponPoints")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SaleOrderCouponPointsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class AccountMergeWizardLine: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
@@ -57,21 +56,17 @@ public partial class AccountMergeWizardLine: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("AccountMergeWizardLine")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountMergeWizardLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("AccountMergeWizardLine")] //Many2one
     public virtual AccountMergeWizard? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountMergeWizardLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

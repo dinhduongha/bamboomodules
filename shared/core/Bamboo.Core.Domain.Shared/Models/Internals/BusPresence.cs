@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -22,7 +23,6 @@ public partial class BusPresence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -41,11 +41,9 @@ public partial class BusPresence: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("GuestId")]
-    // [InverseProperty("BusPresence")] //Many2one
     public virtual MailGuest? Guest { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("BusPresence")] //Many2one
     public virtual ResUsers? User { get; set; }
 }

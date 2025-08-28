@@ -23,7 +23,6 @@ public partial class PurchaseRequisitionAlternativeWarning: FullAuditedEntity<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,23 +38,21 @@ public partial class PurchaseRequisitionAlternativeWarning: FullAuditedEntity<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PurchaseRequisitionAlternativeWarningCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PurchaseRequisitionAlternativeWarningWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PurchaseRequisitionAlternativeWarningId")] //Many2many
-    // [InverseProperty("PurchaseRequisitionAlternativeWarning")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PurchaseRequisitionAlternativeWarningId")] // Many2many // Normal
+    // [InverseProperty("PurchaseRequisitionAlternativeWarning")] // Many2many // Normal
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PurchaseRequisitionAlternativeWarningId")] //Many2many
-    // [InverseProperty("PurchaseRequisitionAlternativeWarningNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PurchaseRequisitionAlternativeWarningId")] // Many2many // Normal
+    // [InverseProperty("PurchaseRequisitionAlternativeWarningNavigation")] // Many2many // Normal
     public virtual ICollection<PurchaseOrder> PurchaseOrderNavigation { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class EventStage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -68,16 +67,15 @@ public partial class EventStage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventStageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("StageId")]
-    [InverseProperty("Stage")]
+    // [One2many] [ForeignKey("StageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Stage")] // One2many
     public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventStageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

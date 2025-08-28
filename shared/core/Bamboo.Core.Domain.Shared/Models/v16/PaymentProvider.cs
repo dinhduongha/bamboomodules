@@ -24,7 +24,6 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -59,16 +58,9 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("state")]
     public string? State { get; set; }
 
-    [Column("module_state")]
-    public string? ModuleState { get; set; }
-
     [JsonField]
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
-
-    [JsonField]
-    [Column("display_as", TypeName = "jsonb")]
-    public string? DisplayAs { get; set; }
 
     [JsonField]
     [Column("pre_msg", TypeName = "jsonb")]
@@ -105,26 +97,11 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("allow_express_checkout")]
     public bool? AllowExpressCheckout { get; set; }
 
-    [Column("fees_active")]
-    public bool? FeesActive { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
-
-    [Column("fees_dom_fixed")]
-    public double? FeesDomFixed { get; set; }
-
-    [Column("fees_dom_var")]
-    public double? FeesDomVar { get; set; }
-
-    [Column("fees_int_fixed")]
-    public double? FeesIntFixed { get; set; }
-
-    [Column("fees_int_var")]
-    public double? FeesIntVar { get; set; }
 
     [Column("so_reference_type")]
     public string? SoReferenceType { get; set; }
@@ -151,92 +128,80 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     public string? AuthorizeClientKey { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentProviderId")]
-    [InverseProperty("PaymentProvider")]
+    // [One2many] [ForeignKey("PaymentProviderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentProvider")] // One2many
     public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PaymentProvider")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PaymentProviderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ExpressCheckoutFormViewId")]
-    // [InverseProperty("PaymentProviderExpressCheckoutFormView")] //Many2one
     public virtual IrUiView? ExpressCheckoutFormView { get; set; }
 
     // [Many2one]
     [ForeignKey("InlineFormViewId")]
-    // [InverseProperty("PaymentProviderInlineFormView")] //Many2one
     public virtual IrUiView? InlineFormView { get; set; }
 
     // [Many2one]
     [ForeignKey("ModuleId")]
-    // [InverseProperty("PaymentProvider")] //Many2one
     public virtual IrModuleModule? Module { get; set; }
 
     // [One2many]
-    [ForeignKey("ProviderId")]
-    [InverseProperty("Provider")]
+    // [One2many] [ForeignKey("ProviderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Provider")] // One2many
     public virtual ICollection<PaymentToken> PaymentToken { get; set; }
 
     // [One2many]
-    [ForeignKey("ProviderId")]
-    [InverseProperty("Provider")]
+    // [One2many] [ForeignKey("ProviderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Provider")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [Many2one]
     [ForeignKey("RedirectFormViewId")]
-    // [InverseProperty("PaymentProviderRedirectFormView")] //Many2one
     public virtual IrUiView? RedirectFormView { get; set; }
 
     // [Many2one]
     [ForeignKey("TokenInlineFormViewId")]
-    // [InverseProperty("PaymentProviderTokenInlineFormView")] //Many2one
     public virtual IrUiView? TokenInlineFormView { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("PaymentProvider")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PaymentProviderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PaymentId")] //Many2many
-    // [InverseProperty("Payment")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("PaymentId")] // Many2many // Normal
+    // [InverseProperty("Payment")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PaymentProviderId")] //Many2many
-    // [InverseProperty("PaymentProvider")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResCurrency) is commented out
+    // [ForeignKey("PaymentProviderId")] // Many2many // Normal
+    // [InverseProperty("PaymentProvider")] // Many2many // Normal
     public virtual ICollection<ResCurrency> Currency { get; set; }
 
-    // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PaymentProviderId")] //Many2many
-    // [InverseProperty("PaymentProvider")] //Many2many
-    public virtual ICollection<PaymentIcon> PaymentIcon { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PaymentProviderId")]
-    // [InverseProperty("PaymentProvider")]
+    // [ForeignKey("PaymentProviderId")] //Many2many // Hidden
+    // [InverseProperty("PaymentProvider")] //Many2many // Hidden
     public virtual ICollection<PaymentMethod> PaymentMethod { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PaymentProviderId")]
-    // [InverseProperty("PaymentProvider")]
+    // [ForeignKey("PaymentProviderId")] //Many2many // Hidden
+    // [InverseProperty("PaymentProvider")] //Many2many // Hidden
     public virtual ICollection<PosPaymentMethod> PosPaymentMethod { get; set; }
 }

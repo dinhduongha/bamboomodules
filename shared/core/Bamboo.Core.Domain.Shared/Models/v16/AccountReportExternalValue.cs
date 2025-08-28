@@ -23,7 +23,6 @@ public partial class AccountReportExternalValue: FullAuditedEntity<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("target_report_expression_id")]
     public Guid? TargetReportExpressionId { get; set; }
@@ -63,31 +62,25 @@ public partial class AccountReportExternalValue: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("CarryoverOriginReportLineId")]
-    // [InverseProperty("AccountReportExternalValue")] //Many2one
     public virtual AccountReportLine? CarryoverOriginReportLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountReportExternalValue")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReportExternalValueCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ForeignVatFiscalPositionId")]
-    // [InverseProperty("AccountReportExternalValue")] //Many2one
     public virtual AccountFiscalPosition? ForeignVatFiscalPosition { get; set; }
 
     // [Many2one]
     [ForeignKey("TargetReportExpressionId")]
-    // [InverseProperty("AccountReportExternalValue")] //Many2one
     public virtual AccountReportExpression? TargetReportExpression { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReportExternalValueWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -10,7 +11,6 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Models;
 
-[Model("ir.actions.act_window")]
 [Table("ir_act_window")]
 //[Index("Path", Name = "ir_act_window_path_unique", IsUnique = true)]
 public partial class IrActWindow: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
@@ -91,63 +91,64 @@ public partial class IrActWindow: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public bool? Filter { get; set; }
 
     // [One2many]
-    [ForeignKey("CustomAuditActionId")]
-    [InverseProperty("CustomAuditAction")]
+    // [One2many] [ForeignKey("CustomAuditActionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CustomAuditAction")] // One2many
     public virtual ICollection<AccountReportColumn> AccountReportColumn { get; set; }
 
     // [Many2one]
     [ForeignKey("BindingModelId")]
-    // [InverseProperty("IrActWindow")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrActWindowCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ActionId")]
-    [InverseProperty("Action")]
+    // [One2many] [ForeignKey("ActionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Action")] // One2many
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinition { get; set; }
 
     // [One2many]
-    [ForeignKey("ActWindowId")]
-    [InverseProperty("ActWindow")]
+    // [One2many] [ForeignKey("ActWindowId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ActWindow")] // One2many
     public virtual ICollection<IrActWindowView> IrActWindowView { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentActionId")]
-    [InverseProperty("ParentAction")]
+    // [One2many] [ForeignKey("ParentActionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ParentAction")] // One2many
     public virtual ICollection<IrEmbeddedActions> IrEmbeddedActions { get; set; }
 
     // [One2many]
-    [ForeignKey("RefIrActWindow")]
-    [InverseProperty("RefIrActWindowNavigation")]
+    // [One2many] [ForeignKey("RefIrActWindow")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("RefIrActWindowNavigation")] // One2many
     public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("SearchViewId")]
-    // [InverseProperty("IrActWindowSearchView")] //Many2one
     public virtual IrUiView? SearchView { get; set; }
 
     // [One2many]
-    [ForeignKey("SidebarActionId")]
-    [InverseProperty("SidebarAction")]
+    // [One2many] [ForeignKey("SidebarActionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SidebarAction")] // One2many
     public virtual ICollection<SmsTemplate> SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("ViewId")]
-    // [InverseProperty("IrActWindowView")] //Many2one
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrActWindowWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ActId")] //Many2many
-    // [InverseProperty("ActNavigation")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ActId")] // Many2many // Normal
+    // [InverseProperty("ActNavigation")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 }

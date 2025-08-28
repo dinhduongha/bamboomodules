@@ -28,7 +28,6 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -87,9 +86,6 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("pos_reference")]
     public string? PosReference { get; set; }
 
-    [Column("note")]
-    public string? Note { get; set; }
-
     [Column("ticket_code")]
     public string? TicketCode { get; set; }
 
@@ -132,9 +128,6 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("to_invoice")]
     public bool? ToInvoice { get; set; }
 
-    [Column("to_ship")]
-    public bool? ToShip { get; set; }
-
     [Column("is_tipped")]
     public bool? IsTipped { get; set; }
 
@@ -156,20 +149,11 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("crm_team_id")]
     public Guid? CrmTeamId { get; set; }
 
-    [Column("employee_id")]
-    public Guid? EmployeeId { get; set; }
-
-    [Column("cashier")]
-    public string? Cashier { get; set; }
-
     [Column("table_id")]
     public Guid? TableId { get; set; }
 
     [Column("customer_count")]
     public long? CustomerCount { get; set; }
-
-    [Column("multiprint_resume")]
-    public string? MultiprintResume { get; set; }
 
     [Column("takeaway")]
     public bool? Takeaway { get; set; }
@@ -180,130 +164,117 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("use_self_order_online_payment")]
     public bool? UseSelfOrderOnlinePayment { get; set; }
 
-    // [Column("employee_id")]
-    // public Guid? EmployeeId { get; set; }
+    [Column("employee_id")]
+    public Guid? EmployeeId { get; set; }
 
-    // [Column("cashier")]
-    // public string? Cashier { get; set; }
+    [Column("cashier")]
+    public string? Cashier { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountMove")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual AccountMove? AccountMove1 { get; set; }
 
     // [One2many]
-    [ForeignKey("ReversedPosOrderId")]
-    [InverseProperty("ReversedPosOrder")]
+    // [One2many] [ForeignKey("ReversedPosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReversedPosOrder")] // One2many
     public virtual ICollection<AccountMove> AccountMoveNavigation { get; set; }
 
-    // v16-Compat
-    // [Many2one]
-    //[ForeignKey("AccountMove")]
-    // [InverseProperty("PosOrder")] //Many2one
-    //public virtual AccountMove? AccountMoveNavigation { get; set; }
-
     // [One2many]
-    [ForeignKey("PosOrderId")]
-    [InverseProperty("PosOrder")]
+    // [One2many] [ForeignKey("PosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ConfigId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual PosConfig? Config { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosOrderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CrmTeamId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual CrmTeam? CrmTeam { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("FiscalPositionId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual AccountFiscalPosition? FiscalPosition { get; set; }
 
     // [One2many]
-    [ForeignKey("SourcePosOrderId")]
-    [InverseProperty("SourcePosOrder")]
+    // [One2many] [ForeignKey("SourcePosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SourcePosOrder")] // One2many
     public virtual ICollection<LoyaltyCard> LoyaltyCard { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderId")]
-    [InverseProperty("PosOrder")]
+    // [One2many] [ForeignKey("PosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [One2many]
-    [ForeignKey("OrderId")]
-    [InverseProperty("Order")]
+    // [One2many] [ForeignKey("OrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Order")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderId")]
-    [InverseProperty("PosOrder")]
+    // [One2many] [ForeignKey("PosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [Many2one]
     [ForeignKey("PricelistId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual ProductPricelist? Pricelist { get; set; }
 
     // [Many2one]
     [ForeignKey("ProcurementGroupId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual ProcurementGroup? ProcurementGroup { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderId")]
-    [InverseProperty("PosOrderNavigation")]
+    // [One2many] [ForeignKey("PosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrderNavigation")] // One2many
     public virtual ICollection<ProcurementGroup> ProcurementGroupNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleJournal")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual AccountJournal? SaleJournalNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("SessionId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual PosSession? Session { get; set; }
 
     // [One2many]
-    [ForeignKey("PosOrderId")]
-    [InverseProperty("PosOrder")]
+    // [One2many] [ForeignKey("PosOrderId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
     [ForeignKey("TableId")]
-    // [InverseProperty("PosOrder")] //Many2one
     public virtual RestaurantTable? Table { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("PosOrderUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosOrderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

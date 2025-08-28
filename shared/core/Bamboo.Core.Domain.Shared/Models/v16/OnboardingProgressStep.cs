@@ -12,7 +12,6 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("onboarding_progress_step")]
-//[Index("ProgressId", "StepId", Name = "onboarding_progress_step_progress_step_uniq", IsUnique = true)]
 public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -24,10 +23,6 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("progress_id")]
-    public Guid? ProgressId { get; set; }
 
     [Column("step_id")]
     public Guid? StepId { get; set; }
@@ -49,32 +44,23 @@ public partial class OnboardingProgressStep: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("OnboardingProgressStep")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("OnboardingProgressStepCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("ProgressId")]
-    // [InverseProperty("OnboardingProgressStep")] //Many2one
-    public virtual OnboardingProgress? Progress { get; set; }
-
-    // [Many2one]
     [ForeignKey("StepId")]
-    // [InverseProperty("OnboardingProgressStep")] //Many2one
     public virtual OnboardingOnboardingStep? Step { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("OnboardingProgressStepWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("OnboardingProgressStepId")]
-    // [InverseProperty("OnboardingProgressStep")]
+    // [ForeignKey("OnboardingProgressStepId")] //Many2many // Hidden
+    // [InverseProperty("OnboardingProgressStep")] //Many2many // Hidden
     public virtual ICollection<OnboardingProgress> OnboardingProgress { get; set; }
 }

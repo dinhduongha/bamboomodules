@@ -23,7 +23,6 @@ public partial class HrLeaveAccrualPlan: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("time_off_type_id")]
     public Guid? TimeOffTypeId { get; set; }
@@ -69,36 +68,35 @@ public partial class HrLeaveAccrualPlan: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrLeaveAccrualPlan")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrLeaveAccrualPlanCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AccrualPlanId")]
-    [InverseProperty("AccrualPlan")]
+    // [One2many] [ForeignKey("AccrualPlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccrualPlan")] // One2many
     public virtual ICollection<HrLeaveAccrualLevel> HrLeaveAccrualLevel { get; set; }
 
     // [One2many]
-    [ForeignKey("AccrualPlanId")]
-    [InverseProperty("AccrualPlan")]
+    // [One2many] [ForeignKey("AccrualPlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccrualPlan")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
 
     // [One2many]
-    [ForeignKey("AccrualPlanId")]
-    [InverseProperty("AccrualPlan")]
+    // [One2many] [ForeignKey("AccrualPlanId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccrualPlan")] // One2many
     public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("TimeOffTypeId")]
-    // [InverseProperty("HrLeaveAccrualPlan")] //Many2one
     public virtual HrLeaveType? TimeOffType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrLeaveAccrualPlanWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

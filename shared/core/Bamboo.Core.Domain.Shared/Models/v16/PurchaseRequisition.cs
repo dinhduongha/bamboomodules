@@ -12,7 +12,6 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("purchase_requisition")]
-//[Index("ScheduleDate", Name = "purchase_requisition_schedule_date_index")]
 public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -24,16 +23,9 @@ public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("vendor_id")]
     public Guid? VendorId { get; set; }
-
-    [Column("type_id")]
-    public Guid? TypeId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -50,9 +42,6 @@ public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("origin")]
-    public string? Origin { get; set; }
-
     [Column("reference")]
     public string? Reference { get; set; }
 
@@ -67,12 +56,6 @@ public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("date_end")]
     public DateTime? DateEnd { get; set; }
-
-    [Column("ordering_date")]
-    public DateTime? OrderingDate { get; set; }
-
-    [Column("schedule_date")]
-    public DateTime? ScheduleDate { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -94,61 +77,45 @@ public partial class PurchaseRequisition: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PurchaseRequisitionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PickingTypeId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
     public virtual StockPickingType? PickingType { get; set; }
 
     // [One2many]
-    [ForeignKey("RequisitionId")]
-    [InverseProperty("Requisition")]
+    // [One2many] [ForeignKey("RequisitionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Requisition")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("RequisitionId")]
-    [InverseProperty("Requisition")]
+    // [One2many] [ForeignKey("RequisitionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Requisition")] // One2many
     public virtual ICollection<PurchaseRequisitionLine> PurchaseRequisitionLine { get; set; }
 
     // [Many2one]
-    [ForeignKey("TypeId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
-    public virtual PurchaseRequisitionType? Type { get; set; }
-
-    // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("PurchaseRequisitionUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("VendorId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
     public virtual ResPartner? Vendor { get; set; }
 
     // [Many2one]
     [ForeignKey("WarehouseId")]
-    // [InverseProperty("PurchaseRequisition")] //Many2one
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PurchaseRequisitionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

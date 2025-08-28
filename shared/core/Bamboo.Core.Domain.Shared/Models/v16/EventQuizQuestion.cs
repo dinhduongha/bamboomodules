@@ -23,7 +23,6 @@ public partial class EventQuizQuestion: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -49,21 +48,19 @@ public partial class EventQuizQuestion: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventQuizQuestionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("QuestionId")]
-    [InverseProperty("Question")]
+    // [One2many] [ForeignKey("QuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Question")] // One2many
     public virtual ICollection<EventQuizAnswer> EventQuizAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("QuizId")]
-    // [InverseProperty("EventQuizQuestion")] //Many2one
     public virtual EventQuiz? Quiz { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventQuizQuestionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class AccountReportExpression: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("report_line_id")]
     public Guid? ReportLineId { get; set; }
@@ -72,34 +71,20 @@ public partial class AccountReportExpression: FullAuditedAggregateRoot<Guid>, IE
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("TargetReportExpressionId")]
-    [InverseProperty("TargetReportExpression")]
+    // [One2many] [ForeignKey("TargetReportExpressionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TargetReportExpression")] // One2many
     public virtual ICollection<AccountReportExternalValue> AccountReportExternalValue { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReportExpressionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportLineId")]
-    // [InverseProperty("AccountReportExpression")] //Many2one
     public virtual AccountReportLine? ReportLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReportExpressionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountReportExpressionId")]
-    // [InverseProperty("AccountReportExpression")]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplate { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountReportExpressionId")]
-    // [InverseProperty("AccountReportExpressionNavigation")]
-    public virtual ICollection<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplateNavigation { get; set; }
 }

@@ -24,7 +24,6 @@ public partial class CrmIapLeadRole: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("color")]
     public long? Color { get; set; }
@@ -50,33 +49,33 @@ public partial class CrmIapLeadRole: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmIapLeadRoleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PreferredRoleId")]
-    [InverseProperty("PreferredRole")]
+    // [One2many] [ForeignKey("PreferredRoleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PreferredRole")] // One2many
     public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
     // [One2many]
-    [ForeignKey("PreferredRoleId")]
-    [InverseProperty("PreferredRole")]
+    // [One2many] [ForeignKey("PreferredRoleId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PreferredRole")] // One2many
     public virtual ICollection<CrmRevealRule> CrmRevealRuleNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmIapLeadRoleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmIapLeadRoleId")]
-    // [InverseProperty("CrmIapLeadRole")]
+    // [ForeignKey("CrmIapLeadRoleId")] //Many2many // Hidden
+    // [InverseProperty("CrmIapLeadRole")] //Many2many // Hidden
     public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequestNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("CrmIapLeadRoleId")]
-    // [InverseProperty("CrmIapLeadRole")]
+    // [ForeignKey("CrmIapLeadRoleId")] //Many2many // Hidden
+    // [InverseProperty("CrmIapLeadRole")] //Many2many // Hidden
     public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 }

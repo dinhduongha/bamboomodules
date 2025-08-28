@@ -23,7 +23,6 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -60,33 +59,29 @@ public partial class SlideChannelInvite: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("ChannelId")]
-    // [InverseProperty("SlideChannelInvite")] //Many2one
     public virtual SlideChannel? Channel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SlideChannelInviteCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("SlideChannelInvite")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SlideChannelInviteWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SlideChannelInviteId")] //Many2many
-    // [InverseProperty("SlideChannelInvite")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("SlideChannelInviteId")] // Many2many // Normal
+    // [InverseProperty("SlideChannelInvite")] // Many2many // Normal
     public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SlideChannelInviteId")] //Many2many
-    // [InverseProperty("SlideChannelInvite")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("SlideChannelInviteId")] // Many2many // Normal
+    // [InverseProperty("SlideChannelInvite")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

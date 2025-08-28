@@ -23,7 +23,6 @@ public partial class MrpAccountWipAccounting: FullAuditedAggregateRoot<Guid>, IE
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }
@@ -51,27 +50,25 @@ public partial class MrpAccountWipAccounting: FullAuditedAggregateRoot<Guid>, IE
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpAccountWipAccountingCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("MrpAccountWipAccounting")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [One2many]
-    [ForeignKey("WipAccountingId")]
-    [InverseProperty("WipAccounting")]
+    // [One2many] [ForeignKey("WipAccountingId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("WipAccounting")] // One2many
     public virtual ICollection<MrpAccountWipAccountingLine> MrpAccountWipAccountingLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpAccountWipAccountingWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("MrpAccountWipAccountingId")] //Many2many
-    [InverseProperty("MrpAccountWipAccounting")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpAccountWipAccountingId")] // Many2many // Normal
+    // [InverseProperty("MrpAccountWipAccounting")] // Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 }

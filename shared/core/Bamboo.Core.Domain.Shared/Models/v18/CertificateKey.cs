@@ -52,32 +52,32 @@ public partial class CertificateKey: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("PrivateKeyId")]
-    [InverseProperty("PrivateKeyCert")]
+    // [One2many] [ForeignKey("PrivateKeyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PrivateKey")] // One2many
     public virtual ICollection<AccountEdiProxyClientUser> AccountEdiProxyClientUser { get; set; }
 
     // [One2many]
-    [ForeignKey("PrivateKeyId")]
-    [InverseProperty("PrivateKey")]
+    // [One2many] [ForeignKey("PrivateKeyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PrivateKey")] // One2many
     public virtual ICollection<CertificateCertificate> CertificateCertificatePrivateKey { get; set; }
 
     // [One2many]
-    [ForeignKey("PublicKeyId")]
-    [InverseProperty("PublicKey")]
+    // [One2many] [ForeignKey("PublicKeyId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PublicKey")] // One2many
     public virtual ICollection<CertificateCertificate> CertificateCertificatePublicKey { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("CertificateKey")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CertificateKeyCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CertificateKeyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

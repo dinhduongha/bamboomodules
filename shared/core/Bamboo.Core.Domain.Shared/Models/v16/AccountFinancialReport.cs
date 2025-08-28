@@ -23,7 +23,6 @@ public partial class AccountFinancialReport: FullAuditedAggregateRoot<Guid>, IEn
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -70,48 +69,47 @@ public partial class AccountFinancialReport: FullAuditedAggregateRoot<Guid>, IEn
 
     // [Many2one]
     [ForeignKey("AccountReportId")]
-    // [InverseProperty("InverseAccountReport")] //Many2one
     public virtual AccountFinancialReport? AccountReport { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountReportId")]
-    [InverseProperty("AccountReport")]
+    // [One2many] [ForeignKey("AccountReportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccountReport")] // One2many
     public virtual ICollection<AccountingReport> AccountingReport { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountFinancialReportCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("AccountReportId")]
-    [InverseProperty("AccountReport")]
+    // [One2many] [ForeignKey("AccountReportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccountReport")] // One2many
     public virtual ICollection<AccountFinancialReport> InverseAccountReport { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountFinancialReport> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual AccountFinancialReport? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountFinancialReportWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ReportLineId")] //Many2many
-    // [InverseProperty("ReportLine2")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (AccountAccount) is commented out
+    // [ForeignKey("ReportLineId")] // Many2many // Normal
+    // [InverseProperty("ReportLine2")] // Many2many // Normal
     public virtual ICollection<AccountAccount> Account { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ReportId")] //Many2many
-    // [InverseProperty("Report")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ReportId")] // Many2many // Normal
+    // [InverseProperty("Report")] // Many2many // Normal
     public virtual ICollection<AccountAccountType> AccountType { get; set; }
 }

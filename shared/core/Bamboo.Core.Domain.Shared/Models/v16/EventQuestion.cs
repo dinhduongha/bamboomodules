@@ -23,7 +23,6 @@ public partial class EventQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_type_id")]
     public Guid? EventTypeId { get; set; }
@@ -61,31 +60,29 @@ public partial class EventQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventQuestionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventQuestion")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("QuestionId")]
-    [InverseProperty("Question")]
+    // [One2many] [ForeignKey("QuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Question")] // One2many
     public virtual ICollection<EventQuestionAnswer> EventQuestionAnswer { get; set; }
 
     // [One2many]
-    [ForeignKey("QuestionId")]
-    [InverseProperty("Question")]
+    // [One2many] [ForeignKey("QuestionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Question")] // One2many
     public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTypeId")]
-    // [InverseProperty("EventQuestion")] //Many2one
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventQuestionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

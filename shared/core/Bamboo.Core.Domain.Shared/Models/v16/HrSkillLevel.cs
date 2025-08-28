@@ -23,7 +23,6 @@ public partial class HrSkillLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("skill_type_id")]
     public Guid? SkillTypeId { get; set; }
@@ -51,36 +50,31 @@ public partial class HrSkillLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrSkillLevelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillLevelId")]
-    [InverseProperty("SkillLevel")]
-    public virtual ICollection<HrApplicantSkill> HrApplicantSkill { get; set; }
-
-    // [One2many]
-    [ForeignKey("SkillLevelId")]
-    [InverseProperty("SkillLevel")]
+    // [One2many] [ForeignKey("SkillLevelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillLevel")] // One2many
     public virtual ICollection<HrCandidateSkill> HrCandidateSkill { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillLevelId")]
-    [InverseProperty("SkillLevel")]
+    // [One2many] [ForeignKey("SkillLevelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillLevel")] // One2many
     public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
 
     // [One2many]
-    [ForeignKey("SkillLevelId")]
-    [InverseProperty("SkillLevel")]
+    // [One2many] [ForeignKey("SkillLevelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SkillLevel")] // One2many
     public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLog { get; set; }
 
     // [Many2one]
     [ForeignKey("SkillTypeId")]
-    // [InverseProperty("HrSkillLevel")] //Many2one
     public virtual HrSkillType? SkillType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrSkillLevelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

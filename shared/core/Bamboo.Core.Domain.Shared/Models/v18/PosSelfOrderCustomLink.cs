@@ -23,7 +23,6 @@ public partial class PosSelfOrderCustomLink: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -55,17 +54,15 @@ public partial class PosSelfOrderCustomLink: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosSelfOrderCustomLinkCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosSelfOrderCustomLinkWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("PosSelfOrderCustomLinkId")] //Many2many
-    [InverseProperty("PosSelfOrderCustomLink")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PosSelfOrderCustomLinkId")] // Many2many // Normal
+    // [InverseProperty("PosSelfOrderCustomLink")] // Many2many // Normal
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

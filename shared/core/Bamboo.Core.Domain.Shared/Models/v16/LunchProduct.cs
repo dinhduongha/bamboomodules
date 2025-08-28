@@ -23,7 +23,6 @@ public partial class LunchProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
@@ -62,37 +61,33 @@ public partial class LunchProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("LunchProduct")] //Many2one
     public virtual LunchProductCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LunchProduct")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchProductCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductId")]
-    [InverseProperty("Product")]
+    // [One2many] [ForeignKey("ProductId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Product")] // One2many
     public virtual ICollection<LunchOrder> LunchOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("SupplierId")]
-    // [InverseProperty("LunchProduct")] //Many2one
     public virtual LunchSupplier? Supplier { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchProductWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductId")] //Many2many
-    // [InverseProperty("Product")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("ProductId")] // Many2many // Normal
+    // [InverseProperty("Product")] // Many2many // Normal
     public virtual ICollection<ResUsers> User { get; set; }
 }

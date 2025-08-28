@@ -23,7 +23,6 @@ public partial class EventBoothCategory: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -68,41 +67,41 @@ public partial class EventBoothCategory: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventBoothCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("BoothCategoryId")]
-    [InverseProperty("BoothCategory")]
+    // [One2many] [ForeignKey("BoothCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BoothCategory")] // One2many
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [One2many]
-    [ForeignKey("EventBoothCategoryId")]
-    [InverseProperty("EventBoothCategory")]
+    // [One2many] [ForeignKey("EventBoothCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventBoothCategory")] // One2many
     public virtual ICollection<EventBoothConfigurator> EventBoothConfigurator { get; set; }
 
     // [One2many]
-    [ForeignKey("BoothCategoryId")]
-    [InverseProperty("BoothCategory")]
+    // [One2many] [ForeignKey("BoothCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BoothCategory")] // One2many
     public virtual ICollection<EventTypeBooth> EventTypeBooth { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("EventBoothCategory")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("EventBoothCategoryId")]
-    [InverseProperty("EventBoothCategory")]
+    // [One2many] [ForeignKey("EventBoothCategoryId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EventBoothCategory")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SponsorTypeId")]
-    // [InverseProperty("EventBoothCategory")] //Many2one
     public virtual EventSponsorType? SponsorType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventBoothCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

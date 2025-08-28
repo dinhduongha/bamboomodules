@@ -23,10 +23,6 @@ public partial class ProjectMilestone: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
@@ -63,31 +59,23 @@ public partial class ProjectMilestone: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProjectMilestoneCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ProjectMilestone")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("ProjectMilestone")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]
-    [ForeignKey("MilestoneId")]
-    [InverseProperty("Milestone")]
+    // [One2many] [ForeignKey("MilestoneId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Milestone")] // One2many
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleLineId")]
-    // [InverseProperty("ProjectMilestone")] //Many2one
     public virtual SaleOrderLine? SaleLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProjectMilestoneWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

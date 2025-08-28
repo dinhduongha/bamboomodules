@@ -23,7 +23,6 @@ public partial class PrivacyLog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -60,21 +59,19 @@ public partial class PrivacyLog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PrivacyLogCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LogId")]
-    [InverseProperty("Log")]
+    // [One2many] [ForeignKey("LogId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Log")] // One2many
     public virtual ICollection<PrivacyLookupWizard> PrivacyLookupWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("PrivacyLogUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PrivacyLogWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,10 +23,6 @@ public partial class RestaurantFloor: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("pos_config_id")]
-    public Guid? PosConfigId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -54,28 +50,21 @@ public partial class RestaurantFloor: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RestaurantFloorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
-    // v16-Compat
-    // [Many2one]
-    // [ForeignKey("PosConfigId")]
-    // [InverseProperty("RestaurantFloor")] //Many2one
-    //public virtual PosConfig? PosConfig { get; set; }
-
     // [One2many]
-    [ForeignKey("FloorId")]
-    [InverseProperty("Floor")]
+    // [One2many] [ForeignKey("FloorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Floor")] // One2many
     public virtual ICollection<RestaurantTable> RestaurantTable { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RestaurantFloorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    [ForeignKey("RestaurantFloorId")]
-    [InverseProperty("RestaurantFloor")]
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("RestaurantFloorId")] //Many2many // Hidden
+    // [InverseProperty("RestaurantFloor")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

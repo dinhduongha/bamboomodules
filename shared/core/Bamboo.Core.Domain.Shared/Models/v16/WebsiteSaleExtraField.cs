@@ -23,7 +23,6 @@ public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -48,21 +47,17 @@ public partial class WebsiteSaleExtraField: FullAuditedEntity<Guid>, IEntityDto<
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteSaleExtraFieldCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FieldId")]
-    // [InverseProperty("WebsiteSaleExtraField")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("WebsiteSaleExtraField")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteSaleExtraFieldWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

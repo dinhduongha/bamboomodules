@@ -23,7 +23,6 @@ public partial class HrResumeLineType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -38,10 +37,6 @@ public partial class HrResumeLineType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("name", TypeName = "jsonb")]
     public string? Name { get; set; }
 
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -50,16 +45,15 @@ public partial class HrResumeLineType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrResumeLineTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LineTypeId")]
-    [InverseProperty("LineType")]
+    // [One2many] [ForeignKey("LineTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LineType")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrResumeLineTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

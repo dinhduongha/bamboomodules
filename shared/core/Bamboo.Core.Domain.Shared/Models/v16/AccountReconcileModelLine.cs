@@ -23,7 +23,6 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -53,10 +52,6 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("analytic_distribution", TypeName = "jsonb")]
     public string? AnalyticDistribution { get; set; }
 
-    // v16-Compat
-    //[Column("label")]
-    //public string? Label { get; set; }
-
     [JsonField]
     [Column("label", TypeName = "jsonb")]
     public string? Label { get; set; }
@@ -75,37 +70,31 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReconcileModelLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("AccountReconcileModelLine")] //Many2one
     public virtual AccountReconcileModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReconcileModelLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountReconcileModelLineId")] //Many2many
-    // [InverseProperty("AccountReconcileModelLine")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountReconcileModelLineId")] // Many2many // Normal
+    // [InverseProperty("AccountReconcileModelLine")] // Many2many // Normal
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 }

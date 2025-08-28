@@ -23,7 +23,6 @@ public partial class CrmMergeOpportunity: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -45,27 +44,23 @@ public partial class CrmMergeOpportunity: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmMergeOpportunityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TeamId")]
-    // [InverseProperty("CrmMergeOpportunity")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("CrmMergeOpportunityUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmMergeOpportunityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MergeId")] //Many2many
-    // [InverseProperty("Merge")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MergeId")] // Many2many // Normal
+    // [InverseProperty("Merge")] // Many2many // Normal
     public virtual ICollection<CrmLead> Opportunity { get; set; }
 }

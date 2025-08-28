@@ -23,7 +23,6 @@ public partial class EventSponsorType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -49,21 +48,21 @@ public partial class EventSponsorType: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventSponsorTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("SponsorTypeId")]
-    [InverseProperty("SponsorType")]
+    // [One2many] [ForeignKey("SponsorTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SponsorType")] // One2many
     public virtual ICollection<EventBoothCategory> EventBoothCategory { get; set; }
 
     // [One2many]
-    [ForeignKey("SponsorTypeId")]
-    [InverseProperty("SponsorType")]
+    // [One2many] [ForeignKey("SponsorTypeId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SponsorType")] // One2many
     public virtual ICollection<EventSponsor> EventSponsor { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventSponsorTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

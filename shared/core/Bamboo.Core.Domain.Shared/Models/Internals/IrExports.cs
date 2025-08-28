@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -38,16 +39,15 @@ public partial class IrExports: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrExportsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ExportId")]
-    [InverseProperty("Export")]
+    // [One2many] [ForeignKey("ExportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Export")] // One2many
     public virtual ICollection<IrExportsLine> IrExportsLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrExportsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

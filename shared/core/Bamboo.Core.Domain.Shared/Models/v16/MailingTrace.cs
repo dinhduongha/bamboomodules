@@ -24,7 +24,6 @@ public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_mail_id")]
     public Guid? MailMailId { get; set; }
@@ -89,12 +88,6 @@ public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("sms_id_int")]
     public Guid? SmsIdInt { get; set; }
 
-    [Column("sms_sms_id")]
-    public Guid? SmsSmsId { get; set; }
-
-    [Column("sms_sms_id_int")]
-    public Guid? SmsSmsIdInt { get; set; }
-
     [Column("sms_number")]
     public string? SmsNumber { get; set; }
 
@@ -103,41 +96,33 @@ public partial class MailingTrace: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CampaignId")]
-    // [InverseProperty("MailingTrace")] //Many2one
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailingTraceCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MailingTraceId")]
-    [InverseProperty("MailingTrace")]
+    // [One2many] [ForeignKey("MailingTraceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailingTrace")] // One2many
     public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMailId")]
-    // [InverseProperty("MailingTrace")] //Many2one
     public virtual MailMail? MailMail { get; set; }
 
     // [Many2one]
     [ForeignKey("MassMailingId")]
-    // [InverseProperty("MailingTrace")] //Many2one
     public virtual MailingMailing? MassMailing { get; set; }
 
-    // [Many2one]
-    [ForeignKey("SmsSmsId")]
-    // [InverseProperty("MailingTrace")] //Many2one
-    public virtual SmsSms? SmsSms { get; set; }
-
     // [One2many]
-    [ForeignKey("MailingTraceId")]
-    [InverseProperty("MailingTrace")]
+    // [One2many] [ForeignKey("MailingTraceId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailingTrace")] // One2many
     public virtual ICollection<SmsTracker> SmsTracker { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailingTraceWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

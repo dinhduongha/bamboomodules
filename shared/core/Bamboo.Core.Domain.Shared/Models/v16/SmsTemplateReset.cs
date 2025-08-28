@@ -23,7 +23,6 @@ public partial class SmsTemplateReset: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class SmsTemplateReset: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsTemplateResetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsTemplateResetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("SmsTemplateResetId")] //Many2many
-    // [InverseProperty("SmsTemplateReset")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SmsTemplateResetId")] // Many2many // Normal
+    // [InverseProperty("SmsTemplateReset")] // Many2many // Normal
     public virtual ICollection<SmsTemplate> SmsTemplate { get; set; }
 }

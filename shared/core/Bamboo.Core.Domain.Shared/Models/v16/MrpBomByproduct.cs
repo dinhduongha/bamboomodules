@@ -25,7 +25,6 @@ public partial class MrpBomByproduct: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -62,47 +61,41 @@ public partial class MrpBomByproduct: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("BomId")]
-    // [InverseProperty("MrpBomByproduct")] //Many2one
     public virtual MrpBom? Bom { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MrpBomByproduct")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpBomByproductCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("OperationId")]
-    // [InverseProperty("MrpBomByproduct")] //Many2one
     public virtual MrpRoutingWorkcenter? Operation { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MrpBomByproduct")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("MrpBomByproduct")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [One2many]
-    [ForeignKey("ByproductId")]
-    [InverseProperty("Byproduct")]
+    // [One2many] [ForeignKey("ByproductId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Byproduct")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpBomByproductWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MrpBomByproductId")] //Many2many
-    // [InverseProperty("MrpBomByproduct")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("MrpBomByproductId")] // Many2many // Normal
+    // [InverseProperty("MrpBomByproduct")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 }

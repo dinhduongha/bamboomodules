@@ -56,31 +56,25 @@ public partial class AccountAccruedOrdersWizard: FullAuditedEntity<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAccruedOrdersWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountAccruedOrdersWizard")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAccruedOrdersWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

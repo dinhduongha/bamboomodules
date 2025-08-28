@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -88,59 +89,54 @@ public partial class IrActReportXml: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public bool? IsInvoiceReport { get; set; }
 
     // [One2many]
-    [ForeignKey("PdfReportId")]
-    [InverseProperty("PdfReport")]
+    // [One2many] [ForeignKey("PdfReportId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PdfReport")] // One2many
     public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
     // [Many2one]
     [ForeignKey("BindingModelId")]
-    // [InverseProperty("IrActReportXml")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrActReportXmlCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PosReportPrintId")]
-    [InverseProperty("PosReportPrint")]
+    // [One2many] [ForeignKey("PosReportPrintId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PosReportPrint")] // One2many
     public virtual ICollection<LoyaltyMail> LoyaltyMail { get; set; }
-
-    // [One2many]
-    [ForeignKey("ReportTemplate")]
-    [InverseProperty("ReportTemplateNavigation")]
-    public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("PaperformatId")]
-    // [InverseProperty("IrActReportXml")] //Many2one
     public virtual ReportPaperformat? Paperformat { get; set; }
 
     // [One2many]
-    [ForeignKey("InvoiceTemplatePdfReportId")]
-    [InverseProperty("InvoiceTemplatePdfReport")]
+    // [One2many] [ForeignKey("InvoiceTemplatePdfReportId")]
+    [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
+    // [InverseProperty("InvoiceTemplatePdfReport")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [One2many]
-    [ForeignKey("ReportTemplate")]
-    [InverseProperty("ReportTemplateNavigation")]
+    // [One2many] [ForeignKey("ReportTemplate")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReportTemplateNavigation")] // One2many
     public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrActReportXmlWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("Uid")] //Many2many
-    // [InverseProperty("Uid")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("Uid")] // Many2many // Normal
+    // [InverseProperty("Uid")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("IrActionsReportId")]
-    // [InverseProperty("IrActionsReport")]
-    // public virtual ICollection<MailTemplate> MailTemplate { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("IrActionsReportId")] //Many2many // Hidden
+    // [InverseProperty("IrActionsReport")] //Many2many // Hidden
+    public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 }

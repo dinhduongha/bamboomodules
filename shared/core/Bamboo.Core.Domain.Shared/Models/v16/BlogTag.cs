@@ -25,7 +25,6 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
@@ -70,22 +69,19 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("BlogTag")] //Many2one
     public virtual BlogTagCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BlogTagCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BlogTagWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("BlogTagId")] //Many2many
-    // [InverseProperty("BlogTag")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("BlogTagId")] // Many2many // Normal
+    // [InverseProperty("BlogTag")] // Many2many // Normal
     public virtual ICollection<BlogPost> BlogPost { get; set; }
 }

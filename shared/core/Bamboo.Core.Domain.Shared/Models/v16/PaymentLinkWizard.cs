@@ -23,7 +23,6 @@ public partial class PaymentLinkWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
@@ -42,12 +41,6 @@ public partial class PaymentLinkWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("res_model")]
     public string? ResModel { get; set; }
-
-    [Column("description")]
-    public string? Description { get; set; }
-
-    [Column("payment_provider_selection")]
-    public string? PaymentProviderSelection { get; set; }
 
     [Column("amount")]
     public decimal? Amount { get; set; }
@@ -76,21 +69,17 @@ public partial class PaymentLinkWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PaymentLinkWizardCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("PaymentLinkWizard")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("PaymentLinkWizard")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PaymentLinkWizardWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

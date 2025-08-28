@@ -23,7 +23,6 @@ public partial class EventMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("event_id")]
     public Guid? EventId { get; set; }
@@ -45,9 +44,6 @@ public partial class EventMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("notification_type")]
-    public string? NotificationType { get; set; }
 
     [Column("interval_unit")]
     public string? IntervalUnit { get; set; }
@@ -72,26 +68,23 @@ public partial class EventMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventMailCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventMail")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
-    [ForeignKey("SchedulerId")]
-    [InverseProperty("Scheduler")]
+    // [One2many] [ForeignKey("SchedulerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Scheduler")] // One2many
     public virtual ICollection<EventMailRegistration> EventMailRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("LastRegistrationId")]
-    // [InverseProperty("EventMail")] //Many2one
     public virtual EventRegistration? LastRegistration { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventMailWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -41,86 +42,85 @@ public partial class ResCountryState: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("ResCountryState")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResCountryStateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
-    // [One2many]
-    [ForeignKey("StateId")]
-    [InverseProperty("State")]
-    public virtual ICollection<CrmLead> CrmLead { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("StateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("State")] // One2many // Peer relationship (CrmLead) is commented out
+    // public virtual ICollection<CrmLead> CrmLead { get; set; }
 
-    // [One2many]
-    [ForeignKey("PrivateStateId")]
-    [InverseProperty("PrivateState")]
-    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("PrivateStateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PrivateState")] // One2many // Peer relationship (HrEmployee) is commented out
+    // public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
-    // [One2many]
-    [ForeignKey("PartnerStateId")]
-    [InverseProperty("PartnerState")]
-    public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("PartnerStateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("PartnerState")] // One2many // Peer relationship (PaymentTransaction) is commented out
+    // public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
-    // [One2many]
-    [ForeignKey("State")]
-    [InverseProperty("StateNavigation")]
-    public virtual ICollection<ResBank> ResBank { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("State")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("StateNavigation")] // One2many // Peer relationship (ResBank) is commented out
+    // public virtual ICollection<ResBank> ResBank { get; set; }
 
-    // [One2many]
-    [ForeignKey("StateId")]
-    [InverseProperty("State")]
-    public virtual ICollection<ResCity> ResCity { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("StateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("State")] // One2many // Peer relationship (ResCity) is commented out
+    // public virtual ICollection<ResCity> ResCity { get; set; }
 
-    // [One2many]
-    [ForeignKey("StateId")]
-    [InverseProperty("State")]
-    public virtual ICollection<ResPartner> ResPartner { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("StateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("State")] // One2many
+    // public virtual ICollection<ResPartner> ResPartner { get; set; }
 
-    // [One2many]
-    [ForeignKey("StateId")]
-    [InverseProperty("StateNavigation")]
-    public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("StateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("StateNavigation")] // One2many // Peer relationship (SnailmailLetter) is commented out
+    // public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
-    // [One2many]
-    [ForeignKey("StateId")]
-    [InverseProperty("State")]
-    public virtual ICollection<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
+    // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCountryState'
+    // [One2many] [ForeignKey("StateId")]
+    // [NotMapped] // One2many 
+    // [InverseProperty("State")] // One2many // Peer relationship (SnailmailLetterMissingRequiredFields) is commented out
+    // public virtual ICollection<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResCountryStateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResCountryStateId")]
-    // [InverseProperty("ResCountryState")]
-    // public virtual ICollection<AccountFiscalPosition> AccountFiscalPosition { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResCountryStateId")] //Many2many // Hidden
+    // [InverseProperty("ResCountryState")] //Many2many // Hidden
+    public virtual ICollection<AccountFiscalPosition> AccountFiscalPosition { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResCountryStateId")]
-    // [InverseProperty("ResCountryState")]
-    // public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplate { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StateId")] //Many2many // Hidden
+    // [InverseProperty("State")] //Many2many // Hidden
+    public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("StateId")]
-    // [InverseProperty("State")]
-    // public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResCountryStateId")] //Many2many // Hidden
+    // [InverseProperty("ResCountryState")] //Many2many // Hidden
+    public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResCountryStateId")]
-    // [InverseProperty("ResCountryState")]
-    // public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
-
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ResCountryStateId")]
-    // [InverseProperty("ResCountryState")]
-    // public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("ResCountryStateId")] //Many2many // Hidden
+    // [InverseProperty("ResCountryState")] //Many2many // Hidden
+    public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 }

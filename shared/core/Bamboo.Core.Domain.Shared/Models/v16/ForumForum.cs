@@ -24,22 +24,15 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
     [Column("authorized_group_id")]
     public Guid? AuthorizedGroupId { get; set; }
-
-    [Column("menu_id")]
-    public Guid? MenuId { get; set; }
 
     [Column("karma_gen_question_new")]
     public long? KarmaGenQuestionNew { get; set; }
@@ -199,9 +192,6 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("active")]
     public bool? Active { get; set; }
 
-    [Column("allow_bump")]
-    public bool? AllowBump { get; set; }
-
     [Column("allow_share")]
     public bool? AllowShare { get; set; }
 
@@ -222,55 +212,42 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("AuthorizedGroupId")]
-    // [InverseProperty("ForumForum")] //Many2one
     public virtual ResGroups? AuthorizedGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ForumForumCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ForumId")]
-    [InverseProperty("Forum")]
+    // [One2many] [ForeignKey("ForumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Forum")] // One2many
     public virtual ICollection<ForumPost> ForumPost { get; set; }
 
     // [One2many]
-    [ForeignKey("ForumId")]
-    [InverseProperty("Forum")]
+    // [One2many] [ForeignKey("ForumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Forum")] // One2many
     public virtual ICollection<ForumPostVote> ForumPostVote { get; set; }
 
     // [One2many]
-    [ForeignKey("ForumId")]
-    [InverseProperty("Forum")]
+    // [One2many] [ForeignKey("ForumId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Forum")] // One2many
     public virtual ICollection<ForumTag> ForumTag { get; set; }
 
     // [Many2one]
-    [ForeignKey("MenuId")]
-    // [InverseProperty("ForumForum")] //Many2one
-    public virtual WebsiteMenu? Menu { get; set; }
-
-    // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("ForumForum")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("SlideChannelId")]
-    // [InverseProperty("ForumForum")] //Many2one
     public virtual SlideChannel? SlideChannel { get; set; }
 
     // [Many2one]
-    // [InverseProperty("Forum")] //Many2one
     public virtual SlideChannel? SlideChannelNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("ForumForum")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ForumForumWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

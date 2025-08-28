@@ -25,7 +25,6 @@ public partial class HrPayslipWorkedDays: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("payslip_id")]
     public Guid? PayslipId { get; set; }
@@ -62,21 +61,17 @@ public partial class HrPayslipWorkedDays: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("ContractId")]
-    // [InverseProperty("HrPayslipWorkedDays")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrPayslipWorkedDaysCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PayslipId")]
-    // [InverseProperty("HrPayslipWorkedDays")] //Many2one
     public virtual HrPayslip? Payslip { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrPayslipWorkedDaysWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

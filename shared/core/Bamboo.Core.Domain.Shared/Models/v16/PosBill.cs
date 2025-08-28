@@ -23,7 +23,6 @@ public partial class PosBill: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -48,17 +47,15 @@ public partial class PosBill: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PosBillCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PosBillWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("PosBillId")]
-    // [InverseProperty("PosBill")]
+    // [ForeignKey("PosBillId")] //Many2many // Hidden
+    // [InverseProperty("PosBill")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 }

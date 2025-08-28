@@ -23,7 +23,6 @@ public partial class ChatbotScriptAnswer: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -51,28 +50,26 @@ public partial class ChatbotScriptAnswer: FullAuditedAggregateRoot<Guid>, IEntit
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("UserScriptAnswerId")]
-    [InverseProperty("UserScriptAnswer")]
+    // [One2many] [ForeignKey("UserScriptAnswerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UserScriptAnswer")] // One2many
     public virtual ICollection<ChatbotMessage> ChatbotMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChatbotScriptAnswerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ScriptStepId")]
-    // [InverseProperty("ChatbotScriptAnswer")] //Many2one
     public virtual ChatbotScriptStep? ScriptStep { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChatbotScriptAnswerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ChatbotScriptAnswerId")]
-    // [InverseProperty("ChatbotScriptAnswerNavigation")]
+    // [ForeignKey("ChatbotScriptAnswerId")] //Many2many // Hidden
+    // [InverseProperty("ChatbotScriptAnswerNavigation")] //Many2many // Hidden
     public virtual ICollection<ChatbotScriptStep> ChatbotScriptStep { get; set; }
 }

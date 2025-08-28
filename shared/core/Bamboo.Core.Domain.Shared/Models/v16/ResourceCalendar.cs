@@ -37,7 +37,7 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     public string? Tz { get; set; }
 
     [Column("hours_per_day")]
-    public double? HoursPerDay { get; set; }
+    public decimal? HoursPerDay { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -58,82 +58,86 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     public double? FullTimeRequiredHours { get; set; }
 
     // [One2many]
-    [ForeignKey("TrgDateCalendarId")]
-    [InverseProperty("TrgDateCalendar")]
+    // [One2many] [ForeignKey("TrgDateCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("TrgDateCalendar")] // One2many
     public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ResourceCalendarNavigation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResourceCalendarCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
+    // [One2many] [ForeignKey("ResourceCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
+    // [One2many] [ForeignKey("ResourceCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
+    // [One2many] [ForeignKey("ResourceCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
+    // [One2many] [ForeignKey("ResourceCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrLeaveMandatoryDay> HrLeaveMandatoryDay { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
-    public virtual ICollection<HrLeaveStressDay> HrLeaveStressDay { get; set; }
-
-    // [One2many]
-    [ForeignKey("DefaultResourceCalendarId")]
-    [InverseProperty("DefaultResourceCalendar")]
+    // [One2many] [ForeignKey("DefaultResourceCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DefaultResourceCalendar")] // One2many
     public virtual ICollection<HrPayrollStructureType> HrPayrollStructureType { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
+    // [One2many] [ForeignKey("ResourceCalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 
     // [One2many]
-    [ForeignKey("ResourceCalendarId")]
-    [InverseProperty("ResourceCalendar")]
+    // [One2many] [ForeignKey("ResourceCalendarId")]
+    [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
+    // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
-    [ForeignKey("CalendarId")]
-    [InverseProperty("Calendar")]
+    // [One2many] [ForeignKey("CalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Calendar")] // One2many
     public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendance { get; set; }
 
     // [One2many]
-    [ForeignKey("CalendarId")]
-    [InverseProperty("Calendar")]
+    // [One2many] [ForeignKey("CalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Calendar")] // One2many
     public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
 
     // [One2many]
-    [ForeignKey("CalendarId")]
-    [InverseProperty("Calendar")]
+    // [One2many] [ForeignKey("CalendarId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Calendar")] // One2many
     public virtual ICollection<ResourceResource> ResourceResource { get; set; }
 
     // [One2many]
-    [ForeignKey("OpeningHours")]
-    [InverseProperty("OpeningHoursNavigation")]
+    // [One2many] [ForeignKey("OpeningHours")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("OpeningHoursNavigation")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResourceCalendarWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class PortalWizardUser: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }
@@ -48,21 +47,17 @@ public partial class PortalWizardUser: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PortalWizardUserCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("PortalWizardUser")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("WizardId")]
-    // [InverseProperty("PortalWizardUser")] //Many2one
     public virtual PortalWizard? Wizard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PortalWizardUserWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

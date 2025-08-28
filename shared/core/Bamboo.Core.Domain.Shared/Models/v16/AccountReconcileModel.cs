@@ -24,10 +24,6 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -40,10 +36,6 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    // v16-Compat
-    //[Column("name")]
-    //public string? Name { get; set; }
 
     [Column("rule_type")]
     public string? RuleType { get; set; }
@@ -131,55 +123,50 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
     public double? PaymentToleranceParam { get; set; }
 
     // [One2many]
-    [ForeignKey("ReconcileModelId")]
-    [InverseProperty("ReconcileModel")]
+    // [One2many] [ForeignKey("ReconcileModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReconcileModel")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMapping { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountReconcileModel")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReconcileModelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("AccountReconcileModel")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReconcileModelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountReconcileModelId")] //Many2many
-    // [InverseProperty("AccountReconcileModel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountReconcileModelId")] // Many2many // Normal
+    // [InverseProperty("AccountReconcileModel")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountReconcileModelId")] //Many2many
-    // [InverseProperty("AccountReconcileModel")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("AccountReconcileModelId")] // Many2many // Normal
+    // [InverseProperty("AccountReconcileModel")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("AccountReconcileModelId")] //Many2many
-    // [InverseProperty("AccountReconcileModel")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("AccountReconcileModelId")] // Many2many // Normal
+    // [InverseProperty("AccountReconcileModel")] // Many2many // Normal
     public virtual ICollection<ResPartnerCategory> ResPartnerCategory { get; set; }
 }

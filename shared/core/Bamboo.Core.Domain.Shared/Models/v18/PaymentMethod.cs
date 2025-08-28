@@ -23,7 +23,6 @@ public partial class PaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -64,49 +63,49 @@ public partial class PaymentMethod: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PaymentMethodCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("PrimaryPaymentMethodId")]
-    [InverseProperty("PrimaryPaymentMethod")]
+    // [One2many] [ForeignKey("PrimaryPaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PrimaryPaymentMethod")] // One2many
     public virtual ICollection<PaymentMethod> InversePrimaryPaymentMethod { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodId")]
-    [InverseProperty("PaymentMethod")]
+    // [One2many] [ForeignKey("PaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethod")] // One2many
     public virtual ICollection<PaymentToken> PaymentToken { get; set; }
 
     // [One2many]
-    [ForeignKey("PaymentMethodId")]
-    [InverseProperty("PaymentMethod")]
+    // [One2many] [ForeignKey("PaymentMethodId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("PaymentMethod")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [Many2one]
     [ForeignKey("PrimaryPaymentMethodId")]
-    // [InverseProperty("InversePrimaryPaymentMethod")] //Many2one
     public virtual PaymentMethod? PrimaryPaymentMethod { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PaymentMethodWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("PaymentMethodId")] //Many2many
-    [InverseProperty("PaymentMethod")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PaymentMethodId")] // Many2many // Normal
+    // [InverseProperty("PaymentMethod")] // Many2many // Normal
     public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("PaymentMethodId")] //Many2many
-    // [InverseProperty("PaymentMethod")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
+    // [ForeignKey("PaymentMethodId")] // Many2many // Normal
+    // [InverseProperty("PaymentMethod")] // Many2many // Normal
     public virtual ICollection<ResCountry> ResCountry { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("PaymentMethodId")] //Many2many
-    // [InverseProperty("PaymentMethod")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    [NotMapped] // Many2many // Peer relationship (ResCurrency) is commented out
+    // [ForeignKey("PaymentMethodId")] // Many2many // Normal
+    // [InverseProperty("PaymentMethod")] // Many2many // Normal
     public virtual ICollection<ResCurrency> ResCurrency { get; set; }
 }

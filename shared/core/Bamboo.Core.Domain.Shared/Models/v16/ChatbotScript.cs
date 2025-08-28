@@ -23,7 +23,6 @@ public partial class ChatbotScript: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("source_id")]
     public Guid? SourceId { get; set; }
@@ -51,32 +50,30 @@ public partial class ChatbotScript: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("ChatbotScriptId")]
-    [InverseProperty("ChatbotScript")]
+    // [One2many] [ForeignKey("ChatbotScriptId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ChatbotScript")] // One2many
     public virtual ICollection<ChatbotScriptStep> ChatbotScriptStep { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ChatbotScriptCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ChatbotScriptId")]
-    [InverseProperty("ChatbotScript")]
+    // [One2many] [ForeignKey("ChatbotScriptId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ChatbotScript")] // One2many
     public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRule { get; set; }
 
     // [Many2one]
     [ForeignKey("OperatorPartnerId")]
-    // [InverseProperty("ChatbotScript")] //Many2one
     public virtual ResPartner? OperatorPartner { get; set; }
 
     // [Many2one]
     [ForeignKey("SourceId")]
-    // [InverseProperty("ChatbotScript")] //Many2one
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ChatbotScriptWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

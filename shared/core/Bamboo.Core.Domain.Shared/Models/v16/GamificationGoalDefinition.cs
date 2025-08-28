@@ -23,7 +23,6 @@ public partial class GamificationGoalDefinition: FullAuditedAggregateRoot<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }
@@ -92,52 +91,47 @@ public partial class GamificationGoalDefinition: FullAuditedAggregateRoot<Guid>,
 
     // [Many2one]
     [ForeignKey("ActionId")]
-    // [InverseProperty("GamificationGoalDefinition")] //Many2one
     public virtual IrActWindow? Action { get; set; }
 
     // [Many2one]
     [ForeignKey("BatchDistinctiveField")]
-    // [InverseProperty("GamificationGoalDefinitionBatchDistinctiveFieldNavigation")] //Many2one
     public virtual IrModelFields? BatchDistinctiveFieldNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationGoalDefinitionCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FieldId")]
-    // [InverseProperty("GamificationGoalDefinitionField")] //Many2one
     public virtual IrModelFields? Field { get; set; }
 
     // [Many2one]
     [ForeignKey("FieldDateId")]
-    // [InverseProperty("GamificationGoalDefinitionFieldDate")] //Many2one
     public virtual IrModelFields? FieldDate { get; set; }
 
     // [One2many]
-    [ForeignKey("DefinitionId")]
-    [InverseProperty("Definition")]
+    // [One2many] [ForeignKey("DefinitionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Definition")] // One2many
     public virtual ICollection<GamificationChallengeLine> GamificationChallengeLine { get; set; }
 
     // [One2many]
-    [ForeignKey("DefinitionId")]
-    [InverseProperty("Definition")]
+    // [One2many] [ForeignKey("DefinitionId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Definition")] // One2many
     public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("GamificationGoalDefinition")] //Many2one
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationGoalDefinitionWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("GamificationGoalDefinitionId")]
-    // [InverseProperty("GamificationGoalDefinition")]
+    // [ForeignKey("GamificationGoalDefinitionId")] //Many2many // Hidden
+    // [InverseProperty("GamificationGoalDefinition")] //Many2many // Hidden
     public virtual ICollection<GamificationBadge> GamificationBadge { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class PickingLabelType: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -42,23 +41,21 @@ public partial class PickingLabelType: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("PickingLabelTypeCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("PickingLabelTypeWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PickingLabelTypeId")] //Many2many
-    // [InverseProperty("PickingLabelType")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PickingLabelTypeId")] // Many2many // Normal
+    // [InverseProperty("PickingLabelType")] // Many2many // Normal
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("PickingLabelTypeId")] //Many2many
-    // [InverseProperty("PickingLabelType")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("PickingLabelTypeId")] // Many2many // Normal
+    // [InverseProperty("PickingLabelType")] // Many2many // Normal
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

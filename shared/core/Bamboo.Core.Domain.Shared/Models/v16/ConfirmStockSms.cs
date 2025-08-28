@@ -23,7 +23,6 @@ public partial class ConfirmStockSms: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,17 +38,15 @@ public partial class ConfirmStockSms: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ConfirmStockSmsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ConfirmStockSmsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ConfirmStockSmsId")] //Many2many
-    // [InverseProperty("ConfirmStockSms")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ConfirmStockSmsId")] // Many2many // Normal
+    // [InverseProperty("ConfirmStockSms")] // Many2many // Normal
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 }

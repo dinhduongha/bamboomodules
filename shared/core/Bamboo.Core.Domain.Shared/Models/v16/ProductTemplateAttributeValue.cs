@@ -14,7 +14,7 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_value")]
 //[Index("AttributeId", Name = "product_template_attribute_value__attribute_id_index")]
 //[Index("AttributeLineId", Name = "product_template_attribute_value__attribute_line_id_index")]
-//[Index("ProductAttributeValueId", Name = "product_template_attribute_value__product_attribute_value_id_ind")]
+//[Index("ProductAttributeValueId", Name = "product_template_attribute_value__product_attribute_va_63041d9e")]
 //[Index("ProductTmplId", Name = "product_template_attribute_value__product_tmpl_id_index")]
 //[Index("AttributeLineId", "ProductAttributeValueId", Name = "product_template_attribute_value_attribute_value_unique", IsUnique = true)]
 public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
@@ -28,7 +28,6 @@ public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_attribute_value_id")]
     public Guid? ProductAttributeValueId { get; set; }
@@ -65,101 +64,98 @@ public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Gui
 
     // [Many2one]
     [ForeignKey("AttributeId")]
-    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductAttribute? Attribute { get; set; }
 
     // [Many2one]
     [ForeignKey("AttributeLineId")]
-    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductTemplateAttributeLine? AttributeLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductTemplateAttributeValueCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("CustomProductTemplateAttributeValueId")]
-    [InverseProperty("CustomProductTemplateAttributeValue")]
+    // [One2many] [ForeignKey("CustomProductTemplateAttributeValueId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CustomProductTemplateAttributeValue")] // One2many
     public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValue { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductAttributeValue? ProductAttributeValue { get; set; }
 
     // [One2many]
-    [ForeignKey("ProductTemplateAttributeValueId")]
-    [InverseProperty("ProductTemplateAttributeValueNavigation")]
+    // [One2many] [ForeignKey("ProductTemplateAttributeValueId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ProductTemplateAttributeValueNavigation")] // One2many
     public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductTmplId")]
-    // [InverseProperty("ProductTemplateAttributeValue")] //Many2one
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductTemplateAttributeValueWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("TemplateAttributeValueId")]
-    // [InverseProperty("TemplateAttributeValue")]
+    // [ForeignKey("TemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("TemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<StockMove> Move { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [Many2many] // Hidden
+
+    [NotMapped] //Many2many // Hidden // Peer relationship (ProductProduct) is commented out
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusion { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("TemplateAttributeValueId")]
-    // [InverseProperty("TemplateAttributeValue")]
+    // [ForeignKey("TemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("TemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpProduction> Production { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("ProductTemplateAttributeValueId")]
-    // [InverseProperty("ProductTemplateAttributeValue")]
+    // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
+    // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 }

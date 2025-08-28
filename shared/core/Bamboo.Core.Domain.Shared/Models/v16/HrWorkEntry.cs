@@ -26,7 +26,6 @@ public partial class HrWorkEntry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }
@@ -78,41 +77,33 @@ public partial class HrWorkEntry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("HrWorkEntry")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("ContractId")]
-    // [InverseProperty("HrWorkEntry")] //Many2one
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrWorkEntryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("HrWorkEntry")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("HrWorkEntry")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("LeaveId")]
-    // [InverseProperty("HrWorkEntry")] //Many2one
     public virtual HrLeave? Leave { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkEntryTypeId")]
-    // [InverseProperty("HrWorkEntry")] //Many2one
     public virtual HrWorkEntryType? WorkEntryType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrWorkEntryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

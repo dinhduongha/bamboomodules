@@ -23,7 +23,6 @@ public partial class HrExpenseApproveDuplicate: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -39,23 +38,21 @@ public partial class HrExpenseApproveDuplicate: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrExpenseApproveDuplicateCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrExpenseApproveDuplicateWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrExpenseApproveDuplicateId")] //Many2many
-    // [InverseProperty("HrExpenseApproveDuplicate")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrExpenseApproveDuplicateId")] // Many2many // Normal
+    // [InverseProperty("HrExpenseApproveDuplicate")] // Many2many // Normal
     public virtual ICollection<HrExpense> HrExpense { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("HrExpenseApproveDuplicateId")] //Many2many
-    // [InverseProperty("HrExpenseApproveDuplicate")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrExpenseApproveDuplicateId")] // Many2many // Normal
+    // [InverseProperty("HrExpenseApproveDuplicate")] // Many2many // Normal
     public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 }

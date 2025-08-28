@@ -24,7 +24,6 @@ public partial class CrmLeadScoringFrequency: FullAuditedEntity<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("team_id")]
     public Guid? TeamId { get; set; }
@@ -55,16 +54,13 @@ public partial class CrmLeadScoringFrequency: FullAuditedEntity<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLeadScoringFrequencyCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TeamId")]
-    // [InverseProperty("CrmLeadScoringFrequency")] //Many2one
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLeadScoringFrequencyWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

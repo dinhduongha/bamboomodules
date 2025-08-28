@@ -23,7 +23,6 @@ public partial class MailTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_template_id")]
     public Guid? MailTemplateId { get; set; }
@@ -40,9 +39,6 @@ public partial class MailTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gu
     [Column("lang")]
     public string? Lang { get; set; }
 
-    [Column("error_msg")]
-    public string? ErrorMsg { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -51,16 +47,13 @@ public partial class MailTemplatePreview: FullAuditedEntity<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailTemplatePreviewCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailTemplateId")]
-    // [InverseProperty("MailTemplatePreview")] //Many2one
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailTemplatePreviewWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

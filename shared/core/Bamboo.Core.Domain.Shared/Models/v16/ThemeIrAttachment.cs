@@ -23,7 +23,6 @@ public partial class ThemeIrAttachment: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -48,16 +47,15 @@ public partial class ThemeIrAttachment: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ThemeIrAttachmentCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ThemeTemplateId")]
-    [InverseProperty("ThemeTemplate")]
+    // [One2many] [ForeignKey("ThemeTemplateId")]
+    [NotMapped] // One2many // Peer relationship (IrAttachment) is commented out
+    // [InverseProperty("ThemeTemplate")] // One2many
     public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ThemeIrAttachmentWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

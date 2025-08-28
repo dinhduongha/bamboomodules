@@ -25,7 +25,6 @@ public partial class MailGroupMember: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_group_id")]
     public Guid? MailGroupId { get; set; }
@@ -53,21 +52,17 @@ public partial class MailGroupMember: FullAuditedEntity<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailGroupMemberCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailGroupId")]
-    // [InverseProperty("MailGroupMember")] //Many2one
     public virtual MailGroup? MailGroup { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("MailGroupMember")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailGroupMemberWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -65,26 +66,23 @@ public partial class ResBank: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("Country")]
-    // [InverseProperty("ResBank")] //Many2one
     public virtual ResCountry? CountryNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ResBankCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("BankId")]
-    [InverseProperty("Bank")]
+    // [One2many] [ForeignKey("BankId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Bank")] // One2many
     public virtual ICollection<ResPartnerBank> ResPartnerBank { get; set; }
 
     // [Many2one]
     [ForeignKey("State")]
-    // [InverseProperty("ResBank")] //Many2one
     public virtual ResCountryState? StateNavigation { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ResBankWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

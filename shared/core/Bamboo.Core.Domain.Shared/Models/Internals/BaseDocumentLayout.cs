@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -43,21 +44,17 @@ public partial class BaseDocumentLayout: FullAuditedEntity<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("BaseDocumentLayout")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("BaseDocumentLayoutCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportLayoutId")]
-    // [InverseProperty("BaseDocumentLayout")] //Many2one
     public virtual ReportLayout? ReportLayout { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("BaseDocumentLayoutWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

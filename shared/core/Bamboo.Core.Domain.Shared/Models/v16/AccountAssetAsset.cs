@@ -23,10 +23,6 @@ public partial class AccountAssetAsset: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
-
-    [Column("message_main_attachment_id")]
-    public Guid? MessageMainAttachmentId { get; set; }
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
@@ -112,51 +108,39 @@ public partial class AccountAssetAsset: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("AccountAnalyticId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual AccountAnalyticAccount? AccountAnalytic { get; set; }
 
     // [One2many]
-    [ForeignKey("AssetId")]
-    [InverseProperty("Asset")]
+    // [One2many] [ForeignKey("AssetId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Asset")] // One2many
     public virtual ICollection<AccountAssetDepreciationLine> AccountAssetDepreciationLine { get; set; }
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual AccountAssetCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAssetAssetCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("InvoiceId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual AccountMove? Invoice { get; set; }
 
     // [Many2one]
-    [ForeignKey("MessageMainAttachmentId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
-    public virtual IrAttachment? MessageMainAttachment { get; set; }
-
-    // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountAssetAsset")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAssetAssetWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

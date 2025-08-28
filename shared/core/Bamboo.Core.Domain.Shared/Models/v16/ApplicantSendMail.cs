@@ -23,7 +23,6 @@ public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }
@@ -54,33 +53,29 @@ public partial class ApplicantSendMail: FullAuditedEntity<Guid>, IEntityDto<Guid
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("ApplicantSendMail")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ApplicantSendMailCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("TemplateId")]
-    // [InverseProperty("ApplicantSendMail")] //Many2one
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ApplicantSendMailWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ApplicantSendMailId")] //Many2many
-    // [InverseProperty("ApplicantSendMail")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ApplicantSendMailId")] // Many2many // Normal
+    // [InverseProperty("ApplicantSendMail")] // Many2many // Normal
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ApplicantSendMailId")] //Many2many
-    // [InverseProperty("ApplicantSendMail")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("ApplicantSendMailId")] // Many2many // Normal
+    // [InverseProperty("ApplicantSendMail")] // Many2many // Normal
     public virtual ICollection<IrAttachment> IrAttachment { get; set; }
 }

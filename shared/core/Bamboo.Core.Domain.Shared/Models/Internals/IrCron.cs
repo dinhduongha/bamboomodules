@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -26,9 +27,6 @@ public partial class IrCron: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     [Column("interval_number")]
     public long? IntervalNumber { get; set; }
 
-    [Column("numbercall")]
-    public long? Numbercall { get; set; }
-
     [Column("priority")]
     public long? Priority { get; set; }
 
@@ -44,19 +42,11 @@ public partial class IrCron: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     [Column("cron_name")]
     public string? CronName { get; set; }
 
-    // v16-Compat - Removed
-    //[JsonField]
-    //[Column("cron_name", TypeName = "jsonb")]
-    //public string? CronName { get; set; }
-
     [Column("interval_type")]
     public string? IntervalType { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
-
-    [Column("doall")]
-    public bool? Doall { get; set; }
 
     [Column("nextcall", TypeName = "timestamp without time zone")]
     public DateTime? Nextcall { get; set; }
@@ -75,41 +65,41 @@ public partial class IrCron: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrCronCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("IrActionsServerId")]
-    // [InverseProperty("IrCron")] //Many2one
     public virtual IrActServer? IrActionsServer { get; set; }
 
     // [One2many]
-    [ForeignKey("CronId")]
-    [InverseProperty("Cron")]
+    // [One2many] [ForeignKey("CronId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Cron")] // One2many
     public virtual ICollection<IrCronProgress> IrCronProgress { get; set; }
 
     // [One2many]
-    [ForeignKey("CronId")]
-    [InverseProperty("Cron")]
+    // [One2many] [ForeignKey("CronId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Cron")] // One2many
     public virtual ICollection<IrCronTrigger> IrCronTrigger { get; set; }
 
     // [One2many]
-    [ForeignKey("CronId")]
-    [InverseProperty("Cron")]
+    // [One2many] [ForeignKey("CronId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Cron")] // One2many
     public virtual ICollection<LunchAlert> LunchAlert { get; set; }
 
     // [One2many]
-    [ForeignKey("CronId")]
-    [InverseProperty("Cron")]
+    // [One2many] [ForeignKey("CronId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Cron")] // One2many
     public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("IrCronUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrCronWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

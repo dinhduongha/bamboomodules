@@ -23,7 +23,6 @@ public partial class LoyaltyHistory: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("card_id")]
     public Guid? CardId { get; set; }
@@ -57,16 +56,13 @@ public partial class LoyaltyHistory: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
 
     // [Many2one]
     [ForeignKey("CardId")]
-    // [InverseProperty("LoyaltyHistory")] //Many2one
     public virtual LoyaltyCard? Card { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LoyaltyHistoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LoyaltyHistoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,7 +13,6 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_filters")]
 //[Index("ModelId", "UserId", "ActionId", "EmbeddedActionId", "EmbeddedParentResId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
-//[Index("ModelId", "UserId", "ActionId", "Name", Name = "ir_filters_name_model_uid_unique", IsUnique = true)]
 public partial class IrFilters: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
@@ -66,26 +66,23 @@ public partial class IrFilters: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrFiltersCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EmbeddedActionId")]
-    // [InverseProperty("IrFilters")] //Many2one
     public virtual IrEmbeddedActions? EmbeddedAction { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("IrFiltersUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [One2many]
-    [ForeignKey("FilterId")]
-    [InverseProperty("Filter")]
+    // [One2many] [ForeignKey("FilterId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Filter")] // One2many
     public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilter { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrFiltersWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

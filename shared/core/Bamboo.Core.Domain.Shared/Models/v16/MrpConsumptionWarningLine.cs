@@ -23,7 +23,6 @@ public partial class MrpConsumptionWarningLine: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mrp_consumption_warning_id")]
     public Guid? MrpConsumptionWarningId { get; set; }
@@ -54,26 +53,21 @@ public partial class MrpConsumptionWarningLine: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpConsumptionWarningLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MrpConsumptionWarningId")]
-    // [InverseProperty("MrpConsumptionWarningLine")] //Many2one
     public virtual MrpConsumptionWarning? MrpConsumptionWarning { get; set; }
 
     // [Many2one]
     [ForeignKey("MrpProductionId")]
-    // [InverseProperty("MrpConsumptionWarningLine")] //Many2one
     public virtual MrpProduction? MrpProduction { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("MrpConsumptionWarningLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpConsumptionWarningLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

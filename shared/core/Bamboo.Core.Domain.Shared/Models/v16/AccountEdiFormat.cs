@@ -24,7 +24,6 @@ public partial class AccountEdiFormat: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -45,28 +44,22 @@ public partial class AccountEdiFormat: FullAuditedAggregateRoot<Guid>, IEntityDt
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("EdiFormatId")]
-    [InverseProperty("EdiFormat")]
+    // [One2many] [ForeignKey("EdiFormatId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("EdiFormat")] // One2many
     public virtual ICollection<AccountEdiDocument> AccountEdiDocument { get; set; }
-
-    // [One2many]
-    [ForeignKey("EdiFormatId")]
-    [InverseProperty("EdiFormat")]
-    public virtual ICollection<AccountEdiProxyClientUser> AccountEdiProxyClientUser { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountEdiFormatCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountEdiFormatWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountEdiFormatId")]
-    // [InverseProperty("AccountEdiFormat")]
+    // [ForeignKey("AccountEdiFormatId")] //Many2many // Hidden
+    // [InverseProperty("AccountEdiFormat")] //Many2many // Hidden
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 }

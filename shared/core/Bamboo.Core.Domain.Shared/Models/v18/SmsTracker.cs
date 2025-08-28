@@ -24,7 +24,6 @@ public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_notification_id")]
     public Guid? MailNotificationId { get; set; }
@@ -49,21 +48,17 @@ public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SmsTrackerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("MailNotificationId")]
-    // [InverseProperty("SmsTracker")] //Many2one
     public virtual MailNotification? MailNotification { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingTraceId")]
-    // [InverseProperty("SmsTracker")] //Many2one
     public virtual MailingTrace? MailingTrace { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SmsTrackerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

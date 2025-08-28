@@ -23,7 +23,6 @@ public partial class WebsiteBaseUnit: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -43,21 +42,21 @@ public partial class WebsiteBaseUnit: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("WebsiteBaseUnitCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("BaseUnitId")]
-    [InverseProperty("BaseUnit")]
+    // [One2many] [ForeignKey("BaseUnitId")]
+    [NotMapped] // One2many // Peer relationship (ProductProduct) is commented out
+    // [InverseProperty("BaseUnit")] // One2many
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [One2many]
-    [ForeignKey("BaseUnitId")]
-    [InverseProperty("BaseUnit")]
+    // [One2many] [ForeignKey("BaseUnitId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BaseUnit")] // One2many
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("WebsiteBaseUnitWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

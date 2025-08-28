@@ -47,36 +47,33 @@ public partial class ProductComboItem: FullAuditedAggregateRoot<Guid>, IEntityDt
 
     // [Many2one]
     [ForeignKey("ComboId")]
-    // [InverseProperty("ProductComboItem")] //Many2one
     public virtual ProductCombo? Combo { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("ProductComboItem")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductComboItemCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ComboItemId")]
-    [InverseProperty("ComboItem")]
+    // [One2many] [ForeignKey("ComboItemId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ComboItem")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("ProductComboItem")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
-    [ForeignKey("ComboItemId")]
-    [InverseProperty("ComboItem")]
+    // [One2many] [ForeignKey("ComboItemId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ComboItem")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductComboItemWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

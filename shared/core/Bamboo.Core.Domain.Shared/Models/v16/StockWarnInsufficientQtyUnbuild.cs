@@ -23,7 +23,6 @@ public partial class StockWarnInsufficientQtyUnbuild: FullAuditedEntity<Guid>, I
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -54,26 +53,21 @@ public partial class StockWarnInsufficientQtyUnbuild: FullAuditedEntity<Guid>, I
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("StockWarnInsufficientQtyUnbuildCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LocationId")]
-    // [InverseProperty("StockWarnInsufficientQtyUnbuild")] //Many2one
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("StockWarnInsufficientQtyUnbuild")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("UnbuildId")]
-    // [InverseProperty("StockWarnInsufficientQtyUnbuild")] //Many2one
     public virtual MrpUnbuild? Unbuild { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("StockWarnInsufficientQtyUnbuildWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

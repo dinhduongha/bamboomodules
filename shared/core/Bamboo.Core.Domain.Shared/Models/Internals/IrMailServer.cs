@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -12,18 +13,12 @@ namespace Bamboo.Core.Models;
 
 [Table("ir_mail_server")]
 //[Index("Name", Name = "ir_mail_server__name_index")]
-public partial class IrMailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrMailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
     [Column("smtp_port")]
     public long? SmtpPort { get; set; }
 
@@ -92,41 +87,45 @@ public partial class IrMailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrMailServerCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("MailServerId")]
-    [InverseProperty("MailServer")]
+    // [One2many] [ForeignKey("MailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailServer")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("MailServerId")]
-    [InverseProperty("MailServer")]
+    // [One2many] [ForeignKey("MailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailServer")] // One2many
     public virtual ICollection<MailMessage> MailMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("MailServerId")]
-    [InverseProperty("MailServer")]
+    // [One2many] [ForeignKey("MailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailServer")] // One2many
     public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("MailServerId")]
-    [InverseProperty("MailServer")]
+    // [One2many] [ForeignKey("MailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailServer")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [One2many]
-    [ForeignKey("MassMailingMailServerId")]
-    [InverseProperty("MassMailingMailServer")]
+    // [One2many] [ForeignKey("MassMailingMailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MassMailingMailServer")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [One2many]
-    [ForeignKey("MailServerId")]
-    [InverseProperty("MailServer")]
+    // [One2many] [ForeignKey("MailServerId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailServer")] // One2many
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrMailServerWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

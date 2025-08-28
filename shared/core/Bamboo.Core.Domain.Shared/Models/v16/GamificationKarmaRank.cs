@@ -23,7 +23,6 @@ public partial class GamificationKarmaRank: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("karma_min")]
     public long? KarmaMin { get; set; }
@@ -54,21 +53,21 @@ public partial class GamificationKarmaRank: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationKarmaRankCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("NextRankId")]
-    [InverseProperty("NextRank")]
+    // [One2many] [ForeignKey("NextRankId")]
+    [NotMapped] // One2many // Peer relationship (ResUsers) is commented out
+    // [InverseProperty("NextRank")] // One2many
     public virtual ICollection<ResUsers> ResUsersNextRank { get; set; }
 
     // [One2many]
-    [ForeignKey("RankId")]
-    [InverseProperty("Rank")]
+    // [One2many] [ForeignKey("RankId")]
+    [NotMapped] // One2many // Peer relationship (ResUsers) is commented out
+    // [InverseProperty("Rank")] // One2many
     public virtual ICollection<ResUsers> ResUsersRank { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationKarmaRankWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("floor_id")]
     public Guid? FloorId { get; set; }
@@ -42,9 +41,6 @@ public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
-
-    [Column("name")]
-    public string? Name { get; set; }
 
     [Column("shape")]
     public string? Shape { get; set; }
@@ -78,31 +74,29 @@ public partial class RestaurantTable: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RestaurantTableCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FloorId")]
-    // [InverseProperty("RestaurantTable")] //Many2one
     public virtual RestaurantFloor? Floor { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<RestaurantTable> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual RestaurantTable? Parent { get; set; }
 
     // [One2many]
-    [ForeignKey("TableId")]
-    [InverseProperty("Table")]
+    // [One2many] [ForeignKey("TableId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Table")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RestaurantTableWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

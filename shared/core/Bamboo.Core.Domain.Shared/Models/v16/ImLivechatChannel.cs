@@ -24,7 +24,6 @@ public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -51,26 +50,13 @@ public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("button_text", TypeName = "jsonb")]
     public string? ButtonText { get; set; }
 
-    // v16-Compat
-    //[Column("button_text")]
-    //public string? ButtonText { get; set; }
-
     [JsonField]
     [Column("default_message", TypeName = "jsonb")]
     public string? DefaultMessage { get; set; }
 
-    // v16-Compat
-    //[Column("default_message")]
-    //public string? DefaultMessage { get; set; }
-
     [JsonField]
     [Column("input_placeholder", TypeName = "jsonb")]
     public string? InputPlaceholder { get; set; }
-
-    // v16-Compat
-    //[Column("input_placeholder")]
-    //public string? InputPlaceholder { get; set; }
-
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -87,37 +73,33 @@ public partial class ImLivechatChannel: FullAuditedAggregateRoot<Guid>, IEntityD
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ImLivechatChannelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LivechatChannelId")]
-    [InverseProperty("LivechatChannel")]
+    // [One2many] [ForeignKey("LivechatChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LivechatChannel")] // One2many
     public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRule { get; set; }
 
     // [One2many]
-    [ForeignKey("LivechatChannelId")]
-    [InverseProperty("LivechatChannel")]
-    public virtual ICollection<MailChannel> MailChannel { get; set; }
-
-    // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    [NotMapped] // One2many // Peer relationship (Website) is commented out
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<Website> Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ImLivechatChannelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ChannelId")] //Many2many
-    // [InverseProperty("Channel")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
+    // [ForeignKey("ChannelId")] // Many2many // Normal
+    // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<ResUsers> User { get; set; }
 }

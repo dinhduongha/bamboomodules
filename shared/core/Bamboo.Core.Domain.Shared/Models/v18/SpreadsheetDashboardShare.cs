@@ -23,7 +23,6 @@ public partial class SpreadsheetDashboardShare: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("dashboard_id")]
     public Guid? DashboardId { get; set; }
@@ -45,16 +44,13 @@ public partial class SpreadsheetDashboardShare: FullAuditedEntity<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("SpreadsheetDashboardShareCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DashboardId")]
-    // [InverseProperty("SpreadsheetDashboardShare")] //Many2one
     public virtual SpreadsheetDashboard? Dashboard { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("SpreadsheetDashboardShareWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -23,7 +23,6 @@ public partial class LunchAlert: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("cron_id")]
     public Guid? CronId { get; set; }
@@ -92,22 +91,19 @@ public partial class LunchAlert: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchAlertCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CronId")]
-    // [InverseProperty("LunchAlert")] //Many2one
     public virtual IrCron? Cron { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchAlertWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("LunchAlertId")] //Many2many
-    // [InverseProperty("LunchAlert")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("LunchAlertId")] // Many2many // Normal
+    // [InverseProperty("LunchAlert")] // Many2many // Normal
     public virtual ICollection<LunchLocation> LunchLocation { get; set; }
 }

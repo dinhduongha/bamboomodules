@@ -24,7 +24,6 @@ public partial class HrCandidateSkill: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("candidate_id")]
     public Guid? CandidateId { get; set; }
@@ -52,31 +51,25 @@ public partial class HrCandidateSkill: FullAuditedEntity<Guid>, IEntityDto<Guid>
 
     // [Many2one]
     [ForeignKey("CandidateId")]
-    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrCandidateSkillCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("SkillId")]
-    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrSkill? Skill { get; set; }
 
     // [Many2one]
     [ForeignKey("SkillLevelId")]
-    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrSkillLevel? SkillLevel { get; set; }
 
     // [Many2one]
     [ForeignKey("SkillTypeId")]
-    // [InverseProperty("HrCandidateSkill")] //Many2one
     public virtual HrSkillType? SkillType { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrCandidateSkillWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

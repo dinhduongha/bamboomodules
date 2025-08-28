@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("OrderId", Name = "account_analytic_line__order_id_index")]
 //[Index("ProjectId", Name = "account_analytic_line__project_id_index")]
 //[Index("UserId", Name = "account_analytic_line__user_id_index")]
-public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,6 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }
@@ -46,9 +45,6 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("currency_id")]
     public Guid? CurrencyId { get; set; }
-
-    [Column("plan_id")]
-    public Guid? PlanId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -110,9 +106,6 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("parent_task_id")]
     public Guid? ParentTaskId { get; set; }
 
-    [Column("ancestor_task_id")]
-    public Guid? AncestorTaskId { get; set; }
-
     [Column("project_id")]
     public Guid? ProjectId { get; set; }
 
@@ -145,170 +138,119 @@ public partial class AccountAnalyticLine: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("AccountId")]
-    // [InverseProperty("AccountAnalyticLineAccount")] //Many2one
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountAnalyticAccount? Account { get; set; }
 
     // [Many2one]
-    [ForeignKey("AncestorTaskId")]
-    // [InverseProperty("AccountAnalyticLineAncestorTask")] //Many2one
-    public virtual ProjectTask? AncestorTask { get; set; }
-
-    // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountAnalyticLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("DepartmentId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
     [ForeignKey("EmployeeId")]
-    // [InverseProperty("AccountAnalyticLineEmployee")] //Many2one
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
     [ForeignKey("GeneralAccountId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountAccount? GeneralAccount { get; set; }
 
     // [Many2one]
     [ForeignKey("GlobalLeaveId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResourceCalendarLeaves? GlobalLeave { get; set; }
 
     // [Many2one]
     [ForeignKey("HolidayId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual HrLeave? Holiday { get; set; }
 
     // [Many2one]
     [ForeignKey("JournalId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
     [ForeignKey("ManagerId")]
-    // [InverseProperty("AccountAnalyticLineManager")] //Many2one
     public virtual HrEmployee? Manager { get; set; }
 
     // [Many2one]
     [ForeignKey("MoveLineId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountMoveLine? MoveLine { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("MoAnalyticAccountLineId")]
-    [InverseProperty("MoAnalyticAccountLine")]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLine { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("WcAnalyticAccountLineId")]
-    [InverseProperty("WcAnalyticAccountLine")]
-    public virtual ICollection<MrpWorkorder> MrpWorkorderWcAnalyticAccountLine { get; set; }
 
     // [Many2one]
     [ForeignKey("OrderId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual SaleOrder? Order { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentTaskId")]
-    // [InverseProperty("AccountAnalyticLineParentTask")] //Many2one
     public virtual ProjectTask? ParentTask { get; set; }
 
     // [Many2one]
     [ForeignKey("PartnerId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
-    [ForeignKey("PlanId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
-    public virtual AccountAnalyticPlan? Plan { get; set; }
-
-    // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductUomId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
     [ForeignKey("ProjectId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual ProjectProject? Project { get; set; }
 
     // [Many2one]
     [ForeignKey("SoLine")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual SaleOrderLine? SoLineNavigation { get; set; }
-
-    // [One2many]
-    // [One2many] [ForeignKey("AnalyticAccountLineId")]
-    [InverseProperty("AnalyticAccountLine")]
-    public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [Many2one]
     [ForeignKey("TaskId")]
-    // [InverseProperty("AccountAnalyticLineTask")] //Many2one
     public virtual ProjectTask? Task { get; set; }
 
     // [Many2one]
     [ForeignKey("TimesheetInvoiceId")]
-    // [InverseProperty("AccountAnalyticLine")] //Many2one
     public virtual AccountMove? TimesheetInvoice { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("AccountAnalyticLineUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountAnalyticLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2one]
     [ForeignKey("XPlan2Id")]
-    // [InverseProperty("AccountAnalyticLineXPlan2")] //Many2one
     public virtual AccountAnalyticAccount? XPlan2 { get; set; }
 
     // [Many2one]
     [ForeignKey("XPlan3Id")]
-    // [InverseProperty("AccountAnalyticLineXPlan3")] //Many2one
     public virtual AccountAnalyticAccount? XPlan3 { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAnalyticLineId")]
-    // [InverseProperty("AccountAnalyticLine")]
+    // [ForeignKey("AccountAnalyticLineId")] //Many2many // Hidden
+    // [InverseProperty("AccountAnalyticLine")] //Many2many // Hidden
     public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAnalyticLineId")]
-    // [InverseProperty("AccountAnalyticLineNavigation")]
+    // [ForeignKey("AccountAnalyticLineId")] //Many2many // Hidden
+    // [InverseProperty("AccountAnalyticLineNavigation")] //Many2many // Hidden
     public virtual ICollection<MrpWorkorder> MrpWorkorderNavigation { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    //[NotMapped] //Many2many // Hidden
-    // [ForeignKey("AccountAnalyticLineId")]
-    // [InverseProperty("AccountAnalyticLine")]
-    //public virtual ICollection<StockMove> StockMove { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("AccountAnalyticLineId")] //Many2many // Hidden
+    // [InverseProperty("AccountAnalyticLine")] //Many2many // Hidden
+    public virtual ICollection<StockMove> StockMove { get; set; }
 }

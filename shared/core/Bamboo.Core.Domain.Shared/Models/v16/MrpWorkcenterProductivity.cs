@@ -26,7 +26,6 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }
@@ -67,49 +66,38 @@ public partial class MrpWorkcenterProductivity: FullAuditedEntity<Guid>, IEntity
     [Column("duration")]
     public double? Duration { get; set; }
 
-    [Column("cost_already_recorded")]
-    public bool? CostAlreadyRecorded { get; set; }
-
     [Column("account_move_line_id")]
     public Guid? AccountMoveLineId { get; set; }
 
     // [Many2one]
     [ForeignKey("AccountMoveLineId")]
-    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual AccountMoveLine? AccountMoveLine { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MrpWorkcenterProductivityCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LossId")]
-    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual MrpWorkcenterProductivityLoss? Loss { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("MrpWorkcenterProductivityUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkcenterId")]
-    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual MrpWorkcenter? Workcenter { get; set; }
 
     // [Many2one]
     [ForeignKey("WorkorderId")]
-    // [InverseProperty("MrpWorkcenterProductivity")] //Many2one
     public virtual MrpWorkorder? Workorder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MrpWorkcenterProductivityWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

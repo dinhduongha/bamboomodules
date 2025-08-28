@@ -26,7 +26,6 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -58,10 +57,6 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [Column("date")]
     public DateTime? Date { get; set; }
 
-    [JsonField]
-    [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
-
     [Column("note")]
     public string? Note { get; set; }
 
@@ -88,52 +83,43 @@ public partial class LunchOrder: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
 
     // [Many2one]
     [ForeignKey("CategoryId")]
-    // [InverseProperty("LunchOrder")] //Many2one
     public virtual LunchProductCategory? Category { get; set; }
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LunchOrder")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchOrderCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("CurrencyId")]
-    // [InverseProperty("LunchOrder")] //Many2one
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
     [ForeignKey("LunchLocationId")]
-    // [InverseProperty("LunchOrder")] //Many2one
     public virtual LunchLocation? LunchLocation { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("LunchOrder")] //Many2one
     public virtual LunchProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("SupplierId")]
-    // [InverseProperty("LunchOrder")] //Many2one
     public virtual LunchSupplier? Supplier { get; set; }
 
     // [Many2one]
     [ForeignKey("UserId")]
-    // [InverseProperty("LunchOrderUser")] //Many2one
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchOrderWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("OrderId")] //Many2many
-    // [InverseProperty("Order")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("OrderId")] // Many2many // Normal
+    // [InverseProperty("Order")] // Many2many // Normal
     public virtual ICollection<LunchTopping> Topping { get; set; }
 }

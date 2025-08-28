@@ -23,7 +23,6 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("editor_id")]
     public Guid? EditorId { get; set; }
@@ -52,9 +51,6 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
     [Column("phone")]
     public string? Phone { get; set; }
 
-    [Column("mobile")]
-    public string? Mobile { get; set; }
-
     [Column("name")]
     public string? Name { get; set; }
 
@@ -66,36 +62,29 @@ public partial class RegistrationEditorLine: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RegistrationEditorLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EditorId")]
-    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual RegistrationEditor? Editor { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("EventTicketId")]
-    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual EventEventTicket? EventTicket { get; set; }
 
     // [Many2one]
     [ForeignKey("RegistrationId")]
-    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual EventRegistration? Registration { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    // [InverseProperty("RegistrationEditorLine")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RegistrationEditorLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

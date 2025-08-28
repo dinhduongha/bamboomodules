@@ -27,7 +27,6 @@ public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEnt
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -86,32 +85,29 @@ public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEnt
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("ProductPublicCategoryCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<ProductPublicCategory> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual ProductPublicCategory? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteId")]
-    // [InverseProperty("ProductPublicCategory")] //Many2one
     public virtual Website? Website { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("ProductPublicCategoryWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("ProductPublicCategoryId")] //Many2many
-    // [InverseProperty("ProductPublicCategory")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("ProductPublicCategoryId")] // Many2many // Normal
+    // [InverseProperty("ProductPublicCategory")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 }

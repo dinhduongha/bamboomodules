@@ -23,7 +23,6 @@ public partial class GamificationChallengeLine: FullAuditedAggregateRoot<Guid>, 
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("challenge_id")]
     public Guid? ChallengeId { get; set; }
@@ -51,26 +50,23 @@ public partial class GamificationChallengeLine: FullAuditedAggregateRoot<Guid>, 
 
     // [Many2one]
     [ForeignKey("ChallengeId")]
-    // [InverseProperty("GamificationChallengeLine")] //Many2one
     public virtual GamificationChallenge? Challenge { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("GamificationChallengeLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("DefinitionId")]
-    // [InverseProperty("GamificationChallengeLine")] //Many2one
     public virtual GamificationGoalDefinition? Definition { get; set; }
 
     // [One2many]
-    [ForeignKey("LineId")]
-    [InverseProperty("Line")]
+    // [One2many] [ForeignKey("LineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Line")] // One2many
     public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("GamificationChallengeLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

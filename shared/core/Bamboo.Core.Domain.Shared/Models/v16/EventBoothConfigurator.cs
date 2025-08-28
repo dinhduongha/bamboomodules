@@ -23,7 +23,6 @@ public partial class EventBoothConfigurator: FullAuditedEntity<Guid>, IEntityDto
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -51,37 +50,31 @@ public partial class EventBoothConfigurator: FullAuditedEntity<Guid>, IEntityDto
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("EventBoothConfiguratorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("EventId")]
-    // [InverseProperty("EventBoothConfigurator")] //Many2one
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
     [ForeignKey("EventBoothCategoryId")]
-    // [InverseProperty("EventBoothConfigurator")] //Many2one
     public virtual EventBoothCategory? EventBoothCategory { get; set; }
 
     // [Many2one]
     [ForeignKey("ProductId")]
-    // [InverseProperty("EventBoothConfigurator")] //Many2one
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderLineId")]
-    // [InverseProperty("EventBoothConfigurator")] //Many2one
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("EventBoothConfiguratorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("EventBoothConfiguratorId")] //Many2many
-    // [InverseProperty("EventBoothConfigurator")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventBoothConfiguratorId")] // Many2many // Normal
+    // [InverseProperty("EventBoothConfigurator")] // Many2many // Normal
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 }

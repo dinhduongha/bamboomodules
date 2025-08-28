@@ -24,7 +24,6 @@ public partial class MailMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }
@@ -68,9 +67,6 @@ public partial class MailMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("auto_delete")]
     public bool? AutoDelete { get; set; }
 
-    [Column("to_delete")]
-    public bool? ToDelete { get; set; }
-
     [Column("scheduled_date", TypeName = "timestamp without time zone")]
     public DateTime? ScheduledDate { get; set; }
 
@@ -85,42 +81,39 @@ public partial class MailMail: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailMailCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("FetchmailServerId")]
-    // [InverseProperty("MailMail")] //Many2one
     public virtual FetchmailServer? FetchmailServer { get; set; }
 
     // [Many2one]
     [ForeignKey("MailMessageId")]
-    // [InverseProperty("MailMail")] //Many2one
     public virtual MailMessage? MailMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMailId")]
-    [InverseProperty("MailMail")]
+    // [One2many] [ForeignKey("MailMailId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMail")] // One2many
     public virtual ICollection<MailNotification> MailNotification { get; set; }
 
     // [Many2one]
     [ForeignKey("MailingId")]
-    // [InverseProperty("MailMail")] //Many2one
     public virtual MailingMailing? Mailing { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMailId")]
-    [InverseProperty("MailMail")]
+    // [One2many] [ForeignKey("MailMailId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMail")] // One2many
     public virtual ICollection<MailingTrace> MailingTrace { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailMailWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailMailId")] //Many2many
-    // [InverseProperty("MailMail")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("MailMailId")] // Many2many // Normal
+    // [InverseProperty("MailMail")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

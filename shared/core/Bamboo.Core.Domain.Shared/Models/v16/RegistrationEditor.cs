@@ -23,7 +23,6 @@ public partial class RegistrationEditor: FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
@@ -42,21 +41,19 @@ public partial class RegistrationEditor: FullAuditedAggregateRoot<Guid>, IEntity
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("RegistrationEditorCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("EditorId")]
-    [InverseProperty("Editor")]
+    // [One2many] [ForeignKey("EditorId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Editor")] // One2many
     public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
     // [Many2one]
     [ForeignKey("SaleOrderId")]
-    // [InverseProperty("RegistrationEditor")] //Many2one
     public virtual SaleOrder? SaleOrder { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("RegistrationEditorWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -71,203 +72,230 @@ public partial class IrModel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public bool? WebsiteFormAccess { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<BaseLanguageExport> BaseLanguageExport { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModelNavigation")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModelNavigation")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrModelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModel")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModel")] // One2many
     public virtual ICollection<DataRecycleModel> DataRecycleModel { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModel")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModel")] // One2many
     public virtual ICollection<DataRecycleRecord> DataRecycleRecord { get; set; }
 
     // [One2many]
-    [ForeignKey("ObjectId")]
-    [InverseProperty("Object")]
+    // [One2many] [ForeignKey("ObjectId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Object")] // One2many
     public virtual ICollection<FetchmailServer> FetchmailServer { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinition { get; set; }
 
     // [One2many]
-    [ForeignKey("BindingModelId")]
-    [InverseProperty("BindingModel")]
+    // [One2many] [ForeignKey("BindingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BindingModel")] // One2many
     public virtual ICollection<IrActClient> IrActClient { get; set; }
 
     // [One2many]
-    [ForeignKey("BindingModelId")]
-    [InverseProperty("BindingModel")]
+    // [One2many] [ForeignKey("BindingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BindingModel")] // One2many
     public virtual ICollection<IrActReportXml> IrActReportXml { get; set; }
 
     // [One2many]
-    [ForeignKey("BindingModelId")]
-    [InverseProperty("BindingModel")]
+    // [One2many] [ForeignKey("BindingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BindingModel")] // One2many
     public virtual ICollection<IrActServer> IrActServerBindingModel { get; set; }
 
     // [One2many]
-    [ForeignKey("CrudModelId")]
-    [InverseProperty("CrudModel")]
+    // [One2many] [ForeignKey("CrudModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CrudModel")] // One2many
     public virtual ICollection<IrActServer> IrActServerCrudModel { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<IrActServer> IrActServerModel { get; set; }
 
     // [One2many]
-    [ForeignKey("UpdateRelatedModelId")]
-    [InverseProperty("UpdateRelatedModel")]
+    // [One2many] [ForeignKey("UpdateRelatedModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("UpdateRelatedModel")] // One2many
     public virtual ICollection<IrActServer> IrActServerUpdateRelatedModel { get; set; }
 
     // [One2many]
-    [ForeignKey("BindingModelId")]
-    [InverseProperty("BindingModel")]
-    public virtual ICollection<IrActionsActUrl> IrActionsActUrl { get; set; }
+    // [One2many] [ForeignKey("BindingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BindingModel")] // One2many
+    public virtual ICollection<IrActUrl> IrActUrl { get; set; }
 
     // [One2many]
-    [ForeignKey("BindingModelId")]
-    [InverseProperty("BindingModel")]
+    // [One2many] [ForeignKey("BindingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BindingModel")] // One2many
     public virtual ICollection<IrActWindow> IrActWindow { get; set; }
 
     // [One2many]
-    [ForeignKey("BindingModelId")]
-    [InverseProperty("BindingModel")]
+    // [One2many] [ForeignKey("BindingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("BindingModel")] // One2many
     public virtual ICollection<IrActions> IrActions { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<IrModelAccess> IrModelAccess { get; set; }
 
     // [One2many]
-    [ForeignKey("Model")]
-    [InverseProperty("ModelNavigation")]
+    // [One2many] [ForeignKey("Model")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModelNavigation")] // One2many
     public virtual ICollection<IrModelConstraint> IrModelConstraint { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("ModelNavigation")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModelNavigation")] // One2many
     public virtual ICollection<IrModelFields> IrModelFields { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<IrModelInherit> IrModelInheritModel { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<IrModelInherit> IrModelInheritParent { get; set; }
 
     // [One2many]
-    [ForeignKey("Model")]
-    [InverseProperty("ModelNavigation")]
+    // [One2many] [ForeignKey("Model")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModelNavigation")] // One2many
     public virtual ICollection<IrModelRelation> IrModelRelation { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("Model")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Model")] // One2many
     public virtual ICollection<IrRule> IrRule { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModelNavigation")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModelNavigation")] // One2many
     public virtual ICollection<MailActivity> MailActivity { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModelNavigation")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModelNavigation")] // One2many
     public virtual ICollection<MailActivityPlan> MailActivityPlan { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModelNavigation")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModelNavigation")] // One2many
     public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasModelId")]
-    [InverseProperty("AliasModel")]
+    // [One2many] [ForeignKey("AliasModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AliasModel")] // One2many
     public virtual ICollection<MailAlias> MailAliasAliasModel { get; set; }
 
     // [One2many]
-    [ForeignKey("AliasParentModelId")]
-    [InverseProperty("AliasParentModel")]
+    // [One2many] [ForeignKey("AliasParentModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AliasParentModel")] // One2many
     public virtual ICollection<MailAlias> MailAliasAliasParentModel { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("ModelNavigation")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModelNavigation")] // One2many
     public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
     // [One2many]
-    [ForeignKey("MailingModelId")]
-    [InverseProperty("MailingModel")]
+    // [One2many] [ForeignKey("MailingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailingModel")] // One2many
     public virtual ICollection<MailingFilter> MailingFilter { get; set; }
 
     // [One2many]
-    [ForeignKey("MailingModelId")]
-    [InverseProperty("MailingModel")]
+    // [One2many] [ForeignKey("MailingModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailingModel")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [One2many]
-    [ForeignKey("CallbackModelId")]
-    [InverseProperty("CallbackModel")]
-    public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
-
-    // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModelNavigation")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModelNavigation")] // One2many
     public virtual ICollection<PrivacyLookupWizardLine> PrivacyLookupWizardLine { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentResModelId")]
-    [InverseProperty("ParentResModelNavigation")]
+    // [One2many] [ForeignKey("ParentResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ParentResModelNavigation")] // One2many
     public virtual ICollection<RatingRating> RatingRatingParentResModelNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("ResModelId")]
-    [InverseProperty("ResModelNavigation")]
+    // [One2many] [ForeignKey("ResModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ResModelNavigation")] // One2many
     public virtual ICollection<RatingRating> RatingRatingResModelNavigation { get; set; }
 
     // [One2many]
-    [ForeignKey("ModelId")]
-    [InverseProperty("ModelNavigation")]
+    // [One2many] [ForeignKey("ModelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ModelNavigation")] // One2many
     public virtual ICollection<SmsTemplate> SmsTemplate { get; set; }
 
     // [Many2one]
     [ForeignKey("WebsiteFormDefaultFieldId")]
-    // [InverseProperty("IrModel")] //Many2one
     public virtual IrModelFields? WebsiteFormDefaultField { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrModelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
-    // [NotMapped] //Many2many // Hidden
-    // [ForeignKey("IrModelId")]
-    // [InverseProperty("IrModel")]
-    // public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
+    // [Many2many] // Hidden
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("IrModelId")] //Many2many // Hidden
+    // [InverseProperty("IrModel")] //Many2many // Hidden
+    public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
 }

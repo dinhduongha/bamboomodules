@@ -12,7 +12,7 @@ using Volo.Abp.MultiTenancy;
 namespace Bamboo.Core.Models;
 
 [Table("hr_leave_accrual_level")]
-public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeaveAccrualLevel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -23,7 +23,6 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -48,9 +47,6 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("yearly_day")]
     public long? YearlyDay { get; set; }
-
-    [Column("parent_id")]
-    public Guid? ParentId { get; set; }
 
     [Column("postpone_max_days")]
     public long? PostponeMaxDays { get; set; }
@@ -95,7 +91,7 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
     public decimal? AddedValue { get; set; }
 
     [Column("maximum_leave")]
-    public double? MaximumLeave { get; set; }
+    public decimal? MaximumLeave { get; set; }
 
     [Column("maximum_leave_yearly")]
     public decimal? MaximumLeaveYearly { get; set; }
@@ -109,9 +105,6 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("accrual_validity")]
     public bool? AccrualValidity { get; set; }
 
-    [Column("is_based_on_worked_time")]
-    public bool? IsBasedOnWorkedTime { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
@@ -123,26 +116,13 @@ public partial class HrLeaveAccrualLevel: FullAuditedAggregateRoot<Guid>, IEntit
 
     // [Many2one]
     [ForeignKey("AccrualPlanId")]
-    // [InverseProperty("HrLeaveAccrualLevel")] //Many2one
     public virtual HrLeaveAccrualPlan? AccrualPlan { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("HrLeaveAccrualLevelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
-
-    // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
-    public virtual ICollection<HrLeaveAccrualLevel> InverseParent { get; set; }
-
-    // [Many2one]
-    [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
-    public virtual HrLeaveAccrualLevel? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("HrLeaveAccrualLevelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

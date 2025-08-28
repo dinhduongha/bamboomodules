@@ -27,7 +27,6 @@ public partial class DiscussChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_channel_id")]
     public Guid? ParentChannelId { get; set; }
@@ -105,95 +104,90 @@ public partial class DiscussChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? LivechatVisitorId { get; set; }
 
     // [One2many]
-    [ForeignKey("VideocallChannelId")]
-    [InverseProperty("VideocallChannel")]
+    // [One2many] [ForeignKey("VideocallChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("VideocallChannel")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
     [ForeignKey("ChatbotCurrentStepId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual ChatbotScriptStep? ChatbotCurrentStep { get; set; }
 
     // [One2many]
-    [ForeignKey("DiscussChannelId")]
-    [InverseProperty("DiscussChannel")]
+    // [One2many] [ForeignKey("DiscussChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("DiscussChannel")] // One2many
     public virtual ICollection<ChatbotMessage> ChatbotMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("CountryId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("DiscussChannelCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
 
     // [One2many]
-    [ForeignKey("ChannelId")]
-    [InverseProperty("Channel")]
+    // [One2many] [ForeignKey("ChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Channel")] // One2many
     public virtual ICollection<DiscussChannelRtcSession> DiscussChannelRtcSession { get; set; }
 
     // [Many2one]
     [ForeignKey("FromMessageId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual MailMessage? FromMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("ReportMessageGroupId")]
-    [InverseProperty("ReportMessageGroup")]
+    // [One2many] [ForeignKey("ReportMessageGroupId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReportMessageGroup")] // One2many
     public virtual ICollection<GamificationChallenge> GamificationChallenge { get; set; }
 
     // [Many2one]
     [ForeignKey("GroupPublicId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual ResGroups? GroupPublic { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentChannelId")]
-    [InverseProperty("ParentChannel")]
+    // [One2many] [ForeignKey("ParentChannelId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ParentChannel")] // One2many
     public virtual ICollection<DiscussChannel> InverseParentChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("LivechatChannelId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual ImLivechatChannel? LivechatChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("LivechatOperatorId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual ResPartner? LivechatOperator { get; set; }
 
     // [Many2one]
     [ForeignKey("LivechatVisitorId")]
-    // [InverseProperty("DiscussChannel")] //Many2one
     public virtual WebsiteVisitor? LivechatVisitor { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentChannelId")]
-    // [InverseProperty("InverseParentChannel")] //Many2one
     public virtual DiscussChannel? ParentChannel { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("DiscussChannelWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [ForeignKey("DiscussChannelId")] //Many2many
-    [InverseProperty("DiscussChannel")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("DiscussChannelId")] // Many2many // Normal
+    // [InverseProperty("DiscussChannel")] // Many2many // Normal
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 
     // [Many2many] // Normal
-    [NotMapped] // [Many2many] // Normal
-    // [ForeignKey("DiscussChannelId")] //Many2many
-    // [InverseProperty("DiscussChannelNavigation")] //Many2many
-    // [NotMapped] //Many2many // Normal
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("DiscussChannelId")] // Many2many // Normal
+    // [InverseProperty("DiscussChannelNavigation")] // Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 }

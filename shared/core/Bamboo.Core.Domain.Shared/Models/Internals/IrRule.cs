@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -19,12 +20,6 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudited
     [Column("id")]
     public Guid Id { get => base.Id; set => base.Id = value; }
 
-    [Column("company_id")]
-    public Guid? TenantId { get; set; }
-
-    [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
-    
     [Column("model_id")]
     public Guid? ModelId { get; set; }
 
@@ -66,22 +61,19 @@ public partial class IrRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudited
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrRuleCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("ModelId")]
-    // [InverseProperty("IrRule")] //Many2one
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrRuleWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    [ForeignKey("RuleGroupId")] //Many2many
-    [InverseProperty("RuleGroup")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("RuleGroupId")] // Many2many // Normal
+    // [InverseProperty("RuleGroup")] // Many2many // Normal
     public virtual ICollection<ResGroups> Group { get; set; }
 }

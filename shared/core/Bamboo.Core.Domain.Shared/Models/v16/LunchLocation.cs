@@ -44,38 +44,37 @@ public partial class LunchLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     // [Many2one]
     [ForeignKey("TenantId")]
-    // [InverseProperty("LunchLocation")] //Many2one
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("LunchLocationCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("LunchLocationId")]
-    [InverseProperty("LunchLocation")]
+    // [One2many] [ForeignKey("LunchLocationId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("LunchLocation")] // One2many
     public virtual ICollection<LunchOrder> LunchOrder { get; set; }
 
     // [One2many]
-    [ForeignKey("LastLunchLocationId")]
-    [InverseProperty("LastLunchLocation")]
+    // [One2many] [ForeignKey("LastLunchLocationId")]
+    [NotMapped] // One2many // Peer relationship (ResUsers) is commented out
+    // [InverseProperty("LastLunchLocation")] // One2many
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("LunchLocationWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("LunchLocationId")]
-    // [InverseProperty("LunchLocation")]
+    // [ForeignKey("LunchLocationId")] //Many2many // Hidden
+    // [InverseProperty("LunchLocation")] //Many2many // Hidden
     public virtual ICollection<LunchAlert> LunchAlert { get; set; }
 
-    // [Many2many] // ManyToMany Hidden
+    // [Many2many] // Hidden
     [NotMapped] //Many2many // Hidden
-    // [ForeignKey("LunchLocationId")]
-    // [InverseProperty("LunchLocation")]
+    // [ForeignKey("LunchLocationId")] //Many2many // Hidden
+    // [InverseProperty("LunchLocation")] //Many2many // Hidden
     public virtual ICollection<LunchSupplier> LunchSupplier { get; set; }
 }

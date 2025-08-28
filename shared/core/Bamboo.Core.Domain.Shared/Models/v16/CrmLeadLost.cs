@@ -23,7 +23,6 @@ public partial class CrmLeadLost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("lost_reason_id")]
     public Guid? LostReasonId { get; set; }
@@ -45,22 +44,19 @@ public partial class CrmLeadLost: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("CrmLeadLostCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LostReasonId")]
-    // [InverseProperty("CrmLeadLost")] //Many2one
     public virtual CrmLostReason? LostReason { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("CrmLeadLostWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("CrmLeadLostId")] //Many2many
-    // [InverseProperty("CrmLeadLost")] //Many2many
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("CrmLeadLostId")] // Many2many // Normal
+    // [InverseProperty("CrmLeadLost")] // Many2many // Normal
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 }

@@ -13,7 +13,6 @@ namespace Bamboo.Core.Models;
 
 [Table("account_report_line")]
 //[Index("ReportId", "Code", Name = "account_report_line_code_uniq", IsUnique = true)]
-//[Index("Code", Name = "account_report_line_code_uniq", IsUnique = true)]
 public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
@@ -25,7 +24,6 @@ public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityD
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("report_id")]
     public Guid? ReportId { get; set; }
@@ -80,37 +78,36 @@ public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityD
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
-    [ForeignKey("ReportLineId")]
-    [InverseProperty("ReportLine")]
+    // [One2many] [ForeignKey("ReportLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("ReportLine")] // One2many
     public virtual ICollection<AccountReportExpression> AccountReportExpression { get; set; }
 
     // [One2many]
-    [ForeignKey("CarryoverOriginReportLineId")]
-    [InverseProperty("CarryoverOriginReportLine")]
+    // [One2many] [ForeignKey("CarryoverOriginReportLineId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("CarryoverOriginReportLine")] // One2many
     public virtual ICollection<AccountReportExternalValue> AccountReportExternalValue { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("AccountReportLineCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountReportLine> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual AccountReportLine? Parent { get; set; }
 
     // [Many2one]
     [ForeignKey("ReportId")]
-    // [InverseProperty("AccountReportLine")] //Many2one
     public virtual AccountReport? Report { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("AccountReportLineWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }

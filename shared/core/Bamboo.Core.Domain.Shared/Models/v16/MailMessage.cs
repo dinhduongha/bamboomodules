@@ -13,7 +13,6 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_message")]
 //[Index("AuthorId", Name = "mail_message__author_id_index")]
-//[Index("MailActivityTypeId", Name = "mail_message_mail_activity_type_id_index")]
 //[Index("MessageId", Name = "mail_message__message_id_index")]
 //[Index("SubtypeId", Name = "mail_message__subtype_id_index")]
 //[Index("Model", "ResId", "Id", Name = "mail_message_model_res_id_id_idx")]
@@ -29,7 +28,6 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId  { get; set; }
-    
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
@@ -114,177 +112,173 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
 
     // [Many2one]
     [ForeignKey("AuthorId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
     [ForeignKey("AuthorGuestId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual MailGuest? AuthorGuest { get; set; }
 
     // [Many2one]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual ChatbotMessage? ChatbotMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("MailMessageCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    // [InverseProperty("FromMessage")] //Many2one
     public virtual DiscussChannel? DiscussChannel { get; set; }
 
     // [One2many]
-    [ForeignKey("FetchedMessageId")]
-    [InverseProperty("FetchedMessage")]
+    // [One2many] [ForeignKey("FetchedMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("FetchedMessage")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMemberFetchedMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("SeenMessageId")]
-    [InverseProperty("SeenMessage")]
+    // [One2many] [ForeignKey("SeenMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("SeenMessage")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMemberSeenMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<MailMessage> InverseParent { get; set; }
 
     // [Many2one]
     [ForeignKey("MailActivityTypeId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual MailActivityType? MailActivityType { get; set; }
 
     // [One2many]
-    [ForeignKey("FetchedMessageId")]
-    [InverseProperty("FetchedMessage")]
-    public virtual ICollection<MailChannelMember> MailChannelMemberFetchedMessage { get; set; }
-
-    // [One2many]
-    [ForeignKey("SeenMessageId")]
-    [InverseProperty("SeenMessage")]
-    public virtual ICollection<MailChannelMember> MailChannelMemberSeenMessage { get; set; }
-
-    // [One2many]
-    [ForeignKey("ParentId")]
-    [InverseProperty("Parent")]
+    // [One2many] [ForeignKey("ParentId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Parent")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailGroupMessage> MailGroupMessage { get; set; }
 
     // [One2many]
-    [ForeignKey("MessageId")]
-    [InverseProperty("Message")]
+    // [One2many] [ForeignKey("MessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Message")] // One2many
     public virtual ICollection<MailLinkPreview> MailLinkPreview { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailMail> MailMail { get; set; }
 
     // [One2many]
-    [ForeignKey("MessageId")]
-    [InverseProperty("Message")]
+    // [One2many] [ForeignKey("MessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Message")] // One2many
     public virtual ICollection<MailMessageReaction> MailMessageReaction { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailMessageSchedule> MailMessageSchedule { get; set; }
 
     // [One2many]
-    [ForeignKey("MessageId")]
-    [InverseProperty("Message")]
+    // [One2many] [ForeignKey("MessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Message")] // One2many
     public virtual ICollection<MailMessageTranslation> MailMessageTranslation { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailNotification> MailNotification { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailResendMessage> MailResendMessage { get; set; }
 
     // [Many2one]
     [ForeignKey("MailServerId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual IrMailServer? MailServer { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailTrackingValue> MailTrackingValue { get; set; }
 
     // [Many2one]
     [ForeignKey("ParentId")]
-    // [InverseProperty("InverseParent")] //Many2one
     public virtual MailMessage? Parent { get; set; }
 
     // [One2many]
-    [ForeignKey("MessageId")]
-    [InverseProperty("Message")]
+    // [One2many] [ForeignKey("MessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Message")] // One2many
     public virtual ICollection<RatingRating> RatingRating { get; set; }
 
     // [Many2one]
     [ForeignKey("RecordAliasDomainId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual MailAliasDomain? RecordAliasDomain { get; set; }
 
     // [Many2one]
     [ForeignKey("RecordCompanyId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual ResCompany? RecordCompany { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<SmsResend> SmsResend { get; set; }
 
     // [One2many]
-    [ForeignKey("MailMessageId")]
-    [InverseProperty("MailMessage")]
+    // [One2many] [ForeignKey("MailMessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<SmsSms> SmsSms { get; set; }
 
     // [One2many]
-    [ForeignKey("MessageId")]
-    [InverseProperty("Message")]
+    // [One2many] [ForeignKey("MessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Message")] // One2many
     public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
     // [One2many]
-    [ForeignKey("MessageId")]
-    [InverseProperty("Message")]
+    // [One2many] [ForeignKey("MessageId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Message")] // One2many
     public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatError { get; set; }
 
     // [Many2one]
     [ForeignKey("SubtypeId")]
-    // [InverseProperty("MailMessage")] //Many2one
     public virtual MailMessageSubtype? Subtype { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("MailMessageWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MessageId")] //Many2many
-    // [InverseProperty("Message")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
+    // [ForeignKey("MessageId")] // Many2many // Normal
+    // [InverseProperty("Message")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailMessageId")] //Many2many
-    // [InverseProperty("MailMessageNavigation")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("MailMessageId")] // Many2many // Normal
+    // [InverseProperty("MailMessageNavigation")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
-    // [NotMapped] //Many2many // Normal
-    // [ForeignKey("MailMessageId")] //Many2many
-    // [InverseProperty("MailMessage1")] //Many2many
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("MailMessageId")] // Many2many // Normal
+    // [InverseProperty("MailMessage1")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartnerNavigation { get; set; }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -55,16 +56,13 @@ public partial class IrActions: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAudi
 
     // [Many2one]
     [ForeignKey("BindingModelId")]
-    // [InverseProperty("IrActions")] //Many2one
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
     [ForeignKey("CreatorId")]
-    // [InverseProperty("IrActionsCreateU")] //Many2one
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
     [ForeignKey("LastModifierId")]
-    // [InverseProperty("IrActionsWriteU")] //Many2one
     public virtual ResUsers? WriteU { get; set; }
 }
