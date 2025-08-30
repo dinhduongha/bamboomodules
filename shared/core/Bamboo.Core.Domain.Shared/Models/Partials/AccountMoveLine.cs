@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -37,12 +38,14 @@ public partial class AccountMoveLine
     public double? DiscountPercentage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InvoiceLineId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("InvoiceLine")] // One2many
     public virtual ICollection<RepairFee> RepairFee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InvoiceLineId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("InvoiceLine")] // One2many

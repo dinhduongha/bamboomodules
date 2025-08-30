@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -42,12 +43,14 @@ public partial class MrpProduction
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductionId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Production")] // One2many
     public virtual ICollection<MrpImmediateProductionLine> MrpImmediateProductionLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductionId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Production")] // One2many
@@ -60,6 +63,7 @@ public partial class MrpProduction
     // public virtual ICollection<MrpConsumptionWarning> MrpConsumptionWarning { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpProductionId")] //Many2many // Hidden
     // [InverseProperty("MrpProduction")] //Many2many // Hidden

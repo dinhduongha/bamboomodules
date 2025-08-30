@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -23,6 +24,7 @@ public partial class ProductRibbon
     public string? Html { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RibbonId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Ribbon")] // One2many

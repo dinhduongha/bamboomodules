@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -18,12 +19,14 @@ namespace Bamboo.Core.Models;
 public partial class PurchaseOrderLine
 {
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CreatedPurchaseLineId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("CreatedPurchaseLine")] // One2many
     public virtual ICollection<StockMove> StockMoveCreatedPurchaseLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PurchaseLineId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("PurchaseLine")] // One2many

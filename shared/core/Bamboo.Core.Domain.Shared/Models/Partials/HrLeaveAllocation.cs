@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -46,12 +47,14 @@ public partial class HrLeaveAllocation
     public virtual HrEmployeeCategory? Category { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("HolidayAllocationId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("HolidayAllocation")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
@@ -70,6 +73,7 @@ public partial class HrLeaveAllocation
     public virtual HrLeaveAllocation? Parent { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("HrLeaveAllocationId")] // Many2many // Normal
     // [InverseProperty("HrLeaveAllocation")] // Many2many // Normal

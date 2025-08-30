@@ -184,6 +184,19 @@ namespace Bamboo.Core.EntityFrameworkCore
                     .HasConstraintName("blog_post_message_main_attachment_id_fkey");
             });
 
+            modelBuilder.Entity<BusPresence>(entity =>
+            {
+                entity.Property(e => e.CreationTime)
+                    .HasDefaultValueSql("now()")
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("create_date");
+                entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                entity.Property(e => e.LastModificationTime)
+                    .HasColumnType("timestamp without time zone")
+                    .HasColumnName("write_date");
+                entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+            });
+
             modelBuilder.Entity<CalendarEvent>(entity =>
             {
                 // entity.HasOne(d => d.MessageMainAttachment).WithMany(p => p.CalendarEvent) .HasForeignKey(d => d.MessageMainAttachmentId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("calendar_event_message_main_attachment_id_fkey");

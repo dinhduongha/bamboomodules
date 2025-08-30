@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -69,12 +70,14 @@ public partial class PosConfig
 
     // v16-Compat
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosConfigId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosConfig")] // One2many
     // public virtual ICollection<RestaurantFloor> RestaurantFloor { get; set; }
 
     // [Many2many] // Normal
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ConfigId")] // Many2many // Normal
     // [InverseProperty("Config")] // Many2many // Normal

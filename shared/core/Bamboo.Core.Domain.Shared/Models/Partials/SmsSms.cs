@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -17,12 +18,14 @@ namespace Bamboo.Core.Models;
 public partial class SmsSms
 {
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Sms")] // One2many
     public virtual ICollection<MailNotification> MailNotification { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsSmsId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("SmsSms")] // One2many

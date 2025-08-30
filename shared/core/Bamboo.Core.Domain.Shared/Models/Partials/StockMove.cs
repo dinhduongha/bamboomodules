@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -45,18 +46,21 @@ public partial class StockMove
     //public virtual PurchaseOrderLine? CreatedPurchaseLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MoveId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Move")] // One2many
     public virtual ICollection<RepairLine> RepairLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MoveId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Move")] // One2many
     public virtual ICollection<StockAssignSerial> StockAssignSerial { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MoveId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Move")] // One2many

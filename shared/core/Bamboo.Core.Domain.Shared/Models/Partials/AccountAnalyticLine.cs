@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -33,12 +34,14 @@ public partial class AccountAnalyticLine
     public virtual ProjectTask? AncestorTask { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MoAnalyticAccountLineId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("MoAnalyticAccountLine")] // One2many
     public virtual ICollection<MrpWorkorder> MrpWorkorderMoAnalyticAccountLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WcAnalyticAccountLineId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("WcAnalyticAccountLine")] // One2many
@@ -50,6 +53,7 @@ public partial class AccountAnalyticLine
 
     // v16-Compat
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AnalyticAccountLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AnalyticAccountLine")] // One2many

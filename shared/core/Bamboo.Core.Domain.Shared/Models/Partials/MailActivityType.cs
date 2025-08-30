@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -17,12 +18,14 @@ namespace Bamboo.Core.Models;
 public partial class MailActivityType
 {
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SaleActivityTypeId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("SaleActivityType")] // One2many
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActivityTypeId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("ActivityType")] // One2many

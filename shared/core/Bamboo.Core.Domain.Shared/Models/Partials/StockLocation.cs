@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -24,36 +25,42 @@ public partial class StockLocation
     public bool? ReturnLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LocationId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Location")] // One2many
     public virtual ICollection<RepairLine> RepairLineLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LocationDestId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("LocationDest")] // One2many
     public virtual ICollection<RepairLine> RepairLineLocationDest { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LocationId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Location")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LocationId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Location")] // One2many
     public virtual ICollection<StockReturnPicking> StockReturnPickingLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OriginalLocationId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("OriginalLocation")] // One2many
     public virtual ICollection<StockReturnPicking> StockReturnPickingOriginalLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentLocationId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("ParentLocation")] // One2many

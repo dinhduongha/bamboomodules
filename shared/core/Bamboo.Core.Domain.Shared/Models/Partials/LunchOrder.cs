@@ -13,7 +13,8 @@ namespace Bamboo.Core.Models;
 public partial class LunchOrder
 {
     // v16-Compat
+    // [JsonField(IsSparse = false)] // Name
     //[Column("name", TypeName = "jsonb")]
-    //public string? Name { get; set; }
+    //public StringDictionary? Name { get; set; }
 
 }

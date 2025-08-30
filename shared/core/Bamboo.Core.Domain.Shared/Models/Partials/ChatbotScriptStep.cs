@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -17,6 +18,7 @@ public partial class ChatbotScriptStep
 {
     // v16-Compat    
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChatbotCurrentStepId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChatbotCurrentStep")] // One2many

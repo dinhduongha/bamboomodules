@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -19,11 +20,12 @@ public partial class MailTemplate
     [Column("report_template")]
     public Guid? ReportTemplate { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // ReportName
     [Column("report_name", TypeName = "jsonb")]
-    public string? ReportName { get; set; }
+    public StringDictionary? ReportName { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TemplateId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Template")] // One2many

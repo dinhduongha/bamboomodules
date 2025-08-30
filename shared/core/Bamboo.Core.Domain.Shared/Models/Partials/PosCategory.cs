@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -17,6 +18,7 @@ namespace Bamboo.Core.Models;
 public partial class PosCategory
 {
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IfaceStartCategId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("IfaceStartCateg")] // One2many
@@ -24,12 +26,14 @@ public partial class PosCategory
 
     // v16-Compat
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosCategId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosCateg")] // One2many
     // public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosIfaceStartCategId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("PosIfaceStartCateg")] // One2many

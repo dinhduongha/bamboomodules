@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -21,6 +22,7 @@ public partial class AccountGroup
     public string? ParentPath { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     [NotMapped] // One2many // Peer relationship (AccountAccount) is commented out
     // [InverseProperty("Group")] // One2many

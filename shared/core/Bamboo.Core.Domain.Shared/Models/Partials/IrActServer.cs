@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -17,12 +18,14 @@ namespace Bamboo.Core.Models;
 public partial class IrActServer
 {
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActionServerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActionServer")] // One2many
     // public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ServerId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Server")] // One2many

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -32,6 +33,7 @@ public partial class AccountMove
     public bool? ToCheck { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountMoveId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("AccountMove")] // One2many
@@ -42,18 +44,21 @@ public partial class AccountMove
     // public virtual AccountPayment? Payment { get; set; }
 
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountMove")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AccountMoveNavigation")] // One2many
     // public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InvoiceId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Invoice")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountMoveId")] //Many2many // Hidden
     // [InverseProperty("AccountMove")] //Many2many // Hidden

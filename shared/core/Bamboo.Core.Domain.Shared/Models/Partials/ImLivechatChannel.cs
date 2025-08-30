@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -27,12 +28,14 @@ public partial class ImLivechatChannelIAuditedObject
     //public string? InputPlaceholder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<ImLivechatChannelRule> ImLivechatChannelRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LivechatChannelId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("LivechatChannel")] // One2many

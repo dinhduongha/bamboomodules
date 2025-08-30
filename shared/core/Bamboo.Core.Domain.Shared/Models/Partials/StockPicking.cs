@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -38,6 +40,7 @@ public partial class StockPicking
 
     // v16-Compat
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
@@ -50,6 +53,7 @@ public partial class StockPicking
     public virtual ICollection<StockImmediateTransferLine> StockImmediateTransferLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
@@ -62,6 +66,7 @@ public partial class StockPicking
     // public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -19,9 +20,9 @@ public partial class PaymentProvider
     [Column("module_state")]
     public string? ModuleState { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DisplayAs
     [Column("display_as", TypeName = "jsonb")]
-    public string? DisplayAs { get; set; }
+    public StringDictionary? DisplayAs { get; set; }
 
     [Column("fees_active")]
     public bool? FeesActive { get; set; }
@@ -39,6 +40,7 @@ public partial class PaymentProvider
     public double? FeesIntVar { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("PaymentProviderId")] // Many2many // Normal
     // [InverseProperty("PaymentProvider")] // Many2many // Normal

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -62,6 +63,7 @@ public partial class HrApplicant
     public virtual HrEmployee? Emp { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ApplicantId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Applicant")] // One2many
@@ -80,6 +82,7 @@ public partial class HrApplicant
     public virtual HrRecruitmentDegree? Type { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("HrApplicantId")] // Many2many // Normal
     // [InverseProperty("HrApplicant")] // Many2many // Normal

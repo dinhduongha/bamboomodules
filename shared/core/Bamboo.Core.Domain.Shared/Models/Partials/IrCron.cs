@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -19,9 +20,9 @@ public partial class IrCron
     [Column("numbercall")]
     public long? Numbercall { get; set; }
 
-    // [JsonField]
+    // [JsonField(IsSparse = false)] // CronName
     // [Column("cron_name", TypeName = "jsonb")]
-    // public string? CronName { get; set; }
+    // public StringDictionary? CronName { get; set; }
 
     [Column("doall")]
     public bool? Doall { get; set; }

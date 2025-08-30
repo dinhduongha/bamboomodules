@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -31,17 +32,19 @@ public partial class StockMoveLine
     [Column("qty_done")]
     public decimal? QtyDone { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // CarrierName
     [Column("carrier_name", TypeName = "jsonb")]
-    public string? CarrierName { get; set; }
+    public StringDictionary? CarrierName { get; set; }
 
     // [Many2many] // Normal
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ConsumeLineId")] // Many2many // Normal
     // [InverseProperty("ConsumeLine")] // Many2many // Normal
     // public virtual ICollection<StockMoveLine> ProduceLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockMoveLineId")] //Many2many // Hidden
     // [InverseProperty("StockMoveLine")] //Many2many // Hidden

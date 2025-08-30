@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -20,6 +21,7 @@ public partial class AccountAnalyticAccount
     public Guid? MessageMainAttachmentId { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Account")] // One2many
@@ -30,18 +32,21 @@ public partial class AccountAnalyticAccount
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AnalyticAccountId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("AnalyticAccount")] // One2many
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AnalyticAccountId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("AnalyticAccount")] // One2many
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AnalyticAccountId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("AnalyticAccount")] // One2many

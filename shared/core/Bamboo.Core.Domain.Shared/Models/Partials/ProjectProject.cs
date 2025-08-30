@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -44,6 +45,7 @@ public partial class ProjectProject
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
@@ -51,6 +53,7 @@ public partial class ProjectProject
 
     // v16-Compat
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
@@ -58,18 +61,21 @@ public partial class ProjectProject
 
     // v16-Compat
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     // public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
 
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DisplayProjectId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("DisplayProject")] // One2many
     public virtual ICollection<ProjectTask> ProjectTaskDisplayProject { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
@@ -77,6 +83,7 @@ public partial class ProjectProject
 
     // v16-Compat
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many

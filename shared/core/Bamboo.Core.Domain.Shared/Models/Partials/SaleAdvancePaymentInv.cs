@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -30,6 +31,7 @@ public partial class SaleAdvancePaymentInv
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SaleAdvancePaymentInvId")] // Many2many // Normal
     // [InverseProperty("SaleAdvancePaymentInv")] // Many2many // Normal

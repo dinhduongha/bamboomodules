@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -453,12 +454,14 @@ public partial class IrAttachment
 
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden
     public virtual ICollection<AccountBankStatementImport> AccountBankStatementImport { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden

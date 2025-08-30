@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
@@ -24,6 +25,7 @@ public partial class IrModelFields
 {
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LinkFieldId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("LinkField")] // One2many
@@ -31,12 +33,14 @@ public partial class IrModelFields
 
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldsId")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Fields")] // One2many
     public virtual ICollection<IrProperty> IrProperty { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("Col1")]
     [NotMapped] // One2many // Normal
     // [InverseProperty("Col1Navigation")] // One2many
@@ -44,6 +48,7 @@ public partial class IrModelFields
 
     // v16-Compat
     // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("Field")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("FieldNavigation")] // One2many
