@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -40,9 +43,9 @@ public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -72,128 +75,151 @@ public partial class StockRoute: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public bool? ShippingSelectable { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Route")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Route")] // One2many
     public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Route")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Route")] // One2many
     public virtual ICollection<StockReplenishmentOption> StockReplenishmentOption { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Route")] // One2many
     public virtual ICollection<StockRule> StockRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CrossdockRouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("CrossdockRoute")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseCrossdockRoute { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DeliveryRouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DeliveryRoute")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseDeliveryRoute { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Route")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PbmRouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PbmRoute")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePbmRoute { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReceptionRouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReceptionRoute")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseReceptionRoute { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubcontractingRouteId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SubcontractingRoute")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingRoute { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SuppliedWhId")]
     public virtual StockWarehouse? SuppliedWh { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SupplierWhId")]
     public virtual StockWarehouse? SupplierWh { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("RouteId")] // Many2many // Normal
     // [InverseProperty("Route")] // Many2many // Normal
     public virtual ICollection<ProductCategory> Categ { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("RouteId")] //Many2many // Hidden
     // [InverseProperty("Route")] //Many2many // Hidden
     public virtual ICollection<StockMove> Move { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("RouteId")] // Many2many // Normal
     // [InverseProperty("Route")] // Many2many // Normal
     public virtual ICollection<ProductPackaging> Packaging { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("RouteId")] // Many2many // Normal
     // [InverseProperty("Route")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> Product { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("RouteId")] //Many2many // Hidden
     // [InverseProperty("Route")] //Many2many // Hidden
     public virtual ICollection<DeliveryCarrier> Shipping { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockRouteId")] //Many2many // Hidden
     // [InverseProperty("StockRoute")] //Many2many // Hidden
     public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("RouteId")] // Many2many // Normal
     // [InverseProperty("Route")] // Many2many // Normal

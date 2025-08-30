@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -120,41 +123,41 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("slide_last_update")]
     public DateTime? SlideLastUpdate { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaTitle
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaDescription
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
-    [JsonField]
+    [JsonField] // WebsiteMetaKeywords
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public JsonElement? WebsiteMetaKeywords { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionShort
     [Column("description_short", TypeName = "jsonb")]
-    public string? DescriptionShort { get; set; }
+    public StringDictionary? DescriptionShort { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionHtml
     [Column("description_html", TypeName = "jsonb")]
-    public string? DescriptionHtml { get; set; }
+    public StringDictionary? DescriptionHtml { get; set; }
 
-    [JsonField]
+    [JsonField] // EnrollMsg
     [Column("enroll_msg", TypeName = "jsonb")]
-    public string? EnrollMsg { get; set; }
+    public JsonElement? EnrollMsg { get; set; }
 
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
@@ -190,110 +193,132 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? ProductId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CompletedTemplateId")]
     public virtual MailTemplate? CompletedTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ForumId")]
     public virtual ForumForum? Forum { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SlideChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SlideChannel")] // One2many
     public virtual ICollection<ForumForum> ForumForum { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductId")]
     public virtual ProductProduct? Product { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PromotedSlideId")]
     public virtual SlideSlide? PromotedSlide { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PublishTemplateId")]
     public virtual MailTemplate? PublishTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ShareChannelTemplateId")]
     public virtual MailTemplate? ShareChannelTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ShareSlideTemplateId")]
     public virtual MailTemplate? ShareSlideTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideChannelPartner> SlideChannelPartner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideSlide> SlideSlide { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("PrerequisiteChannelId")] // Many2many // Normal
     // [InverseProperty("PrerequisiteChannel")] // Many2many // Normal
     public virtual ICollection<SlideChannel> Channel { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ChannelId")] // Many2many // Normal
     // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<ResGroups> Group { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ChannelId")] // Many2many // Normal
     // [InverseProperty("Channel")] // Many2many // Normal
     public virtual ICollection<SlideChannel> PrerequisiteChannel { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SlideChannelId")] // Many2many // Normal
     // [InverseProperty("SlideChannel")] // Many2many // Normal
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ChannelId")] // Many2many // Normal
     // [InverseProperty("Channel")] // Many2many // Normal

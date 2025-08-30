@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -65,58 +68,70 @@ public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? LivechatOperatorId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LivechatVisitorId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("LivechatVisitor")] // One2many
     public virtual ICollection<DiscussChannel> DiscussChannel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VisitorId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Visitor")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VisitorId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Visitor")] // One2many
     public virtual ICollection<EventTrackVisitor> EventTrackVisitor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LangId")]
     public virtual ResLang? Lang { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LivechatOperatorId")]
     public virtual ResPartner? LivechatOperator { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VisitorId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Visitor")] // One2many
     public virtual ICollection<WebsiteTrack> WebsiteTrack { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("WebsiteVisitorId")] //Many2many // Hidden
     // [InverseProperty("WebsiteVisitor")] //Many2many // Hidden

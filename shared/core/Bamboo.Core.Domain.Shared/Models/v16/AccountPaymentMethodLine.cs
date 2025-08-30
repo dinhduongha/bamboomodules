@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -55,54 +58,65 @@ public partial class AccountPaymentMethodLine: FullAuditedAggregateRoot<Guid>, I
     public Guid? PaymentProviderId { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PreferredPaymentMethodLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PreferredPaymentMethodLine")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentMethodLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PaymentMethodLine")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentMethodLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PaymentMethodLine")] // One2many
     public virtual ICollection<AccountPaymentRegister> AccountPaymentRegister { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentMethodLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PaymentMethodLine")] // One2many
     public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("JournalId")]
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentAccountId")]
     public virtual AccountAccount? PaymentAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentMethodId")]
     public virtual AccountPaymentMethod? PaymentMethod { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentProviderId")]
     public virtual PaymentProvider? PaymentProvider { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (ResCompany) is commented out
     // [ForeignKey("AccountPaymentMethodLineId")] //Many2many // Hidden

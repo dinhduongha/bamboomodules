@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -142,38 +145,46 @@ public partial class CardCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public byte[]? ImagePreview { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<CardCard> CardCard { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CardTemplateId")]
     public virtual CardTemplate? CardTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LinkTrackerId")]
     public virtual LinkTracker? LinkTracker { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CardCampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("CardCampaign")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CardCampaignId")] // Many2many // Normal
     // [InverseProperty("CardCampaign")] // Many2many // Normal

@@ -17,7 +17,7 @@ namespace Bamboo.Core.HttpApi
     public class GenericModelController : AbpController
     {
         private readonly IGenericModelService _genericModelService;
-            private readonly JsonSerializerOptions _jsonSerializerOptions;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public GenericModelController(IOptions<JsonSerializerOptions> jsonSerializerOptions, IGenericModelService genericModelService)
         {
@@ -66,6 +66,17 @@ namespace Bamboo.Core.HttpApi
         {
             var result = await _genericModelService.CreateAsync(modelName, request.Entity, request.Fields);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+
+        [HttpPut("{modelName}/update/{id}")]
+        public async Task<JsonElement> UpdateAsync(string modelName, Guid id, [FromBody] UpdateRequestDto request)
+        {
+            var results = await _genericModelService.WriteAsync(modelName, [id], request.Entity, request.Fields);
+            if (results != null && results.Count > 0)
+            { 
+                return JsonSerializer.SerializeToElement(results[0], _jsonSerializerOptions);
+            }
+            return default;
         }
 
         [HttpPut("{modelName}/write")]

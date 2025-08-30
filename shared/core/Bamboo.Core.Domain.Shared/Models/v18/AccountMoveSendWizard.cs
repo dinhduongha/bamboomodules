@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,17 +45,17 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     [Column("mail_subject")]
     public string? MailSubject { get; set; }
 
-    [JsonField]
+    [JsonField] // SendingMethodCheckboxes
     [Column("sending_method_checkboxes", TypeName = "jsonb")]
-    public string? SendingMethodCheckboxes { get; set; }
+    public JsonElement? SendingMethodCheckboxes { get; set; }
 
-    [JsonField]
+    [JsonField] // ExtraEdiCheckboxes
     [Column("extra_edi_checkboxes", TypeName = "jsonb")]
-    public string? ExtraEdiCheckboxes { get; set; }
+    public JsonElement? ExtraEdiCheckboxes { get; set; }
 
-    [JsonField]
+    [JsonField] // MailAttachmentsWidget
     [Column("mail_attachments_widget", TypeName = "jsonb")]
-    public string? MailAttachmentsWidget { get; set; }
+    public JsonElement? MailAttachmentsWidget { get; set; }
 
     [Column("mail_body")]
     public string? MailBody { get; set; }
@@ -64,26 +67,32 @@ public partial class AccountMoveSendWizard: FullAuditedEntity<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MailTemplateId")]
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MoveId")]
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PdfReportId")]
     public virtual IrActReportXml? PdfReport { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("AccountMoveSendWizardId")] // Many2many // Normal
     // [InverseProperty("AccountMoveSendWizard")] // Many2many // Normal

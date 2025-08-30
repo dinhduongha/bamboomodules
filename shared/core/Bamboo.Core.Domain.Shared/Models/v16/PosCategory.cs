@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -40,9 +43,9 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -57,42 +60,50 @@ public partial class PosCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public double? HourAfter { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<PosCategory> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual PosCategory? Parent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosCategoryId")] //Many2many // Hidden
     // [InverseProperty("PosCategory")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CategoryId")] //Many2many // Hidden
     // [InverseProperty("Category")] //Many2many // Hidden
     public virtual ICollection<PosPrinter> Printer { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosCategoryId")] //Many2many // Hidden
     // [InverseProperty("PosCategory")] //Many2many // Hidden
     public virtual ICollection<ProductTemplate> ProductTemplate { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PosCategoryId")] //Many2many // Hidden
     // [InverseProperty("PosCategory")] //Many2many // Hidden

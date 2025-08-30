@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -91,70 +94,84 @@ public partial class CrmRevealRule: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RevealRuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RevealRule")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RevealRuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RevealRule")] // One2many
     public virtual ICollection<CrmRevealView> CrmRevealView { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PreferredRoleId")]
     public virtual CrmIapLeadRole? PreferredRole { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SeniorityId")]
     public virtual CrmIapLeadSeniority? Seniority { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TeamId")]
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
     // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustry { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
     // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadRole> CrmIapLeadRole { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
     // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<CrmTag> CrmTag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
     // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
     // [InverseProperty("CrmRevealRule")] // Many2many // Normal
     public virtual ICollection<ResCountry> ResCountry { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
     // [ForeignKey("CrmRevealRuleId")] // Many2many // Normal
     // [InverseProperty("CrmRevealRule")] // Many2many // Normal

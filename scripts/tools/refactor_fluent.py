@@ -768,6 +768,7 @@ def refactor_entity_file(content, schema_map):
                             result.append(f"{indent}// {line.strip()}")
             else: # Xử lý bình thường
                 result.append(f"\n\n{indent}// [One2many]")
+                result.append(f"{indent}[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]")
                 if not has_fk_attr and 'foreign_key' in rel_info:
                     result.append(f"{indent}// [One2many] [ForeignKey(\"{rel_info['foreign_key']}\")]")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
@@ -795,6 +796,7 @@ def refactor_entity_file(content, schema_map):
             is_fluent_m2m = rel_info.get('is_fluent_m2m', False)            
             if is_fluent_m2m: # M2M tường minh -> giữ lại
                 result.append(f"\n\n{indent}// [Many2many] // Normal")
+                result.append(f"{indent}[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]")
                 # result.append(f"{indent}[NotMapped] //Many2many // Normal")
                 if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
                     result.append(f"{indent}[NotMapped] // Many2many // Peer relationship ({peer_entity}) is commented out")
@@ -825,12 +827,12 @@ def refactor_entity_file(content, schema_map):
         
         elif rel_type == 'ManyToManyHidden':
             result.append(f"\n\n{indent}// [Many2many] // Hidden")
+            result.append(f"{indent}[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]")
             #result.append(f"{indent}[NotMapped] //Many2many // Hidden")
             if peer_entity in COMMENT_OUT_O2M_RELATIONSHIPS:
                 result.append(f"\n{indent}[NotMapped] //Many2many // Hidden // Peer relationship ({peer_entity}) is commented out")
             else:
                 result.append(f"{indent}[NotMapped] //Many2many // Hidden")
-
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     line_indent = ' ' * (len(line) - len(line.lstrip(' ')))
@@ -848,6 +850,7 @@ def refactor_entity_file(content, schema_map):
             #if clean_type in COMMENT_OUT_O2M_RELATIONSHIPS:
             #    result.append(f"{indent}[NotMapped] //Many2one")                
             #result.append(f"{indent}[NotMapped] //Many2one")
+            result.append(f"{indent}[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]")
             for line in (attributes_block_str + property_line_str).splitlines():
                 if line.strip():
                     if line.strip().startswith(("[InverseProperty")):
@@ -889,12 +892,14 @@ def refactor_entity_file(content, schema_map):
 #using System.ComponentModel.DataAnnotations.Schema;
 
     # Thay thế usings
-    abp_usings = """
+    abp_usings = """using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
 using Bamboo.Core.Domain.Shared.Attributes;"""
     #if should_add_multitenancy:
     #    abp_usings += "\nusing Volo.Abp.MultiTenancy;"
@@ -952,16 +957,58 @@ using Bamboo.Core.Domain.Shared.Attributes;"""
     new_lines = []
     i = 0
     while i < len(lines):
-        line = lines[i].expandtabs(4)
+        line = lines[i]
+        is_processed = False
+
+        # --- ĐOẠN CODE XỬ LÝ JSONFIELD NẰM Ở ĐÂY ---
         if 'TypeName = "jsonb"' in line:
             j = i + 1
-            while j < len(lines) and not lines[j].strip().startswith("public"): j += 1
+            # Tìm dòng public property phía sau
+            while j < len(lines) and not lines[j].strip().startswith("public"):
+                j += 1
+            
             if j < len(lines):
-                public_line_indent = ' ' * (len(lines[j]) - len(lines[j].lstrip(' ')))
-                new_lines.append(f"{public_line_indent}[JsonField]")
-                for k in range(i, j + 1): new_lines.append(lines[k])
-                i = j + 1
-                continue
+                public_property_line = lines[j]
+                
+                # Trích xuất tên thuộc tính từ dòng public
+                prop_name_match = re.search(r'public\s+.*?\s+(\w+)\s*\{', public_property_line)
+                prop_name_comment = ""
+                if prop_name_match:
+                    prop_name = prop_name_match.group(1)
+                    public_line_indent = ' ' * (len(public_property_line) - len(public_property_line.lstrip(' ')))
+                    
+                    # 2. Định nghĩa các keyword
+                    keywords = ("Name", "Description", "Label", "Help", "Title", "Message")
+                    
+                    json_field_line = ""
+                    modified_property_line = ""
+
+                    # 3. Trường hợp 1: Nếu tên thuộc tính chứa keyword
+                    if any(keyword in prop_name for keyword in keywords):
+                        json_field_line = f"{public_line_indent}[JsonField(IsSparse = false)] // {prop_name}"
+                        # Thay thế 'string' hoặc 'string?' thành 'StringDictionary?'
+                        modified_property_line = re.sub(r'public\s+string\??\s+', 'public StringDictionary? ', public_property_line)
+                    
+                    # 4. Trường hợp 2: Nếu không chứa keyword
+                    else:
+                        json_field_line = f"{public_line_indent}[JsonField] // {prop_name}"
+                        # Thay thế 'string' hoặc 'string?' thành 'JsonElement' hoặc 'JsonElement?', giữ nguyên nullability
+                        if 'string?' in public_property_line:
+                            modified_property_line = re.sub(r'public\s+string\?\s+', 'public JsonElement? ', public_property_line)
+                        else:
+                            modified_property_line = re.sub(r'public\s+string\s+', 'public JsonElement ', public_property_line)
+
+                    # 5. Tái tạo lại khối code
+                    new_lines.append(json_field_line)
+                    # Thêm các dòng gốc ở giữa (ví dụ: [Column])
+                    new_lines.extend(lines[i:j])
+                    # Thêm dòng thuộc tính đã được sửa đổi
+                    new_lines.append(modified_property_line)
+                    
+                    i = j + 1
+                    is_processed = True
+        
+        if is_processed: continue
         new_lines.append(line)
         i += 1
     content = "\n".join(new_lines)

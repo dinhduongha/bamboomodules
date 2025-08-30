@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -54,9 +57,9 @@ public partial class AuthOauthProvider: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("css_class")]
     public string? CssClass { get; set; }
 
-    [JsonField]
+    [JsonField] // Body
     [Column("body", TypeName = "jsonb")]
-    public string? Body { get; set; }
+    public JsonElement? Body { get; set; }
 
     [Column("enabled")]
     public bool? Enabled { get; set; }
@@ -68,16 +71,19 @@ public partial class AuthOauthProvider: FullAuditedAggregateRoot<Guid>, IEntityD
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OauthProviderId")]
     [NotMapped] // One2many // Peer relationship (ResUsers) is commented out
     // [InverseProperty("OauthProvider")] // One2many
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

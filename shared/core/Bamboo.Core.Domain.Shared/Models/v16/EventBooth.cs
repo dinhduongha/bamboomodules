@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -54,9 +57,9 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("state")]
     public string? State { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -80,48 +83,59 @@ public partial class EventBooth: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? SponsorId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BoothCategoryId")]
     public virtual EventBoothCategory? BoothCategory { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventId")]
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventBoothId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventBooth")] // One2many
     public virtual ICollection<EventBoothRegistration> EventBoothRegistration { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventTypeId")]
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleOrderId")]
     public virtual SaleOrder? SaleOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleOrderLineId")]
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SponsorId")]
     public virtual EventSponsor? Sponsor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventBoothId")] //Many2many // Hidden
     // [InverseProperty("EventBooth")] //Many2many // Hidden

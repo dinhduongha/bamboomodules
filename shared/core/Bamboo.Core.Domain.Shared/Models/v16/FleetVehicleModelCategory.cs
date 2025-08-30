@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -50,28 +53,33 @@ public partial class FleetVehicleModelCategory: FullAuditedAggregateRoot<Guid>, 
     public double? VolumeCapacity { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<FleetVehicleModel> FleetVehicleModel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleCategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("VehicleCategory")] // One2many
     public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

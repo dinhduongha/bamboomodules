@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -37,17 +40,17 @@ public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Summary
     [Column("summary", TypeName = "jsonb")]
-    public string? Summary { get; set; }
+    public JsonElement? Summary { get; set; }
 
-    [JsonField]
+    [JsonField] // TargetAudience
     [Column("target_audience", TypeName = "jsonb")]
-    public string? TargetAudience { get; set; }
+    public JsonElement? TargetAudience { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }
@@ -65,18 +68,22 @@ public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ChatRoomId")]
     public virtual ChatRoom? ChatRoom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventId")]
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

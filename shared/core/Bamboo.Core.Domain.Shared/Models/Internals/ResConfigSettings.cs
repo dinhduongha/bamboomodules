@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -883,74 +886,91 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     public string? CloudStorageProvider { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AuthSignupTemplateUserId")]
     public virtual ResUsers? AuthSignupTemplateUser { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DigestId")]
     public virtual DigestDigest? Digest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("GeolocProviderId")]
     public virtual BaseGeoProvider? GeolocProvider { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("InvoiceMailTemplateId")]
     public virtual MailTemplate? InvoiceMailTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MassMailingMailServerId")]
     public virtual IrMailServer? MassMailingMailServer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosConfigId")]
     public virtual PosConfig? PosConfig { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosDefaultFiscalPositionId")]
     public virtual AccountFiscalPosition? PosDefaultFiscalPosition { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosDiscountProductId")]
     public virtual ProductProduct? PosDiscountProduct { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosPricelistId")]
     public virtual ProductPricelist? PosPricelist { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosTipProductId")]
     public virtual ProductProduct? PosTipProduct { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ResConfigSettingsId")] // Many2many // Normal
     // [InverseProperty("ResConfigSettings")] // Many2many // Normal
     public virtual ICollection<AccountFiscalPosition> AccountFiscalPosition { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ResConfigSettingsId")] // Many2many // Normal
     // [InverseProperty("ResConfigSettings")] // Many2many // Normal
     public virtual ICollection<PosCategory> PosCategory { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ResConfigSettingsId")] // Many2many // Normal
     // [InverseProperty("ResConfigSettings")] // Many2many // Normal

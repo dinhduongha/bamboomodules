@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,9 +45,9 @@ public partial class PurchaseRequisitionLine: FullAuditedAggregateRoot<Guid>, IE
     [Column("product_description_variants")]
     public string? ProductDescriptionVariants { get; set; }
 
-    [JsonField]
+    [JsonField] // AnalyticDistribution
     [Column("analytic_distribution", TypeName = "jsonb")]
-    public string? AnalyticDistribution { get; set; }
+    public JsonElement? AnalyticDistribution { get; set; }
 
     [Column("product_qty")]
     public decimal? ProductQty { get; set; }
@@ -62,36 +65,44 @@ public partial class PurchaseRequisitionLine: FullAuditedAggregateRoot<Guid>, IE
     public Guid? MoveDestId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MoveDestId")]
     public virtual StockMove? MoveDest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductId")]
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PurchaseRequisitionLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PurchaseRequisitionLine")] // One2many
     public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductUomId")]
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RequisitionId")]
     public virtual PurchaseRequisition? Requisition { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

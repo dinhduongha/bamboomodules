@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -58,9 +61,9 @@ public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("horizontal_split_side")]
     public string? HorizontalSplitSide { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("foldable")]
     public bool? Foldable { get; set; }
@@ -78,36 +81,43 @@ public partial class AccountReportLine: FullAuditedAggregateRoot<Guid>, IEntityD
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReportLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReportLine")] // One2many
     public virtual ICollection<AccountReportExpression> AccountReportExpression { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CarryoverOriginReportLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("CarryoverOriginReportLine")] // One2many
     public virtual ICollection<AccountReportExternalValue> AccountReportExternalValue { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountReportLine> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual AccountReportLine? Parent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ReportId")]
     public virtual AccountReport? Report { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

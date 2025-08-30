@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -114,10 +117,12 @@ public partial class IrAttachment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
@@ -176,6 +181,7 @@ public partial class IrAttachment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // public virtual ICollection<IrAttachment> InverseOriginal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OriginalId")]
     public virtual IrAttachment? Original { get; set; }
 
@@ -204,90 +210,106 @@ public partial class IrAttachment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ThemeTemplateId")]
     public virtual ThemeIrAttachment? ThemeTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden
     public virtual ICollection<AccountBankStatement> AccountBankStatement { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<MailActivity> Activity { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden
     public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden
     public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<MailTemplate> EmailTemplate { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<MailingMailing> MassMailing { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<MailMessage> Message { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<MailScheduledMessage> ScheduledMessage { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrAttachmentId")] //Many2many // Hidden
     // [InverseProperty("IrAttachment")] //Many2many // Hidden
     public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<FleetVehicleSendMail> Wizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden
     public virtual ICollection<SurveyInvite> Wizard1 { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AttachmentId")] //Many2many // Hidden
     // [InverseProperty("Attachment")] //Many2many // Hidden

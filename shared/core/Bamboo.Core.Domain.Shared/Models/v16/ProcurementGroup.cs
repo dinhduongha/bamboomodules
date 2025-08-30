@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -52,82 +55,97 @@ public partial class ProcurementGroup: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? SaleId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProcurementGroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProcurementGroup")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProcurementGroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProcurementGroup")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosOrderId")]
     public virtual PosOrder? PosOrderNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Group")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Group")] // One2many
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProcurementGroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProcurementGroup")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleId")]
     public virtual SaleOrder? Sale { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProcurementGroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProcurementGroupNavigation")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockRule> StockRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Group")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

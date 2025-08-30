@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -61,42 +64,50 @@ public partial class IapAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public string? SenderName { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ServiceId")]
     public virtual IapService? Service { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Account")] // One2many
     public virtual ICollection<SmsAccountCode> SmsAccountCode { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Account")] // One2many
     public virtual ICollection<SmsAccountPhone> SmsAccountPhone { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Account")] // One2many
     public virtual ICollection<SmsAccountSender> SmsAccountSender { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCompany) is commented out
     // [ForeignKey("IapAccountId")] // Many2many // Normal
     // [InverseProperty("IapAccount")] // Many2many // Normal
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("IapAccountId")] // Many2many // Normal
     // [InverseProperty("IapAccount")] // Many2many // Normal

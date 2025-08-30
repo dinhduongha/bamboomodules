@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -46,9 +49,9 @@ public partial class ThemeWebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("mega_menu_classes")]
     public string? MegaMenuClasses { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("mega_menu_content")]
     public string? MegaMenuContent { get; set; }
@@ -66,30 +69,36 @@ public partial class ThemeWebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDt
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<ThemeWebsiteMenu> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PageId")]
     public virtual ThemeWebsitePage? Page { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual ThemeWebsiteMenu? Parent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ThemeTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ThemeTemplate")] // One2many
     public virtual ICollection<WebsiteMenu> WebsiteMenu { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

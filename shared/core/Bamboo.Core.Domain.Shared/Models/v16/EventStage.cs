@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -33,25 +36,25 @@ public partial class EventStage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField] // LegendBlocked
     [Column("legend_blocked", TypeName = "jsonb")]
-    public string? LegendBlocked { get; set; }
+    public JsonElement? LegendBlocked { get; set; }
 
-    [JsonField]
+    [JsonField] // LegendDone
     [Column("legend_done", TypeName = "jsonb")]
-    public string? LegendDone { get; set; }
+    public JsonElement? LegendDone { get; set; }
 
-    [JsonField]
+    [JsonField] // LegendNormal
     [Column("legend_normal", TypeName = "jsonb")]
-    public string? LegendNormal { get; set; }
+    public JsonElement? LegendNormal { get; set; }
 
     [Column("fold")]
     public bool? Fold { get; set; }
@@ -66,16 +69,19 @@ public partial class EventStage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("StageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Stage")] // One2many
     public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

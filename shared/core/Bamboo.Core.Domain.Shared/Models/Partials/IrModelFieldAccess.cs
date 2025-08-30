@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Bamboo.Core.Domain.Shared.Attributes;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -16,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("GroupId", Name = "ir_model_access_group_id_index")]
 //[Index("ModelId", Name = "ir_model_access_model_id_index")]
 //[Index("Name", Name = "ir_model_access_name_index")]
-public partial class IrModelFieldAccess: FullAuditedEntity<Guid>, IEntityDto<Guid>
+public partial class IrModelFieldAccess : FullAuditedEntity<Guid>, IEntityDto<Guid>
 {
     [Key]
     [Column("id")]
@@ -84,6 +86,7 @@ public partial class IrModelFieldAccess: FullAuditedEntity<Guid>, IEntityDto<Gui
     [NotMapped]
     public virtual IrModelFields? Field { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     //[InverseProperty("IrModelAccessWriteUs")]
     [NotMapped]

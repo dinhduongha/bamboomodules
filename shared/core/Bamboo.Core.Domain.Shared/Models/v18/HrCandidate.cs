@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -83,9 +86,9 @@ public partial class HrCandidate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("availability")]
     public DateTime? Availability { get; set; }
 
-    [JsonField]
+    [JsonField] // CandidateProperties
     [Column("candidate_properties", TypeName = "jsonb")]
-    public string? CandidateProperties { get; set; }
+    public JsonElement? CandidateProperties { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -97,68 +100,82 @@ public partial class HrCandidate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CandidateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Candidate")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EmployeeId")]
     public virtual HrEmployee? Employee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CandidateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Candidate")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CandidateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Candidate")] // One2many
     public virtual ICollection<HrCandidateSkill> HrCandidateSkill { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MessageMainAttachmentId")]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TypeId")]
     public virtual HrRecruitmentDegree? Type { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrCandidateId")] //Many2many // Hidden
     // [InverseProperty("HrCandidate")] //Many2many // Hidden
     public virtual ICollection<CandidateSendMail> CandidateSendMail { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("HrCandidateId")] // Many2many // Normal
     // [InverseProperty("HrCandidate")] // Many2many // Normal
     public virtual ICollection<HrApplicantCategory> HrApplicantCategory { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("HrCandidateId")] // Many2many // Normal
     // [InverseProperty("HrCandidate")] // Many2many // Normal

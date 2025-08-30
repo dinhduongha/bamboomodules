@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -104,88 +107,106 @@ public partial class DiscussChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? LivechatVisitorId { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VideocallChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("VideocallChannel")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ChatbotCurrentStepId")]
     public virtual ChatbotScriptStep? ChatbotCurrentStep { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DiscussChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DiscussChannel")] // One2many
     public virtual ICollection<ChatbotMessage> ChatbotMessage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMember { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Channel")] // One2many
     public virtual ICollection<DiscussChannelRtcSession> DiscussChannelRtcSession { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FromMessageId")]
     public virtual MailMessage? FromMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReportMessageGroupId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReportMessageGroup")] // One2many
     public virtual ICollection<GamificationChallenge> GamificationChallenge { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("GroupPublicId")]
     public virtual ResGroups? GroupPublic { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentChannelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ParentChannel")] // One2many
     public virtual ICollection<DiscussChannel> InverseParentChannel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LivechatChannelId")]
     public virtual ImLivechatChannel? LivechatChannel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LivechatOperatorId")]
     public virtual ResPartner? LivechatOperator { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LivechatVisitorId")]
     public virtual WebsiteVisitor? LivechatVisitor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentChannelId")]
     public virtual DiscussChannel? ParentChannel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DiscussChannelId")] // Many2many // Normal
     // [InverseProperty("DiscussChannel")] // Many2many // Normal
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DiscussChannelId")] // Many2many // Normal
     // [InverseProperty("DiscussChannelNavigation")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -83,9 +86,9 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("kanban_state")]
     public string? KanbanState { get; set; }
 
-    [JsonField]
+    [JsonField] // ApplicantProperties
     [Column("applicant_properties", TypeName = "jsonb")]
-    public string? ApplicantProperties { get; set; }
+    public JsonElement? ApplicantProperties { get; set; }
 
     [Column("applicant_notes")]
     public string? ApplicantNotes { get; set; }
@@ -124,98 +127,119 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public double? DelayClose { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ApplicantId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Applicant")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CampaignId")]
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CandidateId")]
     public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DepartmentId")]
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("JobId")]
     public virtual HrJob? Job { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastStageId")]
     public virtual HrRecruitmentStage? LastStage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MediumId")]
     public virtual UtmMedium? Medium { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MessageMainAttachmentId")]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RefuseReasonId")]
     public virtual HrApplicantRefuseReason? RefuseReason { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SourceId")]
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StageId")]
     public virtual HrRecruitmentStage? Stage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ApplicantId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Applicant")] // One2many
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ApplicantId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Applicant")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrApplicantId")] //Many2many // Hidden
     // [InverseProperty("HrApplicant")] //Many2many // Hidden
     public virtual ICollection<ApplicantGetRefuseReason> ApplicantGetRefuseReason { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrApplicantId")] //Many2many // Hidden
     // [InverseProperty("HrApplicant")] //Many2many // Hidden
     public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("HrApplicantId")] // Many2many // Normal
     // [InverseProperty("HrApplicant")] // Many2many // Normal
     public virtual ICollection<HrApplicantCategory> HrApplicantCategory { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("HrApplicantId")] // Many2many // Normal
     // [InverseProperty("HrApplicant")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -117,9 +120,9 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("first_contract_date")]
     public DateTime? FirstContractDate { get; set; }
 
-    [JsonField]
+    [JsonField] // VehicleProperties
     [Column("vehicle_properties", TypeName = "jsonb")]
-    public string? VehicleProperties { get; set; }
+    public JsonElement? VehicleProperties { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -173,96 +176,116 @@ public partial class FleetVehicle: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public string? MobilityCard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BrandId")]
     public virtual FleetVehicleModelBrand? Brand { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CategoryId")]
     public virtual FleetVehicleModelCategory? Category { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DriverId")]
     public virtual ResPartner? Driver { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DriverEmployeeId")]
     public virtual HrEmployee? DriverEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleLogContract> FleetVehicleLogContract { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<FleetVehicleOdometer> FleetVehicleOdometer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FutureDriverId")]
     public virtual ResPartner? FutureDriver { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FutureDriverEmployeeId")]
     public virtual HrEmployee? FutureDriverEmployee { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ManagerId")]
     public virtual ResUsers? Manager { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual FleetVehicleModel? Model { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StateId")]
     public virtual FleetVehicleState? State { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("VehicleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Vehicle")] // One2many
     public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("FleetVehicleId")] //Many2many // Hidden
     // [InverseProperty("FleetVehicle")] //Many2many // Hidden
     public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("VehicleTagId")] // Many2many // Normal
     // [InverseProperty("VehicleTag")] // Many2many // Normal

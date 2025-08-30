@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -154,37 +157,37 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("default_order")]
     public string? DefaultOrder { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaTitle
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaDescription
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
-    [JsonField]
+    [JsonField] // WebsiteMetaKeywords
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public JsonElement? WebsiteMetaKeywords { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Faq
     [Column("faq", TypeName = "jsonb")]
-    public string? Faq { get; set; }
+    public JsonElement? Faq { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WelcomeMessage
     [Column("welcome_message", TypeName = "jsonb")]
-    public string? WelcomeMessage { get; set; }
+    public StringDictionary? WelcomeMessage { get; set; }
 
     [Column("teaser")]
     public string? Teaser { get; set; }
@@ -211,43 +214,52 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? SlideChannelId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AuthorizedGroupId")]
     public virtual ResGroups? AuthorizedGroup { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ForumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Forum")] // One2many
     public virtual ICollection<ForumPost> ForumPost { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ForumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Forum")] // One2many
     public virtual ICollection<ForumPostVote> ForumPostVote { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ForumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Forum")] // One2many
     public virtual ICollection<ForumTag> ForumTag { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SlideChannelId")]
     public virtual SlideChannel? SlideChannel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual SlideChannel? SlideChannelNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

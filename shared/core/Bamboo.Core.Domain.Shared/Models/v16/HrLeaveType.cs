@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -66,9 +69,9 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("request_unit")]
     public string? RequestUnit { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_calendar_meeting")]
     public bool? CreateCalendarMeeting { get; set; }
@@ -116,72 +119,87 @@ public partial class HrLeaveType: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public bool? TimesheetGenerate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AllocationNotifSubtypeId")]
     public virtual MailMessageSubtype? AllocationNotifSubtype { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("HolidayStatusId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("HolidayStatus")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TimeOffTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TimeOffType")] // One2many
     public virtual ICollection<HrLeaveAccrualPlan> HrLeaveAccrualPlan { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("HolidayStatusId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("HolidayStatus")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("HolidayStatusId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("HolidayStatus")] // One2many
     public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("HolidayStatusId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("HolidayStatus")] // One2many
     public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("IconId")]
     public virtual IrAttachment? Icon { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LeaveNotifSubtypeId")]
     public virtual MailMessageSubtype? LeaveNotifSubtype { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TimesheetProjectId")]
     public virtual ProjectProject? TimesheetProject { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TimesheetTaskId")]
     public virtual ProjectTask? TimesheetTask { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WorkEntryTypeId")]
     public virtual HrWorkEntryType? WorkEntryType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("HrLeaveTypeId")] // Many2many // Normal
     // [InverseProperty("HrLeaveType")] // Many2many // Normal

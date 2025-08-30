@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -63,9 +66,9 @@ public partial class LoyaltyReward: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("discount_product_domain")]
     public string? DiscountProductDomain { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("discount_max_amount")]
     public decimal? DiscountMaxAmount { get; set; }
@@ -89,72 +92,87 @@ public partial class LoyaltyReward: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public double? RequiredPoints { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DiscountLineProductId")]
     public virtual ProductProduct? DiscountLineProduct { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DiscountProductCategoryId")]
     public virtual ProductCategory? DiscountProductCategory { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DiscountProductTagId")]
     public virtual ProductTag? DiscountProductTag { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RewardId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Reward")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProgramId")]
     public virtual LoyaltyProgram? Program { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RewardProductId")]
     public virtual ProductProduct? RewardProduct { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RewardProductTagId")]
     public virtual ProductTag? RewardProductTag { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SelectedRewardId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SelectedReward")] // One2many
     public virtual ICollection<SaleLoyaltyRewardWizard> SaleLoyaltyRewardWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RewardId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Reward")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("LoyaltyRewardId")] // Many2many // Normal
     // [InverseProperty("LoyaltyReward")] // Many2many // Normal
     public virtual ICollection<AccountTax> AccountTax { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
     // [ForeignKey("LoyaltyRewardId")] // Many2many // Normal
     // [InverseProperty("LoyaltyReward")] // Many2many // Normal
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("LoyaltyRewardId")] //Many2many // Hidden
     // [InverseProperty("LoyaltyReward")] //Many2many // Hidden

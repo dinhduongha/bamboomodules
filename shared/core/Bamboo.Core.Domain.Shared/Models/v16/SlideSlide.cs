@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -103,33 +106,33 @@ public partial class SlideSlide: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("slide_type")]
     public string? SlideType { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaTitle
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaDescription
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
-    [JsonField]
+    [JsonField] // WebsiteMetaKeywords
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public JsonElement? WebsiteMetaKeywords { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField] // HtmlContent
     [Column("html_content", TypeName = "jsonb")]
-    public string? HtmlContent { get; set; }
+    public JsonElement? HtmlContent { get; set; }
 
     [Column("completion_time")]
     public decimal? CompletionTime { get; set; }
@@ -165,72 +168,86 @@ public partial class SlideSlide: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public long? NbrCertification { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CategoryId")]
     public virtual SlideSlide? Category { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ChannelId")]
     public virtual SlideChannel? Channel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<SlideSlide> InverseCategory { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PromotedSlideId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PromotedSlide")] // One2many
     public virtual ICollection<SlideChannel> SlideChannel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SlideId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideEmbed> SlideEmbed { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SlideId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideQuestion> SlideQuestion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SlideId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideSlidePartner> SlideSlidePartner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SlideId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SlideSlideResource> SlideSlideResource { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SurveyId")]
     public virtual SurveySurvey? Survey { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SlideId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Slide")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SlideId")] // Many2many // Normal
     // [InverseProperty("Slide")] // Many2many // Normal

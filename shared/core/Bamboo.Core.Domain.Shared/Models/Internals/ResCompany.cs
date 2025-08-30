@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -75,17 +78,17 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("layout_background")]
     public string? LayoutBackground { get; set; }
 
-    [JsonField]
+    [JsonField] // ReportHeader
     [Column("report_header", TypeName = "jsonb")]
-    public string? ReportHeader { get; set; }
+    public JsonElement? ReportHeader { get; set; }
 
-    [JsonField]
+    [JsonField] // ReportFooter
     [Column("report_footer", TypeName = "jsonb")]
-    public string? ReportFooter { get; set; }
+    public JsonElement? ReportFooter { get; set; }
 
-    [JsonField]
+    [JsonField] // CompanyDetails
     [Column("company_details", TypeName = "jsonb")]
-    public string? CompanyDetails { get; set; }
+    public JsonElement? CompanyDetails { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -249,13 +252,13 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("account_opening_date")]
     public DateTime? AccountOpeningDate { get; set; }
 
-    [JsonField]
+    [JsonField] // InvoiceTerms
     [Column("invoice_terms", TypeName = "jsonb")]
-    public string? InvoiceTerms { get; set; }
+    public JsonElement? InvoiceTerms { get; set; }
 
-    [JsonField]
+    [JsonField] // InvoiceTermsHtml
     [Column("invoice_terms_html", TypeName = "jsonb")]
-    public string? InvoiceTermsHtml { get; set; }
+    public JsonElement? InvoiceTermsHtml { get; set; }
 
     [Column("expects_chart_of_accounts")]
     public bool? ExpectsChartOfAccounts { get; set; }
@@ -377,9 +380,9 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("hr_presence_control_ip_list")]
     public string? HrPresenceControlIpList { get; set; }
 
-    [JsonField]
+    [JsonField] // EmployeePropertiesDefinition
     [Column("employee_properties_definition", TypeName = "jsonb")]
-    public string? EmployeePropertiesDefinition { get; set; }
+    public JsonElement? EmployeePropertiesDefinition { get; set; }
 
     [Column("hr_presence_control_login")]
     public bool? HrPresenceControlLogin { get; set; }
@@ -399,13 +402,13 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("work_permit_expiration_notice_period")]
     public long? WorkPermitExpirationNoticePeriod { get; set; }
 
-    [JsonField]
+    [JsonField] // CandidatePropertiesDefinition
     [Column("candidate_properties_definition", TypeName = "jsonb")]
-    public string? CandidatePropertiesDefinition { get; set; }
+    public JsonElement? CandidatePropertiesDefinition { get; set; }
 
-    [JsonField]
+    [JsonField] // JobPropertiesDefinition
     [Column("job_properties_definition", TypeName = "jsonb")]
-    public string? JobPropertiesDefinition { get; set; }
+    public JsonElement? JobPropertiesDefinition { get; set; }
 
     [Column("overtime_company_threshold")]
     public long? OvertimeCompanyThreshold { get; set; }
@@ -452,9 +455,9 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("expense_outstanding_account_id")]
     public Guid? ExpenseOutstandingAccountId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // LunchNotifyMessage
     [Column("lunch_notify_message", TypeName = "jsonb")]
-    public string? LunchNotifyMessage { get; set; }
+    public StringDictionary? LunchNotifyMessage { get; set; }
 
     [Column("lunch_minimum_threshold")]
     public double? LunchMinimumThreshold { get; set; }
@@ -607,6 +610,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountBudgetPost> AccountBudgetPost { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountCashBasisBaseAccountId")]
     public virtual AccountAccount? AccountCashBasisBaseAccount { get; set; }
 
@@ -635,14 +639,17 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountCommonReport> AccountCommonReport { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountDefaultPosReceivableAccountId")]
     public virtual AccountAccount? AccountDefaultPosReceivableAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountDiscountExpenseAllocationId")]
     public virtual AccountAccount? AccountDiscountExpenseAllocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountDiscountIncomeAllocationId")]
     public virtual AccountAccount? AccountDiscountIncomeAllocation { get; set; }
 
@@ -659,6 +666,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountFinancialYearOp> AccountFinancialYearOp { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountFiscalCountryId")]
     public virtual ResCountry? AccountFiscalCountry { get; set; }
 
@@ -699,10 +707,12 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalEarlyPayDiscountGainAccountId")]
     public virtual AccountAccount? AccountJournalEarlyPayDiscountGainAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalEarlyPayDiscountLossAccountId")]
     public virtual AccountAccount? AccountJournalEarlyPayDiscountLossAccount { get; set; }
 
@@ -713,6 +723,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountJournalGroup> AccountJournalGroup { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalSuspenseAccountId")]
     public virtual AccountAccount? AccountJournalSuspenseAccount { get; set; }
 
@@ -741,6 +752,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountMoveReversal> AccountMoveReversal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountOpeningMoveId")]
     public virtual AccountMove? AccountOpeningMove { get; set; }
 
@@ -775,14 +787,17 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountPrintJournal> AccountPrintJournal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountProductionWipAccountId")]
     public virtual AccountAccount? AccountProductionWipAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountProductionWipOverheadAccountId")]
     public virtual AccountAccount? AccountProductionWipOverheadAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountPurchaseTaxId")]
     public virtual AccountTax? AccountPurchaseTax { get; set; }
 
@@ -823,6 +838,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedger { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountSaleTaxId")]
     public virtual AccountTax? AccountSaleTax { get; set; }
 
@@ -869,10 +885,12 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountingReport> AccountingReport { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AliasDomainId")]
     public virtual MailAliasDomain? AliasDomain { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AutomaticEntryDefaultJournalId")]
     public virtual AccountJournal? AutomaticEntryDefaultJournal { get; set; }
 
@@ -883,6 +901,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<BaseDocumentLayout> BaseDocumentLayout { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BatchPaymentSequenceId")]
     public virtual IrSequence? BatchPaymentSequence { get; set; }
 
@@ -905,6 +924,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ChangeLockDate> ChangeLockDate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
@@ -933,10 +953,12 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<CrossoveredBudgetLines> CrossoveredBudgetLines { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyExchangeJournalId")]
     public virtual AccountJournal? CurrencyExchangeJournal { get; set; }
 
@@ -947,10 +969,12 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<DataRecycleRecord> DataRecycleRecord { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultCashDifferenceExpenseAccountId")]
     public virtual AccountAccount? DefaultCashDifferenceExpenseAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultCashDifferenceIncomeAccountId")]
     public virtual AccountAccount? DefaultCashDifferenceIncomeAccount { get; set; }
 
@@ -967,6 +991,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<DigestDigest> DigestDigest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DropshipSubcontractorPickTypeId")]
     public virtual StockPickingType? DropshipSubcontractorPickType { get; set; }
 
@@ -989,22 +1014,27 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseAccrualAccountId")]
     public virtual AccountAccount? ExpenseAccrualAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseCurrencyExchangeAccountId")]
     public virtual AccountAccount? ExpenseCurrencyExchangeAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseJournalId")]
     public virtual AccountJournal? ExpenseJournal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseOutstandingAccountId")]
     public virtual AccountAccount? ExpenseOutstandingAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExternalReportLayoutId")]
     public virtual IrUiView? ExternalReportLayout { get; set; }
 
@@ -1027,6 +1057,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual FollowupFollowup? FollowupFollowup { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResCompany'
@@ -1180,18 +1211,22 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<HrWorkLocation> HrWorkLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("IncomeCurrencyExchangeAccountId")]
     public virtual AccountAccount? IncomeCurrencyExchangeAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("IncotermId")]
     public virtual AccountIncoterms? Incoterm { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("InternalProjectId")]
     public virtual ProjectProject? InternalProject { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("InternalTransitLocationId")]
     public virtual StockLocation? InternalTransitLocation { get; set; }
 
@@ -1220,10 +1255,12 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<IrSequence> IrSequence { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LcJournalId")]
     public virtual AccountJournal? LcJournal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LeaveTimesheetTaskId")]
     public virtual ProjectTask? LeaveTimesheetTask { get; set; }
 
@@ -1378,6 +1415,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivity { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("NomenclatureId")]
     public virtual BarcodeNomenclature? Nomenclature { get; set; }
 
@@ -1394,14 +1432,17 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaperformatId")]
     public virtual ReportPaperformat? Paperformat { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual ResCompany? Parent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
@@ -1424,6 +1465,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PeppolPurchaseJournalId")]
     public virtual AccountJournal? PeppolPurchaseJournal { get; set; }
 
@@ -1536,6 +1578,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProjectTimeModeId")]
     public virtual UomUom? ProjectTimeMode { get; set; }
 
@@ -1612,6 +1655,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResourceCalendarId")]
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
@@ -1634,6 +1678,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ResourceResource> ResourceResource { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RevenueAccrualAccountId")]
     public virtual AccountAccount? RevenueAccrualAccount { get; set; }
 
@@ -1644,6 +1689,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<SaleAdvancePaymentInv> SaleAdvancePaymentInv { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleDiscountProductId")]
     public virtual ProductProduct? SaleDiscountProduct { get; set; }
 
@@ -1660,6 +1706,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleOrderTemplateId")]
     public virtual SaleOrderTemplate? SaleOrderTemplate { get; set; }
 
@@ -1712,6 +1759,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<StockLot> StockLot { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StockMailConfirmationTemplateId")]
     public virtual MailTemplate? StockMailConfirmationTemplate { get; set; }
 
@@ -1794,6 +1842,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StockSmsConfirmationTemplateId")]
     public virtual SmsTemplate? StockSmsConfirmationTemplate { get; set; }
 
@@ -1828,18 +1877,22 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SubcontractingLocationId")]
     public virtual StockLocation? SubcontractingLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TaxCashBasisJournalId")]
     public virtual AccountJournal? TaxCashBasisJournal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TimesheetEncodeUomId")]
     public virtual UomUom? TimesheetEncodeUom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TransferAccountId")]
     public virtual AccountAccount? TransferAccount { get; set; }
 
@@ -1850,6 +1903,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<UtmCampaign> UtmCampaign { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
@@ -1860,10 +1914,12 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<Website> WebsiteNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (AccountAccount) is commented out
     // [ForeignKey("ResCompanyId")] //Many2many // Hidden
@@ -1871,18 +1927,21 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<AccountAccount> AccountAccount { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ResCompanyId")] // Many2many // Normal
     // [InverseProperty("ResCompany")] // Many2many // Normal
     public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResCompanyId")] //Many2many // Hidden
     // [InverseProperty("ResCompany")] //Many2many // Hidden
     public virtual ICollection<IapAccount> IapAccount { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("Cid")] // Many2many // Normal
     // [InverseProperty("Cid")] // Many2many // Normal

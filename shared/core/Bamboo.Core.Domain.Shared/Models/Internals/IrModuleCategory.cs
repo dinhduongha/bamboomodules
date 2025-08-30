@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -34,16 +37,16 @@ public partial class IrModuleCategory: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("parent_id")]
     public Guid? ParentId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("visible")]
     public bool? Visible { get; set; }
@@ -52,32 +55,38 @@ public partial class IrModuleCategory: FullAuditedAggregateRoot<Guid>, IEntityDt
     public bool? Exclusive { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<IrModuleCategory> InverseParent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<IrModuleModule> IrModuleModule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual IrModuleCategory? Parent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<ResGroups> ResGroups { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

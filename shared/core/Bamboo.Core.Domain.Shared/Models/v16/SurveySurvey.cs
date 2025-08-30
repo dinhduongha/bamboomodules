@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -84,17 +87,17 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("session_code")]
     public string? SessionCode { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Title
     [Column("title", TypeName = "jsonb")]
-    public string? Title { get; set; }
+    public StringDictionary? Title { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionDone
     [Column("description_done", TypeName = "jsonb")]
-    public string? DescriptionDone { get; set; }
+    public StringDictionary? DescriptionDone { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -142,78 +145,93 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public long? CertificationValidityMonths { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CertificationBadgeId")]
     public virtual GamificationBadge? CertificationBadge { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CertificationMailTemplateId")]
     public virtual MailTemplate? CertificationMailTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<GamificationBadge> GamificationBadge { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SessionQuestionId")]
     public virtual SurveyQuestion? SessionQuestion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SlideSlide> SlideSlide { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyInvite> SurveyInvite { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyQuestion> SurveyQuestion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SurveyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Survey")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("SurveySurveyId")] // Many2many // Normal
     // [InverseProperty("SurveySurvey")] // Many2many // Normal

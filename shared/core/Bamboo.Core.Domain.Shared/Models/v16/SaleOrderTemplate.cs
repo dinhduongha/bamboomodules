@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,13 +45,13 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("name")]
     public string? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Note
     [Column("note", TypeName = "jsonb")]
-    public string? Note { get; set; }
+    public JsonElement? Note { get; set; }
 
-    [JsonField]
+    [JsonField] // JournalId
     [Column("journal_id", TypeName = "jsonb")]
-    public string? JournalId { get; set; }
+    public JsonElement? JournalId { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -69,46 +72,55 @@ public partial class SaleOrderTemplate: FullAuditedAggregateRoot<Guid>, IEntityD
     public double? PrepaymentPercent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MailTemplateId")]
     public virtual MailTemplate? MailTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SaleOrderTemplateId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SaleOrderTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SaleOrderTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<SaleOrderTemplateLine> SaleOrderTemplateLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SaleOrderTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SaleOrderTemplate")] // One2many
     public virtual ICollection<SaleOrderTemplateOption> SaleOrderTemplateOption { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("SaleOrderTemplateId")] //Many2many // Hidden
     // [InverseProperty("SaleOrderTemplate")] //Many2many // Hidden

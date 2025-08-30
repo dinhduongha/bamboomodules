@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -70,9 +74,9 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("state")]
     public string? State { get; set; }
 
-    [JsonField]
+    [JsonField] // RegistrationProperties
     [Column("registration_properties", TypeName = "jsonb")]
-    public string? RegistrationProperties { get; set; }
+    public JsonElement? RegistrationProperties { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -102,82 +106,100 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     public string? SaleStatus { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventId")]
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LastRegistrationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("LastRegistration")] // One2many
     public virtual ICollection<EventMail> EventMail { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RegistrationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Registration")] // One2many
     public virtual ICollection<EventMailRegistration> EventMailRegistration { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RegistrationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Registration")] // One2many
     public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventTicketId")]
     public virtual EventEventTicket? EventTicket { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosOrderLineId")]
     public virtual PosOrderLine? PosOrderLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RegistrationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Registration")] // One2many
     public virtual ICollection<RegistrationEditorLine> RegistrationEditorLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleOrderId")]
     public virtual SaleOrder? SaleOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleOrderLineId")]
     public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UtmCampaignId")]
     public virtual UtmCampaign? UtmCampaign { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UtmMediumId")]
     public virtual UtmMedium? UtmMedium { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UtmSourceId")]
     public virtual UtmSource? UtmSource { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("VisitorId")]
     public virtual WebsiteVisitor? Visitor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventRegistrationId")] //Many2many // Hidden
     // [InverseProperty("EventRegistration")] //Many2many // Hidden

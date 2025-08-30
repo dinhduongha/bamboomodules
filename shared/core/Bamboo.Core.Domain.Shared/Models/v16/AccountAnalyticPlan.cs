@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -46,13 +49,13 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     [Column("complete_name")]
     public string? CompleteName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // DefaultApplicability
     [Column("default_applicability", TypeName = "jsonb")]
-    public string? DefaultApplicability { get; set; }
+    public JsonElement? DefaultApplicability { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -64,38 +67,45 @@ public partial class AccountAnalyticPlan: FullAuditedAggregateRoot<Guid>, IEntit
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PlanId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Plan")] // One2many
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountPlan { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RootPlanId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RootPlan")] // One2many
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccountRootPlan { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AnalyticPlanId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AnalyticPlan")] // One2many
     public virtual ICollection<AccountAnalyticApplicability> AccountAnalyticApplicability { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountAnalyticPlan> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual AccountAnalyticPlan? Parent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

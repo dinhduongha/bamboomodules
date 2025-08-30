@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -63,72 +66,86 @@ public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AttributeId")]
     public virtual ProductAttribute? Attribute { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AttributeLineId")]
     public virtual ProductTemplateAttributeLine? AttributeLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CustomProductTemplateAttributeValueId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("CustomProductTemplateAttributeValue")] // One2many
     public virtual ICollection<ProductAttributeCustomValue> ProductAttributeCustomValue { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductAttributeValueId")]
     public virtual ProductAttributeValue? ProductAttributeValue { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTemplateAttributeValueId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTemplateAttributeValueNavigation")] // One2many
     public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusionNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductTmplId")]
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("TemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("TemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<StockMove> Move { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (ProductProduct) is commented out
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
@@ -136,24 +153,28 @@ public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Gui
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusion { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("TemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("TemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<MrpProduction> Production { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateAttributeValueId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplateAttributeValue")] //Many2many // Hidden

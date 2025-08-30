@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -82,60 +85,72 @@ public partial class CrmIapLeadMiningRequest: FullAuditedAggregateRoot<Guid>, IE
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LeadMiningRequestId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("LeadMiningRequest")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PreferredRoleId")]
     public virtual CrmIapLeadRole? PreferredRole { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SeniorityId")]
     public virtual CrmIapLeadSeniority? Seniority { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TeamId")]
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
     // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadIndustry> CrmIapLeadIndustry { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
     // [InverseProperty("CrmIapLeadMiningRequestNavigation")] // Many2many // Normal
     public virtual ICollection<CrmIapLeadRole> CrmIapLeadRole { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
     // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<CrmTag> CrmTag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
     // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
     // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal
     public virtual ICollection<ResCountry> ResCountry { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
     // [ForeignKey("CrmIapLeadMiningRequestId")] // Many2many // Normal
     // [InverseProperty("CrmIapLeadMiningRequest")] // Many2many // Normal

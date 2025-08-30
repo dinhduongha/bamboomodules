@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,9 +45,9 @@ public partial class SurveyQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("value_image_filename")]
     public string? ValueImageFilename { get; set; }
 
-    [JsonField]
+    [JsonField] // Value
     [Column("value", TypeName = "jsonb")]
-    public string? Value { get; set; }
+    public JsonElement? Value { get; set; }
 
     [Column("is_correct")]
     public bool? IsCorrect { get; set; }
@@ -59,34 +62,41 @@ public partial class SurveyQuestionAnswer: FullAuditedAggregateRoot<Guid>, IEnti
     public double? AnswerScore { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MatrixQuestionId")]
     public virtual SurveyQuestion? MatrixQuestion { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("QuestionId")]
     public virtual SurveyQuestion? Question { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MatrixRowId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MatrixRow")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineMatrixRow { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SuggestedAnswerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SuggestedAnswer")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLineSuggestedAnswer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("SurveyQuestionAnswerId")] //Many2many // Hidden
     // [InverseProperty("SurveyQuestionAnswer")] //Many2many // Hidden

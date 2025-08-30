@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -44,58 +47,68 @@ public partial class UtmMedium: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("UtmMediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("UtmMedium")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<LinkTracker> LinkTracker { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MediumId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Medium")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

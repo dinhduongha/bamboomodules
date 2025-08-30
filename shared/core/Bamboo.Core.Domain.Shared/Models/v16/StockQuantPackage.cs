@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -58,58 +61,69 @@ public partial class StockQuantPackage: FullAuditedAggregateRoot<Guid>, IEntityD
     public double? ShippingWeight { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LocationId")]
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PackageTypeId")]
     public virtual StockPackageType? PackageType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PackageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLinePackage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResultPackageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ResultPackage")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLineResultPackage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PackageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockPackageLevel> StockPackageLevel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PackageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockQuant> StockQuant { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DestPackageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DestPackage")] // One2many
     public virtual ICollection<StockQuantRelocate> StockQuantRelocate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PackageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Package")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

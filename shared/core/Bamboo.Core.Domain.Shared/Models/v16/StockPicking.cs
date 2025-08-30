@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -80,9 +83,9 @@ public partial class StockPicking: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("priority")]
     public string? Priority { get; set; }
 
-    [JsonField]
+    [JsonField] // PickingProperties
     [Column("picking_properties", TypeName = "jsonb")]
-    public string? PickingProperties { get; set; }
+    public JsonElement? PickingProperties { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
@@ -148,184 +151,221 @@ public partial class StockPicking: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public long? BatchSequence { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BackorderId")]
     public virtual StockPicking? Backorder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BatchId")]
     public virtual StockPickingBatch? Batch { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CarrierId")]
     public virtual DeliveryCarrier? Carrier { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<ChooseDeliveryPackage> ChooseDeliveryPackage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("GroupId")]
     public virtual ProcurementGroup? Group { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BackorderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Backorder")] // One2many
     public virtual ICollection<StockPicking> InverseBackorder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReturnId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Return")] // One2many
     public virtual ICollection<StockPicking> InverseReturn { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LocationId")]
     public virtual StockLocation? Location { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LocationDestId")]
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OwnerId")]
     public virtual ResPartner? Owner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PickingTypeId")]
     public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosOrderId")]
     public virtual PosOrder? PosOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosSessionId")]
     public virtual PosSession? PosSession { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProjectId")]
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ReturnId")]
     public virtual StockPicking? Return { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleId")]
     public virtual SaleOrder? Sale { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockBackorderConfirmationLine> StockBackorderConfirmationLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockPackageDestination> StockPackageDestination { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockPackageLevel> StockPackageLevel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockReturnPicking> StockReturnPicking { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Picking")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
     public virtual ICollection<ConfirmStockSms> ConfirmStockSms { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
     public virtual ICollection<ExpiryPickingConfirmation> ExpiryPickingConfirmation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
     public virtual ICollection<PickingLabelType> PickingLabelType { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
     public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden
     public virtual ICollection<StockBackorderConfirmation> StockBackorderConfirmation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("StockPickingId")] //Many2many // Hidden
     // [InverseProperty("StockPicking")] //Many2many // Hidden

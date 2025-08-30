@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -76,9 +79,9 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("decimal_separator")]
     public string? DecimalSeparator { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -123,48 +126,57 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
     public double? PaymentToleranceParam { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReconcileModelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReconcileModel")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Model")] // One2many
     public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Model")] // One2many
     public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMapping { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AccountReconcileModelId")] // Many2many // Normal
     // [InverseProperty("AccountReconcileModel")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("AccountReconcileModelId")] // Many2many // Normal
     // [InverseProperty("AccountReconcileModel")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AccountReconcileModelId")] // Many2many // Normal
     // [InverseProperty("AccountReconcileModel")] // Many2many // Normal

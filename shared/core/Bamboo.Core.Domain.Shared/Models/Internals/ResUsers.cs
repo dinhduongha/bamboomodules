@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -79,9 +82,9 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("sale_team_id")]
     public Guid? SaleTeamId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyWarehouseId
     [Column("property_warehouse_id", TypeName = "jsonb")]
-    public string? PropertyWarehouseId { get; set; }
+    public JsonElement? PropertyWarehouseId { get; set; }
 
     [Column("target_sales_won")]
     public long? TargetSalesWon { get; set; }
@@ -1536,6 +1539,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<BusBus> BusBusWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual BusPresence? BusPresence { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResUsers'
@@ -1887,6 +1891,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<ChooseDeliveryPackage> ChooseDeliveryPackageWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
@@ -1915,6 +1920,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<CouponShare> CouponShareWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
@@ -4757,6 +4763,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<IrUiView> IrUiViewWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastLunchLocationId")]
     public virtual LunchLocation? LastLunchLocation { get; set; }
 
@@ -6093,10 +6100,12 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<MrpWorkorder> MrpWorkorderWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("NextRankId")]
     public virtual GamificationKarmaRank? NextRank { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OauthProviderId")]
     public virtual AuthOauthProvider? OauthProvider { get; set; }
 
@@ -6149,6 +6158,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<OnboardingProgress> OnboardingProgressWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
@@ -7257,6 +7267,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<QuotationDocument> QuotationDocumentWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RankId")]
     public virtual GamificationKarmaRank? Rank { get; set; }
 
@@ -7747,6 +7758,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<ResUsersSettings> ResUsersSettingsCreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual ResUsersSettings? ResUsersSettingsUser { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResUsers'
@@ -8050,6 +8062,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<SalePdfFormField> SalePdfFormFieldWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleTeamId")]
     public virtual CrmTeam? SaleTeam { get; set; }
 
@@ -9356,6 +9369,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<WebTourTour> WebTourTourWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
@@ -9582,16 +9596,19 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     // public virtual ICollection<WizardIrModelMenuCreate> WizardIrModelMenuCreateWriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("UserId")] //Many2many // Hidden
     // [InverseProperty("User")] //Many2many // Hidden
     public virtual ICollection<ImLivechatChannel> Channel { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (ResCompany) is commented out
     // [ForeignKey("UserId")] //Many2many // Hidden
@@ -9599,138 +9616,161 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public virtual ICollection<ResCompany> Cid { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<DataRecycleModel> DataRecycleModel { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<DigestDigest> DigestDigest { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<DigestTip> DigestTip { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<ForumPost> ForumPost { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<GamificationBadge> GamificationBadge { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<GamificationChallenge> GamificationChallenge { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsersNavigation")] //Many2many // Hidden
     public virtual ICollection<GamificationChallenge> GamificationChallengeNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("Uid")] //Many2many // Hidden
     // [InverseProperty("UidNavigation")] //Many2many // Hidden
     public virtual ICollection<ResGroups> Gid { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsersNavigation")] //Many2many // Hidden
     public virtual ICollection<HrJob> HrJobNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<HrLeaveType> HrLeaveType { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<IapAccount> IapAccount { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("UserId")] //Many2many // Hidden
     // [InverseProperty("UserNavigation")] //Many2many // Hidden
     public virtual ICollection<HrJob> Job { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<MailGroup> MailGroup { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<MaintenanceTeam> MaintenanceTeam { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("UserId")] //Many2many // Hidden
     // [InverseProperty("User")] //Many2many // Hidden
     public virtual ICollection<StockPickingType> PickingType { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("UserId")] //Many2many // Hidden
     // [InverseProperty("User")] //Many2many // Hidden
     public virtual ICollection<LunchProduct> Product { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("UserId")] //Many2many // Hidden
     // [InverseProperty("User")] //Many2many // Hidden
     public virtual ICollection<ProjectProject> Project { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<SurveySurvey> SurveySurvey { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("UserId")] //Many2many // Hidden
     // [InverseProperty("UserNavigation")] //Many2many // Hidden
     public virtual ICollection<CrmTeam> Team { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResUsersId")] //Many2many // Hidden
     // [InverseProperty("ResUsers")] //Many2many // Hidden

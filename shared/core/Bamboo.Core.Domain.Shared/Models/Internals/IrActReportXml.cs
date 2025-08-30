@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -40,13 +43,13 @@ public partial class IrActReportXml: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("binding_view_types")]
     public string? BindingViewTypes { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Help
     [Column("help", TypeName = "jsonb")]
-    public string? Help { get; set; }
+    public StringDictionary? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -75,9 +78,9 @@ public partial class IrActReportXml: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("domain")]
     public string? Domain { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // PrintReportName
     [Column("print_report_name", TypeName = "jsonb")]
-    public string? PrintReportName { get; set; }
+    public StringDictionary? PrintReportName { get; set; }
 
     [Column("multi")]
     public bool? Multi { get; set; }
@@ -89,52 +92,62 @@ public partial class IrActReportXml: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public bool? IsInvoiceReport { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PdfReportId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PdfReport")] // One2many
     public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BindingModelId")]
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosReportPrintId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosReportPrint")] // One2many
     public virtual ICollection<LoyaltyMail> LoyaltyMail { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaperformatId")]
     public virtual ReportPaperformat? Paperformat { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InvoiceTemplatePdfReportId")]
     [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
     // [InverseProperty("InvoiceTemplatePdfReport")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReportTemplate")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReportTemplateNavigation")] // One2many
     public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("Uid")] // Many2many // Normal
     // [InverseProperty("Uid")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrActionsReportId")] //Many2many // Hidden
     // [InverseProperty("IrActionsReport")] //Many2many // Hidden

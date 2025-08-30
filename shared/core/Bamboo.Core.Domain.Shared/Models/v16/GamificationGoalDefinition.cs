@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -63,13 +66,13 @@ public partial class GamificationGoalDefinition: FullAuditedAggregateRoot<Guid>,
     [Column("res_id_field")]
     public string? ResIdField { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Suffix
     [Column("suffix", TypeName = "jsonb")]
-    public string? Suffix { get; set; }
+    public JsonElement? Suffix { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -90,46 +93,56 @@ public partial class GamificationGoalDefinition: FullAuditedAggregateRoot<Guid>,
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ActionId")]
     public virtual IrActWindow? Action { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BatchDistinctiveField")]
     public virtual IrModelFields? BatchDistinctiveFieldNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FieldId")]
     public virtual IrModelFields? Field { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FieldDateId")]
     public virtual IrModelFields? FieldDate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DefinitionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Definition")] // One2many
     public virtual ICollection<GamificationChallengeLine> GamificationChallengeLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DefinitionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Definition")] // One2many
     public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("GamificationGoalDefinitionId")] //Many2many // Hidden
     // [InverseProperty("GamificationGoalDefinition")] //Many2many // Hidden

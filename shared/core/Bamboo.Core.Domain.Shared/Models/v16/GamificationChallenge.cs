@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -84,13 +87,13 @@ public partial class GamificationChallenge: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("next_report_date")]
     public DateTime? NextReportDate { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("reward_failure")]
     public bool? RewardFailure { get; set; }
@@ -105,66 +108,80 @@ public partial class GamificationChallenge: FullAuditedAggregateRoot<Guid>, IEnt
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChallengeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Challenge")] // One2many
     public virtual ICollection<GamificationBadgeUser> GamificationBadgeUser { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChallengeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Challenge")] // One2many
     public virtual ICollection<GamificationChallengeLine> GamificationChallengeLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChallengeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Challenge")] // One2many
     public virtual ICollection<GamificationGoal> GamificationGoal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ManagerId")]
     public virtual ResUsers? Manager { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ReportMessageGroupId")]
     public virtual DiscussChannel? ReportMessageGroup { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ReportTemplateId")]
     public virtual MailTemplate? ReportTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RewardId")]
     public virtual GamificationBadge? Reward { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RewardFirstId")]
     public virtual GamificationBadge? RewardFirst { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RewardSecondId")]
     public virtual GamificationBadge? RewardSecond { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RewardThirdId")]
     public virtual GamificationBadge? RewardThird { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("GamificationChallengeId")] // Many2many // Normal
     // [InverseProperty("GamificationChallenge")] // Many2many // Normal
     public virtual ICollection<ResUsers> ResUsers { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("GamificationChallengeId")] // Many2many // Normal
     // [InverseProperty("GamificationChallengeNavigation")] // Many2many // Normal

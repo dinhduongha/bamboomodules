@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -85,92 +88,110 @@ public partial class MrpBom: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     public Guid? ProjectId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpBomByproduct> MrpBomByproduct { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<MrpUnbuild> MrpUnbuild { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PickingTypeId")]
     public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductId")]
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductTmplId")]
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductUomId")]
     public virtual UomUom? ProductUom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProjectId")]
     public virtual ProjectProject? Project { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<StockScrap> StockScrap { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BomId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Bom")] // One2many
     public virtual ICollection<StockWarehouseOrderpoint> StockWarehouseOrderpoint { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpBomId")] //Many2many // Hidden
     // [InverseProperty("MrpBom")] //Many2many // Hidden
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("MrpBomId")] // Many2many // Normal
     // [InverseProperty("MrpBom")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -71,44 +74,53 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? LetterId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AuthorId")]
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LetterId")]
     public virtual SnailmailLetter? Letter { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MailMailId")]
     public virtual MailMail? MailMail { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MailMessageId")]
     public virtual MailMessage? MailMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("NotificationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Notification")] // One2many
     public virtual ICollection<MailResendPartner> MailResendPartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResPartnerId")]
     public virtual ResPartner? ResPartner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("NotificationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Notification")] // One2many
     public virtual ICollection<SmsResendRecipient> SmsResendRecipient { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailNotificationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailNotification")] // One2many
     public virtual ICollection<SmsTracker> SmsTracker { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailNotificationId")] //Many2many // Hidden
     // [InverseProperty("MailNotification")] //Many2many // Hidden

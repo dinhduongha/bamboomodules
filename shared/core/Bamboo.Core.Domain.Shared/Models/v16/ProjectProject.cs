@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -78,17 +81,17 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("date")]
     public DateTime? Date { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // LabelTasks
     [Column("label_tasks", TypeName = "jsonb")]
-    public string? LabelTasks { get; set; }
+    public StringDictionary? LabelTasks { get; set; }
 
-    [JsonField]
+    [JsonField] // TaskPropertiesDefinition
     [Column("task_properties_definition", TypeName = "jsonb")]
-    public string? TaskPropertiesDefinition { get; set; }
+    public JsonElement? TaskPropertiesDefinition { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -142,170 +145,203 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public string? BillingType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountId")]
     public virtual AccountAnalyticAccount? Account { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AliasId")]
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TimesheetProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TimesheetProject")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastUpdateId")]
     public virtual ProjectUpdate? LastUpdate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectCollaborator> ProjectCollaborator { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectCreateInvoice> ProjectCreateInvoice { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectMilestone> ProjectMilestone { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectTask> ProjectTask { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<ProjectUpdate> ProjectUpdate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ReinvoicedSaleOrderId")]
     public virtual SaleOrder? ReinvoicedSaleOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InternalProjectId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("InternalProject")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleLineId")]
     public virtual SaleOrderLine? SaleLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StageId")]
     public virtual ProjectProjectStage? Stage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProjectId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Project")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TimesheetProductId")]
     public virtual ProductProduct? TimesheetProduct { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? UserNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("XPlan2Id")]
     public virtual AccountAnalyticAccount? XPlan2 { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("XPlan3Id")]
     public virtual AccountAnalyticAccount? XPlan3 { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProjectProjectId")] // Many2many // Normal
     // [InverseProperty("ProjectProject")] // Many2many // Normal
     public virtual ICollection<ProjectTags> ProjectTags { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProjectProjectId")] //Many2many // Hidden
     // [InverseProperty("ProjectProject")] //Many2many // Hidden
     public virtual ICollection<ProjectTaskTypeDeleteWizard> ProjectTaskTypeDeleteWizard { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProjectId")] // Many2many // Normal
     // [InverseProperty("Project")] // Many2many // Normal
     public virtual ICollection<ProjectTaskType> Type { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("ProjectId")] // Many2many // Normal
     // [InverseProperty("Project")] // Many2many // Normal

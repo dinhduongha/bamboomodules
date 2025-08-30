@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,13 +45,13 @@ public partial class MailMessageSubtype: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("res_model")]
     public string? ResModel { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("internal")]
     public bool? Internal { get; set; }
@@ -69,48 +72,57 @@ public partial class MailMessageSubtype: FullAuditedAggregateRoot<Guid>, IEntity
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AllocationNotifSubtypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AllocationNotifSubtype")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveTypeAllocationNotifSubtype { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LeaveNotifSubtypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("LeaveNotifSubtype")] // One2many
     public virtual ICollection<HrLeaveType> HrLeaveTypeLeaveNotifSubtype { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<MailMessageSubtype> InverseParent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubtypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Subtype")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubtypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Subtype")] // One2many
     public virtual ICollection<MailMessage> MailMessage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual MailMessageSubtype? Parent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailMessageSubtypeId")] //Many2many // Hidden
     // [InverseProperty("MailMessageSubtype")] //Many2many // Hidden

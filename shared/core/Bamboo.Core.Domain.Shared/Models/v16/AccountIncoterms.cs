@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -33,9 +36,9 @@ public partial class AccountIncoterms: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("code")]
     public string? Code { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -47,34 +50,40 @@ public partial class AccountIncoterms: FullAuditedAggregateRoot<Guid>, IEntityDt
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InvoiceIncotermId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("InvoiceIncoterm")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IncotermId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Incoterm")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IncotermId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("Incoterm")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("Incoterm")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("IncotermNavigation")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -71,9 +74,9 @@ public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("method_end")]
     public DateTime? MethodEnd { get; set; }
 
-    [JsonField]
+    [JsonField] // AnalyticDistribution
     [Column("analytic_distribution", TypeName = "jsonb")]
-    public string? AnalyticDistribution { get; set; }
+    public JsonElement? AnalyticDistribution { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -97,46 +100,56 @@ public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEnti
     public double? MethodProgressFactor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountAnalyticId")]
     public virtual AccountAnalyticAccount? AccountAnalytic { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountAssetId")]
     public virtual AccountAccount? AccountAsset { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<AccountAssetAsset> AccountAssetAsset { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountDepreciationId")]
     public virtual AccountAccount? AccountDepreciation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountDepreciationExpenseId")]
     public virtual AccountAccount? AccountDepreciationExpense { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AssetCategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AssetCategory")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("JournalId")]
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

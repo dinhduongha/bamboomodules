@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,9 +45,9 @@ public partial class AccountFiscalPositionTemplate: FullAuditedAggregateRoot<Gui
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("zip_from")]
     public string? ZipFrom { get; set; }
@@ -52,9 +55,9 @@ public partial class AccountFiscalPositionTemplate: FullAuditedAggregateRoot<Gui
     [Column("zip_to")]
     public string? ZipTo { get; set; }
 
-    [JsonField]
+    [JsonField] // Note
     [Column("note", TypeName = "jsonb")]
-    public string? Note { get; set; }
+    public JsonElement? Note { get; set; }
 
     [Column("auto_apply")]
     public bool? AutoApply { get; set; }
@@ -69,38 +72,46 @@ public partial class AccountFiscalPositionTemplate: FullAuditedAggregateRoot<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PositionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Position")] // One2many
     public virtual ICollection<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PositionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Position")] // One2many
     public virtual ICollection<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ChartTemplateId")]
     public virtual AccountChartTemplate? ChartTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryGroupId")]
     public virtual ResCountryGroup? CountryGroup { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
     // [ForeignKey("AccountFiscalPositionTemplateId")] // Many2many // Normal
     // [InverseProperty("AccountFiscalPositionTemplate")] // Many2many // Normal

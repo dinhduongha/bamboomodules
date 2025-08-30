@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -209,9 +212,9 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("departure_date")]
     public DateTime? DepartureDate { get; set; }
 
-    [JsonField]
+    [JsonField] // EmployeeProperties
     [Column("employee_properties", TypeName = "jsonb")]
-    public string? EmployeeProperties { get; set; }
+    public JsonElement? EmployeeProperties { get; set; }
 
     [Column("additional_note")]
     public string? AdditionalNote { get; set; }
@@ -319,458 +322,545 @@ public partial class HrEmployee: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public bool? ManuallySetPresence { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManagerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Manager")] // One2many
     public virtual ICollection<AccountAnalyticLine> AccountAnalyticLineManager { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AddressId")]
     public virtual ResPartner? Address { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AttendanceManagerId")]
     public virtual ResUsers? AttendanceManager { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BankAccountId")]
     public virtual ResPartnerBank? BankAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CoachId")]
     public virtual HrEmployee? Coach { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ContractId")]
     public virtual HrContract? Contract { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryOfBirth")]
     public virtual ResCountry? CountryOfBirthNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DepartmentId")]
     public virtual HrDepartment? Department { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DepartureReasonId")]
     public virtual HrDepartureReason? DepartureReason { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseManagerId")]
     public virtual ResUsers? ExpenseManager { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DriverEmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DriverEmployee")] // One2many
     public virtual ICollection<FleetVehicleAssignationLog> FleetVehicleAssignationLog { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DriverEmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DriverEmployee")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicleDriverEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FutureDriverEmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("FutureDriverEmployee")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicleFutureDriverEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PurchaserEmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PurchaserEmployee")] // One2many
     public virtual ICollection<FleetVehicleLogServices> FleetVehicleLogServices { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FridayLocationId")]
     public virtual HrWorkLocation? FridayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<GamificationBadgeUser> GamificationBadgeUser { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<GamificationBadgeUserWizard> GamificationBadgeUserWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HomeworkLocationWizard> HomeworkLocationWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrAttendance> HrAttendance { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrAttendanceOvertime> HrAttendanceOvertime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrCandidate> HrCandidate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManagerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrDepartment> HrDepartment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrDepartureWizard> HrDepartureWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrEmployeeLocation> HrEmployeeLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrEmployeeSkill> HrEmployeeSkill { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrEmployeeSkillLog> HrEmployeeSkillLog { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrExpense> HrExpense { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrExpenseSheet> HrExpenseSheet { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrExpenseSplit> HrExpenseSplit { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManagerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ApproverId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Approver")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationApprover { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManagerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationManager { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SecondApproverId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SecondApprover")] // One2many
     public virtual ICollection<HrLeaveAllocation> HrLeaveAllocationSecondApprover { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrLeave> HrLeaveEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FirstApproverId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("FirstApprover")] // One2many
     public virtual ICollection<HrLeave> HrLeaveFirstApprover { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManagerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Manager")] // One2many
     public virtual ICollection<HrLeave> HrLeaveManager { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SecondApproverId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SecondApprover")] // One2many
     public virtual ICollection<HrLeave> HrLeaveSecondApprover { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrPayslip> HrPayslip { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrUserWorkEntryEmployee> HrUserWorkEntryEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrWorkEntry> HrWorkEntry { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CoachId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Coach")] // One2many
     public virtual ICollection<HrEmployee> InverseCoach { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<HrEmployee> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("JobId")]
     public virtual HrJob? Job { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastAttendanceId")]
     public virtual HrAttendance? LastAttendance { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LeaveManagerId")]
     public virtual ResUsers? LeaveManager { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MessageMainAttachmentId")]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MondayLocationId")]
     public virtual HrWorkLocation? MondayLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual HrEmployee? Parent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<PosOrder> PosOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<PosSession> PosSession { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PrivateCountryId")]
     public virtual ResCountry? PrivateCountry { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PrivateStateId")]
     public virtual ResCountryState? PrivateState { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EmployeeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<ProjectSaleLineEmployeeMap> ProjectSaleLineEmployeeMap { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResourceId")]
     public virtual ResourceResource? Resource { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResourceCalendarId")]
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaturdayLocationId")]
     public virtual HrWorkLocation? SaturdayLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SundayLocationId")]
     public virtual HrWorkLocation? SundayLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ThursdayLocationId")]
     public virtual HrWorkLocation? ThursdayLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TuesdayLocationId")]
     public virtual HrWorkLocation? TuesdayLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WednesdayLocationId")]
     public virtual HrWorkLocation? WednesdayLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WorkContactId")]
     public virtual ResPartner? WorkContact { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WorkLocationId")]
     public virtual HrWorkLocation? WorkLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("EmployeeId")] // Many2many // Normal
     // [InverseProperty("Employee")] // Many2many // Normal
     public virtual ICollection<HrEmployeeCategory> Category { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrEmployeeCvWizard> HrEmployeeCvWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrEmployeeDeleteWizard> HrEmployeeDeleteWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrLeaveAllocationGenerateMultiWizard> HrLeaveAllocationGenerateMultiWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrLeaveGenerateMultiWizard> HrLeaveGenerateMultiWizard { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("HrEmployeeId")] // Many2many // Normal
     // [InverseProperty("HrEmployee")] // Many2many // Normal
     public virtual ICollection<HrSkill> HrSkill { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<HrWorkEntryRegenerationWizard> HrWorkEntryRegenerationWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("EmployeeId")] //Many2many // Hidden
     // [InverseProperty("Employee")] //Many2many // Hidden
     public virtual ICollection<HrPayslipEmployees> Payslip { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployee")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("HrEmployeeId")] //Many2many // Hidden
     // [InverseProperty("HrEmployeeNavigation")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("EmpId")] //Many2many // Hidden
     // [InverseProperty("Emp")] //Many2many // Hidden

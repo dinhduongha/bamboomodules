@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -123,9 +126,9 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("company_name")]
     public string? CompanyName { get; set; }
 
-    [JsonField]
+    [JsonField] // Barcode
     [Column("barcode", TypeName = "jsonb")]
-    public string? Barcode { get; set; }
+    public JsonElement? Barcode { get; set; }
 
     [Column("comment")]
     public string? Comment { get; set; }
@@ -160,9 +163,9 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("signup_type")]
     public string? SignupType { get; set; }
 
-    [JsonField]
+    [JsonField] // SpecificPropertyProductPricelist
     [Column("specific_property_product_pricelist", TypeName = "jsonb")]
-    public string? SpecificPropertyProductPricelist { get; set; }
+    public JsonElement? SpecificPropertyProductPricelist { get; set; }
 
     [Column("partner_gid")]
     public Guid? PartnerGid { get; set; }
@@ -188,57 +191,57 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("autopost_bills")]
     public string? AutopostBills { get; set; }
 
-    [JsonField]
+    [JsonField] // CreditLimit
     [Column("credit_limit", TypeName = "jsonb")]
-    public string? CreditLimit { get; set; }
+    public JsonElement? CreditLimit { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyAccountPayableId
     [Column("property_account_payable_id", TypeName = "jsonb")]
-    public string? PropertyAccountPayableId { get; set; }
+    public JsonElement? PropertyAccountPayableId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyAccountReceivableId
     [Column("property_account_receivable_id", TypeName = "jsonb")]
-    public string? PropertyAccountReceivableId { get; set; }
+    public JsonElement? PropertyAccountReceivableId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyAccountPositionId
     [Column("property_account_position_id", TypeName = "jsonb")]
-    public string? PropertyAccountPositionId { get; set; }
+    public JsonElement? PropertyAccountPositionId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyPaymentTermId
     [Column("property_payment_term_id", TypeName = "jsonb")]
-    public string? PropertyPaymentTermId { get; set; }
+    public JsonElement? PropertyPaymentTermId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertySupplierPaymentTermId
     [Column("property_supplier_payment_term_id", TypeName = "jsonb")]
-    public string? PropertySupplierPaymentTermId { get; set; }
+    public JsonElement? PropertySupplierPaymentTermId { get; set; }
 
-    [JsonField]
+    [JsonField] // Trust
     [Column("trust", TypeName = "jsonb")]
-    public string? Trust { get; set; }
+    public JsonElement? Trust { get; set; }
 
-    [JsonField]
+    [JsonField] // IgnoreAbnormalInvoiceDate
     [Column("ignore_abnormal_invoice_date", TypeName = "jsonb")]
-    public string? IgnoreAbnormalInvoiceDate { get; set; }
+    public JsonElement? IgnoreAbnormalInvoiceDate { get; set; }
 
-    [JsonField]
+    [JsonField] // IgnoreAbnormalInvoiceAmount
     [Column("ignore_abnormal_invoice_amount", TypeName = "jsonb")]
-    public string? IgnoreAbnormalInvoiceAmount { get; set; }
+    public JsonElement? IgnoreAbnormalInvoiceAmount { get; set; }
 
-    [JsonField]
+    [JsonField] // InvoiceSendingMethod
     [Column("invoice_sending_method", TypeName = "jsonb")]
-    public string? InvoiceSendingMethod { get; set; }
+    public JsonElement? InvoiceSendingMethod { get; set; }
 
-    [JsonField]
+    [JsonField] // InvoiceEdiFormatStore
     [Column("invoice_edi_format_store", TypeName = "jsonb")]
-    public string? InvoiceEdiFormatStore { get; set; }
+    public JsonElement? InvoiceEdiFormatStore { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyOutboundPaymentMethodLineId
     [Column("property_outbound_payment_method_line_id", TypeName = "jsonb")]
-    public string? PropertyOutboundPaymentMethodLineId { get; set; }
+    public JsonElement? PropertyOutboundPaymentMethodLineId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyInboundPaymentMethodLineId
     [Column("property_inbound_payment_method_line_id", TypeName = "jsonb")]
-    public string? PropertyInboundPaymentMethodLineId { get; set; }
+    public JsonElement? PropertyInboundPaymentMethodLineId { get; set; }
 
     [Column("invoice_warn_msg")]
     public string? InvoiceWarnMsg { get; set; }
@@ -261,13 +264,13 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("picking_warn")]
     public string? PickingWarn { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyStockCustomer
     [Column("property_stock_customer", TypeName = "jsonb")]
-    public string? PropertyStockCustomer { get; set; }
+    public JsonElement? PropertyStockCustomer { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyStockSupplier
     [Column("property_stock_supplier", TypeName = "jsonb")]
-    public string? PropertyStockSupplier { get; set; }
+    public JsonElement? PropertyStockSupplier { get; set; }
 
     [Column("picking_warn_msg")]
     public string? PickingWarnMsg { get; set; }
@@ -281,17 +284,17 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("purchase_warn")]
     public string? PurchaseWarn { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyPurchaseCurrencyId
     [Column("property_purchase_currency_id", TypeName = "jsonb")]
-    public string? PropertyPurchaseCurrencyId { get; set; }
+    public JsonElement? PropertyPurchaseCurrencyId { get; set; }
 
-    [JsonField]
+    [JsonField] // ReceiptReminderEmail
     [Column("receipt_reminder_email", TypeName = "jsonb")]
-    public string? ReceiptReminderEmail { get; set; }
+    public JsonElement? ReceiptReminderEmail { get; set; }
 
-    [JsonField]
+    [JsonField] // ReminderDateBeforeReceipt
     [Column("reminder_date_before_receipt", TypeName = "jsonb")]
-    public string? ReminderDateBeforeReceipt { get; set; }
+    public JsonElement? ReminderDateBeforeReceipt { get; set; }
 
     [Column("purchase_warn_msg")]
     public string? PurchaseWarnMsg { get; set; }
@@ -323,36 +326,36 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyDeliveryCarrierId
     [Column("property_delivery_carrier_id", TypeName = "jsonb")]
-    public string? PropertyDeliveryCarrierId { get; set; }
+    public JsonElement? PropertyDeliveryCarrierId { get; set; }
 
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaTitle
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaDescription
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
-    [JsonField]
+    [JsonField] // WebsiteMetaKeywords
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public JsonElement? WebsiteMetaKeywords { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteDescription
     [Column("website_description", TypeName = "jsonb")]
-    public string? WebsiteDescription { get; set; }
+    public StringDictionary? WebsiteDescription { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteShortDescription
     [Column("website_short_description", TypeName = "jsonb")]
-    public string? WebsiteShortDescription { get; set; }
+    public StringDictionary? WebsiteShortDescription { get; set; }
 
     [Column("associate_member")]
     public Guid? AssociateMember { get; set; }
@@ -387,9 +390,9 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("street_number2")]
     public string? StreetNumber2 { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyStockSubcontractor
     [Column("property_stock_subcontractor", TypeName = "jsonb")]
-    public string? PropertyStockSubcontractor { get; set; }
+    public JsonElement? PropertyStockSubcontractor { get; set; }
 
     [Column("date_localization")]
     public DateTime? DateLocalization { get; set; }
@@ -424,9 +427,9 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("vies_valid")]
     public bool? ViesValid { get; set; }
 
-    [JsonField]
+    [JsonField] // PeppolVerificationState
     [Column("peppol_verification_state", TypeName = "jsonb")]
-    public string? PeppolVerificationState { get; set; }
+    public JsonElement? PeppolVerificationState { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
     // [One2many] [ForeignKey("PartnerId")]
@@ -507,6 +510,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMapping { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("Activation")]
     public virtual ResPartnerActivation? ActivationNavigation { get; set; }
 
@@ -517,10 +521,12 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ApplicantSendMail> ApplicantSendMail { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AssignedPartnerId")]
     public virtual ResPartner? AssignedPartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AssociateMember")]
     public virtual ResPartner? AssociateMemberNavigation { get; set; }
 
@@ -543,6 +549,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<BlogPost> BlogPost { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BuyerId")]
     public virtual ResUsers? Buyer { get; set; }
 
@@ -571,22 +578,27 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ChatbotScript> ChatbotScript { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CityId")]
     public virtual ResCity? CityNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CommercialPartnerId")]
     public virtual ResPartner? CommercialPartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
@@ -735,6 +747,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<FleetVehicleSendMail> FleetVehicleSendMail { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("GradeId")]
     public virtual ResPartnerGrade? Grade { get; set; }
 
@@ -781,6 +794,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<HrWorkLocation> HrWorkLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("IndustryId")]
     public virtual ResPartnerIndustry? Industry { get; set; }
 
@@ -809,6 +823,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ResPartner> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("InvoiceTemplatePdfReportId")]
     public virtual IrActReportXml? InvoiceTemplatePdfReport { get; set; }
 
@@ -903,6 +918,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual ResPartner? Parent { get; set; }
 
@@ -913,6 +929,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<PaymentLinkWizard> PaymentLinkWizard { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentResponsibleId")]
     public virtual ResUsers? PaymentResponsible { get; set; }
 
@@ -1067,6 +1084,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<ResPartnerBank> ResPartnerBank { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual ResPartnerIap? ResPartnerIap { get; set; }
 
     // [One2many] - RELATIONSHIP COMMENTED OUT FOR 'ResPartner'
@@ -1148,6 +1166,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StateId")]
     public virtual ResCountryState? State { get; set; }
 
@@ -1236,14 +1255,17 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<SurveyUserInput> SurveyUserInput { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("Title")]
     public virtual ResPartnerTitle? TitleNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? WebsiteNavigation { get; set; }
 
@@ -1260,154 +1282,180 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<WebsiteVisitor> WebsiteVisitorPartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountAgedTrialBalance> AccountAgedTrialBalance { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountCommonPartnerReport> AccountCommonPartnerReport { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountReconcileModel> AccountReconcileModel { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<AccountReportPartnerLedger> AccountReportPartnerLedger { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<BasePartnerMergeAutomaticWizard> BasePartnerMergeAutomaticWizardNavigation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ResPartnerId")] // Many2many // Normal
     // [InverseProperty("ResPartner")] // Many2many // Normal
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PartnerId")] //Many2many // Hidden
     // [InverseProperty("Partner")] //Many2many // Hidden
     public virtual ICollection<ResPartnerCategory> Category { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PartnerId")] //Many2many // Hidden
     // [InverseProperty("Partner")] //Many2many // Hidden
     public virtual ICollection<SurveyInvite> Invite { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PartnerId")] //Many2many // Hidden
     // [InverseProperty("PartnerNavigation")] //Many2many // Hidden
     public virtual ICollection<CrmLead> Lead { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<MailMail> MailMail { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartnerNavigation")] //Many2many // Hidden
     public virtual ICollection<MailMessage> MailMessage1 { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<MailMessage> MailMessageNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<MailScheduledMessage> MailScheduledMessageNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<MailWizardInvite> MailWizardInvite { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PartnerId")] //Many2many // Hidden
     // [InverseProperty("Partner")] //Many2many // Hidden
     public virtual ICollection<FleetVehicleModel> Model { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<PortalShare> PortalShare { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<PortalWizard> PortalWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (ProductProduct) is commented out
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
@@ -1415,24 +1463,28 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<ProjectShareWizard> ProjectShareWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResPartnerId")] //Many2many // Hidden
     // [InverseProperty("ResPartner")] //Many2many // Hidden
     public virtual ICollection<SlideChannelInvite> SlideChannelInvite { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("PartnerId")] // Many2many // Normal
     // [InverseProperty("Partner")] // Many2many // Normal
     public virtual ICollection<ResPartnerTag> Tag { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PartnerId")] //Many2many // Hidden
     // [InverseProperty("Partner")] //Many2many // Hidden

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -39,17 +42,17 @@ public partial class MaintenanceEquipmentCategory: FullAuditedAggregateRoot<Guid
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Note
     [Column("note", TypeName = "jsonb")]
-    public string? Note { get; set; }
+    public JsonElement? Note { get; set; }
 
-    [JsonField]
+    [JsonField] // EquipmentPropertiesDefinition
     [Column("equipment_properties_definition", TypeName = "jsonb")]
-    public string? EquipmentPropertiesDefinition { get; set; }
+    public JsonElement? EquipmentPropertiesDefinition { get; set; }
 
     [Column("fold")]
     public bool? Fold { get; set; }
@@ -61,34 +64,41 @@ public partial class MaintenanceEquipmentCategory: FullAuditedAggregateRoot<Guid
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AliasId")]
     public virtual MailAlias? Alias { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<MaintenanceEquipment> MaintenanceEquipment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CategoryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Category")] // One2many
     public virtual ICollection<MaintenanceRequest> MaintenanceRequest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TechnicianUserId")]
     public virtual ResUsers? TechnicianUser { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

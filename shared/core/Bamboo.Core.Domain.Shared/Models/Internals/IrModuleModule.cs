@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -36,9 +39,9 @@ public partial class IrModuleModule: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("website")]
     public string? Website { get; set; }
 
-    [JsonField]
+    [JsonField] // Summary
     [Column("summary", TypeName = "jsonb")]
-    public string? Summary { get; set; }
+    public JsonElement? Summary { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }
@@ -55,16 +58,16 @@ public partial class IrModuleModule: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("latest_version")]
     public string? LatestVersion { get; set; }
 
-    [JsonField]
+    [JsonField] // Shortdesc
     [Column("shortdesc", TypeName = "jsonb")]
-    public string? Shortdesc { get; set; }
+    public JsonElement? Shortdesc { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
     [Column("application")]
     public bool? Application { get; set; }
@@ -115,90 +118,106 @@ public partial class IrModuleModule: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public bool? Imported { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<BaseModuleInstallRequest> BaseModuleInstallRequest { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<BaseModuleInstallReview> BaseModuleInstallReview { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<BaseModuleUninstall> BaseModuleUninstall { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CategoryId")]
     public virtual IrModuleCategory? Category { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<IrDemoFailure> IrDemoFailure { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("Module")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ModuleNavigation")] // One2many
     public virtual ICollection<IrModelConstraint> IrModelConstraint { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("Module")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ModuleNavigation")] // One2many
     public virtual ICollection<IrModelRelation> IrModelRelation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<IrModuleModuleDependency> IrModuleModuleDependency { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<IrModuleModuleExclusion> IrModuleModuleExclusion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Module")] // One2many
     public virtual ICollection<WebsiteConfiguratorFeature> WebsiteConfiguratorFeature { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ThemeId")]
     [NotMapped] // One2many // Peer relationship (Website) is commented out
     // [InverseProperty("Theme")] // One2many
     public virtual ICollection<Website> WebsiteNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
     // [ForeignKey("ModuleId")] // Many2many // Normal
     // [InverseProperty("Module")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ModuleId")] //Many2many // Hidden
     // [InverseProperty("Module")] //Many2many // Hidden

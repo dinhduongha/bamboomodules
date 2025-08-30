@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -111,9 +114,9 @@ public partial class AccountChartTemplate: FullAuditedAggregateRoot<Guid>, IEnti
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("bank_account_code_prefix")]
     public string? BankAccountCodePrefix { get; set; }
@@ -143,168 +146,205 @@ public partial class AccountChartTemplate: FullAuditedAggregateRoot<Guid>, IEnti
     public string? SpokenLanguages { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<AccountAccountTemplate> AccountAccountTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<AccountFiscalPositionTemplate> AccountFiscalPositionTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<AccountGroupTemplate> AccountGroupTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalEarlyPayDiscountGainAccountId")]
     public virtual AccountAccountTemplate? AccountJournalEarlyPayDiscountGainAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalEarlyPayDiscountLossAccountId")]
     public virtual AccountAccountTemplate? AccountJournalEarlyPayDiscountLossAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalPaymentCreditAccountId")]
     public virtual AccountAccountTemplate? AccountJournalPaymentCreditAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalPaymentDebitAccountId")]
     public virtual AccountAccountTemplate? AccountJournalPaymentDebitAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountJournalSuspenseAccountId")]
     public virtual AccountAccountTemplate? AccountJournalSuspenseAccount { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<AccountReconcileModelTemplate> AccountReconcileModelTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<AccountReport> AccountReport { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<AccountTaxTemplate> AccountTaxTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultCashDifferenceExpenseAccountId")]
     public virtual AccountAccountTemplate? DefaultCashDifferenceExpenseAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultCashDifferenceIncomeAccountId")]
     public virtual AccountAccountTemplate? DefaultCashDifferenceIncomeAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultPosReceivableAccountId")]
     public virtual AccountAccountTemplate? DefaultPosReceivableAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseCurrencyExchangeAccountId")]
     public virtual AccountAccountTemplate? ExpenseCurrencyExchangeAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("IncomeCurrencyExchangeAccountId")]
     public virtual AccountAccountTemplate? IncomeCurrencyExchangeAccount { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<AccountChartTemplate> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual AccountChartTemplate? Parent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAccountExpenseId")]
     public virtual AccountAccountTemplate? PropertyAccountExpense { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAccountExpenseCategId")]
     public virtual AccountAccountTemplate? PropertyAccountExpenseCateg { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAccountIncomeId")]
     public virtual AccountAccountTemplate? PropertyAccountIncome { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAccountIncomeCategId")]
     public virtual AccountAccountTemplate? PropertyAccountIncomeCateg { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAccountPayableId")]
     public virtual AccountAccountTemplate? PropertyAccountPayable { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAccountReceivableId")]
     public virtual AccountAccountTemplate? PropertyAccountReceivable { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyAdvanceTaxPaymentAccountId")]
     public virtual AccountAccountTemplate? PropertyAdvanceTaxPaymentAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyCashBasisBaseAccountId")]
     public virtual AccountAccountTemplate? PropertyCashBasisBaseAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyStockAccountInputCategId")]
     public virtual AccountAccountTemplate? PropertyStockAccountInputCateg { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyStockAccountOutputCategId")]
     public virtual AccountAccountTemplate? PropertyStockAccountOutputCateg { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyStockValuationAccountId")]
     public virtual AccountAccountTemplate? PropertyStockValuationAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyTaxPayableAccountId")]
     public virtual AccountAccountTemplate? PropertyTaxPayableAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropertyTaxReceivableAccountId")]
     public virtual AccountAccountTemplate? PropertyTaxReceivableAccount { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ChartTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ChartTemplate")] // One2many
     public virtual ICollection<ResConfigSettings> ResConfigSettings { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

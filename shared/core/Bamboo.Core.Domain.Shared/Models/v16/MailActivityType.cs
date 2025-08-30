@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -64,17 +67,17 @@ public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("category")]
     public string? Category { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Summary
     [Column("summary", TypeName = "jsonb")]
-    public string? Summary { get; set; }
+    public JsonElement? Summary { get; set; }
 
-    [JsonField]
+    [JsonField] // DefaultNote
     [Column("default_note", TypeName = "jsonb")]
-    public string? DefaultNote { get; set; }
+    public JsonElement? DefaultNote { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -89,88 +92,104 @@ public partial class MailActivityType: FullAuditedAggregateRoot<Guid>, IEntityDt
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultUserId")]
     public virtual ResUsers? DefaultUser { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TriggeredNextTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TriggeredNextType")] // One2many
     public virtual ICollection<MailActivityType> InverseTriggeredNextType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActivityType")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActivityType")] // One2many
     public virtual ICollection<MailActivity> MailActivityActivityType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActivityType")] // One2many
     public virtual ICollection<MailActivityPlanTemplate> MailActivityPlanTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PreviousActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PreviousActivityType")] // One2many
     public virtual ICollection<MailActivity> MailActivityPreviousActivityType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RecommendedActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RecommendedActivityType")] // One2many
     public virtual ICollection<MailActivity> MailActivityRecommendedActivityType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActivityType")] // One2many
     public virtual ICollection<MailActivitySchedule> MailActivitySchedule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailActivityType")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailActivityTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailActivityType")] // One2many
     public virtual ICollection<MailMessage> MailMessage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TriggeredNextTypeId")]
     public virtual MailActivityType? TriggeredNextType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("RecommendedId")] // Many2many // Normal
     // [InverseProperty("Recommended")] // Many2many // Normal
     public virtual ICollection<MailActivityType> Activity { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("MailActivityTypeId")] // Many2many // Normal
     // [InverseProperty("MailActivityType")] // Many2many // Normal
     public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ActivityId")] // Many2many // Normal
     // [InverseProperty("Activity")] // Many2many // Normal

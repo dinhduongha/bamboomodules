@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -41,25 +44,25 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaTitle
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaDescription
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
-    [JsonField]
+    [JsonField] // WebsiteMetaKeywords
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public JsonElement? WebsiteMetaKeywords { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -68,18 +71,22 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CategoryId")]
     public virtual BlogTagCategory? Category { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("BlogTagId")] // Many2many // Normal
     // [InverseProperty("BlogTag")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -40,13 +43,13 @@ public partial class IrActWindow: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("binding_view_types")]
     public string? BindingViewTypes { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Help
     [Column("help", TypeName = "jsonb")]
-    public string? Help { get; set; }
+    public StringDictionary? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -91,62 +94,74 @@ public partial class IrActWindow: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public bool? Filter { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CustomAuditActionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("CustomAuditAction")] // One2many
     public virtual ICollection<AccountReportColumn> AccountReportColumn { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BindingModelId")]
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Action")] // One2many
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinition { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActWindowId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActWindow")] // One2many
     public virtual ICollection<IrActWindowView> IrActWindowView { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentActionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ParentAction")] // One2many
     public virtual ICollection<IrEmbeddedActions> IrEmbeddedActions { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RefIrActWindow")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RefIrActWindowNavigation")] // One2many
     public virtual ICollection<MailTemplate> MailTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SearchViewId")]
     public virtual IrUiView? SearchView { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SidebarActionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SidebarAction")] // One2many
     public virtual ICollection<SmsTemplate> SmsTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ViewId")]
     public virtual IrUiView? View { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ActId")] // Many2many // Normal
     // [InverseProperty("ActNavigation")] // Many2many // Normal

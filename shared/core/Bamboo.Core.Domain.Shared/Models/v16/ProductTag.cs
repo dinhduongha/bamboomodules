@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -38,9 +41,9 @@ public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("color")]
     public long? Color { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -55,48 +58,57 @@ public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public bool? VisibleOnEcommerce { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DiscountProductTagId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DiscountProductTag")] // One2many
     public virtual ICollection<LoyaltyReward> LoyaltyRewardDiscountProductTag { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RewardProductTagId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RewardProductTag")] // One2many
     public virtual ICollection<LoyaltyReward> LoyaltyRewardRewardProductTag { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTagId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTag")] // One2many
     public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTagId")] //Many2many // Hidden
     // [InverseProperty("ProductTag")] //Many2many // Hidden
     public virtual ICollection<DeliveryCarrier> DeliveryCarrier { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTagId")] //Many2many // Hidden
     // [InverseProperty("ProductTagNavigation")] //Many2many // Hidden
     public virtual ICollection<DeliveryCarrier> DeliveryCarrierNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (ProductProduct) is commented out
     // [ForeignKey("ProductTagId")] //Many2many // Hidden
@@ -104,6 +116,7 @@ public partial class ProductTag: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTagId")] //Many2many // Hidden
     // [InverseProperty("ProductTag")] //Many2many // Hidden

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -67,9 +70,9 @@ public partial class EventSponsor: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("mobile")]
     public string? Mobile { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteDescription
     [Column("website_description", TypeName = "jsonb")]
-    public string? WebsiteDescription { get; set; }
+    public StringDictionary? WebsiteDescription { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }
@@ -90,32 +93,39 @@ public partial class EventSponsor: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public double? HourTo { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ChatRoomId")]
     public virtual ChatRoom? ChatRoom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventId")]
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SponsorId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Sponsor")] // One2many
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SponsorTypeId")]
     public virtual EventSponsorType? SponsorType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

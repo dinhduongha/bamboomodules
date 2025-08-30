@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -58,86 +61,101 @@ public partial class ResourceCalendar: FullAuditedAggregateRoot<Guid>, IEntityDt
     public double? FullTimeRequiredHours { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TrgDateCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TrgDateCalendar")] // One2many
     public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResourceCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrContract> HrContract { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResourceCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResourceCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResourceCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<HrLeaveMandatoryDay> HrLeaveMandatoryDay { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DefaultResourceCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DefaultResourceCalendar")] // One2many
     public virtual ICollection<HrPayrollStructureType> HrPayrollStructureType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResourceCalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<MrpWorkcenter> MrpWorkcenter { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ResourceCalendarId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("ResourceCalendar")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Calendar")] // One2many
     public virtual ICollection<ResourceCalendarAttendance> ResourceCalendarAttendance { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Calendar")] // One2many
     public virtual ICollection<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CalendarId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Calendar")] // One2many
     public virtual ICollection<ResourceResource> ResourceResource { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OpeningHours")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("OpeningHoursNavigation")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

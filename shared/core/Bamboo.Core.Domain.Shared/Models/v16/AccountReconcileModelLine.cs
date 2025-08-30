@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -48,13 +51,13 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     [Column("amount_string")]
     public string? AmountString { get; set; }
 
-    [JsonField]
+    [JsonField] // AnalyticDistribution
     [Column("analytic_distribution", TypeName = "jsonb")]
-    public string? AnalyticDistribution { get; set; }
+    public JsonElement? AnalyticDistribution { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Label
     [Column("label", TypeName = "jsonb")]
-    public string? Label { get; set; }
+    public StringDictionary? Label { get; set; }
 
     [Column("force_tax_included")]
     public bool? ForceTaxIncluded { get; set; }
@@ -69,30 +72,37 @@ public partial class AccountReconcileModelLine: FullAuditedEntity<Guid>, IEntity
     public double? Amount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountId")]
     public virtual AccountAccount? Account { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("JournalId")]
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual AccountReconcileModel? Model { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AccountReconcileModelLineId")] // Many2many // Normal
     // [InverseProperty("AccountReconcileModelLine")] // Many2many // Normal

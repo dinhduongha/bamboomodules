@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -46,13 +49,13 @@ public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("model")]
     public string? Model { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // Body
     [Column("body", TypeName = "jsonb")]
-    public string? Body { get; set; }
+    public JsonElement? Body { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -61,70 +64,83 @@ public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual IrModel? ModelNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<ProjectProjectStage> ProjectProjectStage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<ProjectTaskType> ProjectTaskType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("StockSmsConfirmationTemplateId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("StockSmsConfirmationTemplate")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SidebarActionId")]
     public virtual IrActWindow? SidebarAction { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Template")] // One2many
     public virtual ICollection<SmsComposer> SmsComposer { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SmsTemplateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SmsTemplate")] // One2many
     public virtual ICollection<SmsTemplatePreview> SmsTemplatePreview { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("SmsTemplateId")] //Many2many // Hidden
     // [InverseProperty("SmsTemplate")] //Many2many // Hidden

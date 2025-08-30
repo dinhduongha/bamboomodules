@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -129,144 +132,175 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? PosOrderId { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OriginPaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("OriginPayment")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Payment")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DestinationAccountId")]
     public virtual AccountAccount? DestinationAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ForceOutstandingAccountId")]
     public virtual AccountAccount? ForceOutstandingAccount { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PairedInternalTransferPaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PairedInternalTransferPayment")] // One2many
     public virtual ICollection<AccountPayment> InversePairedInternalTransferPayment { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SourcePaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SourcePayment")] // One2many
     public virtual ICollection<AccountPayment> InverseSourcePayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("JournalId")]
     public virtual AccountJournal? Journal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MessageMainAttachmentId")]
     public virtual IrAttachment? MessageMainAttachment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MoveId")]
     public virtual AccountMove? Move { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OutstandingAccountId")]
     public virtual AccountAccount? OutstandingAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PairedInternalTransferPaymentId")]
     public virtual AccountPayment? PairedInternalTransferPayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerBankId")]
     public virtual ResPartnerBank? PartnerBank { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentMethodId")]
     public virtual AccountPaymentMethod? PaymentMethod { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentMethodLineId")]
     public virtual AccountPaymentMethodLine? PaymentMethodLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Payment")] // One2many
     public virtual ICollection<PaymentRefundWizard> PaymentRefundWizard { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentTokenId")]
     public virtual PaymentToken? PaymentToken { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PaymentTransactionId")]
     public virtual PaymentTransaction? PaymentTransaction { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Payment")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransactionNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosOrderId")]
     public virtual PosOrder? PosOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OnlineAccountPaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("OnlineAccountPayment")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosPaymentMethodId")]
     public virtual PosPaymentMethod? PosPaymentMethod { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PosSessionId")]
     public virtual PosSession? PosSession { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Payment")] // One2many
     public virtual ICollection<RecurringPaymentLine> RecurringPaymentLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SourcePaymentId")]
     public virtual AccountPayment? SourcePayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountPaymentId")] //Many2many // Hidden
     // [InverseProperty("AccountPayment")] //Many2many // Hidden
     public virtual ICollection<AccountBankStatementLine> AccountBankStatementLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PaymentId")] //Many2many // Hidden
     // [InverseProperty("Payment")] //Many2many // Hidden

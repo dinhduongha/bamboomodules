@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -44,9 +47,9 @@ public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEnt
     [Column("html_color")]
     public string? HtmlColor { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("is_custom")]
     public bool? IsCustom { get; set; }
@@ -64,30 +67,36 @@ public partial class ProductAttributeValue: FullAuditedAggregateRoot<Guid>, IEnt
     public double? DefaultExtraPrice { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AttributeId")]
     public virtual ProductAttribute? Attribute { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductAttributeValueId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductAttributeValue")] // One2many
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AttributeValueId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AttributeValue")] // One2many
     public virtual ICollection<UpdateProductAttributeValue> UpdateProductAttributeValue { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductAttributeValueId")] // Many2many // Normal
     // [InverseProperty("ProductAttributeValue")] // Many2many // Normal

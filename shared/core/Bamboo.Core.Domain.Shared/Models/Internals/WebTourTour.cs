@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -34,9 +37,9 @@ public partial class WebTourTour: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("url")]
     public string? Url { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // RainbowManMessage
     [Column("rainbow_man_message", TypeName = "jsonb")]
-    public string? RainbowManMessage { get; set; }
+    public StringDictionary? RainbowManMessage { get; set; }
 
     [Column("custom")]
     public bool? Custom { get; set; }
@@ -48,20 +51,24 @@ public partial class WebTourTour: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TourId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Tour")] // One2many
     public virtual ICollection<WebTourTourStep> WebTourTourStep { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("WebTourTourId")] // Many2many // Normal
     // [InverseProperty("WebTourTour")] // Many2many // Normal

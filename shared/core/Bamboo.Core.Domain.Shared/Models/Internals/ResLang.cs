@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -73,62 +76,73 @@ public partial class ResLang: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LangId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lang")] // One2many
     public virtual ICollection<ChatRoom> ChatRoom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LangId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lang")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SelfOrderingDefaultLanguageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SelfOrderingDefaultLanguage")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DefaultLangId")]
     [NotMapped] // One2many // Peer relationship (Website) is commented out
     // [InverseProperty("DefaultLang")] // One2many
     public virtual ICollection<Website> Website { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LangId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lang")] // One2many
     public virtual ICollection<WebsiteVisitor> WebsiteVisitor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("LangId")] //Many2many // Hidden
     // [InverseProperty("Lang")] //Many2many // Hidden
     public virtual ICollection<BaseLanguageInstall> LanguageWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResLangId")] //Many2many // Hidden
     // [InverseProperty("ResLang")] //Many2many // Hidden
     public virtual ICollection<PosConfig> PosConfigNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResLangId")] //Many2many // Hidden
     // [InverseProperty("ResLang")] //Many2many // Hidden
     public virtual ICollection<ResUsersSettings> ResUsersSettings { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (Website) is commented out
     // [ForeignKey("LangId")] //Many2many // Hidden

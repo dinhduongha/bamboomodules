@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -52,78 +55,92 @@ public partial class HrWorkLocation: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AddressId")]
     public virtual ResPartner? Address { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("WorkLocation")] // One2many
     public virtual ICollection<HomeworkLocationWizard> HomeworkLocationWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FridayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("FridayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeFridayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("WorkLocation")] // One2many
     public virtual ICollection<HrEmployeeLocation> HrEmployeeLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MondayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MondayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeMondayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SaturdayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SaturdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeSaturdayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SundayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SundayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeSundayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ThursdayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ThursdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeThursdayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TuesdayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TuesdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeTuesdayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WednesdayLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("WednesdayLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeWednesdayLocation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkLocationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("WorkLocation")] // One2many
     public virtual ICollection<HrEmployee> HrEmployeeWorkLocation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -39,13 +42,13 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("default_timezone")]
     public string? DefaultTimezone { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // TicketInstructions
     [Column("ticket_instructions", TypeName = "jsonb")]
-    public string? TicketInstructions { get; set; }
+    public JsonElement? TicketInstructions { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
@@ -81,62 +84,73 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public bool? WebsiteTrackProposal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventBooth> EventBooth { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventEvent> EventEvent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventEventTicket> EventEventTicket { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventQuestion> EventQuestion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventTypeBooth> EventTypeBooth { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventTypeMail> EventTypeMail { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventTypeTicket> EventTypeTicket { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("EventTypeId")] //Many2many // Hidden
     // [InverseProperty("EventType")] //Many2many // Hidden
     public virtual ICollection<EventLeadRule> EventLeadRule { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("EventTypeId")] // Many2many // Normal
     // [InverseProperty("EventType")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -75,9 +78,9 @@ public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("power_unit")]
     public string? PowerUnit { get; set; }
 
-    [JsonField]
+    [JsonField] // VehiclePropertiesDefinition
     [Column("vehicle_properties_definition", TypeName = "jsonb")]
-    public string? VehiclePropertiesDefinition { get; set; }
+    public JsonElement? VehiclePropertiesDefinition { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -101,28 +104,34 @@ public partial class FleetVehicleModel: FullAuditedAggregateRoot<Guid>, IEntityD
     public double? HorsepowerTax { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BrandId")]
     public virtual FleetVehicleModelBrand? Brand { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CategoryId")]
     public virtual FleetVehicleModelCategory? Category { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ModelId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Model")] // One2many
     public virtual ICollection<FleetVehicle> FleetVehicle { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("ModelId")] // Many2many // Normal
     // [InverseProperty("Model")] // Many2many // Normal

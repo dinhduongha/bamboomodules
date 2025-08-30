@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -187,13 +190,13 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("ecommerce_access")]
     public string? EcommerceAccess { get; set; }
 
-    [JsonField]
+    [JsonField] // ContactUsButtonUrl
     [Column("contact_us_button_url", TypeName = "jsonb")]
-    public string? ContactUsButtonUrl { get; set; }
+    public JsonElement? ContactUsButtonUrl { get; set; }
 
-    [JsonField]
+    [JsonField] // PreventZeroPriceSaleText
     [Column("prevent_zero_price_sale_text", TypeName = "jsonb")]
-    public string? PreventZeroPriceSaleText { get; set; }
+    public JsonElement? PreventZeroPriceSaleText { get; set; }
 
     [Column("enabled_portal_reorder_button")]
     public bool? EnabledPortalReorderButton { get; set; }
@@ -247,14 +250,17 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<BlogPost> BlogPost { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CartRecoveryMailTemplateId")]
     public virtual MailTemplate? CartRecoveryMailTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ChannelId")]
     public virtual ImLivechatChannel? Channel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
@@ -265,14 +271,17 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<CouponShare> CouponShare { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CrmDefaultTeamId")]
     public virtual CrmTeam? CrmDefaultTeam { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CrmDefaultUserId")]
     public virtual ResUsers? CrmDefaultUser { get; set; }
 
@@ -283,6 +292,7 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultLangId")]
     public virtual ResLang? DefaultLang { get; set; }
 
@@ -353,6 +363,7 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("NewsletterId")]
     public virtual MailingList? Newsletter { get; set; }
 
@@ -423,10 +434,12 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SalespersonId")]
     public virtual ResUsers? Salesperson { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SalesteamId")]
     public virtual CrmTeam? Salesteam { get; set; }
 
@@ -443,14 +456,17 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ThemeId")]
     public virtual IrModuleModule? Theme { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WarehouseId")]
     public virtual StockWarehouse? Warehouse { get; set; }
 
@@ -509,16 +525,19 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     // public virtual ICollection<WebsiteVisitor> WebsiteVisitor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("WebsiteId")] //Many2many // Hidden
     // [InverseProperty("Website")] //Many2many // Hidden
     public virtual ICollection<BaseLanguageInstall> BaseLanguageInstall { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("WebsiteId")] // Many2many // Normal
     // [InverseProperty("WebsiteNavigation")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -57,17 +60,17 @@ public partial class AccountTax: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("tax_exigibility")]
     public string? TaxExigibility { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // InvoiceLabel
     [Column("invoice_label", TypeName = "jsonb")]
-    public string? InvoiceLabel { get; set; }
+    public StringDictionary? InvoiceLabel { get; set; }
 
     [Column("invoice_legal_notes")]
     public string? InvoiceLegalNotes { get; set; }
@@ -103,84 +106,100 @@ public partial class AccountTax: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public string? UblCiiTaxExemptionReasonCode { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TaxDestId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TaxDest")] // One2many
     public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxTaxDest { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TaxSrcId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TaxSrc")] // One2many
     public virtual ICollection<AccountFiscalPositionTax> AccountFiscalPositionTaxTaxSrc { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("GroupTaxId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("GroupTax")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLineGroupTax { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TaxLineId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TaxLine")] // One2many
     public virtual ICollection<AccountMoveLine> AccountMoveLineTaxLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TaxId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Tax")] // One2many
     public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CashBasisTransitionAccountId")]
     public virtual AccountAccount? CashBasisTransitionAccount { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountTaxId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AccountTax")] // One2many
     public virtual ICollection<HrPayslipLine> HrPayslipLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountTaxId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("AccountTax")] // One2many
     public virtual ICollection<HrSalaryRule> HrSalaryRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountPurchaseTaxId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("AccountPurchaseTax")] // One2many
     public virtual ICollection<ResCompany> ResCompanyAccountPurchaseTax { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AccountSaleTaxId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("AccountSaleTax")] // One2many
     public virtual ICollection<ResCompany> ResCompanyAccountSaleTax { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TaxGroupId")]
     public virtual AccountTaxGroup? TaxGroup { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (AccountAccount) is commented out
     // [ForeignKey("TaxId")] //Many2many // Hidden
@@ -188,78 +207,91 @@ public partial class AccountTax: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public virtual ICollection<AccountAccount> Account { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<AccountReconcileModelLine> AccountReconcileModelLine { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ParentTax")] // Many2many // Normal
     // [InverseProperty("ParentTax")] // Many2many // Normal
     public virtual ICollection<AccountTax> ChildTax { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("TaxId")] //Many2many // Hidden
     // [InverseProperty("Tax")] //Many2many // Hidden
     public virtual ICollection<HrExpense> Expense { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<HrExpenseSplit> HrExpenseSplit { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<LoyaltyReward> LoyaltyReward { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ChildTax")] // Many2many // Normal
     // [InverseProperty("ChildTax")] // Many2many // Normal
     public virtual ICollection<AccountTax> ParentTax { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("TaxId")] //Many2many // Hidden
     // [InverseProperty("Tax")] //Many2many // Hidden
     public virtual ICollection<ProductTemplate> Prod { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("TaxId")] //Many2many // Hidden
     // [InverseProperty("TaxNavigation")] //Many2many // Hidden
     public virtual ICollection<ProductTemplate> ProdNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden
     public virtual ICollection<SaleOrderDiscount> SaleOrderDiscount { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountTaxId")] //Many2many // Hidden
     // [InverseProperty("AccountTax")] //Many2many // Hidden

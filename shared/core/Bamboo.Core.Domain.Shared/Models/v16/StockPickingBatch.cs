@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -48,9 +51,9 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
     [Column("state")]
     public string? State { get; set; }
 
-    [JsonField]
+    [JsonField] // Properties
     [Column("properties", TypeName = "jsonb")]
-    public string? Properties { get; set; }
+    public JsonElement? Properties { get; set; }
 
     [Column("is_wave")]
     public bool? IsWave { get; set; }
@@ -80,62 +83,75 @@ public partial class StockPickingBatch: FullAuditedAggregateRoot<Guid>, IEntityD
     public DateTime? EndDate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DockId")]
     public virtual StockLocation? Dock { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DriverId")]
     public virtual ResPartner? Driver { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PickingTypeId")]
     public virtual StockPickingType? PickingType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WaveId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Wave")] // One2many
     public virtual ICollection<StockAddToWave> StockAddToWave { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BatchId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Batch")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BatchId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Batch")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BatchId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Batch")] // One2many
     public virtual ICollection<StockPickingToBatch> StockPickingToBatch { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("VehicleId")]
     public virtual FleetVehicle? Vehicle { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("VehicleCategoryId")]
     public virtual FleetVehicleModelCategory? VehicleCategory { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

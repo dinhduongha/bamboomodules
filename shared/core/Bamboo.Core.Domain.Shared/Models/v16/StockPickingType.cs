@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -85,13 +88,13 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("move_type")]
     public string? MoveType { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // PickingPropertiesDefinition
     [Column("picking_properties_definition", TypeName = "jsonb")]
-    public string? PickingPropertiesDefinition { get; set; }
+    public JsonElement? PickingPropertiesDefinition { get; set; }
 
     [Column("show_entire_packs")]
     public bool? ShowEntirePacks { get; set; }
@@ -156,9 +159,9 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("default_recycle_location_dest_id")]
     public Guid? DefaultRecycleLocationDestId { get; set; }
 
-    [JsonField]
+    [JsonField] // RepairPropertiesDefinition
     [Column("repair_properties_definition", TypeName = "jsonb")]
-    public string? RepairPropertiesDefinition { get; set; }
+    public JsonElement? RepairPropertiesDefinition { get; set; }
 
     [Column("is_repairable")]
     public bool? IsRepairable { get; set; }
@@ -202,9 +205,9 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("batch_max_pickings")]
     public long? BatchMaxPickings { get; set; }
 
-    [JsonField]
+    [JsonField] // BatchPropertiesDefinition
     [Column("batch_properties_definition", TypeName = "jsonb")]
-    public string? BatchPropertiesDefinition { get; set; }
+    public JsonElement? BatchPropertiesDefinition { get; set; }
 
     [Column("auto_batch")]
     public bool? AutoBatch { get; set; }
@@ -240,228 +243,270 @@ public partial class StockPickingType: FullAuditedAggregateRoot<Guid>, IEntityDt
     public bool? BatchGroupByCarrier { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultLocationDestId")]
     public virtual StockLocation? DefaultLocationDest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultLocationSrcId")]
     public virtual StockLocation? DefaultLocationSrc { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultProductLocationDestId")]
     public virtual StockLocation? DefaultProductLocationDest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultProductLocationSrcId")]
     public virtual StockLocation? DefaultProductLocationSrc { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultRecycleLocationDestId")]
     public virtual StockLocation? DefaultRecycleLocationDest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("DefaultRemoveLocationDestId")]
     public virtual StockLocation? DefaultRemoveLocationDest { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReturnPickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReturnPickingType")] // One2many
     public virtual ICollection<StockPickingType> InverseReturnPickingType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<MrpProduction> MrpProduction { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<PurchaseOrder> PurchaseOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<PurchaseRequisition> PurchaseRequisition { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<RepairOrder> RepairOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DropshipSubcontractorPickTypeId")]
     [NotMapped] // One2many // Peer relationship (ResCompany) is commented out
     // [InverseProperty("DropshipSubcontractorPickType")] // One2many
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ReturnPickingTypeId")]
     public virtual StockPickingType? ReturnPickingType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SequenceId")]
     public virtual IrSequence? SequenceNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockPickingBatch> StockPickingBatch { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickingType")] // One2many
     public virtual ICollection<StockRule> StockRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("InTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("InType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseInType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IntTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("IntType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseIntType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManuTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ManuType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseManuType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OutTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("OutType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseOutType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PackTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PackType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePackType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PbmTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PbmType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePbmType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PickTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PickType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePickType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePosType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("QcTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("QcType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseQcType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RepairTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RepairType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseRepairType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SamTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SamType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSamType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("StoreTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("StoreType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseStoreType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubcontractingResupplyTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SubcontractingResupplyType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingResupplyType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubcontractingTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SubcontractingType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("XdockTypeId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("XdockType")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseXdockType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WarehouseId")]
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("StockPickingTypeId")] // Many2many // Normal
     // [InverseProperty("StockPickingType")] // Many2many // Normal
     public virtual ICollection<ProductCategory> ProductCategory { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("StockPickingTypeId")] // Many2many // Normal
     // [InverseProperty("StockPickingType")] // Many2many // Normal
     public virtual ICollection<StockLocation> StockLocation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResUsers) is commented out
     // [ForeignKey("PickingTypeId")] // Many2many // Normal
     // [InverseProperty("PickingType")] // Many2many // Normal

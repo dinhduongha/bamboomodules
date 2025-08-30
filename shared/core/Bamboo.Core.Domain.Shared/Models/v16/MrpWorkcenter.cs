@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -87,77 +90,91 @@ public partial class MrpWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("expense_account_id")]
     public Guid? ExpenseAccountId { get; set; }
 
-    [JsonField]
+    [JsonField] // AnalyticDistribution
     [Column("analytic_distribution", TypeName = "jsonb")]
-    public string? AnalyticDistribution { get; set; }
+    public JsonElement? AnalyticDistribution { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseAccountId")]
     public virtual AccountAccount? ExpenseAccount { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkcenterId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpRoutingWorkcenter> MrpRoutingWorkcenter { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkcenterId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpWorkcenterCapacity> MrpWorkcenterCapacity { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkcenterId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpWorkcenterProductivity> MrpWorkcenterProductivity { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WorkcenterId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Workcenter")] // One2many
     public virtual ICollection<MrpWorkorder> MrpWorkorder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResourceId")]
     public virtual ResourceResource? Resource { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResourceCalendarId")]
     public virtual ResourceCalendar? ResourceCalendar { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MrpWorkcenterId")] //Many2many // Hidden
     // [InverseProperty("MrpWorkcenter")] //Many2many // Hidden
     public virtual ICollection<AccountAnalyticAccount> AccountAnalyticAccount { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("WorkcenterId")] // Many2many // Normal
     // [InverseProperty("Workcenter")] // Many2many // Normal
     public virtual ICollection<MrpWorkcenter> AlternativeWorkcenter { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("MrpWorkcenterId")] // Many2many // Normal
     // [InverseProperty("MrpWorkcenter")] // Many2many // Normal
     public virtual ICollection<MrpWorkcenterTag> MrpWorkcenterTag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AlternativeWorkcenterId")] // Many2many // Normal
     // [InverseProperty("AlternativeWorkcenter")] // Many2many // Normal

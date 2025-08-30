@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -43,9 +46,9 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("name")]
     public string? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Title
     [Column("title", TypeName = "jsonb")]
-    public string? Title { get; set; }
+    public StringDictionary? Title { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -75,96 +78,114 @@ public partial class UtmCampaign: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public string? AbTestingSmsWinnerSelection { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AbTestingWinnerMailingId")]
     public virtual MailingMailing? AbTestingWinnerMailing { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("UtmCampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("UtmCampaign")] // One2many
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<HrApplicant> HrApplicant { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<LinkTracker> LinkTracker { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<LinkTrackerClick> LinkTrackerClick { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<MailingMailing> MailingMailing { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<MailingTrace> MailingTrace { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Campaign")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("UtmCampaignId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("UtmCampaign")] // One2many
     public virtual ICollection<SmsComposer> SmsComposer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StageId")]
     public virtual UtmStage? Stage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("TagId")] // Many2many // Normal
     // [InverseProperty("Tag")] // Many2many // Normal

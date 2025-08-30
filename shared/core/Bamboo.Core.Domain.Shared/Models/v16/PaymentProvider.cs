@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -58,29 +61,29 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("state")]
     public string? State { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // PreMsg
     [Column("pre_msg", TypeName = "jsonb")]
-    public string? PreMsg { get; set; }
+    public JsonElement? PreMsg { get; set; }
 
-    [JsonField]
+    [JsonField] // PendingMsg
     [Column("pending_msg", TypeName = "jsonb")]
-    public string? PendingMsg { get; set; }
+    public JsonElement? PendingMsg { get; set; }
 
-    [JsonField]
+    [JsonField] // AuthMsg
     [Column("auth_msg", TypeName = "jsonb")]
-    public string? AuthMsg { get; set; }
+    public JsonElement? AuthMsg { get; set; }
 
-    [JsonField]
+    [JsonField] // DoneMsg
     [Column("done_msg", TypeName = "jsonb")]
-    public string? DoneMsg { get; set; }
+    public JsonElement? DoneMsg { get; set; }
 
-    [JsonField]
+    [JsonField] // CancelMsg
     [Column("cancel_msg", TypeName = "jsonb")]
-    public string? CancelMsg { get; set; }
+    public JsonElement? CancelMsg { get; set; }
 
     [Column("maximum_amount")]
     public decimal? MaximumAmount { get; set; }
@@ -128,78 +131,94 @@ public partial class PaymentProvider: FullAuditedAggregateRoot<Guid>, IEntityDto
     public string? AuthorizeClientKey { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PaymentProviderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PaymentProvider")] // One2many
     public virtual ICollection<AccountPaymentMethodLine> AccountPaymentMethodLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpressCheckoutFormViewId")]
     public virtual IrUiView? ExpressCheckoutFormView { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("InlineFormViewId")]
     public virtual IrUiView? InlineFormView { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModuleId")]
     public virtual IrModuleModule? Module { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProviderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Provider")] // One2many
     public virtual ICollection<PaymentToken> PaymentToken { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProviderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Provider")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RedirectFormViewId")]
     public virtual IrUiView? RedirectFormView { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TokenInlineFormViewId")]
     public virtual IrUiView? TokenInlineFormView { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
     // [ForeignKey("PaymentId")] // Many2many // Normal
     // [InverseProperty("Payment")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCurrency) is commented out
     // [ForeignKey("PaymentProviderId")] // Many2many // Normal
     // [InverseProperty("PaymentProvider")] // Many2many // Normal
     public virtual ICollection<ResCurrency> Currency { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PaymentProviderId")] //Many2many // Hidden
     // [InverseProperty("PaymentProvider")] //Many2many // Hidden
     public virtual ICollection<PaymentMethod> PaymentMethod { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("PaymentProviderId")] //Many2many // Hidden
     // [InverseProperty("PaymentProvider")] //Many2many // Hidden

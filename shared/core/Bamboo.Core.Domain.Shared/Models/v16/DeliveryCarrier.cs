@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -53,13 +56,13 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("invoice_policy")]
     public string? InvoicePolicy { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // CarrierDescription
     [Column("carrier_description", TypeName = "jsonb")]
-    public string? CarrierDescription { get; set; }
+    public StringDictionary? CarrierDescription { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -110,92 +113,109 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
     public bool? IsPublished { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CarrierId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<ChooseDeliveryCarrier> ChooseDeliveryCarrier { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CarrierId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<DeliveryPriceRule> DeliveryPriceRule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductId")]
     public virtual ProductProduct? Product { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CarrierId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CarrierId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<StockMoveLine> StockMoveLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CarrierId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Carrier")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountry) is commented out
     // [ForeignKey("CarrierId")] // Many2many // Normal
     // [InverseProperty("Carrier")] // Many2many // Normal
     public virtual ICollection<ResCountry> Country { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DeliveryCarrierId")] // Many2many // Normal
     // [InverseProperty("DeliveryCarrier")] // Many2many // Normal
     public virtual ICollection<ProductTag> ProductTag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DeliveryCarrierId")] // Many2many // Normal
     // [InverseProperty("DeliveryCarrierNavigation")] // Many2many // Normal
     public virtual ICollection<ProductTag> ProductTagNavigation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ShippingId")] // Many2many // Normal
     // [InverseProperty("Shipping")] // Many2many // Normal
     public virtual ICollection<StockRoute> Route { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCountryState) is commented out
     // [ForeignKey("CarrierId")] // Many2many // Normal
     // [InverseProperty("Carrier")] // Many2many // Normal
     public virtual ICollection<ResCountryState> State { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DeliveryCarrierId")] // Many2many // Normal
     // [InverseProperty("DeliveryCarrier")] // Many2many // Normal
     public virtual ICollection<StockWarehouse> StockWarehouse { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CarrierId")] // Many2many // Normal
     // [InverseProperty("Carrier")] // Many2many // Normal

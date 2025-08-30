@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -41,13 +44,13 @@ public partial class ResCountry: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("name_position")]
     public string? NamePosition { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // VatLabel
     [Column("vat_label", TypeName = "jsonb")]
-    public string? VatLabel { get; set; }
+    public StringDictionary? VatLabel { get; set; }
 
     [Column("address_format")]
     public string? AddressFormat { get; set; }
@@ -98,10 +101,12 @@ public partial class ResCountry: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<AccountTaxGroup> AccountTaxGroup { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AddressViewId")]
     public virtual IrUiView? AddressView { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
@@ -112,6 +117,7 @@ public partial class ResCountry: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<CrmLead> CrmLead { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
@@ -242,52 +248,61 @@ public partial class ResCountry: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     // public virtual ICollection<WebsiteVisitor> WebsiteVisitor { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CountryId")] //Many2many // Hidden
     // [InverseProperty("Country")] //Many2many // Hidden
     public virtual ICollection<DeliveryCarrier> Carrier { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CountryId")] //Many2many // Hidden
     // [InverseProperty("Country")] //Many2many // Hidden
     public virtual ICollection<ImLivechatChannelRule> Channel { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResCountryId")] //Many2many // Hidden
     // [InverseProperty("ResCountry")] //Many2many // Hidden
     public virtual ICollection<CrmIapLeadMiningRequest> CrmIapLeadMiningRequest { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResCountryId")] //Many2many // Hidden
     // [InverseProperty("ResCountry")] //Many2many // Hidden
     public virtual ICollection<CrmRevealRule> CrmRevealRule { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CountryId")] //Many2many // Hidden
     // [InverseProperty("Country")] //Many2many // Hidden
     public virtual ICollection<IrModuleModule> Module { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CountryId")] //Many2many // Hidden
     // [InverseProperty("Country")] //Many2many // Hidden
     public virtual ICollection<PaymentProvider> Payment { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ResCountryId")] //Many2many // Hidden
     // [InverseProperty("ResCountry")] //Many2many // Hidden
     public virtual ICollection<PaymentMethod> PaymentMethod { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ResCountryId")] // Many2many // Normal
     // [InverseProperty("ResCountry")] // Many2many // Normal

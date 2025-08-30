@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -111,172 +114,205 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AuthorId")]
     public virtual ResPartner? Author { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AuthorGuestId")]
     public virtual MailGuest? AuthorGuest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual ChatbotMessage? ChatbotMessage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual DiscussChannel? DiscussChannel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FetchedMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("FetchedMessage")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMemberFetchedMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SeenMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SeenMessage")] // One2many
     public virtual ICollection<DiscussChannelMember> DiscussChannelMemberSeenMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<MailMessage> InverseParent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MailActivityTypeId")]
     public virtual MailActivityType? MailActivityType { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Parent")] // One2many
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailGroupMessage> MailGroupMessage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Message")] // One2many
     public virtual ICollection<MailLinkPreview> MailLinkPreview { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailMail> MailMail { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Message")] // One2many
     public virtual ICollection<MailMessageReaction> MailMessageReaction { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailMessageSchedule> MailMessageSchedule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Message")] // One2many
     public virtual ICollection<MailMessageTranslation> MailMessageTranslation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailNotification> MailNotification { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailResendMessage> MailResendMessage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MailServerId")]
     public virtual IrMailServer? MailServer { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<MailTrackingValue> MailTrackingValue { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ParentId")]
     public virtual MailMessage? Parent { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Message")] // One2many
     public virtual ICollection<RatingRating> RatingRating { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RecordAliasDomainId")]
     public virtual MailAliasDomain? RecordAliasDomain { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RecordCompanyId")]
     public virtual ResCompany? RecordCompany { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<SmsResend> SmsResend { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailMessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailMessage")] // One2many
     public virtual ICollection<SmsSms> SmsSms { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Message")] // One2many
     public virtual ICollection<SnailmailLetter> SnailmailLetter { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MessageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Message")] // One2many
     public virtual ICollection<SnailmailLetterFormatError> SnailmailLetterFormatError { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SubtypeId")]
     public virtual MailMessageSubtype? Subtype { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (IrAttachment) is commented out
     // [ForeignKey("MessageId")] // Many2many // Normal
     // [InverseProperty("Message")] // Many2many // Normal
     public virtual ICollection<IrAttachment> Attachment { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("MailMessageId")] // Many2many // Normal
     // [InverseProperty("MailMessageNavigation")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("MailMessageId")] // Many2many // Normal
     // [InverseProperty("MailMessage1")] // Many2many // Normal

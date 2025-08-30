@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -152,9 +155,9 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("date_deadline")]
     public DateTime? DateDeadline { get; set; }
 
-    [JsonField]
+    [JsonField] // LeadProperties
     [Column("lead_properties", TypeName = "jsonb")]
-    public string? LeadProperties { get; set; }
+    public JsonElement? LeadProperties { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -250,174 +253,210 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public decimal? PartnerLongitude { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OpportunityId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Opportunity")] // One2many
     public virtual ICollection<CalendarEvent> CalendarEvent { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CampaignId")]
     public virtual UtmCampaign? Campaign { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryId")]
     public virtual ResCountry? Country { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LeadId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LeadId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMassNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LeadId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmLeadAssignation> CrmLeadAssignation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LeadId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Lead")] // One2many
     public virtual ICollection<CrmQuotationPartner> CrmQuotationPartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventId")]
     public virtual EventEvent? Event { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventLeadRuleId")]
     public virtual EventLeadRule? EventLeadRule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LangId")]
     public virtual ResLang? Lang { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LeadMiningRequestId")]
     public virtual CrmIapLeadMiningRequest? LeadMiningRequest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LostReasonId")]
     public virtual CrmLostReason? LostReason { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("MediumId")]
     public virtual UtmMedium? Medium { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerAssignedId")]
     public virtual ResPartner? PartnerAssigned { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RecurringPlan")]
     public virtual CrmRecurringPlan? RecurringPlanNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RevealRuleId")]
     public virtual CrmRevealRule? RevealRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OpportunityId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Opportunity")] // One2many
     public virtual ICollection<SaleOrder> SaleOrder { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SourceId")]
     public virtual UtmSource? Source { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StageId")]
     public virtual CrmStage? Stage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("StateId")]
     public virtual ResCountryState? State { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TeamId")]
     public virtual CrmTeam? Team { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("Title")]
     public virtual ResPartnerTitle? TitleNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")] //Many2many // Hidden
     // [InverseProperty("CrmLead")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")] //Many2many // Hidden
     // [InverseProperty("CrmLeadNavigation")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartnerMass> CrmLead2opportunityPartnerMass1 { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")] //Many2many // Hidden
     // [InverseProperty("CrmLead")] //Many2many // Hidden
     public virtual ICollection<CrmLead2opportunityPartner> CrmLead2opportunityPartnerNavigation { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("CrmLeadId")] //Many2many // Hidden
     // [InverseProperty("CrmLead")] //Many2many // Hidden
     public virtual ICollection<CrmLeadLost> CrmLeadLost { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmLeadId")] // Many2many // Normal
     // [InverseProperty("CrmLead")] // Many2many // Normal
     public virtual ICollection<EventRegistration> EventRegistration { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("OpportunityId")] //Many2many // Hidden
     // [InverseProperty("Opportunity")] //Many2many // Hidden
     public virtual ICollection<CrmMergeOpportunity> Merge { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("LeadId")] // Many2many // Normal
     // [InverseProperty("Lead")] // Many2many // Normal
     public virtual ICollection<ResPartner> PartnerNavigation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("LeadId")] // Many2many // Normal
     // [InverseProperty("Lead")] // Many2many // Normal
     public virtual ICollection<CrmTag> Tag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CrmLeadId")] // Many2many // Normal
     // [InverseProperty("CrmLead")] // Many2many // Normal

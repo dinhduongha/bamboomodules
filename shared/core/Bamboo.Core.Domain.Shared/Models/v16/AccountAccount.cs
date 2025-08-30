@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -37,13 +40,13 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("account_type")]
     public string? AccountType { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField] // CodeStore
     [Column("code_store", TypeName = "jsonb")]
-    public string? CodeStore { get; set; }
+    public JsonElement? CodeStore { get; set; }
 
     [Column("note")]
     public string? Note { get; set; }
@@ -214,10 +217,12 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<AccountTaxRepartitionLine> AccountTaxRepartitionLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
@@ -408,90 +413,103 @@ public partial class AccountAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<StockValuationLayerRevaluation> StockValuationLayerRevaluation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AccountAccountId")] // Many2many // Normal
     // [InverseProperty("AccountAccount")] // Many2many // Normal
     public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")] //Many2many // Hidden
     // [InverseProperty("AccountAccount")] //Many2many // Hidden
     public virtual ICollection<AccountBalanceReport> AccountBalanceReport { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")] //Many2many // Hidden
     // [InverseProperty("AccountAccount")] //Many2many // Hidden
     public virtual ICollection<AccountCommonAccountReport> AccountCommonAccountReport { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AccountAccountId")] // Many2many // Normal
     // [InverseProperty("AccountAccount")] // Many2many // Normal
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")] //Many2many // Hidden
     // [InverseProperty("AccountAccount")] //Many2many // Hidden
     public virtual ICollection<AccountMergeWizard> AccountMergeWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountAccountId")] //Many2many // Hidden
     // [InverseProperty("AccountAccount")] //Many2many // Hidden
     public virtual ICollection<AccountReportGeneralLedger> AccountReportGeneralLedger { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")] //Many2many // Hidden
     // [InverseProperty("Account")] //Many2many // Hidden
     public virtual ICollection<AccountBudgetPost> Budget { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")] //Many2many // Hidden
     // [InverseProperty("Account1")] //Many2many // Hidden
     public virtual ICollection<AccountJournal> Journal { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")] //Many2many // Hidden
     // [InverseProperty("Account")] //Many2many // Hidden
     public virtual ICollection<AccountBankbookReport> ReportLine { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")] //Many2many // Hidden
     // [InverseProperty("Account")] //Many2many // Hidden
     public virtual ICollection<AccountDaybookReport> ReportLine1 { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")] //Many2many // Hidden
     // [InverseProperty("Account")] //Many2many // Hidden
     public virtual ICollection<AccountFinancialReport> ReportLine2 { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("AccountId")] //Many2many // Hidden
     // [InverseProperty("Account")] //Many2many // Hidden
     public virtual ICollection<AccountCashbookReport> ReportLineNavigation { get; set; }
 
-
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResCompany) is commented out
     // [ForeignKey("AccountAccountId")] // Many2many // Normal
     // [InverseProperty("AccountAccount")] // Many2many // Normal
-    
     public virtual ICollection<ResCompany> ResCompany { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("AccountId")] // Many2many // Normal
     // [InverseProperty("Account")] // Many2many // Normal

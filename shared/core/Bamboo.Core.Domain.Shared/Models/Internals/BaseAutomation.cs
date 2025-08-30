@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -66,9 +69,9 @@ public partial class BaseAutomation: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("filter_domain")]
     public string? FilterDomain { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -89,42 +92,51 @@ public partial class BaseAutomation: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BaseAutomationId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("BaseAutomation")] // One2many
     public virtual ICollection<IrActServer> IrActServer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TrgDateId")]
     public virtual IrModelFields? TrgDate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TrgDateCalendarId")]
     public virtual ResourceCalendar? TrgDateCalendar { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TrgSelectionFieldId")]
     public virtual IrModelFieldsSelection? TrgSelectionField { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("BaseAutomationId")] // Many2many // Normal
     // [InverseProperty("BaseAutomationNavigation")] // Many2many // Normal
     public virtual ICollection<IrModelFields> IrModelFields { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("BaseAutomationId")] // Many2many // Normal
     // [InverseProperty("BaseAutomation1")] // Many2many // Normal

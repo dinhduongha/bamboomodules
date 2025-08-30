@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -83,9 +86,9 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("push_domain")]
     public string? PushDomain { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -106,112 +109,134 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("GroupId")]
     public virtual ProcurementGroup? Group { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LocationDestId")]
     public virtual StockLocation? LocationDest { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LocationSrcId")]
     public virtual StockLocation? LocationSrc { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerAddressId")]
     public virtual ResPartner? PartnerAddress { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PickingTypeId")]
     public virtual StockPickingType? PickingType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PropagateWarehouseId")]
     public virtual StockWarehouse? PropagateWarehouse { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RouteId")]
     public virtual StockRoute? Route { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Rule")] // One2many
     public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BuyPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("BuyPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseBuyPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManufactureMtoPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ManufactureMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseManufactureMtoPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ManufacturePullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ManufacturePull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseManufacturePull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MtoPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseMtoPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PbmMtoPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PbmMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehousePbmMtoPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RepairMtoPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RepairMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseRepairMtoPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SamRuleId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SamRule")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSamRule { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubcontractingDropshippingPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SubcontractingDropshippingPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingDropshippingPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubcontractingMtoPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SubcontractingMtoPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingMtoPull { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SubcontractingPullId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SubcontractingPull")] // One2many
     public virtual ICollection<StockWarehouse> StockWarehouseSubcontractingPull { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WarehouseId")]
     public virtual StockWarehouse? Warehouse { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

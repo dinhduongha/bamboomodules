@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -46,56 +49,66 @@ public partial class MailingList: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MailingListId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MailingList")] // One2many
     public virtual ICollection<MailingContactToList> MailingContactToList { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("DestListId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("DestList")] // One2many
     public virtual ICollection<MailingListMerge> MailingListMergeNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ListId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("List")] // One2many
     public virtual ICollection<MailingSubscription> MailingSubscription { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("NewsletterId")]
     [NotMapped] // One2many // Peer relationship (Website) is commented out
     // [InverseProperty("Newsletter")] // One2many
     public virtual ICollection<Website> Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingListId")] //Many2many // Hidden
     // [InverseProperty("MailingList")] //Many2many // Hidden
     public virtual ICollection<MailComposeMessage> MailComposeMessage { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingListId")] //Many2many // Hidden
     // [InverseProperty("MailingList")] //Many2many // Hidden
     public virtual ICollection<MailingContactImport> MailingContactImport { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("MailingListId")] //Many2many // Hidden
     // [InverseProperty("MailingList")] //Many2many // Hidden
     public virtual ICollection<MailingListMerge> MailingListMerge { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("MailingListId")] // Many2many // Normal
     // [InverseProperty("MailingList")] // Many2many // Normal

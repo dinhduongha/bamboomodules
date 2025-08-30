@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -41,13 +44,13 @@ public partial class IrActServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("binding_view_types")]
     public string? BindingViewTypes { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Help
     [Column("help", TypeName = "jsonb")]
-    public string? Help { get; set; }
+    public StringDictionary? Help { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -158,98 +161,119 @@ public partial class IrActServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? BaseAutomationId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ActivityTypeId")]
     public virtual MailActivityType? ActivityType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ActivityUserId")]
     public virtual ResUsers? ActivityUser { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BaseAutomationId")]
     public virtual BaseAutomation? BaseAutomation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BindingModelId")]
     public virtual IrModel? BindingModel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CrudModelId")]
     public virtual IrModel? CrudModel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IrActionsServerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("IrActionsServer")] // One2many
     public virtual ICollection<IrCron> IrCron { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LinkFieldId")]
     public virtual IrModelFields? LinkField { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual IrModel? Model { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SelectionValue")]
     public virtual IrModelFieldsSelection? SelectionValueNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SmsTemplateId")]
     public virtual SmsTemplate? SmsTemplate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TemplateId")]
     public virtual MailTemplate? Template { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UpdateFieldId")]
     public virtual IrModelFields? UpdateField { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UpdateRelatedModelId")]
     public virtual IrModel? UpdateRelatedModel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ActionServerId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ActionServer")] // One2many
     public virtual ICollection<WebsiteSnippetFilter> WebsiteSnippetFilter { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ServerId")] // Many2many // Normal
     // [InverseProperty("Server")] // Many2many // Normal
     public virtual ICollection<IrActServer> Action { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ServerId")] // Many2many // Normal
     // [InverseProperty("Server")] // Many2many // Normal
     public virtual ICollection<IrModelFields> Field { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ActId")] // Many2many // Normal
     // [InverseProperty("Act")] // Many2many // Normal
     public virtual ICollection<ResGroups> Gid { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("IrActServerId")] // Many2many // Normal
     // [InverseProperty("IrActServer")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ActionId")] // Many2many // Normal
     // [InverseProperty("Action")] // Many2many // Normal

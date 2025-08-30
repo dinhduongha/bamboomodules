@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -57,9 +60,9 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("alias_status")]
     public string? AliasStatus { get; set; }
 
-    [JsonField]
+    [JsonField] // AliasBouncedContent
     [Column("alias_bounced_content", TypeName = "jsonb")]
-    public string? AliasBouncedContent { get; set; }
+    public JsonElement? AliasBouncedContent { get; set; }
 
     [Column("alias_defaults")]
     public string? AliasDefaults { get; set; }
@@ -74,64 +77,76 @@ public partial class MailAlias: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public override DateTime? LastModificationTime { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<AccountJournal> AccountJournal { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AliasDomainId")]
     public virtual MailAliasDomain? AliasDomain { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AliasModelId")]
     public virtual IrModel? AliasModel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AliasParentModelId")]
     public virtual IrModel? AliasParentModel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<CrmTeam> CrmTeam { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<HrRecruitmentSource> HrRecruitmentSource { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<MailGroup> MailGroup { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<MaintenanceEquipmentCategory> MaintenanceEquipmentCategory { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("AliasId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Alias")] // One2many
     public virtual ICollection<ProjectProject> ProjectProject { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

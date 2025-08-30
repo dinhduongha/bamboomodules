@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -171,110 +174,133 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public string? Cashier { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("AccountMove")]
     public virtual AccountMove? AccountMove1 { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ReversedPosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ReversedPosOrder")] // One2many
     public virtual ICollection<AccountMove> AccountMoveNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<AccountPayment> AccountPayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ConfigId")]
     public virtual PosConfig? Config { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CrmTeamId")]
     public virtual CrmTeam? CrmTeam { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EmployeeId")]
     public virtual HrEmployee? Employee { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("FiscalPositionId")]
     public virtual AccountFiscalPosition? FiscalPosition { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SourcePosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SourcePosOrder")] // One2many
     public virtual ICollection<LoyaltyCard> LoyaltyCard { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<PaymentTransaction> PaymentTransaction { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("OrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Order")] // One2many
     public virtual ICollection<PosOrderLine> PosOrderLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<PosPayment> PosPayment { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PricelistId")]
     public virtual ProductPricelist? Pricelist { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProcurementGroupId")]
     public virtual ProcurementGroup? ProcurementGroup { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosOrderNavigation")] // One2many
     public virtual ICollection<ProcurementGroup> ProcurementGroupNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SaleJournal")]
     public virtual AccountJournal? SaleJournalNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SessionId")]
     public virtual PosSession? Session { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PosOrderId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PosOrder")] // One2many
     public virtual ICollection<StockPicking> StockPicking { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TableId")]
     public virtual RestaurantTable? Table { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

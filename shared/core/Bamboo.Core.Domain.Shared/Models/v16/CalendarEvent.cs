@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -137,78 +140,94 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public bool? NeedSyncM { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ApplicantId")]
     public virtual HrApplicant? Applicant { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("EventId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Event")] // One2many
     public virtual ICollection<CalendarAttendee> CalendarAttendee { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("Record")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RecordNavigation")] // One2many
     public virtual ICollection<CalendarPopoverDeleteWizard> CalendarPopoverDeleteWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BaseEventId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("BaseEvent")] // One2many
     public virtual ICollection<CalendarRecurrence> CalendarRecurrence { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CandidateId")]
     public virtual HrCandidate? Candidate { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MeetingId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Meeting")] // One2many
     public virtual ICollection<HrLeave> HrLeave { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("CalendarEventId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("CalendarEvent")] // One2many
     public virtual ICollection<MailActivity> MailActivity { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OpportunityId")]
     public virtual CrmLead? Opportunity { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RecurrenceId")]
     public virtual CalendarRecurrence? Recurrence { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ResModelId")]
     public virtual IrModel? ResModelNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("VideocallChannelId")]
     public virtual DiscussChannel? VideocallChannel { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("CalendarEventId")] // Many2many // Normal
     // [InverseProperty("CalendarEvent")] // Many2many // Normal
     public virtual ICollection<CalendarAlarm> CalendarAlarm { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
     [NotMapped] //Many2many // Hidden // Peer relationship (ResPartner) is commented out
     // [ForeignKey("CalendarEventId")] //Many2many // Hidden
@@ -216,6 +235,7 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("EventId")] // Many2many // Normal
     // [InverseProperty("Event")] // Many2many // Normal

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -24,13 +27,13 @@ public partial class ResPartnerIndustry: FullAuditedAggregateRoot<Guid>, IEntity
     [Column("write_uid")]
     public override Guid? LastModifierId { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // FullName
     [Column("full_name", TypeName = "jsonb")]
-    public string? FullName { get; set; }
+    public StringDictionary? FullName { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -42,22 +45,26 @@ public partial class ResPartnerIndustry: FullAuditedAggregateRoot<Guid>, IEntity
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IndustryId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Industry")] // One2many
     public virtual ICollection<HrJob> HrJob { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("IndustryId")]
     [NotMapped] // One2many // Peer relationship (ResPartner) is commented out
     // [InverseProperty("Industry")] // One2many
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

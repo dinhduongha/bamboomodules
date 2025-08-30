@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,9 +45,9 @@ public partial class EventQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("question_type")]
     public string? QuestionType { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Title
     [Column("title", TypeName = "jsonb")]
-    public string? Title { get; set; }
+    public StringDictionary? Title { get; set; }
 
     [Column("once_per_order")]
     public bool? OncePerOrder { get; set; }
@@ -59,30 +62,36 @@ public partial class EventQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventId")]
     public virtual EventEvent? Event { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("QuestionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Question")] // One2many
     public virtual ICollection<EventQuestionAnswer> EventQuestionAnswer { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("QuestionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Question")] // One2many
     public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EventTypeId")]
     public virtual EventType? EventType { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 }

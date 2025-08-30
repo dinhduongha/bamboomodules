@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -58,25 +61,25 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("default_code")]
     public string? DefaultCode { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionPurchase
     [Column("description_purchase", TypeName = "jsonb")]
-    public string? DescriptionPurchase { get; set; }
+    public StringDictionary? DescriptionPurchase { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionSale
     [Column("description_sale", TypeName = "jsonb")]
-    public string? DescriptionSale { get; set; }
+    public StringDictionary? DescriptionSale { get; set; }
 
-    [JsonField]
+    [JsonField] // ProductProperties
     [Column("product_properties", TypeName = "jsonb")]
-    public string? ProductProperties { get; set; }
+    public JsonElement? ProductProperties { get; set; }
 
     [Column("list_price")]
     public decimal? ListPrice { get; set; }
@@ -111,13 +114,13 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyAccountIncomeId
     [Column("property_account_income_id", TypeName = "jsonb")]
-    public string? PropertyAccountIncomeId { get; set; }
+    public JsonElement? PropertyAccountIncomeId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyAccountExpenseId
     [Column("property_account_expense_id", TypeName = "jsonb")]
-    public string? PropertyAccountExpenseId { get; set; }
+    public JsonElement? PropertyAccountExpenseId { get; set; }
 
     [Column("service_type")]
     public string? ServiceType { get; set; }
@@ -140,29 +143,29 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("tracking")]
     public string? Tracking { get; set; }
 
-    [JsonField]
+    [JsonField] // ResponsibleId
     [Column("responsible_id", TypeName = "jsonb")]
-    public string? ResponsibleId { get; set; }
+    public JsonElement? ResponsibleId { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyStockProduction
     [Column("property_stock_production", TypeName = "jsonb")]
-    public string? PropertyStockProduction { get; set; }
+    public JsonElement? PropertyStockProduction { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyStockInventory
     [Column("property_stock_inventory", TypeName = "jsonb")]
-    public string? PropertyStockInventory { get; set; }
+    public JsonElement? PropertyStockInventory { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionPicking
     [Column("description_picking", TypeName = "jsonb")]
-    public string? DescriptionPicking { get; set; }
+    public StringDictionary? DescriptionPicking { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionPickingout
     [Column("description_pickingout", TypeName = "jsonb")]
-    public string? DescriptionPickingout { get; set; }
+    public StringDictionary? DescriptionPickingout { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionPickingin
     [Column("description_pickingin", TypeName = "jsonb")]
-    public string? DescriptionPickingin { get; set; }
+    public StringDictionary? DescriptionPickingin { get; set; }
 
     [Column("is_storable")]
     public bool? IsStorable { get; set; }
@@ -170,9 +173,9 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("lot_valuated")]
     public bool? LotValuated { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // PublicDescription
     [Column("public_description", TypeName = "jsonb")]
-    public string? PublicDescription { get; set; }
+    public StringDictionary? PublicDescription { get; set; }
 
     [Column("available_in_pos")]
     public bool? AvailableInPos { get; set; }
@@ -192,35 +195,35 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("purchase_line_warn_msg")]
     public string? PurchaseLineWarnMsg { get; set; }
 
-    [JsonField]
+    [JsonField] // PropertyAccountCreditorPriceDifference
     [Column("property_account_creditor_price_difference", TypeName = "jsonb")]
-    public string? PropertyAccountCreditorPriceDifference { get; set; }
+    public JsonElement? PropertyAccountCreditorPriceDifference { get; set; }
 
-    [JsonField]
+    [JsonField] // ServiceToPurchase
     [Column("service_to_purchase", TypeName = "jsonb")]
-    public string? ServiceToPurchase { get; set; }
+    public JsonElement? ServiceToPurchase { get; set; }
 
     [Column("create_repair")]
     public bool? CreateRepair { get; set; }
 
-    [JsonField]
+    [JsonField] // AssetCategoryId
     [Column("asset_category_id", TypeName = "jsonb")]
-    public string? AssetCategoryId { get; set; }
+    public JsonElement? AssetCategoryId { get; set; }
 
-    [JsonField]
+    [JsonField] // DeferredRevenueCategoryId
     [Column("deferred_revenue_category_id", TypeName = "jsonb")]
-    public string? DeferredRevenueCategoryId { get; set; }
+    public JsonElement? DeferredRevenueCategoryId { get; set; }
 
     [Column("can_be_expensed")]
     public bool? CanBeExpensed { get; set; }
 
-    [JsonField]
+    [JsonField] // ProjectId
     [Column("project_id", TypeName = "jsonb")]
-    public string? ProjectId { get; set; }
+    public JsonElement? ProjectId { get; set; }
 
-    [JsonField]
+    [JsonField] // ProjectTemplateId
     [Column("project_template_id", TypeName = "jsonb")]
-    public string? ProjectTemplateId { get; set; }
+    public JsonElement? ProjectTemplateId { get; set; }
 
     [Column("country_of_origin")]
     public Guid? CountryOfOrigin { get; set; }
@@ -249,29 +252,29 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("website_meta_og_img")]
     public string? WebsiteMetaOgImg { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaTitle
     [Column("website_meta_title", TypeName = "jsonb")]
-    public string? WebsiteMetaTitle { get; set; }
+    public StringDictionary? WebsiteMetaTitle { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteMetaDescription
     [Column("website_meta_description", TypeName = "jsonb")]
-    public string? WebsiteMetaDescription { get; set; }
+    public StringDictionary? WebsiteMetaDescription { get; set; }
 
-    [JsonField]
+    [JsonField] // WebsiteMetaKeywords
     [Column("website_meta_keywords", TypeName = "jsonb")]
-    public string? WebsiteMetaKeywords { get; set; }
+    public JsonElement? WebsiteMetaKeywords { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
-    public string? SeoName { get; set; }
+    public StringDictionary? SeoName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // WebsiteDescription
     [Column("website_description", TypeName = "jsonb")]
-    public string? WebsiteDescription { get; set; }
+    public StringDictionary? WebsiteDescription { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // DescriptionEcommerce
     [Column("description_ecommerce", TypeName = "jsonb")]
-    public string? DescriptionEcommerce { get; set; }
+    public StringDictionary? DescriptionEcommerce { get; set; }
 
     [Column("compare_list_price")]
     public decimal? CompareListPrice { get; set; }
@@ -285,9 +288,9 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("base_unit_count")]
     public double? BaseUnitCount { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // OutOfStockMessage
     [Column("out_of_stock_message", TypeName = "jsonb")]
-    public string? OutOfStockMessage { get; set; }
+    public StringDictionary? OutOfStockMessage { get; set; }
 
     [Column("allow_out_of_stock_order")]
     public bool? AllowOutOfStockOrder { get; set; }
@@ -338,206 +341,244 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? EmailTemplateId { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BaseUnitId")]
     public virtual WebsiteBaseUnit? BaseUnit { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CategId")]
     public virtual ProductCategory? Categ { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CountryOfOrigin")]
     public virtual ResCountry? CountryOfOriginNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("EmailTemplateId")]
     public virtual MailTemplate? EmailTemplate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<MrpBom> MrpBom { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<MrpBomLine> MrpBomLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductImage> ProductImage { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductPricelistItem> ProductPricelistItem { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     [NotMapped] // One2many // Peer relationship (ProductProduct) is commented out
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductProduct> ProductProduct { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductReplenish> ProductReplenish { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductTemplateAttributeExclusion> ProductTemplateAttributeExclusion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductTemplateAttributeLine> ProductTemplateAttributeLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<StockChangeProductQty> StockChangeProductQty { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProductTmplId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ProductTmpl")] // One2many
     public virtual ICollection<StockRulesReport> StockRulesReport { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UomId")]
     public virtual UomUom? Uom { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UomPoId")]
     public virtual UomUom? UomPo { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteRibbonId")]
     public virtual ProductRibbon? WebsiteRibbon { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductTemplateId")] // Many2many // Normal
     // [InverseProperty("ProductTemplate")] // Many2many // Normal
     public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
     // [ForeignKey("SrcId")] // Many2many // Normal
     // [InverseProperty("Src")] // Many2many // Normal
     public virtual ICollection<ProductProduct> Dest { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SrcId")] // Many2many // Normal
     // [InverseProperty("SrcNavigation")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> Dest1 { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SrcId")] // Many2many // Normal
     // [InverseProperty("Src")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> DestNavigation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductTemplateId")] // Many2many // Normal
     // [InverseProperty("ProductTemplate")] // Many2many // Normal
     public virtual ICollection<PosCategory> PosCategory { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplate")] //Many2many // Hidden
     public virtual ICollection<ProductAttribute> ProductAttribute { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductTemplateId")] // Many2many // Normal
     // [InverseProperty("ProductTemplate")] // Many2many // Normal
     public virtual ICollection<ProductCombo> ProductCombo { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplate")] //Many2many // Hidden
     public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductTemplateId")] //Many2many // Hidden
     // [InverseProperty("ProductTemplate")] //Many2many // Hidden
     public virtual ICollection<ProductPublicCategory> ProductPublicCategory { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductTemplateId")] // Many2many // Normal
     // [InverseProperty("ProductTemplate")] // Many2many // Normal
     public virtual ICollection<ProductTag> ProductTag { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductId")] //Many2many // Hidden
     // [InverseProperty("Product")] //Many2many // Hidden
     public virtual ICollection<StockRoute> Route { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DestId")] // Many2many // Normal
     // [InverseProperty("DestNavigation")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> Src { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("DestId")] // Many2many // Normal
     // [InverseProperty("Dest1")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> SrcNavigation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProdId")] // Many2many // Normal
     // [InverseProperty("Prod")] // Many2many // Normal
     public virtual ICollection<AccountTax> Tax { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProdId")] // Many2many // Normal
     // [InverseProperty("ProdNavigation")] // Many2many // Normal

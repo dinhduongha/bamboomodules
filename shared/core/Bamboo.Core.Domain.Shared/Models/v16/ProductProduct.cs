@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -45,9 +48,9 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("combination_indices")]
     public string? CombinationIndices { get; set; }
 
-    [JsonField]
+    [JsonField] // StandardPrice
     [Column("standard_price", TypeName = "jsonb")]
-    public string? StandardPrice { get; set; }
+    public JsonElement? StandardPrice { get; set; }
 
     [Column("volume")]
     public decimal? Volume { get; set; }
@@ -67,9 +70,9 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 
-    [JsonField]
+    [JsonField] // LotPropertiesDefinition
     [Column("lot_properties_definition", TypeName = "jsonb")]
-    public string? LotPropertiesDefinition { get; set; }
+    public JsonElement? LotPropertiesDefinition { get; set; }
 
     [Column("variant_ribbon_id")]
     public Guid? VariantRibbonId { get; set; }
@@ -102,10 +105,12 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<AccountMoveLine> AccountMoveLine { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("BaseUnitId")]
     public virtual WebsiteBaseUnit? BaseUnit { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
@@ -290,6 +295,7 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<ProductSupplierinfo> ProductSupplierinfo { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductTmplId")]
     public virtual ProductTemplate? ProductTmpl { get; set; }
 
@@ -498,6 +504,7 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<StockWarnInsufficientQtyUnbuild> StockWarnInsufficientQtyUnbuild { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("VariantRibbonId")]
     public virtual ProductRibbon? VariantRibbon { get; set; }
 
@@ -508,58 +515,68 @@ public partial class ProductProduct: FullAuditedAggregateRoot<Guid>, IEntityDto<
     // public virtual ICollection<WebsiteTrack> WebsiteTrack { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")] //Many2many // Hidden
     // [InverseProperty("ProductProduct")] //Many2many // Hidden
     public virtual ICollection<LoyaltyReward> LoyaltyReward { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")] //Many2many // Hidden
     // [InverseProperty("ProductProduct")] //Many2many // Hidden
     public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")] //Many2many // Hidden
     // [InverseProperty("ProductProduct")] //Many2many // Hidden
     public virtual ICollection<ProductFetchImageWizard> ProductFetchImageWizard { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")] //Many2many // Hidden
     // [InverseProperty("ProductProduct")] //Many2many // Hidden
     public virtual ICollection<ProductLabelLayout> ProductLabelLayout { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductProductId")] // Many2many // Normal
     // [InverseProperty("ProductProduct")] // Many2many // Normal
     public virtual ICollection<ProductTag> ProductTag { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("ProductProductId")] // Many2many // Normal
     // [InverseProperty("ProductProduct")] // Many2many // Normal
     public virtual ICollection<ProductTemplateAttributeValue> ProductTemplateAttributeValue { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
     // [ForeignKey("ProductProductId")] // Many2many // Normal
     // [InverseProperty("ProductProduct")] // Many2many // Normal
     public virtual ICollection<ResPartner> ResPartner { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("DestId")] //Many2many // Hidden
     // [InverseProperty("Dest")] //Many2many // Hidden
     public virtual ICollection<ProductTemplate> Src { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("ProductProductId")] //Many2many // Hidden
     // [InverseProperty("ProductProduct")] //Many2many // Hidden

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -42,25 +45,25 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
     [Column("panel_step_open_action_name")]
     public string? PanelStepOpenActionName { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Title
     [Column("title", TypeName = "jsonb")]
-    public string? Title { get; set; }
+    public StringDictionary? Title { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField] // ButtonText
     [Column("button_text", TypeName = "jsonb")]
-    public string? ButtonText { get; set; }
+    public JsonElement? ButtonText { get; set; }
 
-    [JsonField]
+    [JsonField] // DoneText
     [Column("done_text", TypeName = "jsonb")]
-    public string? DoneText { get; set; }
+    public JsonElement? DoneText { get; set; }
 
-    [JsonField]
+    [JsonField] // StepImageAlt
     [Column("step_image_alt", TypeName = "jsonb")]
-    public string? StepImageAlt { get; set; }
+    public JsonElement? StepImageAlt { get; set; }
 
     [Column("is_per_company")]
     public bool? IsPerCompany { get; set; }
@@ -72,20 +75,24 @@ public partial class OnboardingOnboardingStep: FullAuditedAggregateRoot<Guid>, I
     public override DateTime? LastModificationTime { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("StepId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Step")] // One2many
     public virtual ICollection<OnboardingProgressStep> OnboardingProgressStep { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("OnboardingOnboardingStepId")] //Many2many // Hidden
     // [InverseProperty("OnboardingOnboardingStep")] //Many2many // Hidden

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -72,41 +75,41 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("validation_max_date")]
     public DateTime? ValidationMaxDate { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Title
     [Column("title", TypeName = "jsonb")]
-    public string? Title { get; set; }
+    public StringDictionary? Title { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Description
     [Column("description", TypeName = "jsonb")]
-    public string? Description { get; set; }
+    public StringDictionary? Description { get; set; }
 
-    [JsonField]
+    [JsonField] // QuestionPlaceholder
     [Column("question_placeholder", TypeName = "jsonb")]
-    public string? QuestionPlaceholder { get; set; }
+    public JsonElement? QuestionPlaceholder { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // ScaleMinLabel
     [Column("scale_min_label", TypeName = "jsonb")]
-    public string? ScaleMinLabel { get; set; }
+    public StringDictionary? ScaleMinLabel { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // ScaleMidLabel
     [Column("scale_mid_label", TypeName = "jsonb")]
-    public string? ScaleMidLabel { get; set; }
+    public StringDictionary? ScaleMidLabel { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // ScaleMaxLabel
     [Column("scale_max_label", TypeName = "jsonb")]
-    public string? ScaleMaxLabel { get; set; }
+    public StringDictionary? ScaleMaxLabel { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // CommentsMessage
     [Column("comments_message", TypeName = "jsonb")]
-    public string? CommentsMessage { get; set; }
+    public StringDictionary? CommentsMessage { get; set; }
 
-    [JsonField]
+    [JsonField] // ValidationErrorMsg
     [Column("validation_error_msg", TypeName = "jsonb")]
-    public string? ValidationErrorMsg { get; set; }
+    public JsonElement? ValidationErrorMsg { get; set; }
 
-    [JsonField]
+    [JsonField] // ConstrErrorMsg
     [Column("constr_error_msg", TypeName = "jsonb")]
-    public string? ConstrErrorMsg { get; set; }
+    public JsonElement? ConstrErrorMsg { get; set; }
 
     [Column("is_page")]
     public bool? IsPage { get; set; }
@@ -169,64 +172,76 @@ public partial class SurveyQuestion: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public double? ValidationMaxFloatValue { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Page")] // One2many
     public virtual ICollection<SurveyQuestion> InversePage { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PageId")]
     public virtual SurveyQuestion? Page { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SurveyId")]
     public virtual SurveySurvey? Survey { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("MatrixQuestionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("MatrixQuestion")] // One2many
     public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerMatrixQuestion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("QuestionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Question")] // One2many
     public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswerQuestion { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SessionQuestionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SessionQuestion")] // One2many
     public virtual ICollection<SurveySurvey> SurveySurvey { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("QuestionId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Question")] // One2many
     public virtual ICollection<SurveyUserInputLine> SurveyUserInputLine { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LastDisplayedPageId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("LastDisplayedPage")] // One2many
     public virtual ICollection<SurveyUserInput> SurveyUserInputNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SurveyQuestionId")] // Many2many // Normal
     // [InverseProperty("SurveyQuestion")] // Many2many // Normal
     public virtual ICollection<SurveyQuestionAnswer> SurveyQuestionAnswer { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("SurveyQuestionId")] //Many2many // Hidden
     // [InverseProperty("SurveyQuestion")] //Many2many // Hidden

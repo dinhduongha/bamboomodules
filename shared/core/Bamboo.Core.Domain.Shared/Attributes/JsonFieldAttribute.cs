@@ -1,6 +1,5 @@
 using System;
-//namespace Bamboo.Core.Domain.Shared.Attributes;
-namespace Bamboo.Core.Models;
+namespace Bamboo.Core.Domain.Shared.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class JsonFieldAttribute : Attribute

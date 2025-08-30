@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -55,13 +58,13 @@ public partial class LoyaltyProgram: FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("date_to")]
     public DateTime? DateTo { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
-    public string? Name { get; set; }
+    public StringDictionary? Name { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // PortalPointName
     [Column("portal_point_name", TypeName = "jsonb")]
-    public string? PortalPointName { get; set; }
+    public StringDictionary? PortalPointName { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }
@@ -91,68 +94,81 @@ public partial class LoyaltyProgram: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public bool? EcommerceOk { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("TenantId")]
     public virtual ResCompany? Company { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProgramId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Program")] // One2many
     public virtual ICollection<CouponShare> CouponShare { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProgramId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Program")] // One2many
     public virtual ICollection<LoyaltyCard> LoyaltyCard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProgramId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Program")] // One2many
     public virtual ICollection<LoyaltyGenerateWizard> LoyaltyGenerateWizard { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProgramId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Program")] // One2many
     public virtual ICollection<LoyaltyMail> LoyaltyMail { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProgramId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Program")] // One2many
     public virtual ICollection<LoyaltyReward> LoyaltyReward { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ProgramId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Program")] // One2many
     public virtual ICollection<LoyaltyRule> LoyaltyRule { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("WebsiteId")]
     public virtual Website? Website { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("LoyaltyProgramId")] // Many2many // Normal
     // [InverseProperty("LoyaltyProgram")] // Many2many // Normal
     public virtual ICollection<PosConfig> PosConfig { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("LoyaltyProgramId")] // Many2many // Normal
     // [InverseProperty("LoyaltyProgram")] // Many2many // Normal

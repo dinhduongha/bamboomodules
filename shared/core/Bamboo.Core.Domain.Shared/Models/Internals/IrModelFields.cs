@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
@@ -88,13 +91,13 @@ public partial class IrModelFields: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("currency_field")]
     public string? CurrencyField { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // FieldDescription
     [Column("field_description", TypeName = "jsonb")]
-    public string? FieldDescription { get; set; }
+    public StringDictionary? FieldDescription { get; set; }
 
-    [JsonField]
+    [JsonField(IsSparse = false)] // Help
     [Column("help", TypeName = "jsonb")]
-    public string? Help { get; set; }
+    public StringDictionary? Help { get; set; }
 
     [Column("compute")]
     public string? Compute { get; set; }
@@ -166,150 +169,177 @@ public partial class IrModelFields: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? SerializationFieldId { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TrgDateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TrgDate")] // One2many
     public virtual ICollection<BaseAutomation> BaseAutomation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Field")] // One2many
     public virtual ICollection<CrmLeadScoringFrequencyField> CrmLeadScoringFrequencyField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("TimeFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("TimeField")] // One2many
     public virtual ICollection<DataRecycleModel> DataRecycleModel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("BatchDistinctiveField")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("BatchDistinctiveFieldNavigation")] // One2many
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionBatchDistinctiveFieldNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Field")] // One2many
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldDateId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("FieldDate")] // One2many
     public virtual ICollection<GamificationGoalDefinition> GamificationGoalDefinitionFieldDate { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RelatedFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RelatedField")] // One2many
     public virtual ICollection<IrModelFields> InverseRelatedField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("RelationFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("RelationFieldNavigation")] // One2many
     public virtual ICollection<IrModelFields> InverseRelationFieldNavigation { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("SerializationFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("SerializationField")] // One2many
     public virtual ICollection<IrModelFields> InverseSerializationField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("LinkFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("LinkField")] // One2many
     public virtual ICollection<IrActServer> IrActServerLinkField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("UpdateFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("UpdateField")] // One2many
     public virtual ICollection<IrActServer> IrActServerUpdateField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Field")] // One2many
     public virtual ICollection<IrDefault> IrDefault { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("WebsiteFormDefaultFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("WebsiteFormDefaultField")] // One2many
     public virtual ICollection<IrModel> IrModel { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Field")] // One2many
     public virtual ICollection<IrModelFieldsSelection> IrModelFieldsSelection { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("ParentFieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("ParentField")] // One2many
     public virtual ICollection<IrModelInherit> IrModelInherit { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Field")] // One2many
     public virtual ICollection<MailTrackingValue> MailTrackingValue { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ModelId")]
     public virtual IrModel? ModelNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RelatedFieldId")]
     public virtual IrModelFields? RelatedField { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("RelationFieldId")]
     public virtual IrModelFields? RelationFieldNavigation { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SerializationFieldId")]
     public virtual IrModelFields? SerializationField { get; set; }
 
     // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("FieldId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("Field")] // One2many
     public virtual ICollection<WebsiteSaleExtraField> WebsiteSaleExtraField { get; set; }
 
     // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("LastModifierId")]
     public virtual ResUsers? WriteU { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrModelFieldsId")] //Many2many // Hidden
     // [InverseProperty("IrModelFieldsNavigation")] //Many2many // Hidden
     public virtual ICollection<BaseAutomation> BaseAutomation1 { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("IrModelFieldsId")] //Many2many // Hidden
     // [InverseProperty("IrModelFields")] //Many2many // Hidden
     public virtual ICollection<BaseAutomation> BaseAutomationNavigation { get; set; }
 
     // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("FieldId")] // Many2many // Normal
     // [InverseProperty("Field")] // Many2many // Normal
     public virtual ICollection<ResGroups> Group { get; set; }
 
     // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [NotMapped] //Many2many // Hidden
     // [ForeignKey("FieldId")] //Many2many // Hidden
     // [InverseProperty("Field")] //Many2many // Hidden
