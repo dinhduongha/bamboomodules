@@ -86,7 +86,8 @@ public partial class CertificateCertificate: FullAuditedEntity<Guid>, IEntityDto
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore]
+    //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PrivateKeyId")]
     public virtual CertificateKey? PrivateKey { get; set; }
 

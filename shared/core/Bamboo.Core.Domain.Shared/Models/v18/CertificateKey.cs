@@ -62,7 +62,8 @@ public partial class CertificateKey: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public virtual ICollection<AccountEdiProxyClientUser> AccountEdiProxyClientUser { get; set; }
 
     // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [One2many] [ForeignKey("PrivateKeyId")]
     // [NotMapped] // One2many // Normal
     // [InverseProperty("PrivateKey")] // One2many

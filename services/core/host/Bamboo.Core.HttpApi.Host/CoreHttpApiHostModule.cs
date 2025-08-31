@@ -252,7 +252,8 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        Apply4(swaggerDoc, context );
+        //Apply4(swaggerDoc, context);
+        Apply6(swaggerDoc, context);
         // swaggerDoc.Tags = swaggerDoc.Tags
         //     .OrderBy(t => priority.IndexOf(t.Name) < 0 ? int.MaxValue : priority.IndexOf(t.Name))
         //     .ThenBy(t => t.Name)
@@ -261,7 +262,7 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
 
     }
     public void Apply1(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    { 
+    {
         var priority = new List<string> { "GenericModel", "JsonRpc" };
 
         var pathToController = context.ApiDescriptions
@@ -272,31 +273,31 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
             );
 
         // sort lại swaggerDoc.Paths
-            var sortedPaths = swaggerDoc.Paths
-                .OrderBy(kvp =>
-                {
-                    var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
-                    var idx = priority.IndexOf(controller);
-                    return idx == -1 ? int.MaxValue : idx;   // ưu tiên controller trong list
-                })
-                .ThenBy(kvp =>
-                {
-                    var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
-                    return controller;                      // sau đó sort theo tên controller
-                })
-                .ThenBy(kvp => kvp.Key)                    // phụ: sort theo URL nếu cùng controller
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            // gán lại
-            swaggerDoc.Paths = new OpenApiPaths();
-            foreach (var kvp in sortedPaths)
+        var sortedPaths = swaggerDoc.Paths
+            .OrderBy(kvp =>
             {
-                swaggerDoc.Paths.Add(kvp.Key, kvp.Value);
-            }
+                var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
+                var idx = priority.IndexOf(controller);
+                return idx == -1 ? int.MaxValue : idx;   // ưu tiên controller trong list
+            })
+            .ThenBy(kvp =>
+            {
+                var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
+                return controller;                      // sau đó sort theo tên controller
+            })
+            .ThenBy(kvp => kvp.Key)                    // phụ: sort theo URL nếu cùng controller
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        // gán lại
+        swaggerDoc.Paths = new OpenApiPaths();
+        foreach (var kvp in sortedPaths)
+        {
+            swaggerDoc.Paths.Add(kvp.Key, kvp.Value);
+        }
     }
 
     public void Apply2(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    { 
+    {
         var priority = new List<string> { "GenericModel", "JsonRpc" };
 
         //Map Controller -> entry point đầu tiên (để xác định module)
@@ -391,7 +392,7 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
         swaggerDoc.Tags = finalTagNames.Select(n => new OpenApiTag { Name = n }).ToList();
     }
     public void Apply4(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    { 
+    {
         var priority = new List<string> { "GenericModel", "JsonRpc" };
         var ci = StringComparer.OrdinalIgnoreCase;
 
@@ -429,5 +430,170 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
                 return controllerToFirstPath.TryGetValue(t.Name, out var path) ? path : "~";
             }, ci)
             .ToList();
+    }
+    public void Apply5(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    {
+        // Danh sách ưu tiên
+        var priorities = new List<string> { "GenericModel", "JsonRpc" };
+
+        // Map controller -> entry point đầu tiên (path nhỏ nhất theo alphabet)
+        var controllerToPath = context.ApiDescriptions
+            .GroupBy(desc => desc.ActionDescriptor.RouteValues["controller"])
+            .ToDictionary(
+                g => g.Key!,
+                g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
+                      .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
+                      .FirstOrDefault() ?? ""
+            );
+
+        swaggerDoc.Tags = swaggerDoc.Tags
+            .OrderBy(t =>
+            {
+                var controller = t.Name;
+
+                // Ưu tiên 1: trong danh sách priorities
+                if (priorities.Contains(controller))
+                    return 1;
+
+                // Ưu tiên 2: bất kỳ path nào chứa "/abp/"
+                if (controllerToPath.TryGetValue(controller, out var path) &&
+                    context.ApiDescriptions.Where(d => d.ActionDescriptor.RouteValues["controller"] == controller)
+                                           .Any(d => d.RelativePath.Contains("/abp/", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return 2;
+                }
+
+                // Ưu tiên 3: bất kỳ path nào chứa "/base/"
+                if (controllerToPath.TryGetValue(controller, out path) &&
+                    context.ApiDescriptions.Where(d => d.ActionDescriptor.RouteValues["controller"] == controller)
+                                           .Any(d => d.RelativePath.Contains("/base/", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return 3;
+                }
+
+                // Nhóm còn lại
+                return 4;
+            })
+            .ThenBy(t =>
+            {
+                // Trong cùng một nhóm, sort theo path đầu tiên của controller
+                return controllerToPath.TryGetValue(t.Name, out var path) ? path : "~";
+            }, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+    
+    public void Apply6(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    {
+        var priorities = new List<string> { "GenericModel", "JsonRpc", "DataSeed" };
+        var ci = StringComparer.OrdinalIgnoreCase;
+
+        // Lấy tất cả ApiDescriptions có controller
+        var apiDescs = context.ApiDescriptions
+            .Where(d => d.ActionDescriptor?.RouteValues != null &&
+                        d.ActionDescriptor.RouteValues.ContainsKey("controller"))
+            .ToList();
+
+        // Build info per controller
+        var controllerInfos = apiDescs
+            .GroupBy(d => d.ActionDescriptor.RouteValues["controller"], ci)
+            .Select(g =>
+            {
+                var controller = g.Key!;
+                // TagName thường là GroupName nếu có, ngược lại controller
+                var tagName = g
+                    .Select(d => d.GroupName ?? d.ActionDescriptor.RouteValues["controller"])
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .GroupBy(n => n, ci)
+                    .OrderByDescending(gr => gr.Count())    // lấy tag xuất hiện nhiều nhất
+                    .ThenBy(gr => gr.Key, ci)
+                    .Select(gr => gr.Key)
+                    .FirstOrDefault() ?? controller;
+
+                // Entry point đầu tiên (deterministic): min path theo OrdinalIgnoreCase
+                var firstPath = g
+                    .Select(d => "/" + (d.RelativePath ?? string.Empty).TrimEnd('/'))
+                    .OrderBy(p => p, ci)
+                    .FirstOrDefault() ?? string.Empty;
+
+                var hasAbp = g.Any(d => (d.RelativePath ?? string.Empty)
+                                        .IndexOf("/abp/", StringComparison.OrdinalIgnoreCase) >= 0);
+                var hasBase = g.Any(d => (d.RelativePath ?? string.Empty)
+                                         .IndexOf("/base/", StringComparison.OrdinalIgnoreCase) >= 0);
+
+                return new
+                {
+                    Controller = controller,
+                    TagName = tagName,
+                    FirstPath = firstPath,
+                    HasAbp = hasAbp,
+                    HasBase = hasBase
+                };
+            })
+            .ToList();
+
+        // Nếu không có controllerInfos thì không làm gì
+        if (!controllerInfos.Any()) return;
+
+        // 1) Priority group (giữ đúng order trong 'priorities' list)
+        var priorityTags = new List<string>();
+        foreach (var p in priorities)
+        {
+            var match = controllerInfos.FirstOrDefault(x => string.Equals(x.Controller, p, StringComparison.OrdinalIgnoreCase));
+            if (match != null)
+            {
+                if (!priorityTags.Contains(match.TagName, ci))
+                    priorityTags.Add(match.TagName);
+            }
+        }
+
+        // Các controller còn lại (không thuộc priority)
+        var remaining = controllerInfos
+            .Where(x => !priorityTags.Contains(x.TagName, ci))
+            .ToList();
+
+        // 2) Controllers có /abp/
+        var abpTags = remaining
+            .Where(x => x.HasAbp)
+            .OrderBy(x => x.FirstPath, ci)
+            .Select(x => x.TagName)
+            .Distinct(ci)
+            .ToList();
+
+        // 3) Controllers có /base/ (nhưng không có /abp/)
+        var baseTags = remaining
+            .Where(x => !x.HasAbp && x.HasBase)
+            .OrderBy(x => x.FirstPath, ci)
+            .Select(x => x.TagName)
+            .Distinct(ci)
+            .ToList();
+
+        // 4) Còn lại
+        var otherTags = remaining
+            .Where(x => !x.HasAbp && !x.HasBase)
+            .OrderBy(x => x.FirstPath, ci)
+            .Select(x => x.TagName)
+            .Distinct(ci)
+            .ToList();
+
+        // Ghép cuối cùng: priority -> abp -> base -> others
+        // var finalTagNames = priorityTags
+        //     .Concat(abpTags)
+        //     .Concat(baseTags)
+        //     .Concat(otherTags)
+        //     .ToList();
+
+        var finalTagNames = abpTags
+            .Concat(priorityTags)
+            .Concat(baseTags)
+            .Concat(otherTags)
+            .ToList();
+        // Nếu swaggerDoc.Tags rỗng hoặc bạn muốn ghi đè, set lại theo finalTagNames
+        swaggerDoc.Tags = finalTagNames.Select(n => new OpenApiTag { Name = n }).ToList();
+
+        // --- optional debug (uncomment if cần debug)
+        // System.Diagnostics.Debug.WriteLine("Controller -> Tag -> FirstPath -> hasAbp/hasBase:");
+        // foreach (var c in controllerInfos)
+        //     System.Diagnostics.Debug.WriteLine($"{c.Controller} => {c.TagName} => {c.FirstPath} => abp:{c.HasAbp} base:{c.HasBase}");
+        // System.Diagnostics.Debug.WriteLine("Final tag order: " + string.Join(", ", finalTagNames));
     }
 }

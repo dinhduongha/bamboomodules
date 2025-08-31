@@ -522,6 +522,7 @@ public partial class ResCompany: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("account_peppol_contact_email")]
     public string? AccountPeppolContactEmail { get; set; }
 
+    [JsonIgnore]
     [Column("account_peppol_migration_key")]
     public string? AccountPeppolMigrationKey { get; set; }
 

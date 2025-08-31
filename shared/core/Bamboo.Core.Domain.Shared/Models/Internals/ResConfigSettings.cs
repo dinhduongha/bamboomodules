@@ -99,6 +99,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("profiling_enabled_until", TypeName = "timestamp without time zone")]
     public DateTime? ProfilingEnabledUntil { get; set; }
 
+    [JsonIgnore]
     [Column("unsplash_access_key")]
     public string? UnsplashAccessKey { get; set; }
 
@@ -117,15 +118,18 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("sfu_server_url")]
     public string? SfuServerUrl { get; set; }
 
+    [JsonIgnore]
     [Column("sfu_server_key")]
     public string? SfuServerKey { get; set; }
 
+    [JsonIgnore]
     [Column("tenor_api_key")]
     public string? TenorApiKey { get; set; }
 
     [Column("tenor_content_filter")]
     public string? TenorContentFilter { get; set; }
 
+    [JsonIgnore]
     [Column("google_translate_api_key")]
     public string? GoogleTranslateApiKey { get; set; }
 
@@ -678,6 +682,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("recaptcha_public_key")]
     public string? RecaptchaPublicKey { get; set; }
 
+    [JsonIgnore]
     [Column("recaptcha_private_key")]
     public string? RecaptchaPrivateKey { get; set; }
 
@@ -771,9 +776,11 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("is_newsletter_enabled")]
     public bool? IsNewsletterEnabled { get; set; }
 
+    [JsonIgnore]
     [Column("google_maps_static_api_key")]
     public string? GoogleMapsStaticApiKey { get; set; }
 
+    [JsonIgnore]
     [Column("google_maps_static_api_secret")]
     public string? GoogleMapsStaticApiSecret { get; set; }
 
@@ -807,6 +814,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("module_event_booth")]
     public bool? ModuleEventBooth { get; set; }
 
+    [JsonIgnore]
     [Column("use_google_maps_static_api")]
     public bool? UseGoogleMapsStaticApi { get; set; }
 
@@ -849,6 +857,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("geoloc_provider_id")]
     public Guid? GeolocProviderId { get; set; }
 
+    [JsonIgnore]
     [Column("geoloc_provider_googlemap_key")]
     public string? GeolocProviderGooglemapKey { get; set; }
 
@@ -873,6 +882,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("cal_microsoft_sync_paused")]
     public bool? CalMicrosoftSyncPaused { get; set; }
 
+    [JsonIgnore]
     [Column("google_custom_search_key")]
     public string? GoogleCustomSearchKey { get; set; }
 

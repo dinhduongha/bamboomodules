@@ -21,8 +21,9 @@ public partial class AccountEdiProxyClientUser
     [Column("edi_format_id")]
     public Guid? EdiFormatId { get; set; }
 
-    // [Column("private_key")]
-    // public byte[]? PrivateKey { get; set; }
+    //[JsonIgnore]
+    //[Column("private_key")]
+    //public byte[]? PrivateKey { get; set; }
 
     // [Many2one]
     [ForeignKey("EdiFormatId")]

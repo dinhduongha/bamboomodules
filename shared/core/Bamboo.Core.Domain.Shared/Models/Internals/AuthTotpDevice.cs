@@ -43,6 +43,7 @@ public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     [Column("index")]
     public string? Index { get; set; }
 
+    [JsonIgnore]
     [Column("key")]
     public string? Key { get; set; }
 

@@ -82,7 +82,8 @@ public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, 
     public virtual ResUsers? CreateU { get; set; }
 
     // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore]
+    //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PrivateKeyId")]
     public virtual CertificateKey? PrivateKey { get; set; }
 

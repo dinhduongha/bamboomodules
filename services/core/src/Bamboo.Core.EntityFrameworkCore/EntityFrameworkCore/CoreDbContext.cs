@@ -21,8 +21,8 @@ public partial class CoreDbContext : AbpDbContext<CoreDbContext>, ICoreDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.LogTo(Console.WriteLine, LogLevel.Debug);
-        optionsBuilder.EnableSensitiveDataLogging().EnableDetailedErrors();
+        //optionsBuilder.LogTo(Console.WriteLine, LogLevel.Debug);
+        //optionsBuilder.EnableSensitiveDataLogging().EnableDetailedErrors();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

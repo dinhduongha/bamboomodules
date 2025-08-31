@@ -73,6 +73,7 @@ public partial class IrMailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("smtp_ssl_certificate")]
     public byte[]? SmtpSslCertificate { get; set; }
 
+    [JsonIgnore]
     [Column("smtp_ssl_private_key")]
     public byte[]? SmtpSslPrivateKey { get; set; }
 

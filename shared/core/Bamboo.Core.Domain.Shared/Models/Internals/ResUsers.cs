@@ -43,6 +43,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("login")]
     public string? Login { get; set; }
 
+    [JsonIgnore]
     [Column("password")]
     public string? Password { get; set; }
 

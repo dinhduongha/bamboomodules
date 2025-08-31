@@ -73,18 +73,21 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("social_tiktok")]
     public string? SocialTiktok { get; set; }
 
+    [JsonIgnore]
     [Column("google_analytics_key")]
     public string? GoogleAnalyticsKey { get; set; }
 
     [Column("google_search_console")]
     public string? GoogleSearchConsole { get; set; }
 
+    [JsonIgnore]
     [Column("google_maps_api_key")]
     public string? GoogleMapsApiKey { get; set; }
 
     [Column("plausible_shared_key")]
     public string? PlausibleSharedKey { get; set; }
 
+    [JsonIgnore]
     [Column("plausible_site")]
     public string? PlausibleSite { get; set; }
 
@@ -216,6 +219,7 @@ public partial class Website: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     [Column("karma_profile_min")]
     public long? KarmaProfileMin { get; set; }
 
+    [JsonIgnore]
     [Column("website_slide_google_app_key")]
     public string? WebsiteSlideGoogleAppKey { get; set; }
 
