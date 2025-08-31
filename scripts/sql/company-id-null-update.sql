@@ -28,26 +28,37 @@ BEGIN
                     AND t.table_name NOT LIKE 'ir_%'
                     AND t.table_name NOT LIKE 'res_%'
                     AND t.table_name NOT IN (
-                        'auth_totp_device',
-                        'auth_totp_wizard'
+                        'auth_totp_device', 
+                        'auth_totp_wizard',
+                        'bus_bus',
+                        'bus_presence',
+                        'demical_precision',
+                        'report_layout',
+                        'report_paperformat',
+                        'web_editor_converter_test',
+                        'web_editor_converter_test_sub',
+                        'web_tour_tour',
+                        'web_tour_tour_step',
+                        'wizard_ir_model_menu_create'
                     )
                 )
                 OR
                 -- Điều kiện 2: Nhưng LUÔN LẤY các bảng trong danh sách ngoại lệ cụ thể này
                 (
                     t.table_name IN (
-                        'base_document_layout',
-                        'ir_attachment',
-                        'ir_default',
-                        'ir_sequence',
-                        'res_config_settings',
-                        'res_currency_rate',
-                        'res_partner',
-                        'res_partner_bank'
+                        -- 'base_document_layout',
+                        -- 'res_config_settings',
+                        -- 'res_currency_rate',
+                        -- 'res_partner',
+                        -- 'res_partner_bank',
+                        -- 'ir_default',
+                        -- 'ir_sequence',
+                        'ir_attachment123'
                         -- Bảng 'res_users' không được thêm vào đây nên sẽ bị loại trừ
                     )
                 )
             )
+            ORDER BY t.table_name
     LOOP
         -- Xây dựng và thực thi câu lệnh UPDATE một cách động
         EXECUTE format(

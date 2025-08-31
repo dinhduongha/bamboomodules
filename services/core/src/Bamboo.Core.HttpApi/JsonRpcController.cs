@@ -13,7 +13,7 @@ using Bamboo.Core.Application;
 
 namespace Bamboo.Core.HttpApi
 {
-    [Route("/api/jsonrpc")]
+    [Route("/api/abp/jsonrpc")]
     public class JsonRpcController : AbpController
     {
         private readonly IGenericModelService _genericModelService;

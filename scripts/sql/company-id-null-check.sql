@@ -10,6 +10,7 @@ BEGIN
         SELECT table_schema, table_name
         FROM information_schema.columns
         WHERE column_name = 'company_id' AND table_schema = 'public'
+        ORDER BY table_name
     LOOP
         -- Với mỗi bảng, thực thi một lệnh đếm số dòng có company_id là NULL
         EXECUTE format('SELECT COUNT(*) FROM %I.%I WHERE company_id IS NULL', r.table_schema, r.table_name)

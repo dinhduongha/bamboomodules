@@ -64,6 +64,7 @@ BEGIN
                     )
                 )
             )
+        ORDER BY t.table_name
     LOOP
         -- Thay đổi quan trọng: Dùng %L thay cho %s để xử lý giá trị UUID/text
         EXECUTE format(

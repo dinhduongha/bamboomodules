@@ -13,7 +13,7 @@ using Bamboo.Core.Application;
 using Bamboo.Core.Application.Dtos;
 namespace Bamboo.Core.HttpApi
 {
-    [Route("api/generic-model")]
+    [Route("api/abp/generic-model")]
     public class GenericModelController : AbpController
     {
         private readonly IGenericModelService _genericModelService;
