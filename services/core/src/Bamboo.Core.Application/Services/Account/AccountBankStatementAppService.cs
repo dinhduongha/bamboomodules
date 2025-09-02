@@ -18,7 +18,7 @@ namespace Bamboo.Core.Application.Services
     public class AccountBankStatementAppService : GenericApplicationService<AccountBankStatement>, IAccountBankStatementAppService
     {
 
-        public AccountBankStatementAppService(IRepository<AccountBankStatement, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public AccountBankStatementAppService(IRepository<AccountBankStatement, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
 
         }

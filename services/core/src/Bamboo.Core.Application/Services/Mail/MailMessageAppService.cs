@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class MailMessageAppService : GenericApplicationService<MailMessage>, IMailMessageAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
-        public MailMessageAppService(IRepository<MailMessage, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MailMessageAppService(IRepository<MailMessage, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _busListenerMixinAppService = busListenerMixinAppService;
         }

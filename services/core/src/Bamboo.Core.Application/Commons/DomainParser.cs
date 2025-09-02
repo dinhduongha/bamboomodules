@@ -22,7 +22,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Application.Services.Commons
 {
-    public class DomainParser : ITransientDependency
+    public class DomainParser : IDomainParser
     {
         private readonly ICurrentUser _currentUser;
         private readonly ICurrentTenant _currentTenant;
@@ -31,7 +31,6 @@ namespace Bamboo.Core.Application.Services.Commons
         private readonly IRepository<IrModel, Guid> _modelRepository;
         private readonly IRepository<IrModelFields, Guid> _fieldRepository;
         private readonly IMemoryCache _memoryCache;
-
         private readonly IModelTypeRegistry _modelTypeRegistry;
 
         public DomainParser(
@@ -54,7 +53,7 @@ namespace Bamboo.Core.Application.Services.Commons
             _modelTypeRegistry = modelTypeRegistry;
         }
 
-        public IQueryable<TEntity> ApplyDomain<TEntity>(IQueryable<TEntity> query, string domainJson)
+        public async Task<IQueryable<TEntity>> ApplyDomain<TEntity>(IQueryable<TEntity> query, string domainJson)
             where TEntity : class, IEntity<Guid>
         {
             if (string.IsNullOrEmpty(domainJson))
@@ -75,7 +74,7 @@ namespace Bamboo.Core.Application.Services.Commons
         {
             return typeof(TEntity)
                 .GetProperties()
-                .Where(p => p.GetCustomAttribute<JsonbFieldAttribute>() != null)
+                .Where(p => p.GetCustomAttribute<JsonFieldAttribute>() != null)
                 .Select(p => p.Name)
                 .ToList();
         }
@@ -101,12 +100,12 @@ namespace Bamboo.Core.Application.Services.Commons
                     jsonFields = new List<string>();
                 }
 
-                // Fallback: Kiểm tra JsonbFieldAttribute nếu không tìm thấy trong ir_model_fields
+                // Fallback: Kiểm tra JsonFieldAttribute nếu không tìm thấy trong ir_model_fields
                 if (!jsonFields.Any())
                 {
                     jsonFields = typeof(TEntity)
                         .GetProperties()
-                        .Where(p => p.GetCustomAttribute<JsonbFieldAttribute>() != null)
+                        .Where(p => p.GetCustomAttribute<JsonFieldAttribute>() != null)
                         .Select(p => p.Name)
                         .ToList();
                 }
@@ -305,8 +304,8 @@ namespace Bamboo.Core.Application.Services.Commons
     //     }
     // }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class JsonbFieldAttribute : Attribute { }
+    // [AttributeUsage(AttributeTargets.Property)]
+    // public class JsonbFieldAttribute : Attribute { }
 
     // [AttributeUsage(AttributeTargets.Property)]
     // public class RelationFieldAttribute : Attribute

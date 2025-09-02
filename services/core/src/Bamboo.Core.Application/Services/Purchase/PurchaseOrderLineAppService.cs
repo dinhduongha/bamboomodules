@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class PurchaseOrderLineAppService : GenericApplicationService<PurchaseOrderLine>, IPurchaseOrderLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
-        public PurchaseOrderLineAppService(IRepository<PurchaseOrderLine, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public PurchaseOrderLineAppService(IRepository<PurchaseOrderLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _analyticMixinAppService = analyticMixinAppService;
         }

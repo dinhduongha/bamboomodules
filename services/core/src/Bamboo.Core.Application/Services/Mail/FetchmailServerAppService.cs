@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IGoogleGmailMixinAppService _googleGmailMixinAppService;
         private readonly IMicrosoftOutlookMixinAppService _microsoftOutlookMixinAppService;
-        public FetchmailServerAppService(IRepository<FetchmailServer, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IGoogleGmailMixinAppService googleGmailMixinAppService, IMicrosoftOutlookMixinAppService microsoftOutlookMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public FetchmailServerAppService(IRepository<FetchmailServer, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IGoogleGmailMixinAppService googleGmailMixinAppService, IMicrosoftOutlookMixinAppService microsoftOutlookMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _googleGmailMixinAppService = googleGmailMixinAppService;
             _microsoftOutlookMixinAppService = microsoftOutlookMixinAppService;

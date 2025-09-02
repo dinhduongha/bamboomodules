@@ -18,7 +18,7 @@ namespace Bamboo.Core.Application.Services
     public class IrActionsTodoAppService : GenericApplicationService<IrActionsTodo>, IIrActionsTodoAppService
     {
 
-        public IrActionsTodoAppService(IRepository<IrActionsTodo, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public IrActionsTodoAppService(IRepository<IrActionsTodo, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
 
         }

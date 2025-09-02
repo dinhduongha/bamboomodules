@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class PhoneBlacklistAppService : GenericApplicationService<PhoneBlacklist>, IPhoneBlacklistAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
-        public PhoneBlacklistAppService(IRepository<PhoneBlacklist, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public PhoneBlacklistAppService(IRepository<PhoneBlacklist, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailThreadAppService = mailThreadAppService;
         }

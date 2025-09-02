@@ -18,7 +18,7 @@ namespace Bamboo.Core.Application.Services
     public class MrpBomByproductAppService : GenericApplicationService<MrpBomByproduct>, IMrpBomByproductAppService
     {
 
-        public MrpBomByproductAppService(IRepository<MrpBomByproduct, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MrpBomByproductAppService(IRepository<MrpBomByproduct, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
 
         }

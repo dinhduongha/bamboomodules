@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class EventTagAppService : GenericApplicationService<EventTag>, IEventTagAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
-        public EventTagAppService(IRepository<EventTag, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public EventTagAppService(IRepository<EventTag, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
         }

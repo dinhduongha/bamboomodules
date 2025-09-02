@@ -22,7 +22,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IFormatVatLabelMixinAppService _formatVatLabelMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public ResCompanyAppService(IRepository<ResCompany, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IFormatAddressMixinAppService formatAddressMixinAppService, IFormatVatLabelMixinAppService formatVatLabelMixinAppService, IMailThreadAppService mailThreadAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ResCompanyAppService(IRepository<ResCompany, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IFormatAddressMixinAppService formatAddressMixinAppService, IFormatVatLabelMixinAppService formatVatLabelMixinAppService, IMailThreadAppService mailThreadAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _formatAddressMixinAppService = formatAddressMixinAppService;
             _formatVatLabelMixinAppService = formatVatLabelMixinAppService;

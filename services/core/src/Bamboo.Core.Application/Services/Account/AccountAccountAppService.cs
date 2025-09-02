@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class AccountAccountAppService : GenericApplicationService<AccountAccount>, IAccountAccountAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
-        public AccountAccountAppService(IRepository<AccountAccount, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public AccountAccountAppService(IRepository<AccountAccount, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailThreadAppService = mailThreadAppService;
         }

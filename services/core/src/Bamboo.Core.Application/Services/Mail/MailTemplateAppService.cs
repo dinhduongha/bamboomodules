@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
         private readonly ITemplateResetMixinAppService _templateResetMixinAppService;
-        public MailTemplateAppService(IRepository<MailTemplate, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailRenderMixinAppService mailRenderMixinAppService, ITemplateResetMixinAppService templateResetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MailTemplateAppService(IRepository<MailTemplate, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailRenderMixinAppService mailRenderMixinAppService, ITemplateResetMixinAppService templateResetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailRenderMixinAppService = mailRenderMixinAppService;
             _templateResetMixinAppService = templateResetMixinAppService;

@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class ResLangAppService : GenericApplicationService<ResLang>, IResLangAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public ResLangAppService(IRepository<ResLang, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ResLangAppService(IRepository<ResLang, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _posLoadMixinAppService = posLoadMixinAppService;
         }

@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Data;
@@ -26,27 +28,28 @@ namespace Bamboo.Core.Application
     public class GenericApplicationService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
         where TEntity : class, IEntity<Guid>
     {
-        protected readonly IRepository<TEntity, Guid> _repository;
+        //protected readonly IRepository<TEntity, Guid> Repository;
         protected readonly IRepository<TEntity, Guid> Repository;
-        protected readonly AuthorizationService _authorizationService;
-        protected readonly DomainParser _domainParser;
+        protected readonly IAuthorizationService _authorizationService;
+        protected readonly IDomainParser _domainParser;
         protected readonly IServiceProvider _serviceProvider;
         protected readonly IModelTypeRegistry _modelTypeRegistry;
         protected readonly IDataFilter _dataFilter;
         protected readonly IObjectMapper _objectMapper;
         protected readonly IMemoryCache _memoryCache;
         private readonly bool _filterFieldAccess = false;
+        protected readonly ICurrentTenant _currentTenant;
         public GenericApplicationService(
             IRepository<TEntity, Guid> repository,
             IServiceProvider serviceProvider,
-            AuthorizationService authorizationService,
-            DomainParser domainParser,
+            IAuthorizationService authorizationService,
+            IDomainParser domainParser,
             IModelTypeRegistry modelTypeRegistry,
             IDataFilter dataFilter,
             IObjectMapper objectMapper,
             IMemoryCache memoryCache)
         {
-            _repository = repository;
+            Repository = repository;
             Repository = repository;
             _serviceProvider = serviceProvider;
             _authorizationService = authorizationService;
@@ -55,7 +58,12 @@ namespace Bamboo.Core.Application
             _dataFilter = dataFilter;
             _objectMapper = objectMapper;
             _memoryCache = memoryCache;
-            _dataFilter.Disable<IMultiTenant>();
+
+            _currentTenant =  _serviceProvider.GetRequiredService<ICurrentTenant>();
+            if (!_currentTenant.Id.HasValue)
+            {
+                _dataFilter.Disable<IMultiTenant>();
+            }
         }
 
         private async Task<List<string>> GetAllowedFieldsAsync(string modelName, string operation, List<string>? fields = null)
@@ -107,9 +115,9 @@ namespace Bamboo.Core.Application
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
 
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
-            query = _domainParser.ApplyDomain(query, domain);
+            query = await _domainParser.ApplyDomain(query, domain);
             return query.Select(x => x.Id).Skip((int)offset).Take(limit).ToList();
         }
 
@@ -120,7 +128,7 @@ namespace Bamboo.Core.Application
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
             var relationFields = GetRelationFields();
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
             query = query.Where(e => ids.Contains(e.Id));
             return query.Cast<object>().ToList();
@@ -167,9 +175,9 @@ namespace Bamboo.Core.Application
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
             var relationFields = GetRelationFields();
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
-            query = _domainParser.ApplyDomain(query, domain);
+            query = await _domainParser.ApplyDomain(query, domain);
             return query.Cast<object>().Skip((int)offset).Take((int)limit).ToList();
 
             var dynamicSelect = new List<string>();
@@ -234,7 +242,7 @@ namespace Bamboo.Core.Application
                 }
             }
 
-            return await _repository.InsertAsync(newEntity);
+            return await Repository.InsertAsync(newEntity);
             var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
             var returnFields = readFieldPermissions == null? allowedFields: allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
@@ -256,7 +264,7 @@ namespace Bamboo.Core.Application
                 }
             }
 
-            var query = (await _repository.GetQueryableAsync()).Where(e => e.Id == newEntity.Id);
+            var query = (await Repository.GetQueryableAsync()).Where(e => e.Id == newEntity.Id);
             var result = query.Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray())
                 .ToDynamicList()
                 .FirstOrDefault();
@@ -279,7 +287,7 @@ namespace Bamboo.Core.Application
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", fields);
             var relationFields = GetRelationFields();
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
             var entities = query.Where(e => ids.Contains(e.Id)).ToList();
             if (entities.Count != ids.Count)
@@ -304,7 +312,7 @@ namespace Bamboo.Core.Application
                         property.SetValue(existingEntity, value);
                     }
                 }
-                await _repository.UpdateAsync(existingEntity);
+                await Repository.UpdateAsync(existingEntity);
             }
 
             var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
@@ -351,12 +359,12 @@ namespace Bamboo.Core.Application
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "unlink");
 
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
             var entity = query.Where(e => ids.Contains(e.Id)).FirstOrDefault();
             if (entity == null)
                 throw new UserFriendlyException("Entity not found or access denied");
-            _repository.DeleteManyAsync(ids);
+            Repository.DeleteManyAsync(ids);
         }
 
         public virtual async Task<object> UnlinkAsync(List<Guid> ids)
@@ -364,12 +372,12 @@ namespace Bamboo.Core.Application
             // var modelName = typeof(TEntity).Name;
             // await _authorizationService.CheckAccessAsync(modelName, "unlink");
 
-            // var query = await _repository.GetQueryableAsync();
+            // var query = await Repository.GetQueryableAsync();
             // query = await _authorizationService.ApplyRulesAsync(query, modelName);
             // var entity = query.Where(e => ids.Contains(e.Id)).FirstOrDefault();
             // if (entity == null)
             //     throw new UserFriendlyException("Entity not found or access denied");
-            // _repository.DeleteManyAsync(ids);
+            // Repository.DeleteManyAsync(ids);
             return default;
         }
 
@@ -393,7 +401,7 @@ namespace Bamboo.Core.Application
                 };
                 property.SetValue(newEntity, value);
             }
-            return await _repository.InsertAsync(newEntity);
+            return await Repository.InsertAsync(newEntity);
         }
 
         public virtual async Task<List<(Guid Id, string Name)>> NameGetAsync(List<Guid> ids)
@@ -401,7 +409,7 @@ namespace Bamboo.Core.Application
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
 
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
             query = query.Where(e => ids.Contains(e.Id));
 
@@ -414,9 +422,9 @@ namespace Bamboo.Core.Application
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
 
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
-            query = _domainParser.ApplyDomain(query, domainJson);
+            query = await _domainParser.ApplyDomain(query, domainJson);
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -432,7 +440,7 @@ namespace Bamboo.Core.Application
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
 
-            var query = await _repository.GetQueryableAsync();
+            var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
             var entity = query.Where(e => e.Id == id).FirstOrDefault();
             if (entity == null)
@@ -466,7 +474,7 @@ namespace Bamboo.Core.Application
                 }
             }
 
-            await _repository.InsertAsync(newEntity);
+            await Repository.InsertAsync(newEntity);
             var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
             var returnFields = readFieldPermissions == null? allowedFields: allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
@@ -488,7 +496,7 @@ namespace Bamboo.Core.Application
                 }
             }
 
-            var result = (await _repository.GetQueryableAsync())
+            var result = (await Repository.GetQueryableAsync())
                 .Where(e => e.Id == newEntity.Id)
                 .Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray())
                 .ToDynamicList()

@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class SpreadsheetDashboardShareAppService : GenericApplicationService<SpreadsheetDashboardShare>, ISpreadsheetDashboardShareAppService
     {
         private readonly ISpreadsheetMixinAppService _spreadsheetMixinAppService;
-        public SpreadsheetDashboardShareAppService(IRepository<SpreadsheetDashboardShare, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public SpreadsheetDashboardShareAppService(IRepository<SpreadsheetDashboardShare, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _spreadsheetMixinAppService = spreadsheetMixinAppService;
         }

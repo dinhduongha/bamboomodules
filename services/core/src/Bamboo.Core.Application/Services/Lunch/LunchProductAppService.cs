@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class LunchProductAppService : GenericApplicationService<LunchProduct>, ILunchProductAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
-        public LunchProductAppService(IRepository<LunchProduct, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IImageMixinAppService imageMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public LunchProductAppService(IRepository<LunchProduct, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IImageMixinAppService imageMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _imageMixinAppService = imageMixinAppService;
         }

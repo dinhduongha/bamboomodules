@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class PosPaymentMethodAppService : GenericApplicationService<PosPaymentMethod>, IPosPaymentMethodAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public PosPaymentMethodAppService(IRepository<PosPaymentMethod, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public PosPaymentMethodAppService(IRepository<PosPaymentMethod, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _posLoadMixinAppService = posLoadMixinAppService;
         }

@@ -18,7 +18,7 @@ namespace Bamboo.Core.Application.Services
     public class BaseImportImportAppService : GenericApplicationService<BaseImportImport>, IBaseImportImportAppService
     {
 
-        public BaseImportImportAppService(IRepository<BaseImportImport, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public BaseImportImportAppService(IRepository<BaseImportImport, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
 
         }

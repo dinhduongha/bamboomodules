@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
-        public ForumPostAppService(IRepository<ForumPost, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ForumPostAppService(IRepository<ForumPost, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailThreadAppService = mailThreadAppService;
             _websiteSearchableMixinAppService = websiteSearchableMixinAppService;

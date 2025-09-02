@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class MailGroupAppService : GenericApplicationService<MailGroup>, IMailGroupAppService
     {
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;
-        public MailGroupAppService(IRepository<MailGroup, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailAliasMixinAppService mailAliasMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MailGroupAppService(IRepository<MailGroup, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailAliasMixinAppService mailAliasMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailAliasMixinAppService = mailAliasMixinAppService;
         }

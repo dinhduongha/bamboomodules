@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class DiscussChannelMemberAppService : GenericApplicationService<DiscussChannelMember>, IDiscussChannelMemberAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
-        public DiscussChannelMemberAppService(IRepository<DiscussChannelMember, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public DiscussChannelMemberAppService(IRepository<DiscussChannelMember, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _busListenerMixinAppService = busListenerMixinAppService;
         }

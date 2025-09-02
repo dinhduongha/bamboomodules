@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class LinkTrackerAppService : GenericApplicationService<LinkTracker>, ILinkTrackerAppService
     {
         private readonly IUtmMixinAppService _utmMixinAppService;
-        public LinkTrackerAppService(IRepository<LinkTracker, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IUtmMixinAppService utmMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public LinkTrackerAppService(IRepository<LinkTracker, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IUtmMixinAppService utmMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _utmMixinAppService = utmMixinAppService;
         }

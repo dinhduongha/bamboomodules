@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class HrEmployeePublicAppService : GenericApplicationService<HrEmployeePublic>, IHrEmployeePublicAppService
     {
         private readonly IHrEmployeeBaseAppService _hrEmployeeBaseAppService;
-        public HrEmployeePublicAppService(IRepository<HrEmployeePublic, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IHrEmployeeBaseAppService hrEmployeeBaseAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public HrEmployeePublicAppService(IRepository<HrEmployeePublic, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IHrEmployeeBaseAppService hrEmployeeBaseAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _hrEmployeeBaseAppService = hrEmployeeBaseAppService;
         }

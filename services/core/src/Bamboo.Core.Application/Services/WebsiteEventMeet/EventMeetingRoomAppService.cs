@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IChatRoomMixinAppService _chatRoomMixinAppService;
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
-        public EventMeetingRoomAppService(IRepository<EventMeetingRoom, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IChatRoomMixinAppService chatRoomMixinAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public EventMeetingRoomAppService(IRepository<EventMeetingRoom, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IChatRoomMixinAppService chatRoomMixinAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _chatRoomMixinAppService = chatRoomMixinAppService;
             _websitePublishedMixinAppService = websitePublishedMixinAppService;

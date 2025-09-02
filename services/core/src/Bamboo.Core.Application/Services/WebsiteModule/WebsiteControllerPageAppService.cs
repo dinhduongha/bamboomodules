@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
-        public WebsiteControllerPageAppService(IRepository<WebsiteControllerPage, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public WebsiteControllerPageAppService(IRepository<WebsiteControllerPage, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService, IWebsiteSearchableMixinAppService websiteSearchableMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
             _websiteSearchableMixinAppService = websiteSearchableMixinAppService;

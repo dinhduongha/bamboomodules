@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         private readonly IWebsiteMultiMixinAppService _websiteMultiMixinAppService;
-        public LoyaltyProgramAppService(IRepository<LoyaltyProgram, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService, IWebsiteMultiMixinAppService websiteMultiMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public LoyaltyProgramAppService(IRepository<LoyaltyProgram, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService, IWebsiteMultiMixinAppService websiteMultiMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _posLoadMixinAppService = posLoadMixinAppService;
             _websiteMultiMixinAppService = websiteMultiMixinAppService;

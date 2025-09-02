@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class ProductSupplierinfoAppService : GenericApplicationService<ProductSupplierinfo>, IProductSupplierinfoAppService
     {
 
-        public ProductSupplierinfoAppService(IRepository<ProductSupplierinfo, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ProductSupplierinfoAppService(IRepository<ProductSupplierinfo, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
 
         }

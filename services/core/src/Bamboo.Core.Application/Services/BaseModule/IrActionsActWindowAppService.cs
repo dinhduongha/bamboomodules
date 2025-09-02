@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class IrActionsActWindowAppService : GenericApplicationService<IrActWindow>, IIrActionsActWindowAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
-        public IrActionsActWindowAppService(IRepository<IrActWindow, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public IrActionsActWindowAppService(IRepository<IrActWindow, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _irActionsActionsAppService = irActionsActionsAppService;
         }

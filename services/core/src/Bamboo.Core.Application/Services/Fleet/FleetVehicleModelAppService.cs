@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IAvatarMixinAppService _avatarMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
-        public FleetVehicleModelAppService(IRepository<FleetVehicleModel, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAvatarMixinAppService avatarMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public FleetVehicleModelAppService(IRepository<FleetVehicleModel, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAvatarMixinAppService avatarMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _avatarMixinAppService = avatarMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;

@@ -22,7 +22,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IMailAliasMixinOptionalAppService _mailAliasMixinOptionalAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPortalMixinAppService _portalMixinAppService;
-        public AccountJournalAppService(IRepository<AccountJournal, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailAliasMixinOptionalAppService mailAliasMixinOptionalAppService, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public AccountJournalAppService(IRepository<AccountJournal, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailActivityMixinAppService mailActivityMixinAppService, IMailAliasMixinOptionalAppService mailAliasMixinOptionalAppService, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailAliasMixinOptionalAppService = mailAliasMixinOptionalAppService;

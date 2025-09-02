@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class AccountAnalyticLineAppService : GenericApplicationService<AccountAnalyticLine>, IAccountAnalyticLineAppService
     {
         private readonly IAnalyticPlanFieldsMixinAppService _analyticPlanFieldsMixinAppService;
-        public AccountAnalyticLineAppService(IRepository<AccountAnalyticLine, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticPlanFieldsMixinAppService analyticPlanFieldsMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public AccountAnalyticLineAppService(IRepository<AccountAnalyticLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticPlanFieldsMixinAppService analyticPlanFieldsMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _analyticPlanFieldsMixinAppService = analyticPlanFieldsMixinAppService;
         }

@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class AccountMoveLineAppService : GenericApplicationService<AccountMoveLine>, IAccountMoveLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
-        public AccountMoveLineAppService(IRepository<AccountMoveLine, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public AccountMoveLineAppService(IRepository<AccountMoveLine, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _analyticMixinAppService = analyticMixinAppService;
         }

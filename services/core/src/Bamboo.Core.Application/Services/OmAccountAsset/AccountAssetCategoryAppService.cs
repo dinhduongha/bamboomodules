@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
-        public AccountAssetCategoryAppService(IRepository<AccountAssetCategory, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public AccountAssetCategoryAppService(IRepository<AccountAssetCategory, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _analyticMixinAppService = analyticMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;

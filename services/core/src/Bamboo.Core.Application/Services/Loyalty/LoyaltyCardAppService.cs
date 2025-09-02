@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public LoyaltyCardAppService(IRepository<LoyaltyCard, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public LoyaltyCardAppService(IRepository<LoyaltyCard, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailThreadAppService mailThreadAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailThreadAppService = mailThreadAppService;
             _posLoadMixinAppService = posLoadMixinAppService;

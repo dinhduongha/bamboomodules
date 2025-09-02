@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IResourceMixinAppService _resourceMixinAppService;
-        public MrpWorkcenterAppService(IRepository<MrpWorkcenter, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService, IMailThreadAppService mailThreadAppService, IResourceMixinAppService resourceMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public MrpWorkcenterAppService(IRepository<MrpWorkcenter, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IAnalyticMixinAppService analyticMixinAppService, IMailThreadAppService mailThreadAppService, IResourceMixinAppService resourceMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _analyticMixinAppService = analyticMixinAppService;
             _mailThreadAppService = mailThreadAppService;

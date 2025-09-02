@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
-        public CrmTeamAppService(IRepository<CrmTeam, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailAliasMixinAppService mailAliasMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public CrmTeamAppService(IRepository<CrmTeam, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IMailAliasMixinAppService mailAliasMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _mailAliasMixinAppService = mailAliasMixinAppService;
             _mailThreadAppService = mailThreadAppService;

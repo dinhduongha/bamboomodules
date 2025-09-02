@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class RestaurantFloorAppService : GenericApplicationService<RestaurantFloor>, IRestaurantFloorAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public RestaurantFloorAppService(IRepository<RestaurantFloor, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public RestaurantFloorAppService(IRepository<RestaurantFloor, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _posLoadMixinAppService = posLoadMixinAppService;
         }

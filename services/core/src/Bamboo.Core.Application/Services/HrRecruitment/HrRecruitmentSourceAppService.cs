@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Services
     public class HrRecruitmentSourceAppService : GenericApplicationService<HrRecruitmentSource>, IHrRecruitmentSourceAppService
     {
         private readonly IUtmSourceMixinAppService _utmSourceMixinAppService;
-        public HrRecruitmentSourceAppService(IRepository<HrRecruitmentSource, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IUtmSourceMixinAppService utmSourceMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public HrRecruitmentSourceAppService(IRepository<HrRecruitmentSource, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IUtmSourceMixinAppService utmSourceMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _utmSourceMixinAppService = utmSourceMixinAppService;
         }

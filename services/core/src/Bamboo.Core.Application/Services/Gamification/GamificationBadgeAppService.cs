@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Services
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
-        public GamificationBadgeAppService(IRepository<GamificationBadge, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IImageMixinAppService imageMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public GamificationBadgeAppService(IRepository<GamificationBadge, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IImageMixinAppService imageMixinAppService, IMailThreadAppService mailThreadAppService, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _imageMixinAppService = imageMixinAppService;
             _mailThreadAppService = mailThreadAppService;

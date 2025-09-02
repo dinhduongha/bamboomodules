@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Hybrid;
 using Volo.Abp;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -16,7 +17,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Services.Commons
 {
-    public class AuthorizationService : ITransientDependency
+    public class AuthorizationService : IAuthorizationService
     {
         private readonly IRepository<IrModel, Guid> _modelRepository;
         private readonly IRepository<IrModelAccess, Guid> _modelAccessRepository;
@@ -27,7 +28,8 @@ namespace Bamboo.Core.Application.Services.Commons
         private readonly IRepository<ResUsers, Guid> _resUserRepository;
         private readonly IRepository<ResGroups, Guid> _resGroupRepository;
         private readonly IMemoryCache _memoryCache;
-        private readonly DomainParser _domainParser;
+        private readonly IDomainParser _domainParser;
+        private readonly HybridCache _hybridCache;
 
         public AuthorizationService(
             IRepository<IrModel, Guid> modelRepository,
@@ -35,21 +37,23 @@ namespace Bamboo.Core.Application.Services.Commons
             IRepository<IrModelFields, Guid> fieldRepository,
             IRepository<IrModelFieldAccess, Guid> fieldAccessRepository,
             IRepository<IrRule, Guid> ruleRepository,
-            ICurrentUser currentUser,
-            IRepository<ResUsers, Guid> resUserRepository,
             IRepository<ResGroups, Guid> resGroupRepository,
+            IRepository<ResUsers, Guid> resUserRepository,
+            ICurrentUser currentUser,
+            HybridCache hybridCache,
             IMemoryCache memoryCache,
-            DomainParser domainParser)
+            IDomainParser domainParser)
         {
             _modelRepository = modelRepository;
             _modelAccessRepository = modelAccessRepository;
             _fieldRepository = fieldRepository;
             _fieldAccessRepository = fieldAccessRepository;
             _ruleRepository = ruleRepository;
-            _currentUser = currentUser;
-            _resUserRepository = resUserRepository;
             _resGroupRepository = resGroupRepository;
+            _resUserRepository = resUserRepository;
+            _currentUser = currentUser;
             _memoryCache = memoryCache;
+            _hybridCache = hybridCache;
             _domainParser = domainParser;
         }
 
@@ -104,7 +108,7 @@ namespace Bamboo.Core.Application.Services.Commons
             {
                 if (!string.IsNullOrEmpty(rule.DomainForce))
                 {
-                    query = _domainParser.ApplyDomain(query, rule.DomainForce);
+                    query = await _domainParser.ApplyDomain(query, rule.DomainForce);
                 }
             }
             return query;

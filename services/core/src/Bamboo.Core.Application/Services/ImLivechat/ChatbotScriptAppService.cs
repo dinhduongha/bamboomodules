@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Services
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IUtmSourceMixinAppService _utmSourceMixinAppService;
-        public ChatbotScriptAppService(IRepository<ChatbotScript, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IImageMixinAppService imageMixinAppService, IUtmSourceMixinAppService utmSourceMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public ChatbotScriptAppService(IRepository<ChatbotScript, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IImageMixinAppService imageMixinAppService, IUtmSourceMixinAppService utmSourceMixinAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _imageMixinAppService = imageMixinAppService;
             _utmSourceMixinAppService = utmSourceMixinAppService;
